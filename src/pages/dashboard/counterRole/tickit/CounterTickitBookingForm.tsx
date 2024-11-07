@@ -125,15 +125,62 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     watch,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { isSubmitSuccessful, errors },
   } = useForm<addBookingSeatFromCounterProps>({
     resolver: zodResolver(addBookingSeatFromCounterSchema),
     defaultValues: {
+      counterId: undefined,
+      customerName: "",
+      paymentType: "", // For dropdowns, empty string is a good default for unselected state
+      paymentAmount: undefined,
+      gender: "Male", // Use undefined instead of empty string for optional enum fields
+      phone: "",
+      email: "",
+      address: "",
+      nid: "",
+      nationality: undefined, // Dropdown reset value
+      paymentMethod: undefined, // Dropdown reset value
+      boardingPoint: undefined, // Dropdown reset value
+      droppingPoint: undefined, // Dropdown reset value
+      noOfSeat: 0,
       amount: 0,
+      date: bookingCoach?.departureDate || "", // Pre-fill if available
       seats: [],
     },
   });
-
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset({
+        counterId: undefined,
+        customerName: "",
+        paymentType: "",
+        paymentAmount: undefined,
+        gender: "Male", // Reset to undefined for optional enum
+        phone: "",
+        email: "",
+        address: "",
+        nid: "",
+        nationality: undefined, // Dropdown reset to undefined
+        paymentMethod: undefined, // Dropdown reset to undefined
+        boardingPoint: undefined, // Dropdown reset to undefined
+        droppingPoint: undefined, // Dropdown reset to undefined
+        noOfSeat: 0,
+        amount: 0,
+        date: bookingCoach?.departureDate || "",
+        seats: [],
+      });
+      setBookingFormState({
+        targetedSeat: null,
+        selectedSeats: [],
+        redirectLink: null,
+        customerName: null,
+        redirectConfirm: false,
+      });
+      setBookingType("SeatIssue");
+      setExpirationDate(undefined);
+      setExpirationTime(new Date());
+    }
+  }, [isSubmitSuccessful, reset, bookingCoach?.departureDate]);
   const handleBookingSeat = async (seatData: any) => {
     const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
       (current: any) => current.seat === seatData.seat
@@ -207,26 +254,6 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   const paymentMethod = watch("paymentMethod");
   const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
   console.log("watch", paymentMethod);
-  const clearForm = () => {
-    reset(); // Reset all form fields
-    setValue("gender", ""); // Reset gender dropdown
-    setValue("paymentMethod", ""); // Reset payment method dropdown
-    setValue("boardingPoint", ""); // Reset boarding point dropdown
-    setValue("droppingPoint", ""); // Reset dropping point dropdown
-    setValue("paymentType", ""); // Reset payment type dropdown
-    setExpirationDate(undefined); // Reset expiration date, if applicable
-    setExpirationTime(new Date()); // Reset expiration time, if applicable
-    setBookingType("SeatIssue"); // Reset booking type, if applicable
-
-    // Reset other form state as needed
-    setBookingFormState({
-      selectedSeats: [],
-      targetedSeat: null,
-      redirectLink: null,
-      customerName: null,
-      redirectConfirm: false,
-    });
-  };
 
   const onSubmit = async (data: addBookingSeatFromCounterProps) => {
     const cleanedData = removeFalsyProperties(data, [
@@ -271,7 +298,6 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
         const booking = await addBooking(finalData);
 
         if (booking.data?.success) {
-          clearForm();
           toast.success(
             translate(
               `প্রিয় ${booking.data?.data?.customerName}, আপনার সিট সফলভাবে বুক করা হয়েছে! আমাদের সেবা ব্যবহার করার জন্য ধন্যবাদ।`,
@@ -486,6 +512,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                       )}
                     >
                       <Select
+                        value={watch("boardingPoint") || ""}
                         onValueChange={(value: string) => {
                           setValue("boardingPoint", value);
                           setError("boardingPoint", {
@@ -530,6 +557,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                       )}
                     >
                       <Select
+                        value={watch("droppingPoint") || ""}
                         onValueChange={(value: string) => {
                           setValue("droppingPoint", value);
                           setError("droppingPoint", {
@@ -622,6 +650,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                   )}
                 >
                   <Select
+                    value={watch("nationality") || ""}
                     onValueChange={(value: string) => {
                       setValue("nationality", value);
                       setError("nationality", { type: "custom", message: "" });
@@ -713,6 +742,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                 )}
               >
                 <Select
+                  value={watch("paymentMethod") || ""}
                   onValueChange={(value: string) => {
                     setValue("paymentMethod", value);
                     setError("paymentMethod", {
