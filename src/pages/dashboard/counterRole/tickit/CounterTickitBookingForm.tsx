@@ -61,7 +61,6 @@ import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperti
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface ICounterBookingFormProps {
@@ -85,7 +84,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   const [expirationTime, setExpirationTime] = useState<Date>(new Date());
   const { translate } = useCustomTranslator();
   const user = useSelector((state: any) => state.user);
-  const navigate = useNavigate();
+
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [bookingFormState, setBookingFormState] =
     useState<ICounterBookingFormStateProps>({

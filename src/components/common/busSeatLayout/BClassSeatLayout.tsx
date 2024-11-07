@@ -172,9 +172,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
           <div className="grid grid-cols-1 gap-x-4 gap-y-8">
             {
               //@ts-ignore
-              seatsAllocation.left.map((seat: any, index: number) =>
-                renderSeatButton(seat)
-              )
+              seatsAllocation.left.map((seat: any) => renderSeatButton(seat))
             }
           </div>
 
@@ -183,7 +181,10 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
           </div>
 
           <div className="grid grid-cols-2 gap-x-12 gap-y-8">
-            {seatsAllocation.right.map((seat: any) => renderSeatButton(seat))}
+            {
+              //@ts-ignore
+              seatsAllocation.right.map((seat: any) => renderSeatButton(seat))
+            }
           </div>
         </div>
 
