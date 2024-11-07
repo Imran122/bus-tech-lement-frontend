@@ -29,6 +29,8 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
   bookingCoach,
 }) => {
   const { translate } = useCustomTranslator();
+  console.log("bookingFormState suite:--", bookingFormState);
+
   const user = useSelector((state: any) => state.user);
 
   const getSeatColorClass = (
@@ -58,7 +60,7 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
     //console.log("order:---", order);
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
-    if (selected) return "border-bule-500 bg-[#00BFFF]";
+    if (selected) return "border-bule-500 text-white bg-[#00BFFF]";
     if (order) {
       return order?.order?.gender === "Male"
         ? "bg-red-700 text-white"
@@ -97,7 +99,7 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
             type="button"
             onClick={() => handleBookingSeat(seat)}
             className={cn(
-              "text-foreground/50 hover:text-foreground/80 size-10 relative",
+              "text-foreground/50 hover:text-foreground/80 flex flex-col items-center gap-1",
               isBookedByOtherCounter && "cursor-not-allowed"
             )}
             disabled={isBookedByOtherCounter}
@@ -111,7 +113,7 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
                   "animate-pulse"
               )}
             >
-              <SeatIcon className="size-11" />
+              <SeatIcon className="text-gray-400 size-10" />
             </div>
             <span>{seat.seat}</span>
           </button>

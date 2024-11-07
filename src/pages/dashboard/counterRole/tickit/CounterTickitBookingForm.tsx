@@ -125,7 +125,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     setError,
     watch,
     handleSubmit,
-
+    reset,
     formState: { errors },
   } = useForm<addBookingSeatFromCounterProps>({
     resolver: zodResolver(addBookingSeatFromCounterSchema),
@@ -248,14 +248,23 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
         const booking = await addBooking(finalData);
 
         if (booking.data?.success) {
+          reset();
+          setBookingFormState({
+            selectedSeats: [],
+            targetedSeat: null,
+            redirectLink: null,
+            customerName: null,
+            redirectConfirm: false,
+          });
+          setExpirationDate(undefined);
+          setExpirationTime(new Date());
+          setBookingType("SeatIssue");
           toast.success(
             translate(
               `প্রিয় ${booking.data?.data?.customerName}, আপনার সিট সফলভাবে বুক করা হয়েছে! আমাদের সেবা ব্যবহার করার জন্য ধন্যবাদ।`,
               `Dear ${booking.data?.data?.customerName}, your seat has been successfully booked! Thank you for choosing our service.`
             )
           );
-
-          navigate("/counter/dashboard");
         } else {
           toast.error("Booking failed. Please try again.");
         }
