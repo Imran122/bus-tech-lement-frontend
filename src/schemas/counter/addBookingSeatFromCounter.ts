@@ -4,11 +4,13 @@ import { phoneNumberBaseSchema } from "../contact/addUpdateDriverSchema";
 export const addBookingSeatFromCounterSchema = z.object({
   counterId: z.number().optional(),
   customerName: z.string().optional(),
-  paymentType: z.enum(["FULL", "PARTIAL"], {
-    errorMap: () => ({
-      message: "Payment Type is required",
-    }),
-  }),
+  paymentType: z
+    .enum(["FULL", "PARTIAL"], {
+      errorMap: () => ({
+        message: "Payment Type is required",
+      }),
+    })
+    .or(z.literal("")),
 
   paymentAmount: z
     .preprocess(
@@ -41,7 +43,8 @@ export const addBookingSeatFromCounterSchema = z.object({
     .positive("Number of seats is required"),
   amount: z
     .number({ required_error: "Payment amount is required" })
-    .positive("Payment amount is required"),
+    .positive("Payment amount is required")
+    .or(z.literal(0)),
   date: z
     .string({ required_error: "Date is required" })
     .min(1, "Date is required"),

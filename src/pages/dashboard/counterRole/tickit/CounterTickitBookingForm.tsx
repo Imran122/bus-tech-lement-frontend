@@ -197,13 +197,37 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     setValue,
     totalAmount,
     totalSeats,
+    user.id,
   ]);
   console.log("bookingType:---x", bookingType);
   console.log("expirationDate:---::", expirationDate);
   console.log("selectedSeats QQ:---::", bookingCoach);
   const paymentType = watch("paymentType");
   const partialAmount = watch("paymentAmount");
+  const paymentMethod = watch("paymentMethod");
   const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
+  console.log("watch", paymentMethod);
+  const clearForm = () => {
+    reset(); // Reset all form fields
+    setValue("gender", ""); // Reset gender dropdown
+    setValue("paymentMethod", ""); // Reset payment method dropdown
+    setValue("boardingPoint", ""); // Reset boarding point dropdown
+    setValue("droppingPoint", ""); // Reset dropping point dropdown
+    setValue("paymentType", ""); // Reset payment type dropdown
+    setExpirationDate(undefined); // Reset expiration date, if applicable
+    setExpirationTime(new Date()); // Reset expiration time, if applicable
+    setBookingType("SeatIssue"); // Reset booking type, if applicable
+
+    // Reset other form state as needed
+    setBookingFormState({
+      selectedSeats: [],
+      targetedSeat: null,
+      redirectLink: null,
+      customerName: null,
+      redirectConfirm: false,
+    });
+  };
+
   const onSubmit = async (data: addBookingSeatFromCounterProps) => {
     const cleanedData = removeFalsyProperties(data, [
       "customerName",
@@ -247,17 +271,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
         const booking = await addBooking(finalData);
 
         if (booking.data?.success) {
-          reset();
-          setBookingFormState({
-            selectedSeats: [],
-            targetedSeat: null,
-            redirectLink: null,
-            customerName: null,
-            redirectConfirm: false,
-          });
-          setExpirationDate(undefined);
-          setExpirationTime(new Date());
-          setBookingType("SeatIssue");
+          clearForm();
           toast.success(
             translate(
               `প্রিয় ${booking.data?.data?.customerName}, আপনার সিট সফলভাবে বুক করা হয়েছে! আমাদের সেবা ব্যবহার করার জন্য ধন্যবাদ।`,
