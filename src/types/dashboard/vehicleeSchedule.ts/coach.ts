@@ -1,0 +1,20 @@
+export type Coach = {
+  id: number;
+  registrationNo: string;
+  manufacturerCompany: string;
+  model: string;
+  chasisNo: string;
+  engineNo: string;
+  countryOfOrigin: string;
+  lcCode: string;
+  deliveryToDipo: string;
+  deliveryDate: string | null;
+  orderDate: string | null;
+  color: string;
+  noOfSeat: number;
+  coachType: string;
+  financedBy: string;
+  terms: string;
+  active: boolean;
+  updatedAt: string;
+};
