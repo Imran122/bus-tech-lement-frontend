@@ -215,7 +215,6 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     ]);
     console.log("submitted data", data);
     try {
-      console.log("entery))))))0");
       const check = await checkingSeat({
         coachConfigId: bookingCoach.id,
         schedule: bookingCoach.schedule,
@@ -224,8 +223,6 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       });
 
       if (check?.data?.data?.available) {
-        console.log("xxxx", bookingFormState.selectedSeats);
-        console.log("xxxx2", bookingCoach);
         const finalData = {
           ...cleanedData,
           bookingType: bookingType,
@@ -247,7 +244,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
               : undefined,
           }),
         };
-        console.log("@final data:", finalData);
+        // console.log("@final data:", finalData);
         const booking = await addBooking(finalData);
 
         if (booking.data?.success) {
@@ -330,16 +327,16 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                 </PopoverContent>
               </Popover>
               {/* Expiration Time Input */}
-              //@ts-ignore
+              {/* //@ts-ignore */}
               <InputWrapper
                 //@ts-ignore
                 error={errors?.time?.message}
                 //@ts-ignore
                 labelFor="time"
-                label={translate("", "")}
+                label={translate(" ", " ")}
               >
                 {" "}
-                //@ts-ignore
+                {/* //@ts-ignore */}
                 <TimePicker
                   //@ts-ignore
                   date={expirationTime}

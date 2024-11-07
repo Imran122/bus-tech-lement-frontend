@@ -30,7 +30,7 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
   bookingCoach,
 }) => {
   const { translate } = useCustomTranslator();
-  console.log("bookingFormState econ::--", bookingFormState);
+  // console.log("bookingFormState econ::--", bookingFormState);
 
   const user = useSelector((state: any) => state.user);
 
@@ -52,14 +52,13 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
     if (bookedByCounter) {
       // If the seat is booked by the logged-in user's counter, show it as green
       if (bookedByCounter.counter.id === user.id) {
-        return "bg-green-500 text-white"; // Green for seats booked by user's counter
+        return "bg-[#A3D1D5] text-white"; // Green for seats booked by user's counter
       }
       // Otherwise, show it as orange
       return "bg-orange-500 text-white"; // Orange for seats booked by others' counters
     }
 
-    console.log("order:---", order);
-    console.log("bookingCoach:---", bookingCoach);
+    //console.log("order:---", order);
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
     if (selected) return "border-bule-500 bg-[#00BFFF]";
@@ -92,8 +91,8 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
       ? bookedByCounter?.counter?.userName
       : "";
 
-    console.log("isBookedByOtherCounter", isBookedByOtherCounter);
-    console.log("tooltipText:", tooltipText);
+    //console.log("isBookedByOtherCounter", isBookedByOtherCounter);
+    //console.log("tooltipText:", tooltipText);
     return (
       <Tooltip key={seat.id}>
         <TooltipTrigger asChild>
