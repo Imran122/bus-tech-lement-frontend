@@ -86,9 +86,12 @@ const CoachList: FC<ICoachListProps> = () => {
     const customizeCoachesData = coachesData?.data?.map(
       (singleCoach: Coach, userIndex: number) => ({
         ...singleCoach,
-        registrationNo: singleCoach?.registrationNo || fallback.notFound.en,
         noOfSeat: singleCoach?.noOfSeat || fallback.quantity,
-        coachType: singleCoach.coachType.split("_").join(" "),
+        schedule:singleCoach?.schedule,
+        fare:singleCoach?.fare?.amount,
+        fromCounter:singleCoach?.fromCounter?.name,
+        destinationCounter:singleCoach?.destinationCounter?.name,
+        route:singleCoach?.route?.routeName,
         dummyActive: singleCoach?.active ? "Activate" : "Deactivate",
         index: generateDynamicIndexWithMeta(coachesData, userIndex),
       })
@@ -153,16 +156,32 @@ const CoachList: FC<ICoachListProps> = () => {
       accessorKey: "coachNo",
       header: translate("কোচ নম্বর", "Coach No"),
     },
-    {
-      accessorKey: "registrationNo",
-      header: translate("রেজিস্ট্রেশন নম্বর", "Registration No"),
-    },
 
     {
       accessorKey: "noOfSeat",
       header: translate("আসন সংখ্যা", "Number of Seat"),
     },
-
+    {
+      accessorKey: "schedule",
+      header: translate("সময়সূচী", "Schedule"),
+    },
+    {
+      accessorKey: "fare",
+      header: translate("ভাড়া", "Fare"),
+    },
+    {
+      accessorKey: "fromCounter",
+      header: translate("প্রস্থান কাউন্টার", "From Counter"),
+    },
+    {
+      accessorKey: "destinationCounter",
+      header: translate("গন্তব্য কাউন্টার", "Destination Counter"),
+    },
+    {
+      accessorKey: "route",
+      header: translate("রুট", "Route"),
+    },
+    
     {
       header: translate("অবস্থা", "Status"),
       cell: ({ row }) => {
@@ -181,10 +200,6 @@ const CoachList: FC<ICoachListProps> = () => {
           </Button>
         );
       },
-    },
-    {
-      accessorKey: "coachType",
-      header: translate("কোচ ধরন", "Coach Type"),
     },
     {
       header: translate("কার্যক্রম", "Action"),

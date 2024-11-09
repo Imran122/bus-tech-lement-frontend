@@ -67,7 +67,7 @@ export const addUpdateCoachConfigurationForm: IAddUpdateCoachConfigurationFromPr
     },
     coachNo: {
       label: {
-        en: "Coach Number ✼",
+        en: "Select Coach Number ✼",
         bn: "কোচ নম্বর ✼",
       },
       placeholder: {

@@ -8,9 +8,6 @@ export const addUpdateCoachConfigurationSchema = z.object({
   routeId: z
     .number({ required_error: "Route is required" })
     .min(1, { message: "Route is required" }),
-
-  supervisorId: z.number({ required_error: "Supervisor is required" }),
-  driverId: z.number({ required_error: "Driver is required" }),
   destinationCounterId: z.number({
     required_error: "Ending counter is required",
   }),
@@ -34,16 +31,11 @@ export const addUpdateCoachConfigurationSchema = z.object({
   schedule: z
     .string({ required_error: "Schedule is required" })
     .min(1, { message: "Schedule is required" }),
-  departureDate: z
-    .string({ required_error: "Departure date is required" })
-    .min(1, { message: "Departure date is required" }),
-  type: z.enum(["Daily", "Weekly"], {
-    required_error: "Configuration type is required",
-  }),
-  saleStatus: z.boolean({ required_error: "Sale status is required" }),
+    departureDate: z
+    .array(z.string(), { required_error: "Departure date is required" })
+    .min(1, { message: "At least one departure date is required" }),
+  
   holdingTime: z.string().optional(),
-  fareAllowed: z.string().optional(),
-  vipTimeOut: z.string().optional(),
 });
 
 export type IAddUpdateCoachConfigurationDataProps = z.infer<
