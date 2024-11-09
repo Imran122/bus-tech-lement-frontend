@@ -42,7 +42,7 @@ export const contactsRoutes: IRouteProps[] = [
     element: React.createElement(CounterList),
   },
   {
-    path: "vehicles_list",
+    path: "vehicle_list",
     element: React.createElement(VehiclesList),
   },
   {

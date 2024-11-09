@@ -14,29 +14,33 @@ import {
   AddUpdateVehicleDataProps,
   addUpdateVehicleSchema,
 } from "@/schemas/vehiclesSchedule/addUpdateVehicleSchema";
-import { useAddVehicleMutation } from "@/store/api/vehiclesSchedule/vehicleApi";
-import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
+import {
+  useGetSingleVehicleQuery,
+  useUpdateVehicleMutation,
+} from "@/store/api/vehiclesSchedule/vehicleApi";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { IVehicleStateProps } from "./VehiclesList";
 
-interface IAddVehicleProps {
-  setVehicleState: (
-    vehicleState: (prevState: IVehicleStateProps) => IVehicleStateProps
-  ) => void;
+interface IUpdateVehicleProps {
+  id: number;
 }
 
-const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
+const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
   const { translate } = useCustomTranslator();
   const { toast } = useToast();
   const { toastMessage } = useMessageGenerator();
-  const [addVehicle, { isLoading: addVehicleLoading, error: addVehicleError }] =
-    useAddVehicleMutation();
+  const [
+    updateVehicle,
+    { isLoading: updateVehicleLoading, error: updateVehicleError },
+  ] = useUpdateVehicleMutation();
+
+  const { data: vehicleData, isLoading: vehicleLoading } =
+    useGetSingleVehicleQuery(id);
 
   const {
     register,
@@ -63,6 +67,38 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
     orderDate: false,
   });
 
+  useEffect(() => {
+    if (vehicleData?.data) {
+      const {
+        registrationNo,
+        manufacturerCompany,
+        model,
+        chasisNo,
+        engineNo,
+        countryOfOrigin,
+        lcCode,
+        color,
+        deliveryToDipo,
+        deliveryDate,
+        orderDate,
+      } = vehicleData.data;
+
+      setValue("registrationNo", registrationNo);
+      setValue("manufacturerCompany", manufacturerCompany);
+      setValue("model", model);
+      setValue("chasisNo", chasisNo);
+      setValue("engineNo", engineNo);
+      setValue("countryOfOrigin", countryOfOrigin);
+      setValue("lcCode", lcCode);
+      setValue("color", color);
+      setValue("deliveryToDipo", deliveryToDipo);
+      setSelectedDates({
+        deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
+        orderDate: orderDate ? new Date(orderDate) : null,
+      });
+    }
+  }, [vehicleData, setValue]);
+
   const handleDateChange = (
     field: keyof typeof selectedDates,
     date: Date | null
@@ -73,40 +109,28 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
   };
 
   const onSubmit = async (data: AddUpdateVehicleDataProps) => {
-    const cleanedData = removeFalsyProperties(data, [
-      "orderDate",
-      "deliveryDate",
-      "deliveryToDipo",
-      "color",
-      "lcCode",
-      "countryOfOrigin",
-      "engineNo",
-      "manufacturerCompany",
-      "chasisNo",
-      "model",
-    ]);
-    const result = await addVehicle(cleanedData);
+    const result = await updateVehicle({ id, data });
     if (result?.data?.success) {
       toast({
         title: translate(
-          "যানবাহন যোগ করার বার্তা",
-          "Message for adding vehicle"
+          "যানবাহন সফলভাবে আপডেট হয়েছে",
+          "Vehicle updated successfully"
         ),
-        description: toastMessage("add", translate("যানবাহন", "vehicle")),
+        description: toastMessage("update", translate("যানবাহন", "vehicle")),
       });
-      setVehicleState((prevState: IVehicleStateProps) => ({
-        ...prevState,
-        addVehicleOpen: false, // Close the modal after success
-      }));
     }
   };
 
+  if (vehicleLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <FormWrapper
-      heading={translate("যানবাহন যোগ করুন", "Add Vehicle")}
+      heading={translate("যানবাহন আপডেট করুন", "Update Vehicle")}
       subHeading={translate(
-        "সিস্টেমে নতুন যানবাহন যোগ করতে নিচের বিস্তারিত পূরণ করুন।",
-        "Fill out the details below to add a new vehicle to the system."
+        "যানবাহনের বিবরণ আপডেট করুন",
+        "Update the details of the vehicle."
       )}
     >
       <form
@@ -117,7 +141,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
         <InputWrapper
           error={errors?.registrationNo?.message}
           labelFor="registrationNo"
-          label={translate("রেজিস্ট্রেশন নম্বর ✼", "Registration Number ✼")}
+          label={translate("রেজিস্ট্রেশন নম্বর", "Registration Number")}
         >
           <Input
             id="registrationNo"
@@ -132,6 +156,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
 
         {/* Manufacturer Company */}
         <InputWrapper
+          error={errors?.manufacturerCompany?.message}
           labelFor="manufacturerCompany"
           label={translate("প্রস্তুতকারক কোম্পানি", "Manufacturer Company")}
         >
@@ -147,7 +172,11 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
         </InputWrapper>
 
         {/* Model */}
-        <InputWrapper labelFor="model" label={translate("মডেল", "Model")}>
+        <InputWrapper
+          error={errors.model?.message}
+          labelFor="model"
+          label={translate("মডেল", "Model")}
+        >
           <Input
             id="model"
             type="text"
@@ -158,6 +187,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
 
         {/* Chassis Number */}
         <InputWrapper
+          error={errors.chasisNo?.message}
           labelFor="chasisNo"
           label={translate("চেসিস নম্বর", "Chassis Number")}
         >
@@ -171,6 +201,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
 
         {/* Engine Number */}
         <InputWrapper
+          error={errors.engineNo?.message}
           labelFor="engineNo"
           label={translate("ইঞ্জিন নম্বর", "Engine Number")}
         >
@@ -184,6 +215,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
 
         {/* Country of Origin */}
         <InputWrapper
+          error={errors.countryOfOrigin?.message}
           labelFor="countryOfOrigin"
           label={translate("উৎপত্তির দেশ", "Country of Origin")}
         >
@@ -200,6 +232,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
 
         {/* LC Code */}
         <InputWrapper
+          error={errors.lcCode?.message}
           labelFor="lcCode"
           label={translate("এলসি কোড", "LC Code")}
         >
@@ -212,7 +245,11 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
         </InputWrapper>
 
         {/* Color */}
-        <InputWrapper labelFor="color" label={translate("রং", "Color")}>
+        <InputWrapper
+          error={errors.color?.message}
+          labelFor="color"
+          label={translate("রং", "Color")}
+        >
           <Input
             id="color"
             type="text"
@@ -223,6 +260,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
 
         {/* Delivery to Depot */}
         <InputWrapper
+          error={errors.deliveryToDipo?.message}
           labelFor="deliveryToDipo"
           label={translate("ডিপোতে ডেলিভারি", "Delivery to Depot")}
         >
@@ -237,7 +275,6 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
           />
         </InputWrapper>
 
-        {/* Delivery Date */}
         {/* Delivery Date */}
         {/* Delivery Date */}
         <InputWrapper label={translate("ডেলিভারি তারিখ", "Delivery Date")}>
@@ -258,13 +295,13 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                   : translate("তারিখ নির্বাচন করুন", "Select a date")}
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end">
+            <PopoverContent>
               <Calendar
                 mode="single"
                 selected={selectedDates.deliveryDate || new Date()}
                 onSelect={(date) =>
-                  handleDateChange("deliveryDate", date || new Date())
-                }
+                  handleDateChange("deliveryDate", date ?? null)
+                } // Fallback to null if date is undefined
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
               />
@@ -291,13 +328,11 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                   : translate("তারিখ নির্বাচন করুন", "Select a date")}
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end">
+            <PopoverContent>
               <Calendar
                 mode="single"
                 selected={selectedDates.orderDate || new Date()}
-                onSelect={(date) =>
-                  handleDateChange("orderDate", date || new Date())
-                }
+                onSelect={(date) => handleDateChange("orderDate", date ?? null)} // Fallback to null if date is undefined
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
               />
@@ -306,12 +341,12 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
         </InputWrapper>
 
         <Submit
-          loading={addVehicleLoading}
-          errors={addVehicleError}
-          submitTitle={translate("যানবাহন যুক্ত করুন", "Add Vehicle")}
+          loading={updateVehicleLoading}
+          errors={updateVehicleError}
+          submitTitle={translate("আপডেট যানবাহন", "Update Vehicle")}
           errorTitle={translate(
-            "যানবাহন যোগ করতে ত্রুটি",
-            "Error Adding Vehicle"
+            "যানবাহন আপডেট করতে ত্রুটি",
+            "Error updating vehicle"
           )}
         />
       </form>
@@ -319,4 +354,4 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
   );
 };
 
-export default AddVehicles;
+export default UpdateVehicle;

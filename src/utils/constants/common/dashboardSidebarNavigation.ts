@@ -1,6 +1,7 @@
 import { IconType } from "react-icons/lib";
 import {
   LuAlignStartVertical,
+  LuArmchair,
   LuArrowDownUp,
   LuArrowRightFromLine,
   LuBadgeDollarSign,
@@ -120,12 +121,7 @@ const vehicleAndScheduleManagementLinks = {
       key: "fare_list",
       href: "fare_list",
     },
-    // {
-    //   icon: LuArmchair,
-    //   label: { bn: "আসন তালিকা ", en: "Seat List" },
-    //   key: "seat_list",
-    //   href: "seat_list",
-    // },
+
     {
       icon: LuMerge,
       label: { bn: "রুট তালিকা", en: "Route List" },
@@ -137,6 +133,12 @@ const vehicleAndScheduleManagementLinks = {
       label: { bn: "সময়সূচী তালিকা", en: "Schedule List" },
       key: "schedule_list",
       href: "schedule_list",
+    },
+    {
+      icon: LuArmchair,
+      label: { bn: "যানবাহন তালিকা ", en: "Vehicle List" },
+      key: "vehicle_list",
+      href: "vehicle_list",
     },
     {
       icon: LuUserCheck,

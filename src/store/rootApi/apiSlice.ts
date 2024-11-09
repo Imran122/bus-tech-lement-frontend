@@ -44,5 +44,6 @@ export const apiSlice = createApi({
     "permission",
     "permissiontype",
     "role",
+    "vehicle",
   ],
 });
