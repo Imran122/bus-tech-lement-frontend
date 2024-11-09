@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -55,7 +56,6 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
       return "bg-orange-500 text-white"; // Orange for seats booked by others' counters
     }
 
-    console.log("order:---", order);
     console.log("bookingCoach:---", bookingCoach);
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
@@ -71,7 +71,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
   const renderSeatButton = (seat: any) => {
     const isSeatSelected = (seatName: string) =>
       bookingFormState.selectedSeats.some(
-        (seat: any) => seat.seat === seatName
+        (selectedSeat: any) => selectedSeat.seat === seatName
       );
     const isSelected = isSeatSelected(seat.seat);
     const seatStatusClass = getSeatColorClass(
@@ -80,46 +80,58 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
       bookingCoach
     );
 
+    // Check if the seat is ordered or booked by another counter
+    const isOrdered = bookingCoach?.orderSeat?.some(
+      (order: any) => order.seat === seat.seat
+    );
     const bookedByCounter = bookingCoach?.CounterBookedSeat?.find(
       (order: any) => order.seat === seat.seat
     );
     const isBookedByOtherCounter =
       bookedByCounter && bookedByCounter.counter.id !== user.id;
+
+    // Determine if the seat should be disabled
+    const shouldDisableSeat = !user.role
+      ? isOrdered || bookedByCounter // User role: disable ordered & all booked seats
+      : isOrdered || isBookedByOtherCounter; // Counter role: disable ordered & other counters' booked seats
+
+    // Tooltip message if the seat is booked by another counter
     const tooltipText = isBookedByOtherCounter
       ? bookedByCounter?.counter?.userName
       : "";
 
-    console.log("isBookedByOtherCounter", isBookedByOtherCounter);
-    console.log("tooltipText:", tooltipText);
     return (
-      <Tooltip key={seat.id}>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            onClick={() => handleBookingSeat(seat)}
-            className={cn(
-              "text-foreground/50 hover:text-foreground/80 size-10 relative",
-              isBookedByOtherCounter && "cursor-not-allowed"
-            )}
-            disabled={isBookedByOtherCounter}
-          >
-            <div
+      <TooltipProvider key={seat.id}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => handleBookingSeat(seat)}
               className={cn(
-                "w-[40px] h-[40px] rounded-md flex items-center justify-center",
-                seatStatusClass,
-                bookingFormState?.targetedSeat === seat.id &&
-                  addBookingSeatLoading &&
-                  "animate-pulse"
+                "text-foreground/50 hover:text-foreground/80 size-10 relative",
+                shouldDisableSeat && "cursor-not-allowed" // Add a class if disabled
               )}
+              disabled={shouldDisableSeat} // Disable based on conditions above
             >
-              <SeatIcon className="size-11" />
-            </div>
-            <span>{seat.seat}</span>
-          </button>
-        </TooltipTrigger>
-
-        {tooltipText && <TooltipContent>{tooltipText}</TooltipContent>}
-      </Tooltip>
+              <div
+                className={cn(
+                  "w-[40px] h-[40px] rounded-md flex items-center justify-center",
+                  seatStatusClass,
+                  bookingFormState?.targetedSeat === seat.id &&
+                    addBookingSeatLoading &&
+                    "animate-pulse"
+                )}
+              >
+                <SeatIcon className="size-11" />
+              </div>
+              <span>{seat.seat}</span>
+            </button>
+          </TooltipTrigger>
+          {user.role && tooltipText && (
+            <TooltipContent>{tooltipText}</TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
     );
   };
 

@@ -240,17 +240,22 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
                   <PopoverContent align="end" className="bg-background">
                     <Calendar
                       mode="single"
-                      selected={bookingState.date || undefined}
-                      onSelect={(date: any) => {
+                      selected={
+                        bookingState.date
+                          ? new Date(bookingState.date)
+                          : undefined
+                      }
+                      onSelect={(date) => {
                         if (date) {
-                          dispatch(setDate(date));
+                          const dateString = date.toISOString(); // Convert to string if dispatching
+                          dispatch(setDate(dateString)); // Dispatch to Redux as string
                           setBookingState(
                             (prevState: IDashboardBookingStateProps) => ({
                               ...prevState,
-                              date,
+                              date, // Or dateString if setting as string in local state
                             })
                           );
-                          setPopoverOpen(false); // Close the popover after date selection
+                          setPopoverOpen(false);
                         }
                       }}
                       fromYear={1960}

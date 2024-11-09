@@ -1,5 +1,8 @@
+import PageTransition from "@/components/common/effect/PageTransition";
+import DetailsSkeleton from "@/components/common/skeleton/DetailsSkeleton";
 import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
 import { Heading } from "@/components/common/typography/Heading";
+import { Label } from "@/components/common/typography/Label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -7,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -27,7 +31,7 @@ import { useGetCountersQuery } from "@/store/api/contact/counterApi";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { LuRefreshCw } from "react-icons/lu";
 interface IBookingProps {
   bookingState: any;
@@ -46,25 +50,33 @@ export interface IBookingStateProps {
 
 const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   const { translate } = useCustomTranslator();
-
-  const { data: bookingCoachesData } = useGetBookingCoachesQuery({
-    fromCounterId: bookingState?.fromCounterId,
-    destinationCounterId: bookingState?.destinationCounterId,
-
-    coachType: bookingState.coachType,
-    date: bookingState.date && format(bookingState.date, "yyyy-MM-dd"),
-  }) as any;
-
-  useEffect(() => {
-    if (
-      bookingState.fromCounterId &&
+  const [tripType, setTripType] = useState("One_Trip");
+  console.log("bookingState@@", bookingState);
+  const shouldFetchData = Boolean(
+    bookingState.fromCounterId &&
       bookingState.destinationCounterId &&
+      bookingState.coachType &&
       bookingState.date &&
-      bookingState.coachType
-    ) {
+      tripType
+  );
+  const { data: bookingCoachesData, isLoading: coachListLoading } =
+    useGetBookingCoachesQuery(
+      shouldFetchData
+        ? {
+            fromCounterId: bookingState?.fromCounterId,
+            destinationCounterId: bookingState?.destinationCounterId,
+            orderType: tripType,
+            coachType: bookingState.coachType,
+            date: bookingState.date && format(bookingState.date, "yyyy-MM-dd"),
+          }
+        : {}, // Provide empty query parameters if conditions aren't met
+      { skip: !shouldFetchData } // Skip fetching if required fields are missing
+    ) as any;
+  useEffect(() => {
+    if (shouldFetchData && bookingCoachesData?.data) {
       setBookingState((prevState: IBookingStateProps) => ({
         ...prevState,
-        bookingCoachesList: bookingCoachesData?.data || [],
+        bookingCoachesList: bookingCoachesData.data,
       }));
     } else {
       setBookingState((prevState: IBookingStateProps) => ({
@@ -73,20 +85,25 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
       }));
     }
   }, [
+    shouldFetchData,
     bookingState.fromCounterId,
     bookingState.destinationCounterId,
-
-    bookingState.date,
     bookingState.coachType,
-    bookingCoachesData?.data,
+    bookingState.date,
+    bookingCoachesData,
+    setBookingState,
   ]);
 
+  console.log("tripType", tripType);
+  console.log("bookingCoachesData:--->>", bookingCoachesData);
   const { data: countersData, isLoading: countersLoading } =
     useGetCountersQuery({}) as any;
-
+  if (countersLoading || coachListLoading) {
+    return <DetailsSkeleton />;
+  }
   return (
     <div className="flex justify-center items-center">
-      <div className=" w-full ">
+      <PageTransition className=" w-full ">
         <div className="mt-2 mb-24">
           <div id="booking" className="rounded-lg ">
             <Heading className=" text-start  pb-6" size="h4">
@@ -94,6 +111,23 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
             </Heading>
             {/* COACH FILTERS */}
             <div className="rounded-xl p-7  bg-gradient-to-tr from-primary to-tertiary text-primary-foreground">
+              {/* seelct trip type */}
+              <PageTransition className="flex py-5 flex-col gap-3 items-center justify-center h-full w-full">
+                <RadioGroup
+                  className="flex gap-4"
+                  value={tripType}
+                  onValueChange={setTripType} // Update bookingType state on change
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="One_Trip" id="r2" />
+                    <Label htmlFor="r2">One Trip</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Round_Trip" id="r3" />
+                    <Label htmlFor="r3">Round Trip</Label>
+                  </div>
+                </RadioGroup>
+              </PageTransition>
               <ul className="grid grid-cols-2 gap-5">
                 {/* START   ING POINT */}
                 <li>
@@ -292,7 +326,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
             </div>
           </div>
         </div>
-      </div>
+      </PageTransition>
     </div>
   );
 };

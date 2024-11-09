@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -80,7 +81,12 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
       isSelected,
       bookingCoach
     );
-
+    const isOrdered = bookingCoach?.orderSeat?.some(
+      (order: any) => order.seat === seat.seat
+    );
+    const isBlockedSeat = bookingCoach?.bookingSeat?.find(
+      (order: any) => order.seat === seat.seat
+    );
     const bookedByCounter = bookingCoach?.CounterBookedSeat?.find(
       (order: any) => order.seat === seat.seat
     );
@@ -89,38 +95,44 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
     const tooltipText = isBookedByOtherCounter
       ? bookedByCounter?.counter?.userName
       : "";
+    const shouldDisableSeat = !user.role
+      ? isOrdered || bookedByCounter || isBlockedSeat // User role: disable ordered & all booked seats
+      : isOrdered || isBookedByOtherCounter || isBlockedSeat; // Counter role: disable ordered & other counters' booked seats
 
     //console.log("isBookedByOtherCounter", isBookedByOtherCounter);
     //console.log("tooltipText:", tooltipText);
     return (
-      <Tooltip key={seat.id}>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            onClick={() => handleBookingSeat(seat)}
-            className={cn(
-              "text-foreground/50 hover:text-foreground/80 flex flex-col items-center gap-1",
-              isBookedByOtherCounter && "cursor-not-allowed"
-            )}
-            disabled={isBookedByOtherCounter}
-          >
-            <div
+      <TooltipProvider key={seat.id}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => handleBookingSeat(seat)}
               className={cn(
-                "w-[40px] h-[40px] rounded-md flex items-center justify-center",
-                seatStatusClass,
-                bookingFormState?.targetedSeat === seat.id &&
-                  addBookingSeatLoading &&
-                  "animate-pulse"
+                "text-foreground/50 hover:text-foreground/80 flex flex-col items-center gap-1",
+                shouldDisableSeat && "cursor-not-allowed"
               )}
+              disabled={shouldDisableSeat}
             >
-              <SeatIcon className="text-gray-400 size-10" />
-            </div>
-            <span>{seat.seat}</span>
-          </button>
-        </TooltipTrigger>
-
-        {tooltipText && <TooltipContent>{tooltipText}</TooltipContent>}
-      </Tooltip>
+              <div
+                className={cn(
+                  "w-[40px] h-[40px] rounded-md flex items-center justify-center",
+                  seatStatusClass,
+                  bookingFormState?.targetedSeat === seat.id &&
+                    addBookingSeatLoading &&
+                    "animate-pulse"
+                )}
+              >
+                <SeatIcon className="text-gray-400 size-10" />
+              </div>
+              <span>{seat.seat}</span>
+            </button>
+          </TooltipTrigger>
+          {user.role && tooltipText && (
+            <TooltipContent>{tooltipText}</TooltipContent>
+          )}{" "}
+        </Tooltip>
+      </TooltipProvider>
     );
   };
 
