@@ -83,7 +83,7 @@ const DashboardSidebarLargeDevices: FC<
             />
           </Button>
           <div
-            className={`${cn(!sidebarOpen && "hidden ")} flex flex-col gap-2`}
+            className={`${cn(!sidebarOpen && "hidden")} flex flex-col gap-2`}
           >
             {locale === "en" ? (
               <img className="" src={logoeng} alt="logo" />
@@ -93,7 +93,11 @@ const DashboardSidebarLargeDevices: FC<
           </div>
         </div>
         {/* user information */}
-        <div className="flex gap-2 items-center border-2 px-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+        <div
+          className={`${cn(
+            !sidebarOpen && "hidden"
+          )} flex gap-2 items-center border-2 px-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]`}
+        >
           <div className="rounder-full p-2">
             <img
               className="w-12 h-12 rounded-full"
