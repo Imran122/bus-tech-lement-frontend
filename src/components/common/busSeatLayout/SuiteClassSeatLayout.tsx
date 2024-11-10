@@ -50,14 +50,14 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
     );
 
     if (bookedByCounter) {
-      // If the seat is booked by the logged-in user's counter, show it as green
-      if (bookedByCounter.counter.id === user.id) {
+      if (!user.id) {
+        return "bg-red-700 text-white";
+      } else if (bookedByCounter.counter.id === user.id) {
         return "bg-[#A3D1D5] text-white"; // Green for seats booked by user's counter
       }
       // Otherwise, show it as orange
       return "bg-orange-500 text-white"; // Orange for seats booked by others' counters
     }
-
     //console.log("order:---", order);
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";

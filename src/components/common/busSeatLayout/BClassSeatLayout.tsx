@@ -46,7 +46,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
     const bookedByCounter = bookingCoach?.CounterBookedSeat?.find(
       (order: any) => order.seat === seatName
     );
-    console.log("bookedByCounter:--", bookedByCounter);
+    // console.log("bookedByCounter:--", bookedByCounter);
     if (bookedByCounter) {
       if (!user.id) {
         return "bg-red-700 text-white";
