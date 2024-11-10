@@ -17,7 +17,7 @@ export type CoachConfiguration = {
   schedule: string;
   departureDate: string;
   type: string;
-  saleStatus: boolean;
+  active: boolean;
   holdingTime: string;
   fareAllowed: string;
   vipTimeOut: string;

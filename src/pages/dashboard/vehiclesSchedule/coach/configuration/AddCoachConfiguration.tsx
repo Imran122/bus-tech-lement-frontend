@@ -187,6 +187,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
       if (selectedCoach.routeId) {
         setValue("routeId", selectedCoach.routeId);
       }
+
       if (selectedCoach.fromCounterId) {
         setValue("fromCounterId", selectedCoach.fromCounterId);
       }
@@ -335,6 +336,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("routeId")?.toString()}
               onValueChange={(value: string) => {
                 setValue("routeId", +value);
@@ -420,6 +422,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("fromCounterId")?.toString()}
               onValueChange={(value: string) => {
                 setValue("fromCounterId", +value);
@@ -466,6 +469,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("destinationCounterId")?.toString()}
               onValueChange={(value: string) => {
                 setValue("destinationCounterId", +value);
@@ -520,6 +524,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("coachClass") || ""}
               onValueChange={(
                 value: "E_Class" | "B_Class" | "S_Class" | "Sleeper"
@@ -557,6 +562,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("coachType") || "AC"} // Ensure it defaults to "AC"
               onValueChange={(value: "AC" | "NON AC") => {
                 setValue("coachType", value);
@@ -595,6 +601,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("fareId") ? watch("fareId")?.toString() : ""}
               onValueChange={(value: string) => {
                 setValue("fareId", +value);
@@ -658,6 +665,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("schedule")}
               onValueChange={(value: string) => {
                 setValue("schedule", value);

@@ -3,14 +3,16 @@ import { z } from "zod";
 export const addUpdateCoachConfigurationSchema = z.object({
   coachNo: z.string().min(1, { message: "Coach is required" }),
   registrationNo: z.string().optional(),
-  discount: z.preprocess((val) => {
-    // Convert to a number if it's a string
-    if (typeof val === "string") {
-      const parsedValue = parseFloat(val);
-      return isNaN(parsedValue) ? undefined : parsedValue; // Return undefined if NaN to trigger the error
-    }
-    return val; // Return as is if already a number
-  }, z.number()),
+  discount: z
+    .preprocess((val) => {
+      // Convert to a number if it's a string
+      if (typeof val === "string") {
+        const parsedValue = parseFloat(val);
+        return isNaN(parsedValue) ? undefined : parsedValue; // Return undefined if NaN to trigger the error
+      }
+      return val; // Return as is if already a number
+    }, z.number())
+    .optional(),
 
   supervisorId: z.number().optional(),
   driverId: z.number().optional(),
