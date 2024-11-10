@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const addUpdateCoachSchema = z.object({
   coachNo: z.string().min(1, "Coach number is required"),
+  active: z.boolean().optional(),
+
   noOfSeat: z
     .number({
       required_error: "Number of seat is required",
@@ -13,10 +15,10 @@ export const addUpdateCoachSchema = z.object({
   routeId: z
     .number({ required_error: "Route is required" })
     .min(1, { message: "Route is required" }),
-    destinationCounterId: z.number({
-      required_error: "Ending counter is required",
-    }),
-    schedule: z
+  destinationCounterId: z.number({
+    required_error: "Ending counter is required",
+  }),
+  schedule: z
     .string({ required_error: "Schedule is required" })
     .min(1, { message: "Schedule is required" }),
 });

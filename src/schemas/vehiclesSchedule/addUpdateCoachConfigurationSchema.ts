@@ -3,6 +3,17 @@ import { z } from "zod";
 export const addUpdateCoachConfigurationSchema = z.object({
   coachNo: z.string().min(1, { message: "Coach is required" }),
   registrationNo: z.string().optional(),
+  discount: z.preprocess((val) => {
+    // Convert to a number if it's a string
+    if (typeof val === "string") {
+      const parsedValue = parseFloat(val);
+      return isNaN(parsedValue) ? undefined : parsedValue; // Return undefined if NaN to trigger the error
+    }
+    return val; // Return as is if already a number
+  }, z.number()),
+
+  supervisorId: z.number().optional(),
+  driverId: z.number().optional(),
   fromCounterId: z.number({ required_error: "Starting counter is required" }),
   fareId: z.number({ required_error: "Fare amount is required" }),
   routeId: z
@@ -25,16 +36,15 @@ export const addUpdateCoachConfigurationSchema = z.object({
   coachType: z.enum(["AC", "NON AC"], {
     required_error: "Coach type is required",
   }),
+  active: z.boolean().optional(),
   coachClass: z.enum(["E_Class", "B_Class", "S_Class", "Sleeper"], {
     required_error: "Coach class is required",
   }),
   schedule: z
     .string({ required_error: "Schedule is required" })
     .min(1, { message: "Schedule is required" }),
-    departureDate: z
-    .array(z.string(), { required_error: "Departure date is required" })
-    .min(1, { message: "At least one departure date is required" }),
-  
+  departureDate: z.date().optional(),
+
   holdingTime: z.string().optional(),
 });
 
