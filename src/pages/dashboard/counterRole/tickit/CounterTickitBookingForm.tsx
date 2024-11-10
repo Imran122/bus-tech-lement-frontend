@@ -28,6 +28,7 @@ import {
   useAddBookingSeatMutation,
   useCheckingSeatMutation,
   useRemoveBookingSeatMutation,
+  useUnBookSeatFromCounterBookingMutation,
 } from "@/store/api/bookingApi";
 import {
   counterPaymentMethodOptions,
@@ -96,6 +97,8 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     });
   const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
     useRemoveBookingSeatMutation({}) as any;
+  const [unBookSeatFromCounterBooking] =
+    useUnBookSeatFromCounterBookingMutation({}) as any;
   const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
     useAddBookingMutation();
   const [
@@ -103,6 +106,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     { isLoading: checkingSeatLoading, error: checkingSeatError },
   ] = useCheckingSeatMutation();
   const [addBookingSeat] = useAddBookingSeatMutation();
+
   const totalAmount =
     totalCalculator(bookingFormState?.selectedSeats, "currentAmount") || 0;
   const totalSeats = bookingFormState?.selectedSeats?.length || 0;
@@ -255,6 +259,50 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
   console.log("watch", paymentMethod);
 
+  const handleCancelBooking = async () => {
+    // Define the data structure for seats to cancel
+    const data = {
+      seats: bookingFormState.selectedSeats.map((seat) => ({
+        seat: seat.seat,
+        coachConfigId: bookingCoach.id,
+        schedule: bookingCoach.schedule,
+        date: bookingCoach.departureDate,
+      })),
+    };
+
+    try {
+      // Call the unbook API with the prepared data
+      const response = await unBookSeatFromCounterBooking(data).unwrap();
+      console.log("res@", response);
+      if (response.success) {
+        setBookingFormState((prevState) => ({
+          ...prevState,
+          selectedSeats: [], // Clear selected seats on successful cancellation
+        }));
+        toast.success(
+          translate(
+            "Booking canceled successfully.",
+            "বুকিং সফলভাবে বাতিল করা হয়েছে।"
+          )
+        );
+      }
+    } catch (error) {
+      console.error(
+        translate(
+          "Failed to cancel booking:",
+          "বুকিং বাতিল করতে ব্যর্থ হয়েছে:"
+        ),
+        error
+      );
+      toast.error(
+        translate(
+          "Failed to cancel booking.",
+          "বুকিং বাতিল করতে ব্যর্থ হয়েছে।"
+        )
+      );
+    }
+  };
+  //on submit
   const onSubmit = async (data: addBookingSeatFromCounterProps) => {
     const cleanedData = removeFalsyProperties(data, [
       "customerName",
@@ -914,15 +962,23 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
               </ul>
             </div>
 
-            <Submit
-              loading={addBookingLoading || checkingSeatLoading}
-              errors={addBookingError || checkingSeatError}
-              submitTitle={translate("আসন বুক করুন", "Book Seat")}
-              errorTitle={translate(
-                "আসন বুক করতে ত্রুটি হয়েছে",
-                "Seat Booking Error"
-              )}
-            />
+            <div className="flex justify-end items-center gap-5">
+              <p
+                className="mt-7 px-5 py-2 text-[16px] cursor-pointer rounded-md w-1/3 bg-gradient-to-tr from-primary to-tertiary text-primary-foreground hover:from-primary/50 hover:to-tertiary/50 hover:bg-gradient-to-tr hover:text-primary-foreground"
+                onClick={handleCancelBooking}
+              >
+                {translate("বুকিং বাতিল করুন", "Restore Seat")}
+              </p>
+              <Submit
+                loading={addBookingLoading || checkingSeatLoading}
+                errors={addBookingError || checkingSeatError}
+                submitTitle={translate("আসন বুক করুন", "Book Seat")}
+                errorTitle={translate(
+                  "আসন বুক করতে ত্রুটি হয়েছে",
+                  "Seat Booking Error"
+                )}
+              />
+            </div>
           </PageTransition>
         </div>
       </form>
