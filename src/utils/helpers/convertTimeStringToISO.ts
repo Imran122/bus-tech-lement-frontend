@@ -1,28 +1,29 @@
-export const convertTimeStringToISO = (
-  timeString: string,
-  dateString: string = "2024-08-06"
-): Date => {
-  // PARSE THE TIME STRING
-  const timeParts = timeString?.match(/(\d+):(\d+):(\d+)\s(AM|PM)/);
+export const convertTimeStringToISO = (timeString: string): Date | null => {
+  // Match "HH:MM:SS", "HH:MM", or "HH:MM AM/PM"
+  const timePattern = /^(\d{1,2}):(\d{2})(?::(\d{2}))?\s?(AM|PM)?$/i;
+  const timeParts = timeString.match(timePattern);
   if (!timeParts) {
-    throw new Error("Invalid time string format");
+    console.error("Invalid time string format:", timeString);
+    return null;
   }
 
   let hours = parseInt(timeParts[1], 10);
   const minutes = parseInt(timeParts[2], 10);
-  const seconds = parseInt(timeParts[3], 10);
-  const period = timeParts[4];
+  const seconds = timeParts[3] ? parseInt(timeParts[3], 10) : 0;
+  const period = timeParts[4]?.toUpperCase();
 
-  // ADJUST HOURS FOR AM/PM
+  // Adjust hours for AM/PM format
   if (period === "PM" && hours !== 12) {
     hours += 12;
   } else if (period === "AM" && hours === 12) {
     hours = 0;
   }
 
-  // CREATE A DATE OBJECT IN LOCAL TIME
-  const [year, month, day] = dateString.split("-").map(Number);
-  const date = new Date(year, month - 1, day, hours, minutes, seconds);
+  // Create date in local time (no date parts as they’re irrelevant here)
+  const date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  date.setSeconds(seconds);
 
-  return new Date(date.toISOString());
+  return date;
 };

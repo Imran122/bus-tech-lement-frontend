@@ -19,16 +19,16 @@ export const dynamicSeatAllocation = (coachClass: string) => {
     lastRow.push({ seat: `J5` });
   } else if (coachClass === "B_Class") {
     // B_Class: 1 left, 2 right, 28 seats in total, last row has 4 seats
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 8; i++) {
       left.push({ seat: `${String.fromCharCode(65 + i)}1` });
       right.push({ seat: `${String.fromCharCode(65 + i)}2` });
       right.push({ seat: `${String.fromCharCode(65 + i)}3` });
     }
     // Last row (4 seats)
-    lastRow.push({ seat: `H1` });
-    lastRow.push({ seat: `H2` });
-    lastRow.push({ seat: `H3` });
-    lastRow.push({ seat: `H4` });
+    lastRow.push({ seat: `I1` });
+    lastRow.push({ seat: `I2` });
+    lastRow.push({ seat: `I3` });
+    lastRow.push({ seat: `I4` });
   } else if (coachClass === "Sleeper") {
     for (let i = 0; i < 5; i++) {
       left.push({ seat: `L-${String.fromCharCode(65 + i)}1` }); // A1, B1, C1, etc.

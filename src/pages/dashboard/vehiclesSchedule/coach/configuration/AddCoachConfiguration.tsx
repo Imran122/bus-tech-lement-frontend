@@ -1,7 +1,17 @@
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
+import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
+import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
+import { GridWrapper } from "@/components/common/wrapper/GridWrapper";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -10,16 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
-import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
-import { GridWrapper } from "@/components/common/wrapper/GridWrapper";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import {
   addUpdateCoachConfigurationSchema,
@@ -32,19 +32,19 @@ import { useAddCoachConfigurationMutation } from "@/store/api/vehiclesSchedule/c
 import { useGetFaresQuery } from "@/store/api/vehiclesSchedule/fareApi";
 import { useGetRoutesQuery } from "@/store/api/vehiclesSchedule/routeApi";
 import { useGetSchedulesQuery } from "@/store/api/vehiclesSchedule/scheduleApi";
+import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
 import { addUpdateCoachConfigurationForm } from "@/utils/constants/form/addUpdateCoachConfigurationForm";
 import formatter from "@/utils/helpers/formatter";
+import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
+import { eachDayOfInterval, format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
+import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
 import { ICoachConfigurationStateProps } from "./CoachConfigurationList";
-import { DateRange } from "react-day-picker";
-import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
-
 interface IAddCoachConfigurationProps {
   setCoachConfigurationState: (
     coachConfigurationState: (
@@ -64,6 +64,11 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
     from: undefined,
     to: undefined,
   });
+  const generateDateRangeArray = (from: Date, to: Date): string[] => {
+    const dates = eachDayOfInterval({ start: from, end: to });
+    return dates.map((date) => format(date, "yyyy-MM-dd"));
+  };
+
   const [departureDates, setDepartureDates] = useState<string[]>([]);
 
   console.log("depratureDates", departureDates);
@@ -72,13 +77,15 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
   const handleDateSelect = (selectedDate: DateRange | undefined) => {
     setDate(selectedDate);
 
-    // Update departureDates array if a range is selected
     if (selectedDate?.from && selectedDate.to) {
-      setDepartureDates([
-        format(selectedDate.from, "yyyy-MM-dd"),
-        format(selectedDate.to, "yyyy-MM-dd"),
-      ]);
+      // Generate array of dates for the full range
+      const rangeDates = generateDateRangeArray(
+        selectedDate.from,
+        selectedDate.to
+      );
+      setDepartureDates(rangeDates);
     } else if (selectedDate?.from) {
+      // Single date selected
       setDepartureDates([format(selectedDate.from, "yyyy-MM-dd")]);
     } else {
       setDepartureDates([]);
@@ -138,11 +145,14 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
     useGetCoachesQuery({}) as any;
 
   const onSubmit = async (data: IAddUpdateCoachConfigurationDataProps) => {
+    const cleanedData = removeFalsyProperties(data, ["holdingTime"]);
+
     const updateData = {
-      ...data,
-      departureDates: departureDates,
+      ...cleanedData,
+      discount: 0,
+      departureDates: departureDates, // Include all selected dates
     };
-    console.log("vehicledata", vehiclesData);
+
     const result = await addCoachConfiguration(updateData);
     if (result?.data?.success) {
       toast({
@@ -173,12 +183,11 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
     console.log("this is selectedcoach", selectedCoach);
     // If a matching coach is found, set its registration number and related values
     if (selectedCoach) {
-      setValue("registrationNo", selectedCoach.registrationNo);
-
       // Set routeId, fromCounterId, and destinationCounterId if available
       if (selectedCoach.routeId) {
         setValue("routeId", selectedCoach.routeId);
       }
+
       if (selectedCoach.fromCounterId) {
         setValue("fromCounterId", selectedCoach.fromCounterId);
       }
@@ -327,6 +336,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("routeId")?.toString()}
               onValueChange={(value: string) => {
                 setValue("routeId", +value);
@@ -412,6 +422,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("fromCounterId")?.toString()}
               onValueChange={(value: string) => {
                 setValue("fromCounterId", +value);
@@ -458,6 +469,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("destinationCounterId")?.toString()}
               onValueChange={(value: string) => {
                 setValue("destinationCounterId", +value);
@@ -512,6 +524,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("coachClass") || ""}
               onValueChange={(
                 value: "E_Class" | "B_Class" | "S_Class" | "Sleeper"
@@ -549,6 +562,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("coachType") || "AC"} // Ensure it defaults to "AC"
               onValueChange={(value: "AC" | "NON AC") => {
                 setValue("coachType", value);
@@ -587,6 +601,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("fareId") ? watch("fareId")?.toString() : ""}
               onValueChange={(value: string) => {
                 setValue("fareId", +value);
@@ -650,6 +665,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("schedule")}
               onValueChange={(value: string) => {
                 setValue("schedule", value);

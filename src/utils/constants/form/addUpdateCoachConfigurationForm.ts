@@ -12,7 +12,7 @@ interface IAddUpdateCoachConfigurationFromProps {
   schedule: ILabelPlaceholder;
   coachClass: ILabelPlaceholder;
   type: ILabelPlaceholder;
-  saleStatus: ILabelPlaceholder;
+  active: ILabelPlaceholder;
   holdingTime: ILabelPlaceholder;
   fareAllowed: ILabelPlaceholder;
   vipTimeOut: ILabelPlaceholder;
@@ -21,6 +21,7 @@ interface IAddUpdateCoachConfigurationFromProps {
   fareId: ILabelPlaceholder;
   driverId: ILabelPlaceholder;
   tokenAvailable: ILabelPlaceholder;
+  discount: ILabelPlaceholder;
 }
 
 export const addUpdateCoachConfigurationForm: IAddUpdateCoachConfigurationFromProps =
@@ -33,6 +34,17 @@ export const addUpdateCoachConfigurationForm: IAddUpdateCoachConfigurationFromPr
       placeholder: {
         en: "Select supervisor",
         bn: "সুপারভাইজর নির্বাচন করুন",
+      },
+    },
+
+    discount: {
+      label: {
+        en: "Discount",
+        bn: "ডিসকাউন্ট",
+      },
+      placeholder: {
+        en: "Enter Discount",
+        bn: "ডিসকাউন্ট পরিমাণ",
       },
     },
     tokenAvailable: {
@@ -165,13 +177,13 @@ export const addUpdateCoachConfigurationForm: IAddUpdateCoachConfigurationFromPr
         bn: "ধরন নির্বাচন করুন",
       },
     },
-    saleStatus: {
+    active: {
       label: {
-        en: "Sale Status ✼",
+        en: "Active ✼",
         bn: "বিক্রয় অবস্থা ✼",
       },
       placeholder: {
-        en: "Select sale status",
+        en: "Select Active",
         bn: "বিক্রয় অবস্থা নির্বাচন করুন",
       },
     },

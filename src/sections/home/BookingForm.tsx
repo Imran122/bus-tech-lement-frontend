@@ -171,7 +171,9 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   };
 
   useEffect(() => {
+    //@ts-ignore
     setValue("coachConfigId", bookingCoach?.id);
+    //@ts-ignore
     setValue("schedule", bookingCoach?.schedule);
     setValue("amount", totalAmount);
     setValue("noOfSeat", totalSeats);
@@ -237,7 +239,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     translate,
   ]);
   const paymentType = watch("paymentType"); // Watch the paymentType value
-
+  console.log("bookingFormState", bookingFormState);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
     const cleanedData = removeFalsyProperties(data, [
       "nid",
@@ -248,14 +250,25 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       "gender",
     ]);
     const check = await checkingSeat({
-      coachConfigId: cleanedData.coachConfigId,
-      schedule: cleanedData.schedule,
-      date: cleanedData.date,
+      coachConfigId: bookingCoach?.id,
+      schedule: bookingCoach.schedule,
+      date: bookingCoach.departureDate,
       seats: cleanedData?.seats,
     });
     console.log("data", data);
     if (check?.data?.data?.available) {
-      const booking = await addBooking(cleanedData);
+      const finalData = {
+        ...cleanedData,
+        bookingType: "SeatIssue",
+        seats: bookingFormState.selectedSeats.map((seat) => ({
+          seat: seat?.seat,
+          coachConfigId: bookingCoach?.id,
+          schedule: bookingCoach.schedule,
+          date: bookingCoach.departureDate,
+        })),
+      };
+
+      const booking = await addBooking(finalData);
 
       if (booking.data?.success) {
         const payment = await addBookingPayment(booking?.data?.data?.id);

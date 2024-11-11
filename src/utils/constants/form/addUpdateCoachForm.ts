@@ -2,11 +2,11 @@ import { ILabelPlaceholder } from "./loginForm";
 
 interface IAddUpdateCoachFromProps {
   registrationNo: ILabelPlaceholder;
-  manufacturerCompany: ILabelPlaceholder;
-  model: ILabelPlaceholder;
-  chasisNo: ILabelPlaceholder;
-  engineNo: ILabelPlaceholder;
-  countryOfOrigin: ILabelPlaceholder;
+  fromCounterId: ILabelPlaceholder;
+  destinationCounterId: ILabelPlaceholder;
+  fareId: ILabelPlaceholder;
+  routeId: ILabelPlaceholder;
+  schedule: ILabelPlaceholder;
   lcCode: ILabelPlaceholder;
   deliveryToDipo: ILabelPlaceholder;
   deliveryDate: ILabelPlaceholder;
@@ -40,54 +40,54 @@ export const addUpdateCoachForm: IAddUpdateCoachFromProps = {
       bn: "কোচ নম্বর লিখুন",
     },
   },
-  manufacturerCompany: {
+  fromCounterId: {
     label: {
-      en: "Manufacturer Company",
-      bn: "প্রস্তুতকারক কোম্পানি",
+      en: "From Counter",
+      bn: "কাউন্টার থেকে",
     },
     placeholder: {
-      en: "Enter manufacturer company",
-      bn: "প্রস্তুতকারক কোম্পানি লিখুন",
+      en: "From Counter",
+      bn: "কাউন্টার থেকে",
     },
   },
-  model: {
+  destinationCounterId: {
     label: {
-      en: "Coach Model",
-      bn: "কোচের মডেল",
+      en: "Destination Counter",
+      bn: "গন্তব্য কাউন্টার",
     },
     placeholder: {
-      en: "Enter Coach Model",
-      bn: "কোচের মডেল লিখুন",
+      en: "Destination Counter",
+      bn: "গন্তব্য কাউন্টার",
     },
   },
-  chasisNo: {
+  fareId: {
     label: {
-      en: "Chassis Number",
-      bn: "চ্যাসিস নম্বর",
+      en: "Fare Amount",
+      bn: "ভাড়ার পরিমাণ",
     },
     placeholder: {
-      en: "Enter chassis number",
-      bn: "চ্যাসিস নম্বর লিখুন",
+      en: "Fare amount",
+      bn: "ভাড়ার পরিমাণ",
     },
   },
-  engineNo: {
+  routeId: {
     label: {
-      en: "Engine Number",
-      bn: "ইঞ্জিন নম্বর",
+      en: "Enter route",
+      bn: "রুট নম্বর",
     },
     placeholder: {
-      en: "Enter engine number",
-      bn: "ইঞ্জিন নম্বর লিখুন",
+      en: "Enter Route",
+      bn: "রুট নম্বর লিখুন",
     },
   },
-  countryOfOrigin: {
+  schedule: {
     label: {
-      en: "Country of Origin",
-      bn: "উৎপত্তি দেশ",
+      en: "schedule",
+      bn: "সময়সূচী",
     },
     placeholder: {
-      en: "Enter country of origin",
-      bn: "উৎপত্তি দেশ লিখুন",
+      en: "schedule",
+      bn: "সময়সূচী",
     },
   },
   lcCode: {
