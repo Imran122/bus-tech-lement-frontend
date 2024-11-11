@@ -366,6 +366,7 @@ export const adminNavigationLinks = [
   { ...contactsManagementLinks },
   // VEHICLES & SCHEDULE MANAGEMENT
   { ...vehicleAndScheduleManagementLinks },
+
   // FINANCE MANAGEMENT LINKS
   { ...financialManagementLinks },
   // EXPENDITURE MANAGEMENT LINKS

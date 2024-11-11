@@ -1,5 +1,4 @@
-import { FC } from "react";
-import DashboardSidebarSmallDevices from "./DashboardSidebarSmallDevices";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,21 +7,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { openModal } from "@/store/api/user/coachConfigModalSlice";
 import {
   adminNavigationLinks,
   INavigationLinks,
 } from "@/utils/constants/common/dashboardSidebarNavigation";
+import { shareAuthentication } from "@/utils/helpers/shareAuthentication";
 import { useAppContext } from "@/utils/hooks/useAppContext";
-import { Link, NavLink, useLocation } from "react-router-dom";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import { FC } from "react";
+import { LuUserCircle } from "react-icons/lu";
+import { useDispatch } from "react-redux";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import PageTransition from "../effect/PageTransition";
 import { Label } from "../typography/Label";
+import DashboardSidebarSmallDevices from "./DashboardSidebarSmallDevices";
 import LocaleSwitcher from "./LocaleSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { shareAuthentication } from "@/utils/helpers/shareAuthentication";
-import PageTransition from "../effect/PageTransition";
-import { cn } from "@/lib/utils";
-import { LuUserCircle } from "react-icons/lu";
 interface IDashboardUpperNavigationProps {}
 
 const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
@@ -33,6 +35,8 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
   const subNavigation = adminNavigationLinks?.find(
     (singleSubNavigation: INavigationLinks) => singleSubNavigation.key === route
   ) as any;
+  //modal work
+  const dispatch = useDispatch();
 
   return (
     <header className="sticky !h-14 !bg-muted/30 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
@@ -66,6 +70,12 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
               )
             )}
         </ul>
+        <button
+          onClick={() => dispatch(openModal())}
+          className="btn btn-primary"
+        >
+          Update Coach Configs
+        </button>
         <ul className="flex gap-x-2 items-center">
           <li>
             <LocaleSwitcher />

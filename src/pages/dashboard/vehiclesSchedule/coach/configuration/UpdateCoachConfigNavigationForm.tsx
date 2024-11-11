@@ -28,15 +28,19 @@ import {
 } from "@/schemas/vehiclesSchedule/addUpdateCoachConfigurationSchema";
 import { useGetCountersQuery } from "@/store/api/contact/counterApi";
 import { useGetDriversQuery } from "@/store/api/contact/driverApi";
+import { useGetHelpersQuery } from "@/store/api/contact/helperApi";
 import { useGetUsersQuery } from "@/store/api/contact/userApi";
+import { closeModal } from "@/store/api/user/coachConfigModalSlice";
 import { useGetCoachesQuery } from "@/store/api/vehiclesSchedule/coachApi";
 import {
+  useGetModalCoachInfoByDateQuery,
   useGetSingleCoachConfigurationQuery,
   useUpdateCoachConfigurationMutation,
 } from "@/store/api/vehiclesSchedule/coachConfigurationApi";
 import { useGetFaresQuery } from "@/store/api/vehiclesSchedule/fareApi";
 import { useGetRoutesQuery } from "@/store/api/vehiclesSchedule/routeApi";
 import { useGetSchedulesQuery } from "@/store/api/vehiclesSchedule/scheduleApi";
+import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
 import { addUpdateCoachConfigurationForm } from "@/utils/constants/form/addUpdateCoachConfigurationForm";
 import formatter from "@/utils/helpers/formatter";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
@@ -47,7 +51,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { useDispatch } from "react-redux";
 interface IUpdateCoachConfigurationProps {
   id: number | null;
 }
@@ -57,16 +61,35 @@ interface IUpdateCoachConfigurationFormStateProps {
   calendarOpen: boolean;
   supervisorOpen: boolean;
   driverOpen: boolean;
+  helperOpen: boolean;
   routeOpen: boolean;
   startingCounterOpen: boolean;
   endingCounterOpen: boolean;
   fareOpen: boolean;
   scheduleOpen: boolean;
 }
+const getTomorrowsDate = () => {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1); // Set date to tomorrow
 
-const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
+  // Format as YYYY-MM-DD
+  const year = tomorrow.getFullYear();
+  const month = String(tomorrow.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(tomorrow.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
   id,
 }) => {
+  const dispatch = useDispatch();
+  const [selectedCoachInfo, setSelectedCoachInfo] = useState<any>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    getTomorrowsDate()
+  );
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const { translate } = useCustomTranslator();
   const { toast } = useToast();
   const { toastMessage } = useMessageGenerator();
@@ -89,7 +112,8 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
     resolver: zodResolver(addUpdateCoachConfigurationSchema),
   });
 
-  console.log(errors);
+  console.log("selectedCoachInfo", selectedCoachInfo);
+  console.log("selectedDate", selectedDate);
 
   const [
     updateCoachConfigurationFormState,
@@ -113,9 +137,15 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
       error: updateCoachConfigurationError,
     },
   ] = useUpdateCoachConfigurationMutation();
-
+  const date = getTomorrowsDate();
   const { data: coachConfigurationData, isLoading: coachConfigurationLoading } =
     useGetSingleCoachConfigurationQuery(id);
+  const {
+    data: tomorrowsCoachConfigurationData,
+    isLoading: tomorrowsCoachConfigurationLoading,
+  } = useGetModalCoachInfoByDateQuery(
+    format(selectedDate || getTomorrowsDate(), "yyyy-MM-dd")
+  );
 
   const { data: schedulesData, isLoading: schedulesLoading } =
     useGetSchedulesQuery({}) as any;
@@ -125,9 +155,13 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
   const { data: driverData, isLoading: driverDataLoading } = useGetDriversQuery(
     {}
   ) as any;
+  const { data: helperData, isLoading: helperDataLoading } = useGetHelpersQuery(
+    {}
+  ) as any;
   const { data: coachListData, isLoading: coachListDataLoading } =
     useGetCoachesQuery({}) as any;
-
+  const { data: vehiclesData, isLoading: vehiclesLoading } =
+    useGetVehiclesQuery({});
   const { data: faresData, isLoading: faresLoading } = useGetFaresQuery(
     {}
   ) as any;
@@ -138,55 +172,43 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
   const { data: supervisorsData, isLoading: supervisorsLoading } =
     useGetUsersQuery({}) as any;
 
-  console.log("coachListData", coachListData);
+  console.log("vehiclesData", vehiclesData);
 
   useEffect(() => {
-    setValue("coachNo", coachConfigurationData?.data?.coachNo);
-    setValue("coachType", coachConfigurationData?.data?.coachType);
-    setValue("coachClass", coachConfigurationData?.data?.coachClass);
-    setValue(
-      "destinationCounterId",
-      coachConfigurationData?.data?.destinationCounterId
-    );
+    if (selectedCoachInfo) {
+      // Populate form fields with selected coach data
+      setValue("coachType", selectedCoachInfo.coachType);
+      setValue("coachClass", selectedCoachInfo.coachClass);
+      setValue("destinationCounterId", selectedCoachInfo.destinationCounterId);
+      setValue("fromCounterId", selectedCoachInfo.fromCounterId);
+      setValue("registrationNo", selectedCoachInfo.registrationNo);
+      setValue("discount", selectedCoachInfo.discount);
+      setValue("routeId", selectedCoachInfo.routeId);
+      setValue("active", selectedCoachInfo.active);
+      setValue("schedule", selectedCoachInfo.schedule);
+      setValue("tokenAvailable", selectedCoachInfo.tokenAvailable);
+      setValue("fareId", selectedCoachInfo.fareId);
+      setValue("driverId", selectedCoachInfo.driverId);
+      setValue("helperId", selectedCoachInfo.helperId);
+      setValue("supervisorId", selectedCoachInfo.supervisorId);
+      setValue(
+        "departureDate",
+        selectedCoachInfo.departureDate ||
+          format(getTomorrowsDate(), "yyyy-MM-dd")
+      );
+    }
+  }, [selectedCoachInfo, setValue]);
+  const handleCoachSelect = (value: string) => {
+    const parsedCoach = JSON.parse(value);
+    setSelectedCoachInfo(parsedCoach);
+    console.log("Selected Coach Info:", parsedCoach);
+  };
 
-    setValue("fromCounterId", coachConfigurationData?.data?.fromCounterId);
-    setValue(
-      "holdingTime",
-      coachConfigurationData?.data?.holdingTime?.toLowerCase() === "n/a"
-        ? ""
-        : coachConfigurationData?.data?.holdingTime
-    );
-    setValue("registrationNo", coachConfigurationData?.data?.registrationNo);
-    setValue("discount", parseInt(coachConfigurationData?.data?.discount));
-    setValue("routeId", coachConfigurationData?.data?.routeId);
-    setValue("active", coachConfigurationData?.data?.active);
-    setValue("schedule", coachConfigurationData?.data?.schedule);
-    setValue("tokenAvailable", coachConfigurationData?.data?.tokenAvailable);
-    setValue("fareId", coachConfigurationData?.data?.fareId);
-    // setValue("seats", coachConfigurationData?.data?.seats);
-    setValue("driverId", coachConfigurationData?.data?.driverId);
-    setValue("supervisorId", coachConfigurationData?.data?.supervisorId);
-
-    setValue("departureDate", coachConfigurationData?.data?.departureDate);
-    setUpdateCoachConfigurationFormState(
-      (prevState: IUpdateCoachConfigurationFormStateProps) => ({
-        ...prevState,
-        date: coachConfigurationData?.data?.departureDate,
-      })
-    );
-  }, [coachConfigurationData, setValue, setError]);
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
 
   const onSubmit = async (data: IAddUpdateCoachConfigurationDataProps) => {
-    // const seatQuantity = seatPlanOptions.find(
-    //   (singlePlan: ISeatPlanOptionsProps) =>
-    //     singlePlan.key === watch("seatPlan")
-    // )?.value;
-    // if (tags?.length !== seatQuantity) {
-    //   return setError("seats", {
-    //     type: "custom",
-    //     message: "Total seat quantity should be exactly " + seatQuantity,
-    //   });
-    // }
     const updateData = removeFalsyProperties(data, [
       "discount",
       "holdingTime",
@@ -195,6 +217,7 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
 
     const result = await updateCoachConfiguration({ data: updateData, id });
     if (result?.data?.success) {
+      dispatch(closeModal());
       toast({
         title: translate(
           "কোচ কনফিগারেইশন সম্পাদন করার বার্তা",
@@ -208,10 +231,19 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
     }
   };
   console.log("Current coachConfigurationData:", coachConfigurationData);
-  if (coachConfigurationLoading || schedulesLoading || coachListDataLoading) {
+  if (
+    coachConfigurationLoading ||
+    tomorrowsCoachConfigurationLoading ||
+    schedulesLoading ||
+    coachListDataLoading ||
+    vehiclesLoading
+  ) {
     return <FormSkeleton columns={3} inputs={16} />;
   }
-
+  console.log(
+    "tomorrowsCoachConfigurationData",
+    tomorrowsCoachConfigurationData
+  );
   return (
     <FormWrapper
       heading={translate(
@@ -223,73 +255,84 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
         "Fill out the details below to update existing coach configuration to the system."
       )}
     >
+      <div>
+        {/* Date Selector */}
+        <InputWrapper
+          error={errors?.departureDate?.message}
+          labelFor="departureDate"
+          label="Departure Date"
+        >
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "justify-start text-left font-normal text-sm h-9",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate
+                  ? format(selectedDate, "yyyy-MM-dd")
+                  : "Select a date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end">
+              <Calendar
+                mode="single"
+                selected={selectedDate || new Date()}
+                onSelect={(date: Date) => {
+                  setSelectedDate(date);
+                  setValue("departureDate", format(date, "yyyy-MM-dd"));
+                  setCalendarOpen(false);
+                }}
+                fromYear={1960}
+                toYear={new Date().getFullYear()}
+              />
+            </PopoverContent>
+          </Popover>
+        </InputWrapper>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <GridWrapper>
-          {/* COACH NUMBER */}
+          {/* COACH CONFIG SELECT */}
 
           <InputWrapper
-            error={errors?.coachNo?.message}
-            labelFor="coachNo"
             label={translate(
-              addUpdateCoachConfigurationForm?.coachNo.label.bn,
-              addUpdateCoachConfigurationForm.coachNo.label.en
+              "কোচ কনফিগারেশন নির্বাচন করুন",
+              "Select Coach Configuration"
             )}
           >
             <Select
-              value={watch("coachNo")?.toString()}
-              onValueChange={(value: string) => {
-                setValue("coachNo", value); // Keep as string
-                setError("coachNo", { type: "custom", message: "" });
+              onValueChange={(value: any) => {
+                const parsedValue = JSON.parse(value);
+                setSelectedCoachInfo(parsedValue);
+                console.log("Updated Selected Coach Info:", parsedValue);
               }}
             >
-              <SelectTrigger id="coachNo" className="w-full">
+              <SelectTrigger id="coachConfig" className="w-full">
                 <SelectValue
                   placeholder={translate(
-                    addUpdateCoachConfigurationForm.coachNo.placeholder.bn,
-                    addUpdateCoachConfigurationForm.coachNo.placeholder.en
+                    "কোচ কনফিগারেশন নির্বাচন করুন",
+                    "Choose Coach Configuration"
                   )}
                 />
               </SelectTrigger>
               <SelectContent>
-                {!coachListDataLoading &&
-                  coachListData?.data?.length > 0 &&
-                  coachListData.data.map((coach: any, index: number) => (
-                    <SelectItem
-                      key={index}
-                      value={coach.coachNo?.toString()} // Use registrationNo as the value
-                    >
-                      {formatter({
-                        type: "words",
-                        words: coach.coachNo,
-                      })}
-                    </SelectItem>
-                  ))}
-
-                {coachListDataLoading && <SelectSkeleton />}
+                {!tomorrowsCoachConfigurationLoading &&
+                tomorrowsCoachConfigurationData?.data?.length > 0 ? (
+                  tomorrowsCoachConfigurationData.data.map(
+                    (coach: any, index: number) => (
+                      <SelectItem key={index} value={JSON.stringify(coach)}>
+                        {`${coach.coachNo} - (${coach.schedule})`}
+                      </SelectItem>
+                    )
+                  )
+                ) : (
+                  <SelectSkeleton />
+                )}
               </SelectContent>
             </Select>
-          </InputWrapper>
-          {/* Registration NUMBER */}
-          <InputWrapper
-            error={errors.registrationNo?.message}
-            labelFor="registrationNo"
-            label={translate(
-              addUpdateCoachConfigurationForm?.registrationNo.label.bn,
-              addUpdateCoachConfigurationForm?.registrationNo.label.en
-            )}
-          >
-            <Input
-              value={watch("registrationNo") || ""}
-              id="registrationNo"
-              {...register("registrationNo")}
-              type="text"
-              //@ts-ignore
-              disabled={true}
-              placeholder={translate(
-                addUpdateCoachConfigurationForm.registrationNo.placeholder.bn,
-                addUpdateCoachConfigurationForm.registrationNo.placeholder.en
-              )}
-            />
           </InputWrapper>
 
           {/* ROUTE */}
@@ -424,117 +467,51 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
               </PopoverContent>
             </Popover>
           </InputWrapper>
-
-          {/* SUPERVISOR */}
+          {/* SCHEDULE */}
           <InputWrapper
-            error={errors?.supervisorId?.message}
-            labelFor="supervisorId"
+            error={errors?.schedule?.message}
+            labelFor="schedule"
             label={translate(
-              addUpdateCoachConfigurationForm?.supervisorId.label.bn,
-              addUpdateCoachConfigurationForm.supervisorId.label.en
+              addUpdateCoachConfigurationForm?.schedule.label.bn,
+              addUpdateCoachConfigurationForm.schedule.label.en
             )}
           >
             <Select
-              open={updateCoachConfigurationFormState.supervisorOpen}
+              open={updateCoachConfigurationFormState.scheduleOpen}
               onOpenChange={(open) =>
-                setUpdateCoachConfigurationFormState(
-                  (prevState: IUpdateCoachConfigurationFormStateProps) => ({
-                    ...prevState,
-                    supervisorOpen: open,
-                  })
-                )
+                setUpdateCoachConfigurationFormState((prevState) => ({
+                  ...prevState,
+                  scheduleOpen: open,
+                }))
               }
-              value={watch("supervisorId")?.toString() || ""}
+              value={watch("schedule")} // Ensure this is showing the value from the database
               onValueChange={(value: string) => {
-                if (updateCoachConfigurationFormState.supervisorOpen) {
-                  setValue("supervisorId", +value);
-                  setError("supervisorId", { type: "custom", message: "" });
-                }
+                setValue("schedule", value); // Update the selected value
+                setError("schedule", { type: "custom", message: "" });
               }}
             >
-              <SelectTrigger id="supervisorId" className="w-full">
+              <SelectTrigger id="schedule" className="w-full">
                 <SelectValue
                   placeholder={translate(
-                    addUpdateCoachConfigurationForm.supervisorId.placeholder.bn,
-                    addUpdateCoachConfigurationForm.supervisorId.placeholder.en
+                    addUpdateCoachConfigurationForm.schedule.placeholder.bn,
+                    addUpdateCoachConfigurationForm.schedule.placeholder.en
                   )}
                 />
               </SelectTrigger>
               <SelectContent>
-                {!supervisorsLoading &&
-                  supervisorsData?.data?.length > 0 &&
-                  supervisorsData?.data
-                    .filter(
-                      (target: any) =>
-                        target?.role?.name.toLowerCase() === "supervisor"
-                    )
-                    ?.map((supervisor: any, index: number) => (
-                      <SelectItem
-                        key={index}
-                        value={supervisor?.id?.toString()}
-                      >
-                        {formatter({
-                          type: "words",
-                          words: supervisor?.userName,
-                        })}
+                {!schedulesLoading &&
+                  schedulesData?.data?.map(
+                    (singleSchedule: any, index: number) => (
+                      <SelectItem key={index} value={singleSchedule?.time}>
+                        {singleSchedule?.time}
                       </SelectItem>
-                    ))}
-
-                {supervisorsLoading && <SelectSkeleton />}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-          {/* Driver */}
-          <InputWrapper
-            error={errors?.driverId?.message}
-            labelFor="driverId"
-            label={translate(
-              addUpdateCoachConfigurationForm?.driverId.label.bn,
-              addUpdateCoachConfigurationForm.driverId.label.en
-            )}
-          >
-            <Select
-              onOpenChange={(open) =>
-                setUpdateCoachConfigurationFormState(
-                  (prevState: IUpdateCoachConfigurationFormStateProps) => ({
-                    ...prevState,
-                    driverOpen: open,
-                  })
-                )
-              }
-              value={watch("driverId")?.toString() || ""}
-              onValueChange={(value: string) => {
-                if (updateCoachConfigurationFormState.driverOpen) {
-                  setValue("driverId", +value);
-                  setError("driverId", { type: "custom", message: "" });
-                }
-              }}
-            >
-              <SelectTrigger id="driverId" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachConfigurationForm.driverId.placeholder.bn,
-                    addUpdateCoachConfigurationForm.driverId.placeholder.en
+                    )
                   )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!driverDataLoading &&
-                  driverData?.data?.length > 0 &&
-                  driverData?.data?.map((driver: any, index: number) => (
-                    <SelectItem key={index} value={driver?.id?.toString()}>
-                      {formatter({
-                        type: "words",
-                        words: driver?.name,
-                      })}
-                    </SelectItem>
-                  ))}
 
-                {driverDataLoading && <SelectSkeleton />}
+                {schedulesLoading && <SelectSkeleton />}
               </SelectContent>
             </Select>
           </InputWrapper>
-
           {/* STARTING COUNTER */}
           <InputWrapper
             error={errors?.fromCounterId?.message}
@@ -731,6 +708,37 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
               </SelectContent>
             </Select>
           </InputWrapper>
+
+          {/* SALE STATUS */}
+          <InputWrapper
+            error={errors?.active?.message}
+            labelFor="active"
+            label={translate(
+              addUpdateCoachConfigurationForm?.active.label.bn,
+              addUpdateCoachConfigurationForm.active.label.en
+            )}
+          >
+            <Select
+              value={watch("active") ? "Yes" : "No"}
+              onValueChange={(value: "Yes" | "No") => {
+                setValue("active", value === "Yes" ? true : false);
+                setError("active", { type: "custom", message: "" });
+              }}
+            >
+              <SelectTrigger id="active" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachConfigurationForm.active.placeholder.bn,
+                    addUpdateCoachConfigurationForm.active.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Yes">{translate("হ্যাঁ", "Yes")}</SelectItem>
+                <SelectItem value="No">{translate("না", "No")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </InputWrapper>
           {/* FARE AMOUNT */}
           <InputWrapper
             error={errors?.fareId?.message}
@@ -785,122 +793,6 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
               </SelectContent>
             </Select>
           </InputWrapper>
-          {/* token amount */}
-          <InputWrapper
-            error={errors?.tokenAvailable?.message}
-            labelFor="tokenAvailable"
-            label={translate(
-              addUpdateCoachConfigurationForm?.tokenAvailable.label.bn,
-              addUpdateCoachConfigurationForm.tokenAvailable.label.en
-            )}
-          >
-            <Input
-              id="tokenAvailable"
-              {...register("tokenAvailable")}
-              type="number"
-              placeholder={translate(
-                addUpdateCoachConfigurationForm.tokenAvailable.placeholder.bn,
-                addUpdateCoachConfigurationForm.tokenAvailable.placeholder.en
-              )}
-            />
-          </InputWrapper>
-          {/* SCHEDULE */}
-          <InputWrapper
-            error={errors?.schedule?.message}
-            labelFor="schedule"
-            label={translate(
-              addUpdateCoachConfigurationForm?.schedule.label.bn,
-              addUpdateCoachConfigurationForm.schedule.label.en
-            )}
-          >
-            <Select
-              open={updateCoachConfigurationFormState.scheduleOpen}
-              onOpenChange={(open) =>
-                setUpdateCoachConfigurationFormState((prevState) => ({
-                  ...prevState,
-                  scheduleOpen: open,
-                }))
-              }
-              value={watch("schedule")} // Ensure this is showing the value from the database
-              onValueChange={(value: string) => {
-                setValue("schedule", value); // Update the selected value
-                setError("schedule", { type: "custom", message: "" });
-              }}
-            >
-              <SelectTrigger id="schedule" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachConfigurationForm.schedule.placeholder.bn,
-                    addUpdateCoachConfigurationForm.schedule.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!schedulesLoading &&
-                  schedulesData?.data?.map(
-                    (singleSchedule: any, index: number) => (
-                      <SelectItem key={index} value={singleSchedule?.time}>
-                        {singleSchedule?.time}
-                      </SelectItem>
-                    )
-                  )}
-
-                {schedulesLoading && <SelectSkeleton />}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* SALE STATUS */}
-          <InputWrapper
-            error={errors?.active?.message}
-            labelFor="active"
-            label={translate(
-              addUpdateCoachConfigurationForm?.active.label.bn,
-              addUpdateCoachConfigurationForm.active.label.en
-            )}
-          >
-            <Select
-              value={watch("active") ? "Yes" : "No"}
-              onValueChange={(value: "Yes" | "No") => {
-                setValue("active", value === "Yes" ? true : false);
-                setError("active", { type: "custom", message: "" });
-              }}
-            >
-              <SelectTrigger id="active" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachConfigurationForm.active.placeholder.bn,
-                    addUpdateCoachConfigurationForm.active.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Yes">{translate("হ্যাঁ", "Yes")}</SelectItem>
-                <SelectItem value="No">{translate("না", "No")}</SelectItem>
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* HOLDING TIME */}
-          <InputWrapper
-            error={errors?.holdingTime?.message}
-            labelFor="holdingTime"
-            label={translate(
-              addUpdateCoachConfigurationForm?.holdingTime.label.bn,
-              addUpdateCoachConfigurationForm.holdingTime.label.en
-            )}
-          >
-            <Input
-              id="holdingTime"
-              {...register("holdingTime")}
-              type="text"
-              placeholder={translate(
-                addUpdateCoachConfigurationForm.holdingTime.placeholder.bn,
-                addUpdateCoachConfigurationForm.holdingTime.placeholder.en
-              )}
-            />
-          </InputWrapper>
-
           {/* discount */}
           {/* disocunt*/}
           <InputWrapper
@@ -922,8 +814,235 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
               )}
             />
           </InputWrapper>
+
+          {/* Registration NUMBER */}
+          <InputWrapper
+            error={errors.registrationNo?.message}
+            labelFor="registrationNo"
+            label={translate(
+              addUpdateCoachConfigurationForm?.registrationNo.label.bn,
+              addUpdateCoachConfigurationForm?.registrationNo.label.en
+            )}
+          >
+            <Select
+              value={watch("registrationNo") || ""} // No need to convert to string here
+              onValueChange={(value: string) => {
+                setValue("registrationNo", value); // Keep as string
+                setError("registrationNo", { type: "custom", message: "" });
+              }}
+            >
+              <SelectTrigger id="registrationNo" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachConfigurationForm.registrationNo.placeholder
+                      .bn,
+                    addUpdateCoachConfigurationForm.registrationNo.placeholder
+                      .en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {!vehiclesLoading &&
+                  vehiclesData?.data?.length > 0 &&
+                  vehiclesData.data.map((coach: any, index: number) => (
+                    <SelectItem
+                      key={index}
+                      value={coach.registrationNo?.toString()} // Use registrationNo as the value
+                    >
+                      {formatter({
+                        type: "words",
+                        words: coach.registrationNo,
+                      })}
+                    </SelectItem>
+                  ))}
+
+                {vehiclesLoading && <SelectSkeleton />}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
+
+          {/* SUPERVISOR */}
+          <InputWrapper
+            error={errors?.supervisorId?.message}
+            labelFor="supervisorId"
+            label={translate(
+              addUpdateCoachConfigurationForm?.supervisorId.label.bn,
+              addUpdateCoachConfigurationForm.supervisorId.label.en
+            )}
+          >
+            <Select
+              open={updateCoachConfigurationFormState.supervisorOpen}
+              onOpenChange={(open) =>
+                setUpdateCoachConfigurationFormState(
+                  (prevState: IUpdateCoachConfigurationFormStateProps) => ({
+                    ...prevState,
+                    supervisorOpen: open,
+                  })
+                )
+              }
+              value={watch("supervisorId")?.toString() || ""}
+              onValueChange={(value: string) => {
+                if (updateCoachConfigurationFormState.supervisorOpen) {
+                  setValue("supervisorId", +value);
+                  setError("supervisorId", { type: "custom", message: "" });
+                }
+              }}
+            >
+              <SelectTrigger id="supervisorId" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachConfigurationForm.supervisorId.placeholder.bn,
+                    addUpdateCoachConfigurationForm.supervisorId.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {!supervisorsLoading &&
+                  supervisorsData?.data?.length > 0 &&
+                  supervisorsData?.data
+                    .filter(
+                      (target: any) =>
+                        target?.role?.name.toLowerCase() === "supervisor"
+                    )
+                    ?.map((supervisor: any, index: number) => (
+                      <SelectItem
+                        key={index}
+                        value={supervisor?.id?.toString()}
+                      >
+                        {formatter({
+                          type: "words",
+                          words: supervisor?.userName,
+                        })}
+                      </SelectItem>
+                    ))}
+
+                {supervisorsLoading && <SelectSkeleton />}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
+          {/* Driver */}
+          <InputWrapper
+            error={errors?.driverId?.message}
+            labelFor="driverId"
+            label={translate(
+              addUpdateCoachConfigurationForm?.driverId.label.bn,
+              addUpdateCoachConfigurationForm.driverId.label.en
+            )}
+          >
+            <Select
+              onOpenChange={(open) =>
+                setUpdateCoachConfigurationFormState(
+                  (prevState: IUpdateCoachConfigurationFormStateProps) => ({
+                    ...prevState,
+                    driverOpen: open,
+                  })
+                )
+              }
+              value={watch("driverId")?.toString() || ""}
+              onValueChange={(value: string) => {
+                if (updateCoachConfigurationFormState.driverOpen) {
+                  setValue("driverId", +value);
+                  setError("driverId", { type: "custom", message: "" });
+                }
+              }}
+            >
+              <SelectTrigger id="driverId" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachConfigurationForm.driverId.placeholder.bn,
+                    addUpdateCoachConfigurationForm.driverId.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {!driverDataLoading &&
+                  driverData?.data?.length > 0 &&
+                  driverData?.data?.map((driver: any, index: number) => (
+                    <SelectItem key={index} value={driver?.id?.toString()}>
+                      {formatter({
+                        type: "words",
+                        words: driver?.name,
+                      })}
+                    </SelectItem>
+                  ))}
+
+                {driverDataLoading && <SelectSkeleton />}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
+          {/* Helper */}
+          <InputWrapper
+            error={errors?.helperId?.message}
+            labelFor="helperId"
+            label={translate(
+              addUpdateCoachConfigurationForm?.helperId.label.bn,
+              addUpdateCoachConfigurationForm.helperId.label.en
+            )}
+          >
+            <Select
+              onOpenChange={(open) =>
+                setUpdateCoachConfigurationFormState(
+                  (prevState: IUpdateCoachConfigurationFormStateProps) => ({
+                    ...prevState,
+                    helperOpen: open,
+                  })
+                )
+              }
+              value={watch("helperId")?.toString() || ""}
+              onValueChange={(value: string) => {
+                if (updateCoachConfigurationFormState.helperOpen) {
+                  setValue("helperId", +value);
+                  setError("helperId", { type: "custom", message: "" });
+                }
+              }}
+            >
+              <SelectTrigger id="helperId" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachConfigurationForm.helperId.placeholder.bn,
+                    addUpdateCoachConfigurationForm.helperId.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {!helperDataLoading &&
+                  helperData?.data?.length > 0 &&
+                  helperData?.data?.map((driver: any, index: number) => (
+                    <SelectItem key={index} value={driver?.id?.toString()}>
+                      {formatter({
+                        type: "words",
+                        words: driver?.name,
+                      })}
+                    </SelectItem>
+                  ))}
+
+                {helperDataLoading && <SelectSkeleton />}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
+
+          {/* token amount */}
+          <InputWrapper
+            error={errors?.tokenAvailable?.message}
+            labelFor="tokenAvailable"
+            label={translate(
+              addUpdateCoachConfigurationForm?.tokenAvailable.label.bn,
+              addUpdateCoachConfigurationForm.tokenAvailable.label.en
+            )}
+          >
+            <Input
+              id="tokenAvailable"
+              {...register("tokenAvailable")}
+              type="number"
+              placeholder={translate(
+                addUpdateCoachConfigurationForm.tokenAvailable.placeholder.bn,
+                addUpdateCoachConfigurationForm.tokenAvailable.placeholder.en
+              )}
+            />
+          </InputWrapper>
         </GridWrapper>
         <Submit
+          onClick={() => dispatch(closeModal())}
           loading={updateCoachConfigurationLoading}
           errors={updateCoachConfigurationError}
           submitTitle={translate(
@@ -940,4 +1059,4 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
   );
 };
 
-export default UpdateCoachConfiguration;
+export default UpdateCoachConfigNavigationForm;

@@ -51,6 +51,9 @@ const coachApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["coach_configuration"],
     }),
+    getModalCoachInfoByDate: builder.query({
+      query: (date) => `/coach-config/get-coach-list-today?date=${date}`,
+    }),
   }),
 });
 
@@ -60,4 +63,5 @@ export const {
   useGetCoachConfigurationsQuery,
   useGetSingleCoachConfigurationQuery,
   useUpdateCoachConfigurationMutation,
+  useGetModalCoachInfoByDateQuery,
 } = coachApi;

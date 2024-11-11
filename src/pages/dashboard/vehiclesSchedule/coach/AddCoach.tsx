@@ -1,5 +1,6 @@
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
+import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,7 +15,12 @@ import {
   AddUpdateCoachDataProps,
   addUpdateCoachSchema,
 } from "@/schemas/vehiclesSchedule/addUpdateCoachSchema";
+import { useGetCountersQuery } from "@/store/api/contact/counterApi";
 import { useAddCoachMutation } from "@/store/api/vehiclesSchedule/coachApi";
+import { useGetFaresQuery } from "@/store/api/vehiclesSchedule/fareApi";
+import { useGetRoutesQuery } from "@/store/api/vehiclesSchedule/routeApi";
+import { useGetSchedulesQuery } from "@/store/api/vehiclesSchedule/scheduleApi";
+import { addUpdateCoachConfigurationForm } from "@/utils/constants/form/addUpdateCoachConfigurationForm";
 import { addUpdateCoachForm } from "@/utils/constants/form/addUpdateCoachForm";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
@@ -22,12 +28,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { ICoachStateProps } from "./CoachList";
-import { useGetSchedulesQuery } from "@/store/api/vehiclesSchedule/scheduleApi";
-import { useGetCountersQuery } from "@/store/api/contact/counterApi";
-import { useGetFaresQuery } from "@/store/api/vehiclesSchedule/fareApi";
-import { useGetRoutesQuery } from "@/store/api/vehiclesSchedule/routeApi";
-import { addUpdateCoachConfigurationForm } from "@/utils/constants/form/addUpdateCoachConfigurationForm";
-import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
 
 interface IAddCoachProps {
   setCoachState: (
@@ -35,12 +35,10 @@ interface IAddCoachProps {
   ) => void;
 }
 
-
 const AddCoach: FC<IAddCoachProps> = ({ setCoachState }) => {
   const { translate } = useCustomTranslator();
   const { toast } = useToast();
   const { toastMessage } = useMessageGenerator();
-
 
   const {
     register,
@@ -55,7 +53,7 @@ const AddCoach: FC<IAddCoachProps> = ({ setCoachState }) => {
 
   const [addCoach, { isLoading: addCoachLoading, error: addCoachError }] =
     useAddCoachMutation();
-    const { data: schedulesData, isLoading: schedulesLoading } =
+  const { data: schedulesData, isLoading: schedulesLoading } =
     useGetSchedulesQuery({}) as any;
 
   const { data: countersData, isLoading: countersLoading } =
@@ -70,7 +68,6 @@ const AddCoach: FC<IAddCoachProps> = ({ setCoachState }) => {
   ) as any;
 
   const onSubmit = async (data: AddUpdateCoachDataProps) => {
-
     const result = await addCoach(data);
     if (result?.data?.success) {
       toast({
@@ -93,6 +90,53 @@ const AddCoach: FC<IAddCoachProps> = ({ setCoachState }) => {
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-x-4 gap-y-2">
+          {/* SCHEDULE */}
+          <InputWrapper
+            error={errors?.schedule?.message}
+            labelFor="schedule"
+            label={translate(
+              addUpdateCoachConfigurationForm?.schedule.label.bn,
+              addUpdateCoachConfigurationForm.schedule.label.en
+            )}
+          >
+            <Select
+              value={watch("schedule")}
+              onValueChange={(value: string) => {
+                setValue("schedule", value);
+                setError("schedule", {
+                  type: "custom",
+                  message: "",
+                });
+              }}
+            >
+              <SelectTrigger id="schedule" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachConfigurationForm.schedule.placeholder.bn,
+                    addUpdateCoachConfigurationForm.schedule.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {!schedulesLoading &&
+                  schedulesData?.data?.length > 0 &&
+                  schedulesData?.data?.map(
+                    (singleSchedule: any, scheduleIndex: number) => (
+                      <SelectItem
+                        key={scheduleIndex}
+                        value={singleSchedule?.time}
+                      >
+                        {singleSchedule?.time}
+                      </SelectItem>
+                    )
+                  )}
+
+                {schedulesLoading && !schedulesData?.data?.length && (
+                  <SelectSkeleton />
+                )}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
           {/* COACH NUMBER */}
           <InputWrapper
             error={errors.coachNo?.message}
@@ -112,8 +156,53 @@ const AddCoach: FC<IAddCoachProps> = ({ setCoachState }) => {
               )}
             />
           </InputWrapper>
-            {/* STARTING COUNTER */}
-            <InputWrapper
+
+          {/* ROUTE */}
+          <InputWrapper
+            error={errors?.routeId?.message}
+            labelFor="routeId"
+            label={translate(
+              addUpdateCoachConfigurationForm?.routeId.label.bn,
+              addUpdateCoachConfigurationForm.routeId.label.en
+            )}
+          >
+            <Select
+              value={watch("routeId")?.toString()}
+              onValueChange={(value: string) => {
+                setValue("routeId", +value);
+                setError("routeId", { type: "custom", message: "" });
+              }}
+            >
+              <SelectTrigger id="routeId" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachConfigurationForm.routeId.placeholder.bn,
+                    addUpdateCoachConfigurationForm.routeId.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {!routesLoading &&
+                  routesData?.data?.length > 0 &&
+                  routesData?.data?.map(
+                    (singleRoute: any, routeIndex: number) => (
+                      <SelectItem
+                        key={routeIndex}
+                        value={singleRoute?.id?.toString()}
+                      >
+                        {singleRoute?.routeName}
+                      </SelectItem>
+                    )
+                  )}
+
+                {routesLoading && !routesData?.data?.length && (
+                  <SelectSkeleton />
+                )}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
+          {/* STARTING COUNTER */}
+          <InputWrapper
             error={errors?.fromCounterId?.message}
             labelFor="fromCounterId"
             label={translate(
@@ -209,140 +298,6 @@ const AddCoach: FC<IAddCoachProps> = ({ setCoachState }) => {
               </SelectContent>
             </Select>
           </InputWrapper>
-            {/* FARE AMOUNT */}
-            <InputWrapper
-            error={errors?.fareId?.message}
-            labelFor="fareId"
-            label={translate(
-              addUpdateCoachConfigurationForm?.fareId.label.bn,
-              addUpdateCoachConfigurationForm.fareId.label.en
-            )}
-          >
-            <Select
-              value={watch("fareId") ? watch("fareId")?.toString() : ""}
-              onValueChange={(value: string) => {
-                setValue("fareId", +value);
-                setError("fareId", {
-                  type: "custom",
-                  message: "",
-                });
-              }}
-            >
-              <SelectTrigger id="fareId" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachConfigurationForm.fareId.placeholder.bn,
-                    addUpdateCoachConfigurationForm.fareId.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!faresLoading &&
-                  faresData?.data?.length > 0 &&
-                  faresData?.data?.map((singleFare: any, fareIndex: number) => (
-                    <SelectItem
-                      key={fareIndex}
-                      value={singleFare?.id?.toString()}
-                    >
-                      {singleFare?.amount}
-                    </SelectItem>
-                  ))}
-
-                {faresLoading && !faresData?.data?.length && <SelectSkeleton />}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-             {/* SCHEDULE */}
-             <InputWrapper
-            error={errors?.schedule?.message}
-            labelFor="schedule"
-            label={translate(
-              addUpdateCoachConfigurationForm?.schedule.label.bn,
-              addUpdateCoachConfigurationForm.schedule.label.en
-            )}
-          >
-            <Select
-              value={watch("schedule")}
-              onValueChange={(value: string) => {
-                setValue("schedule", value);
-                setError("schedule", {
-                  type: "custom",
-                  message: "",
-                });
-              }}
-            >
-              <SelectTrigger id="schedule" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachConfigurationForm.schedule.placeholder.bn,
-                    addUpdateCoachConfigurationForm.schedule.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!schedulesLoading &&
-                  schedulesData?.data?.length > 0 &&
-                  schedulesData?.data?.map(
-                    (singleSchedule: any, scheduleIndex: number) => (
-                      <SelectItem
-                        key={scheduleIndex}
-                        value={singleSchedule?.time}
-                      >
-                        {singleSchedule?.time}
-                      </SelectItem>
-                    )
-                  )}
-
-                {schedulesLoading && !schedulesData?.data?.length && (
-                  <SelectSkeleton />
-                )}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-            {/* ROUTE */}
-            <InputWrapper
-            error={errors?.routeId?.message}
-            labelFor="routeId"
-            label={translate(
-              addUpdateCoachConfigurationForm?.routeId.label.bn,
-              addUpdateCoachConfigurationForm.routeId.label.en
-            )}
-          >
-            <Select
-              value={watch("routeId")?.toString()}
-              onValueChange={(value: string) => {
-                setValue("routeId", +value);
-                setError("routeId", { type: "custom", message: "" });
-              }}
-            >
-              <SelectTrigger id="routeId" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachConfigurationForm.routeId.placeholder.bn,
-                    addUpdateCoachConfigurationForm.routeId.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!routesLoading &&
-                  routesData?.data?.length > 0 &&
-                  routesData?.data?.map(
-                    (singleRoute: any, routeIndex: number) => (
-                      <SelectItem
-                        key={routeIndex}
-                        value={singleRoute?.id?.toString()}
-                      >
-                        {singleRoute?.routeName}
-                      </SelectItem>
-                    )
-                  )}
-
-                {routesLoading && !routesData?.data?.length && (
-                  <SelectSkeleton />
-                )}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
 
           {/* REGISTRATION NUMBER */}
           {/* <InputWrapper
@@ -396,6 +351,49 @@ const AddCoach: FC<IAddCoachProps> = ({ setCoachState }) => {
                 <SelectItem value="30">Sleeper Coach (30 Seats)</SelectItem>
                 <SelectItem value="41">Ac Economy Class (41 Seats)</SelectItem>
                 <SelectItem value="43">Suite Class (43 Seats)</SelectItem>
+              </SelectContent>
+            </Select>
+          </InputWrapper>
+          {/* FARE AMOUNT */}
+          <InputWrapper
+            error={errors?.fareId?.message}
+            labelFor="fareId"
+            label={translate(
+              addUpdateCoachConfigurationForm?.fareId.label.bn,
+              addUpdateCoachConfigurationForm.fareId.label.en
+            )}
+          >
+            <Select
+              value={watch("fareId") ? watch("fareId")?.toString() : ""}
+              onValueChange={(value: string) => {
+                setValue("fareId", +value);
+                setError("fareId", {
+                  type: "custom",
+                  message: "",
+                });
+              }}
+            >
+              <SelectTrigger id="fareId" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachConfigurationForm.fareId.placeholder.bn,
+                    addUpdateCoachConfigurationForm.fareId.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {!faresLoading &&
+                  faresData?.data?.length > 0 &&
+                  faresData?.data?.map((singleFare: any, fareIndex: number) => (
+                    <SelectItem
+                      key={fareIndex}
+                      value={singleFare?.id?.toString()}
+                    >
+                      {singleFare?.amount}
+                    </SelectItem>
+                  ))}
+
+                {faresLoading && !faresData?.data?.length && <SelectSkeleton />}
               </SelectContent>
             </Select>
           </InputWrapper>
