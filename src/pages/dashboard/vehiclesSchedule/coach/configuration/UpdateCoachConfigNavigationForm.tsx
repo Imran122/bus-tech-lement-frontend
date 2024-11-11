@@ -31,10 +31,8 @@ import { useGetDriversQuery } from "@/store/api/contact/driverApi";
 import { useGetHelpersQuery } from "@/store/api/contact/helperApi";
 import { useGetUsersQuery } from "@/store/api/contact/userApi";
 import { closeModal } from "@/store/api/user/coachConfigModalSlice";
-import { useGetCoachesQuery } from "@/store/api/vehiclesSchedule/coachApi";
 import {
   useGetModalCoachInfoByDateQuery,
-  useGetSingleCoachConfigurationQuery,
   useUpdateCoachConfigurationMutation,
 } from "@/store/api/vehiclesSchedule/coachConfigurationApi";
 import { useGetFaresQuery } from "@/store/api/vehiclesSchedule/fareApi";
@@ -81,12 +79,13 @@ const getTomorrowsDate = () => {
   return `${year}-${month}-${day}`;
 };
 
-const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
-  id,
-}) => {
+const UpdateCoachConfigNavigationForm: FC<
+  IUpdateCoachConfigurationProps
+> = () => {
   const dispatch = useDispatch();
   const [selectedCoachInfo, setSelectedCoachInfo] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
+    //@ts-ignore
     getTomorrowsDate()
   );
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -111,10 +110,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
   } = useForm<IAddUpdateCoachConfigurationDataProps>({
     resolver: zodResolver(addUpdateCoachConfigurationSchema),
   });
-
-  console.log("selectedCoachInfo", selectedCoachInfo);
-  console.log("selectedDate", selectedDate);
-
+  console.log("Form errors:", errors);
   const [
     updateCoachConfigurationFormState,
     setUpdateCoachConfigurationFormState,
@@ -123,6 +119,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
     calendarOpen: false,
     supervisorOpen: false,
     driverOpen: false,
+    helperOpen: false,
     routeOpen: false,
     startingCounterOpen: false,
     endingCounterOpen: false,
@@ -137,9 +134,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
       error: updateCoachConfigurationError,
     },
   ] = useUpdateCoachConfigurationMutation();
-  const date = getTomorrowsDate();
-  const { data: coachConfigurationData, isLoading: coachConfigurationLoading } =
-    useGetSingleCoachConfigurationQuery(id);
+
   const {
     data: tomorrowsCoachConfigurationData,
     isLoading: tomorrowsCoachConfigurationLoading,
@@ -158,8 +153,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
   const { data: helperData, isLoading: helperDataLoading } = useGetHelpersQuery(
     {}
   ) as any;
-  const { data: coachListData, isLoading: coachListDataLoading } =
-    useGetCoachesQuery({}) as any;
+
   const { data: vehiclesData, isLoading: vehiclesLoading } =
     useGetVehiclesQuery({});
   const { data: faresData, isLoading: faresLoading } = useGetFaresQuery(
@@ -172,12 +166,13 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
   const { data: supervisorsData, isLoading: supervisorsLoading } =
     useGetUsersQuery({}) as any;
 
-  console.log("vehiclesData", vehiclesData);
+  //console.log("vehiclesData", vehiclesData);
 
   useEffect(() => {
     if (selectedCoachInfo) {
       // Populate form fields with selected coach data
       setValue("coachType", selectedCoachInfo.coachType);
+      setValue("coachNo", selectedCoachInfo.coachNo);
       setValue("coachClass", selectedCoachInfo.coachClass);
       setValue("destinationCounterId", selectedCoachInfo.destinationCounterId);
       setValue("fromCounterId", selectedCoachInfo.fromCounterId);
@@ -199,14 +194,19 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
   }, [selectedCoachInfo, setValue]);
 
   const onSubmit = async (data: IAddUpdateCoachConfigurationDataProps) => {
+    console.log("@data", data);
     const updateData = removeFalsyProperties(data, [
       "discount",
-      "holdingTime",
-      "holdingTime",
+      "tokenAvailable",
+      "registrationNo",
     ]);
+
     console.log("@updata", updateData);
-    console.log("@data", data);
-    const result = await updateCoachConfiguration({ data: updateData, id });
+
+    const result = await updateCoachConfiguration({
+      data: updateData,
+      id: selectedCoachInfo.id,
+    });
     if (result?.data?.success) {
       dispatch(closeModal());
       toast({
@@ -221,20 +221,14 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
       });
     }
   };
-  console.log("Current coachConfigurationData:", coachConfigurationData);
   if (
-    coachConfigurationLoading ||
     tomorrowsCoachConfigurationLoading ||
     schedulesLoading ||
-    coachListDataLoading ||
     vehiclesLoading
   ) {
     return <FormSkeleton columns={3} inputs={16} />;
   }
-  console.log(
-    "tomorrowsCoachConfigurationData",
-    tomorrowsCoachConfigurationData
-  );
+  //console.log("selectedCoachInfo", selectedCoachInfo);
   return (
     <FormWrapper
       heading={translate(
@@ -268,6 +262,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
               <Calendar
                 mode="single"
                 selected={selectedDate || new Date()}
+                //@ts-ignore
                 onSelect={(date: Date) => {
                   setSelectedDate(date);
                   setCalendarOpen(false);
@@ -436,6 +431,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
                       selectedCoachInfo?.departureDate || getTomorrowsDate()
                     )
                   }
+                  //@ts-ignore
                   onSelect={(date: Date | null) => {
                     const selectedDate =
                       date ||
@@ -1041,6 +1037,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
           </InputWrapper>
         </GridWrapper>
         <Submit
+          //@ts-ignore
           onClick={() => dispatch(closeModal())}
           loading={updateCoachConfigurationLoading}
           errors={updateCoachConfigurationError}

@@ -14,9 +14,18 @@ export const addUpdateCoachConfigurationSchema = z.object({
     }, z.number())
     .optional(),
 
-  supervisorId: z.number().optional(),
-  driverId: z.number().optional(),
-  helperId: z.number().optional(),
+  supervisorId: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().optional()
+  ),
+  driverId: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().optional()
+  ),
+  helperId: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().optional()
+  ),
   fromCounterId: z.number({ required_error: "Starting counter is required" }),
   fareId: z.number({ required_error: "Fare amount is required" }),
   routeId: z

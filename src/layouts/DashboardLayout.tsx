@@ -16,7 +16,7 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
   const { sidebarOpen } = useAppContext();
   const dispatch = useDispatch();
   const isModalOpen = useSelector(
-    (state: RootState) => state.coachConfigModal.isModalOpen
+    (state: any) => state.coachConfigModal.isModalOpen
   );
   return (
     <TooltipProvider>

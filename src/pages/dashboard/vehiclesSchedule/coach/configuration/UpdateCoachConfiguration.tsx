@@ -150,12 +150,7 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
     );
 
     setValue("fromCounterId", coachConfigurationData?.data?.fromCounterId);
-    setValue(
-      "holdingTime",
-      coachConfigurationData?.data?.holdingTime?.toLowerCase() === "n/a"
-        ? ""
-        : coachConfigurationData?.data?.holdingTime
-    );
+
     setValue("registrationNo", coachConfigurationData?.data?.registrationNo);
     setValue("discount", parseInt(coachConfigurationData?.data?.discount));
     setValue("routeId", coachConfigurationData?.data?.routeId);
@@ -879,26 +874,6 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
                 <SelectItem value="No">{translate("না", "No")}</SelectItem>
               </SelectContent>
             </Select>
-          </InputWrapper>
-
-          {/* HOLDING TIME */}
-          <InputWrapper
-            error={errors?.holdingTime?.message}
-            labelFor="holdingTime"
-            label={translate(
-              addUpdateCoachConfigurationForm?.holdingTime.label.bn,
-              addUpdateCoachConfigurationForm.holdingTime.label.en
-            )}
-          >
-            <Input
-              id="holdingTime"
-              {...register("holdingTime")}
-              type="text"
-              placeholder={translate(
-                addUpdateCoachConfigurationForm.holdingTime.placeholder.bn,
-                addUpdateCoachConfigurationForm.holdingTime.placeholder.en
-              )}
-            />
           </InputWrapper>
 
           {/* discount */}
