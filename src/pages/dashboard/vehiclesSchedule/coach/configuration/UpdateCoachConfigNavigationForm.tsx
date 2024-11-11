@@ -193,20 +193,10 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
       setValue("supervisorId", selectedCoachInfo.supervisorId);
       setValue(
         "departureDate",
-        selectedCoachInfo.departureDate ||
-          format(getTomorrowsDate(), "yyyy-MM-dd")
+        format(new Date(selectedCoachInfo.departureDate), "yyyy-MM-dd")
       );
     }
   }, [selectedCoachInfo, setValue]);
-  const handleCoachSelect = (value: string) => {
-    const parsedCoach = JSON.parse(value);
-    setSelectedCoachInfo(parsedCoach);
-    console.log("Selected Coach Info:", parsedCoach);
-  };
-
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
 
   const onSubmit = async (data: IAddUpdateCoachConfigurationDataProps) => {
     const updateData = removeFalsyProperties(data, [
@@ -214,7 +204,8 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
       "holdingTime",
       "holdingTime",
     ]);
-
+    console.log("@updata", updateData);
+    console.log("@data", data);
     const result = await updateCoachConfiguration({ data: updateData, id });
     if (result?.data?.success) {
       dispatch(closeModal());
@@ -257,11 +248,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
     >
       <div>
         {/* Date Selector */}
-        <InputWrapper
-          error={errors?.departureDate?.message}
-          labelFor="departureDate"
-          label="Departure Date"
-        >
+        <InputWrapper labelFor="departureDate" label="Select Date">
           <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -283,7 +270,6 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
                 selected={selectedDate || new Date()}
                 onSelect={(date: Date) => {
                   setSelectedDate(date);
-                  setValue("departureDate", format(date, "yyyy-MM-dd"));
                   setCalendarOpen(false);
                 }}
                 fromYear={1960}
@@ -345,6 +331,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               open={updateCoachConfigurationFormState.routeOpen}
               onOpenChange={(open) =>
                 setUpdateCoachConfigurationFormState(
@@ -392,6 +379,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
           </InputWrapper>
 
           {/* DEPARTURE DATE */}
+          {/* DEPARTURE DATE */}
           <InputWrapper
             error={errors?.departureDate?.message}
             labelFor="departureDate"
@@ -419,10 +407,14 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
                     !updateCoachConfigurationFormState.date &&
                       "text-muted-foreground"
                   )}
+                  disabled={true}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {updateCoachConfigurationFormState.date ? (
-                    format(updateCoachConfigurationFormState.date, "PPP")
+                  {selectedCoachInfo?.departureDate ? (
+                    format(
+                      new Date(selectedCoachInfo.departureDate),
+                      "yyyy-MM-dd"
+                    )
                   ) : (
                     <span>
                       {translate(
@@ -440,26 +432,26 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
                   mode="single"
                   captionLayout="dropdown-buttons"
                   selected={
-                    updateCoachConfigurationFormState?.date || new Date()
+                    new Date(
+                      selectedCoachInfo?.departureDate || getTomorrowsDate()
+                    )
                   }
-                  onSelect={(date: any) => {
-                    //@ts-ignore
+                  onSelect={(date: Date | null) => {
+                    const selectedDate =
+                      date ||
+                      new Date(
+                        selectedCoachInfo?.departureDate || getTomorrowsDate()
+                      );
                     setValue(
                       "departureDate",
-                      //@ts-ignore
-                      date
-                        ? format(date, "yyyy-MM-dd")
-                        : format(new Date(), "yyyy-MM-dd")
+                      format(selectedDate, "yyyy-MM-dd")
                     );
-                    //@ts-ignore
                     setError("departureDate", { type: "custom", message: "" });
-                    setUpdateCoachConfigurationFormState(
-                      (prevState: IUpdateCoachConfigurationFormStateProps) => ({
-                        ...prevState,
-                        calendarOpen: false,
-                        date: date || new Date(),
-                      })
-                    );
+                    setUpdateCoachConfigurationFormState((prevState) => ({
+                      ...prevState,
+                      calendarOpen: false,
+                      date: selectedDate,
+                    }));
                   }}
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
@@ -477,6 +469,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               open={updateCoachConfigurationFormState.scheduleOpen}
               onOpenChange={(open) =>
                 setUpdateCoachConfigurationFormState((prevState) => ({
@@ -522,6 +515,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               open={updateCoachConfigurationFormState.startingCounterOpen}
               onOpenChange={(open) =>
                 setUpdateCoachConfigurationFormState(
@@ -579,6 +573,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               open={updateCoachConfigurationFormState.endingCounterOpen}
               onOpenChange={(open) =>
                 setUpdateCoachConfigurationFormState(
@@ -644,6 +639,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("coachClass") || ""}
               onValueChange={(
                 value: "E_Class" | "B_Class" | "S_Class" | "Sleeper"
@@ -681,6 +677,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("coachType") || ""}
               onValueChange={(value: "AC" | "NON AC") => {
                 setValue("coachType", value);
@@ -719,6 +716,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               value={watch("active") ? "Yes" : "No"}
               onValueChange={(value: "Yes" | "No") => {
                 setValue("active", value === "Yes" ? true : false);
@@ -749,6 +747,7 @@ const UpdateCoachConfigNavigationForm: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Select
+              disabled={true}
               open={updateCoachConfigurationFormState.fareOpen}
               onOpenChange={(open) =>
                 setUpdateCoachConfigurationFormState(
