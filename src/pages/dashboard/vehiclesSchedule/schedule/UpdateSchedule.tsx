@@ -1,33 +1,32 @@
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
+import { TimePicker } from "@/components/common/form/TimePicker";
+import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  AddUpdateScheduleDataProps,
+  addUpdateScheduleSchema,
+} from "@/schemas/vehiclesSchedule/addUpdateScheduleSchema";
+import {
+  useGetSingleScheduleQuery,
+  useUpdateScheduleMutation,
+} from "@/store/api/vehiclesSchedule/scheduleApi";
+import { convertTimeStringToISO } from "@/utils/helpers/convertTimeStringToISO";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  AddUpdateScheduleDataProps,
-  addUpdateScheduleSchema,
-} from "@/schemas/vehiclesSchedule/addUpdateScheduleSchema";
-import { TimePicker } from "@/components/common/form/TimePicker";
-import {
-  useGetSingleScheduleQuery,
-  useUpdateScheduleMutation,
-} from "@/store/api/vehiclesSchedule/scheduleApi";
-import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
-import { convertTimeStringToISO } from "@/utils/helpers/convertTimeStringToISO";
 
 interface IUpdateScheduleProps {
   id: number | null;
 }
-
 const UpdateSchedule: FC<IUpdateScheduleProps> = ({ id }) => {
   const { translate } = useCustomTranslator();
   const { toast } = useToast();
   const { toastMessage } = useMessageGenerator();
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(undefined);
 
   const {
     handleSubmit,
@@ -43,13 +42,22 @@ const UpdateSchedule: FC<IUpdateScheduleProps> = ({ id }) => {
 
   useEffect(() => {
     if (scheduleData?.data?.time) {
-      setDate(convertTimeStringToISO(scheduleData?.data?.time));
+      console.log("Received time format from backend:", scheduleData.data.time);
+      const date = convertTimeStringToISO(scheduleData.data.time);
+      if (date) {
+        setDate(date);
+      } else {
+        console.error("Invalid time format received from backend.");
+      }
     }
   }, [scheduleData]);
 
   useEffect(() => {
     if (date) {
-      setValue("time", date?.toLocaleTimeString());
+      setValue(
+        "time",
+        date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      );
       setError("time", { type: "custom", message: "" });
     } else {
       setError("time", { type: "custom", message: "Time is required" });
@@ -74,9 +82,10 @@ const UpdateSchedule: FC<IUpdateScheduleProps> = ({ id }) => {
     }
   };
 
-  if (scheduleLoading) {
+  if (scheduleLoading || date === undefined) {
     return <FormSkeleton columns={1} inputs={1} />;
   }
+
   return (
     <FormWrapper
       heading={translate("সময়সূচী সম্পাদনা করুন", "Update Schedule")}
@@ -96,7 +105,10 @@ const UpdateSchedule: FC<IUpdateScheduleProps> = ({ id }) => {
             <TimePicker date={date} setDate={setDate} />
             <div className="mt-3">
               {translate("নির্বাচিত সময়সূচীঃ ", " Selected Time: ")}
-              {date?.toLocaleTimeString()}
+              {date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </div>
           </InputWrapper>
         </div>

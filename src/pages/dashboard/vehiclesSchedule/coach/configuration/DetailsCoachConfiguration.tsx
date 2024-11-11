@@ -58,19 +58,23 @@ const DetailsCoachConfiguration: FC<IDetailsCoachConfigurationProps> = ({
           paragraph={coachConfigurationData?.data?.coachNo}
         />
         <LabelDescription
-          heading={translate("ইমেইল", "Registration No")}
+          heading={translate("রেজিস্ট্রেশন নং", "Registration No")}
           paragraph={coachConfigurationData?.data?.registrationNo}
         />
         <LabelDescription
-          heading={translate("ইমেইল", "Seat Plan")}
+          heading={translate("আসন পরিকল্পনা", "Seat Plan")}
           paragraph={coachConfigurationData?.data?.seatPlan}
         />
         <LabelDescription
-          heading={translate("ইমেইল", "Coach Type")}
+          heading={translate("ডিসকাউন্ট পরিমাণ", "Discount")}
+          paragraph={coachConfigurationData?.data?.discount}
+        />
+        <LabelDescription
+          heading={translate("কোচ টাইপ", "Coach Type")}
           paragraph={coachConfigurationData?.data?.coachType}
         />
         <LabelDescription
-          heading={translate("ইমেইল", "Schedule")}
+          heading={translate("সময়সূচী", "Schedule")}
           paragraph={coachConfigurationData?.data?.schedule}
         />
         <LabelDescription
@@ -78,7 +82,7 @@ const DetailsCoachConfiguration: FC<IDetailsCoachConfigurationProps> = ({
           paragraph={coachConfigurationData?.data?.tokenAvailable}
         />
         <LabelDescription
-          heading={translate("ভূমিকা", "Departure Date")}
+          heading={translate("প্রস্থানের তারিখ", "Departure Date")}
           paragraph={formatter({
             type: "date",
             dateTime: coachConfigurationData?.data?.departureDate,
@@ -86,30 +90,30 @@ const DetailsCoachConfiguration: FC<IDetailsCoachConfigurationProps> = ({
         />
 
         <LabelDescription
-          heading={translate("ইমেইল", "Type")}
+          heading={translate("টাইপ", "Type")}
           paragraph={coachConfigurationData?.data?.type}
         />
         <LabelDescription
-          heading={translate("ইমেইল", "Sale Status")}
+          heading={translate("বিক্রয় অবস্থা", "Sale Status")}
           paragraph={
             coachConfigurationData?.data?.saleStatus ? "Activate" : "Deactivate"
           }
         />
         <LabelDescription
-          heading={translate("ইমেইল", "Holding Time")}
+          heading={translate("হোল্ডিং টাইম", "Holding Time")}
           paragraph={coachConfigurationData?.data?.holdingTime}
         />
         <LabelDescription
-          heading={translate("ইমেইল", "Fare Allowed")}
+          heading={translate("ভাড়া অনুমোদিত", "Fare Allowed")}
           paragraph={coachConfigurationData?.data?.fareAllowed}
         />
         <LabelDescription
-          heading={translate("ইমেইল", "VIP TimeOut")}
+          heading={translate("ভিআইপি টাইমআউট", "VIP TimeOut")}
           paragraph={coachConfigurationData?.data?.vipTimeOut}
         />
 
         <LabelDescription
-          heading={translate("যোগাযোগ নম্বর", "Staring Point")}
+          heading={translate("স্টার্টিং পয়েন্ট", "Staring Point")}
           paragraph={coachConfigurationData?.data?.fromCounter?.name}
           info={{
             size: "lg",
@@ -122,7 +126,7 @@ const DetailsCoachConfiguration: FC<IDetailsCoachConfigurationProps> = ({
         />
 
         <LabelDescription
-          heading={translate("যোগাযোগ নম্বর", "Ending Point")}
+          heading={translate("শেষ পয়েন্ট", "Ending Point")}
           paragraph={coachConfigurationData?.data?.destinationCounter?.name}
           info={{
             size: "lg",
@@ -147,7 +151,7 @@ const DetailsCoachConfiguration: FC<IDetailsCoachConfigurationProps> = ({
           }}
         />
         <LabelDescription
-          heading={translate("আসন", "Seats")}
+          heading={translate("আসন পরিকল্পনা", "Seats  Plan")}
           paragraph={
             seatPlanOptions.find(
               (singlePlan: ISeatPlanOptionsProps) =>

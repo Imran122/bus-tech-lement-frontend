@@ -4,11 +4,13 @@ import { phoneNumberBaseSchema } from "../contact/addUpdateDriverSchema";
 export const addBookingSeatFromCounterSchema = z.object({
   counterId: z.number().optional(),
   customerName: z.string().optional(),
-  paymentType: z.enum(["FULL", "PARTIAL"], {
-    errorMap: () => ({
-      message: "Payment Type is required",
-    }),
-  }),
+  paymentType: z
+    .enum(["FULL", "PARTIAL"], {
+      errorMap: () => ({
+        message: "Payment Type is required",
+      }),
+    })
+    .or(z.literal("")),
 
   paymentAmount: z
     .preprocess(
@@ -25,23 +27,21 @@ export const addBookingSeatFromCounterSchema = z.object({
   nationality: z.string().optional().or(z.literal("")),
   paymentMethod: z
     .string({ required_error: "Payment method is required" })
-    .min(1, "Payment method is required")
-    .or(z.literal("")),
+    .min(1, "Payment method is required"),
   boardingPoint: z
     .string({ required_error: "Boarding point is required" })
-    .min(1, "Boarding point is required")
-    .or(z.literal("")),
+    .min(1, "Boarding point is required"),
   droppingPoint: z
     .string({ required_error: "Dropping point is required" })
-    .min(1, "Dropping point is required")
-    .or(z.literal("")),
+    .min(1, "Dropping point is required"),
   noOfSeat: z
     .number({ required_error: "Number of seats is required" })
     .int()
     .positive("Number of seats is required"),
   amount: z
     .number({ required_error: "Payment amount is required" })
-    .positive("Payment amount is required"),
+    .positive("Payment amount is required")
+    .or(z.literal(0)),
   date: z
     .string({ required_error: "Date is required" })
     .min(1, "Date is required"),

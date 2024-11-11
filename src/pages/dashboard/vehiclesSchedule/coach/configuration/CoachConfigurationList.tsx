@@ -98,7 +98,7 @@ const CoachConfigurationList: FC<ICoachConfigurationListProps> = () => {
         schedule: singleCoachConfiguration?.schedule || fallback.notFound.en,
         type: singleCoachConfiguration?.type || fallback.notFound.en,
         coachType: singleCoachConfiguration.coachType,
-        dummySaleStatus: singleCoachConfiguration?.saleStatus
+        dummySaleStatus: singleCoachConfiguration?.active
           ? "Accept"
           : "Decline",
         index: generateDynamicIndexWithMeta(
@@ -189,6 +189,10 @@ const CoachConfigurationList: FC<ICoachConfigurationListProps> = () => {
     },
 
     {
+      accessorKey: "departureDate",
+      header: translate("তারিখ", "Date"),
+    },
+    {
       accessorKey: "schedule",
       header: translate("সময়সূচী", "Schedule"),
     },
@@ -205,15 +209,15 @@ const CoachConfigurationList: FC<ICoachConfigurationListProps> = () => {
         };
         return (
           <Button
-            variant={coachConfig.saleStatus ? "success" : "destructive"}
+            variant={coachConfig?.active ? "success" : "destructive"}
             shape="pill"
             className="flex justify-center px-4 py-1"
             size="xs"
             onClick={() =>
-              handleToggleSaleStatus(coachConfig.id, coachConfig.saleStatus)
+              handleToggleSaleStatus(coachConfig.id, coachConfig?.active)
             }
           >
-            {coachConfig.saleStatus
+            {coachConfig?.active
               ? translate("বিক্রয় সক্রিয় করুন", "Activate Sale")
               : translate("বিক্রয় নিষ্ক্রিয় করুন", "Deactivate Sale")}
           </Button>

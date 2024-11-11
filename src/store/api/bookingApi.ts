@@ -95,6 +95,14 @@ const bookingApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["booking"],
     }),
+    unBookSeatFromCounterBooking: builder.mutation({
+      query: (data) => ({
+        url: "/order/cancel-booking",
+        method: "DELETE",
+        body: data,
+      }),
+      invalidatesTags: ["booking"],
+    }),
   }),
 });
 
@@ -109,4 +117,5 @@ export const {
   useGetPaymentDetailsWithHooksQuery,
   useGetTickitInfoQuery,
   useDueAmountPaymentMutation,
+  useUnBookSeatFromCounterBookingMutation,
 } = bookingApi;

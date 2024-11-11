@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
 import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
@@ -136,18 +137,9 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
   ) as any;
   const { data: supervisorsData, isLoading: supervisorsLoading } =
     useGetUsersQuery({}) as any;
-  const selectedCoachNo = watch("coachNo");
-  useEffect(() => {
-    // Find the selected coach's data
-    const selectedCoach = coachListData?.data.find(
-      (coach: any) => coach.coachNo === selectedCoachNo
-    );
 
-    // If a matching coach is found, set its registration number
-    if (selectedCoach) {
-      setValue("registrationNo", selectedCoach.registrationNo);
-    }
-  }, [selectedCoachNo, setValue, coachListData]);
+  console.log("coachConfigurationData", coachConfigurationData);
+
   useEffect(() => {
     setValue("coachNo", coachConfigurationData?.data?.coachNo);
     setValue("coachType", coachConfigurationData?.data?.coachType);
@@ -156,12 +148,7 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
       "destinationCounterId",
       coachConfigurationData?.data?.destinationCounterId
     );
-    setValue(
-      "fareAllowed",
-      coachConfigurationData?.data?.fareAllowed?.toLowerCase() === "n/a"
-        ? ""
-        : coachConfigurationData?.data?.fareAllowed
-    );
+
     setValue("fromCounterId", coachConfigurationData?.data?.fromCounterId);
     setValue(
       "holdingTime",
@@ -169,27 +156,17 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
         ? ""
         : coachConfigurationData?.data?.holdingTime
     );
-    setValue(
-      "registrationNo",
-      coachConfigurationData?.data?.registrationNo?.toLowerCase() === "n/a"
-        ? ""
-        : coachConfigurationData?.data?.registrationNo
-    );
+    setValue("registrationNo", coachConfigurationData?.data?.registrationNo);
+    setValue("discount", parseInt(coachConfigurationData?.data?.discount));
     setValue("routeId", coachConfigurationData?.data?.routeId);
-    setValue("saleStatus", coachConfigurationData?.data?.saleStatus);
+    setValue("active", coachConfigurationData?.data?.active);
     setValue("schedule", coachConfigurationData?.data?.schedule);
     setValue("tokenAvailable", coachConfigurationData?.data?.tokenAvailable);
     setValue("fareId", coachConfigurationData?.data?.fareId);
     // setValue("seats", coachConfigurationData?.data?.seats);
     setValue("driverId", coachConfigurationData?.data?.driverId);
     setValue("supervisorId", coachConfigurationData?.data?.supervisorId);
-    setValue("type", coachConfigurationData?.data?.type);
-    setValue(
-      "vipTimeOut",
-      coachConfigurationData?.data?.vipTimeOut?.toLowerCase() === "n/a"
-        ? ""
-        : coachConfigurationData?.data?.vipTimeOut
-    );
+
     setValue("departureDate", coachConfigurationData?.data?.departureDate);
     setUpdateCoachConfigurationFormState(
       (prevState: IUpdateCoachConfigurationFormStateProps) => ({
@@ -211,11 +188,9 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
     //   });
     // }
     const updateData = removeFalsyProperties(data, [
-      "registrationNo",
+      "discount",
       "holdingTime",
       "holdingTime",
-      "vipTimeOut",
-      "fareAllowed",
     ]);
 
     const result = await updateCoachConfiguration({ data: updateData, id });
@@ -233,7 +208,7 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
     }
   };
   console.log("Current coachConfigurationData:", coachConfigurationData);
-  if (coachConfigurationLoading || schedulesLoading) {
+  if (coachConfigurationLoading || schedulesLoading || coachListDataLoading) {
     return <FormSkeleton columns={3} inputs={16} />;
   }
 
@@ -261,7 +236,7 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Select
-              value={watch("coachNo") || ""} // No need to convert to string here
+              value={watch("coachNo")?.toString()}
               onValueChange={(value: string) => {
                 setValue("coachNo", value); // Keep as string
                 setError("coachNo", { type: "custom", message: "" });
@@ -304,6 +279,7 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
             )}
           >
             <Input
+              value={watch("registrationNo") || ""}
               id="registrationNo"
               {...register("registrationNo")}
               type="text"
@@ -423,13 +399,16 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
                   selected={
                     updateCoachConfigurationFormState?.date || new Date()
                   }
-                  onSelect={(date) => {
+                  onSelect={(date: any) => {
+                    //@ts-ignore
                     setValue(
                       "departureDate",
+                      //@ts-ignore
                       date
                         ? format(date, "yyyy-MM-dd")
                         : format(new Date(), "yyyy-MM-dd")
                     );
+                    //@ts-ignore
                     setError("departureDate", { type: "custom", message: "" });
                     setUpdateCoachConfigurationFormState(
                       (prevState: IUpdateCoachConfigurationFormStateProps) => ({
@@ -871,61 +850,27 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
             </Select>
           </InputWrapper>
 
-          {/* TYPE */}
-          <InputWrapper
-            error={errors?.type?.message}
-            labelFor="type"
-            label={translate(
-              addUpdateCoachConfigurationForm?.type.label.bn,
-              addUpdateCoachConfigurationForm.type.label.en
-            )}
-          >
-            <Select
-              value={watch("type") || ""}
-              onValueChange={(value: "Daily" | "Weekly") => {
-                setValue("type", value);
-                setError("type", { type: "custom", message: "" });
-              }}
-            >
-              <SelectTrigger id="type" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachConfigurationForm.type.placeholder.bn,
-                    addUpdateCoachConfigurationForm.type.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Daily">
-                  {translate("দৈনিক", "Daily")}
-                </SelectItem>
-                <SelectItem value="Weekly">
-                  {translate("সাপ্তাহিক", "Weekly")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </InputWrapper>
           {/* SALE STATUS */}
           <InputWrapper
-            error={errors?.saleStatus?.message}
-            labelFor="saleStatus"
+            error={errors?.active?.message}
+            labelFor="active"
             label={translate(
-              addUpdateCoachConfigurationForm?.saleStatus.label.bn,
-              addUpdateCoachConfigurationForm.saleStatus.label.en
+              addUpdateCoachConfigurationForm?.active.label.bn,
+              addUpdateCoachConfigurationForm.active.label.en
             )}
           >
             <Select
-              value={watch("saleStatus") ? "Yes" : "No"}
+              value={watch("active") ? "Yes" : "No"}
               onValueChange={(value: "Yes" | "No") => {
-                setValue("saleStatus", value === "Yes" ? true : false);
-                setError("saleStatus", { type: "custom", message: "" });
+                setValue("active", value === "Yes" ? true : false);
+                setError("active", { type: "custom", message: "" });
               }}
             >
-              <SelectTrigger id="saleStatus" className="w-full">
+              <SelectTrigger id="active" className="w-full">
                 <SelectValue
                   placeholder={translate(
-                    addUpdateCoachConfigurationForm.saleStatus.placeholder.bn,
-                    addUpdateCoachConfigurationForm.saleStatus.placeholder.en
+                    addUpdateCoachConfigurationForm.active.placeholder.bn,
+                    addUpdateCoachConfigurationForm.active.placeholder.en
                   )}
                 />
               </SelectTrigger>
@@ -955,46 +900,28 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
               )}
             />
           </InputWrapper>
-          {/* FARE ALLOWED */}
-          <InputWrapper
-            error={errors?.fareAllowed?.message}
-            labelFor="fareAllowed"
-            label={translate(
-              addUpdateCoachConfigurationForm?.fareAllowed.label.bn,
-              addUpdateCoachConfigurationForm.fareAllowed.label.en
-            )}
-          >
-            <Input
-              id="fareAllowed"
-              {...register("fareAllowed")}
-              type="text"
-              placeholder={translate(
-                addUpdateCoachConfigurationForm.fareAllowed.placeholder.bn,
-                addUpdateCoachConfigurationForm.fareAllowed.placeholder.en
-              )}
-            />
-          </InputWrapper>
-          {/* VIP TIME OUT */}
-          <InputWrapper
-            error={errors?.vipTimeOut?.message}
-            labelFor="vipTimeOut"
-            label={translate(
-              addUpdateCoachConfigurationForm?.vipTimeOut.label.bn,
-              addUpdateCoachConfigurationForm.vipTimeOut.label.en
-            )}
-          >
-            <Input
-              id="vipTimeOut"
-              {...register("vipTimeOut")}
-              type="text"
-              placeholder={translate(
-                addUpdateCoachConfigurationForm.vipTimeOut.placeholder.bn,
-                addUpdateCoachConfigurationForm.vipTimeOut.placeholder.en
-              )}
-            />
-          </InputWrapper>
 
-          {/* SEATS */}
+          {/* discount */}
+          {/* disocunt*/}
+          <InputWrapper
+            error={errors.discount?.message}
+            labelFor="discount"
+            label={translate(
+              addUpdateCoachConfigurationForm?.discount.label.bn,
+              addUpdateCoachConfigurationForm?.discount.label.en
+            )}
+          >
+            <Input
+              value={watch("discount")}
+              id="discount"
+              {...register("discount")}
+              type="number"
+              placeholder={translate(
+                addUpdateCoachConfigurationForm.discount.placeholder.bn,
+                addUpdateCoachConfigurationForm.discount.placeholder.en
+              )}
+            />
+          </InputWrapper>
         </GridWrapper>
         <Submit
           loading={updateCoachConfigurationLoading}

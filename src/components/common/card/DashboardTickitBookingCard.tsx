@@ -67,7 +67,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
               <span className="">
                 {translate("শুরুর স্থানঃ ", "Starting Point: ")}
               </span>
-              <span className="font-[500] bg-red-400 ml-2 rounded-lg px-2 py-[2px]">
+              <span className="font-[500] text-red-400 ml-2 rounded-lg px-2 py-[2px]">
                 {coachData?.fromCounter?.name ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>
@@ -76,7 +76,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
               <span className="">
                 {translate("শেষ স্থানঃ ", "Ending Point: ")}
               </span>
-              <span className="font-[500] bg-red-400 ml-2 rounded-lg px-2 py-[2px]">
+              <span className="font-[500] text-red-400 ml-2 rounded-lg px-2 py-[2px]">
                 {coachData?.destinationCounter?.name ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>
@@ -87,7 +87,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
               <span className="font-semibold text-lg tracking-tighter">
                 {translate("যাত্রা শুরু সময়", "Departure Time")}
               </span>
-              <span className="text-lg tracking-tight bg-red-400 px-2 rounded-md mt-1">
+              <span className="text-lg tracking-tight text-red-400 px-2 rounded-md mt-1">
                 {translate(
                   convertTimeToBengali(coachData?.schedule || ""),
                   coachData?.schedule
@@ -98,7 +98,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
               <span className="font-semibold text-lg tracking-tighter ">
                 {translate("পৌঁছানোর সময়", "Arrival time")}
               </span>
-              <span className="text-lg tracking-tight bg-red-400 px-2 rounded-md mt-1">
+              <span className="text-lg tracking-tight text-red-400 px-2 rounded-md mt-1">
                 {translate(
                   convertTimeToBengali(coachData?.schedule),
                   coachData?.schedule
@@ -109,7 +109,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
               <span className="font-semibold text-lg tracking-tighter">
                 {translate("খালি আসন", "Available Seat")}
               </span>
-              <span className="text-lg tracking-tight bg-red-400 px-2 rounded-md mt-1">
+              <span className="text-lg tracking-tight text-red-400 px-2 rounded-md mt-1">
                 {translate(
                   convertToBnDigit(coachData?.seatAvailable?.toString()),
                   coachData?.seatAvailable?.toString()

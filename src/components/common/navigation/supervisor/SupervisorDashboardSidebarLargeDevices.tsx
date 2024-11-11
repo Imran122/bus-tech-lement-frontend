@@ -95,7 +95,12 @@ const SupervisorDashboardSidebarLargeDevices: FC<
           </div>
         </div>
         {/* user information */}
-        <div className="flex gap-2 items-center border-2 px-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+        <div
+          className={`${cn(
+            !sidebarOpen && "hidden"
+          )} flex gap-2 items-center border-2 px-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]`}
+        >
+          {" "}
           <div className="rounder-full py-2">
             <img
               className="w-12 h-12 rounded-full"

@@ -3,12 +3,6 @@ import { z } from "zod";
 import { phoneNumberBaseSchema } from "../contact/addUpdateDriverSchema";
 
 export const addBookingSeatSchema = z.object({
-  coachConfigId: z
-    .number({ required_error: "Coach configuration is required" })
-    .nonnegative("Coach configuration is required"),
-  schedule: z
-    .string({ required_error: "Schedule is required" })
-    .min(1, "Schedule is required"),
   counterId: z.number().optional(),
   customerName: z.string().optional(),
   paymentType: z.enum(["FULL", "PARTIAL"], {

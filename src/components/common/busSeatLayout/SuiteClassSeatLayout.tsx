@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { FC } from "react";
 import { GiSteeringWheel } from "react-icons/gi";
+import { useSelector } from "react-redux";
 import PageTransition from "../effect/PageTransition";
 import SeatIcon from "../icon/SeatIcon";
-
 interface ISeatLayoutProps {
   seatsAllocation: { left?: any[]; right?: any[]; middle?: any[] };
   handleBookingSeat: (seatData: any) => void;
@@ -25,58 +31,108 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
 }) => {
   const { translate } = useCustomTranslator();
   console.log("bookingFormState suite:--", bookingFormState);
-  // Helper functions to determine seat status
-  // const isSeatSold = (seatName: string) =>
-  //   bookingCoach?.orderSeat?.some((order: any) => order.seat === seatName);
 
-  // const isSeatBooked = (seatName: string) =>
-  //   bookingCoach?.bookingSeat?.some((booked: any) => booked.seat === seatName);
+  const user = useSelector((state: any) => state.user);
 
-  const getSeatColorClass = (seatName: string, selected: boolean) => {
-    const blockedSeat = bookingCoach?.bookingSeat?.find(
-      (order: any) => order.seat === seatName
-    );
+  const getSeatColorClass = (
+    seatName: string,
+    selected: boolean,
+    bookingCoach: any
+  ) => {
     const order = bookingCoach?.orderSeat?.find(
       (order: any) => order.seat === seatName
     );
-    if (blockedSeat && !selected) return "border-yellow-500 bg-warning/80";
-    if (selected) return "border-bule-500 bg-blue-400"; // Selected by the current user
-    //if (isSeatBooked(seatName)) return "bg-gray-500"; // Booked seat
-    if (order) {
-      return order.order.gender === "Male" ? "bg-red-700" : "bg-pink-500"; // Male: Red, Female: Pink
+    const blockedSeat = bookingCoach?.bookingSeat?.find(
+      (order: any) => order.seat === seatName
+    );
+    const bookedByCounter = bookingCoach?.CounterBookedSeat?.find(
+      (order: any) => order.seat === seatName
+    );
+
+    if (bookedByCounter) {
+      if (!user.id) {
+        return "bg-red-700 text-white";
+      } else if (bookedByCounter.counter.id === user.id) {
+        return "bg-[#A3D1D5] text-white"; // Green for seats booked by user's counter
+      }
+      // Otherwise, show it as orange
+      return "bg-orange-500 text-white"; // Orange for seats booked by others' counters
     }
-    return "bg-white text-black"; // Available seat
+    //console.log("order:---", order);
+    if (blockedSeat && !selected)
+      return "border-gray-800 bg-gray-800 text-white";
+    if (selected) return "border-bule-500 text-white bg-[#00BFFF]";
+    if (order) {
+      return order?.order?.gender === "Male"
+        ? "bg-red-700 text-white"
+        : "bg-[#BD06D3] text-white";
+    }
+    return "bg-white text-black"; // Available
   };
 
-  const isSeatSelected = (seatName: string) =>
-    bookingFormState.selectedSeats.some((seat: any) => seat.seat === seatName);
-
   const renderSeatButton = (seat: any) => {
-    const isSelected = isSeatSelected(seat.seat); // Check if the seat is selected by the user
-    const seatStatusClass = getSeatColorClass(seat.seat, isSelected); // Get appropriate CSS class
+    const isSeatSelected = (seatName: string) =>
+      bookingFormState.selectedSeats.some(
+        (seat: any) => seat.seat === seatName
+      );
+    const isSelected = isSeatSelected(seat.seat);
+    const seatStatusClass = getSeatColorClass(
+      seat.seat,
+      isSelected,
+      bookingCoach
+    );
+    const isOrdered = bookingCoach?.orderSeat?.some(
+      (order: any) => order.seat === seat.seat
+    );
+    const isBlockedSeat = bookingCoach?.bookingSeat?.find(
+      (order: any) => order.seat === seat.seat
+    );
+    const bookedByCounter = bookingCoach?.CounterBookedSeat?.find(
+      (order: any) => order.seat === seat.seat
+    );
+    const isBookedByOtherCounter =
+      bookedByCounter && bookedByCounter.counter.id !== user.id;
+    const tooltipText = isBookedByOtherCounter
+      ? bookedByCounter?.counter?.userName
+      : "";
+    const shouldDisableSeat = !user.role
+      ? isOrdered || bookedByCounter || isBlockedSeat // User role: disable ordered & all booked seats
+      : isOrdered || isBookedByOtherCounter || isBlockedSeat; // Counter role: disable ordered & other counters' booked seats
 
+    //console.log("isBookedByOtherCounter", isBookedByOtherCounter);
+    //console.log("tooltipText:", tooltipText);
     return (
-      <button
-        key={seat.seat}
-        type="button"
-        onClick={() => handleBookingSeat(seat)}
-        className={cn(
-          "text-foreground/50 hover:text-foreground/80 flex flex-col items-center gap-1"
-        )}
-      >
-        <div
-          className={cn(
-            "w-[40px] h-[40px] rounded-md flex items-center justify-center",
-            seatStatusClass, // Apply the calculated seat color class here
-            bookingFormState?.targetedSeat === seat.id &&
-              addBookingSeatLoading &&
-              "animate-pulse"
-          )}
-        >
-          <SeatIcon className="text-gray-400 size-10" />
-        </div>
-        <span className="font-medium">{seat.seat}</span>
-      </button>
+      <TooltipProvider key={seat.id}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => handleBookingSeat(seat)}
+              className={cn(
+                "text-foreground/50 hover:text-foreground/80 flex flex-col items-center gap-1",
+                shouldDisableSeat && "cursor-not-allowed"
+              )}
+              disabled={shouldDisableSeat}
+            >
+              <div
+                className={cn(
+                  "w-[40px] h-[40px] rounded-md flex items-center justify-center",
+                  seatStatusClass,
+                  bookingFormState?.targetedSeat === seat.id &&
+                    addBookingSeatLoading &&
+                    "animate-pulse"
+                )}
+              >
+                <SeatIcon className="text-gray-400 size-10" />
+              </div>
+              <span>{seat.seat}</span>
+            </button>
+          </TooltipTrigger>
+          {user.role && tooltipText && (
+            <TooltipContent>{tooltipText}</TooltipContent>
+          )}{" "}
+        </Tooltip>
+      </TooltipProvider>
     );
   };
 
@@ -94,16 +150,24 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
                 <span>{translate("বিক্রয়কৃত (পুরুষ)", "Sold (Male)")}</span>
               </li>
               <li className="flex items-center gap-x-2">
-                <span className="block size-4 bg-purple-600 rounded-md"></span>
+                <span className="block size-4 bg-[#BD06D3] rounded-md"></span>
                 <span>{translate("বিক্রয়কৃত (মহিলা)", "Sold (Female)")}</span>
               </li>
               <li className="flex items-center gap-x-2">
-                <span className="block size-4 bg-blue-400 rounded-md"></span>
+                <span className="block size-4 bg-[#00BFFF] rounded-md"></span>
                 <span>{translate("নির্বাচিত", "Selected")}</span>
               </li>
               <li className="flex items-center gap-x-2">
+                <span className="block size-4 border-gray-800 bg-gray-800 rounded-md"></span>
+                <span>{translate("অবরুদ্ধ", "Blocked")}</span>
+              </li>
+              <li className="flex items-center gap-x-2">
+                <span className="block size-4 bg-white text-black rounded-md"></span>
+                <span>{translate("ব্যবহারযোগ্য", "Availabe")}</span>
+              </li>
+              <li className="flex items-center gap-x-2">
                 <span className="block size-4 border-yellow-500 bg-warning/80 rounded-md"></span>
-                <span>{translate("অবরুদ্ধ", "Booked")}</span>
+                <span>{translate("বুক করা", "Booked")}</span>
               </li>
             </ul>
           </div>
