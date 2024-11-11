@@ -17,6 +17,7 @@ export interface ISearchInputLabelPlaceholderProps {
   station: ILabelPlaceholder;
   fare: ILabelPlaceholder;
   seat: ILabelPlaceholder;
+  helper: ILabelPlaceholder;
 }
 
 export const searchInputLabelPlaceholder: ISearchInputLabelPlaceholderProps = {
@@ -88,6 +89,16 @@ export const searchInputLabelPlaceholder: ISearchInputLabelPlaceholderProps = {
     placeholder: {
       en: "Enter driver name/ phone",
       bn: "ড্রাইভারের নাম/ ফোন লিখুন",
+    },
+  },
+  helper: {
+    label: {
+      en: "Enter Helper Name/ Phone",
+      bn: "সাহায্যকারী নাম/ ফোন লিখুন",
+    },
+    placeholder: {
+      en: "Enter helper name/ phone",
+      bn: "সাহায্যকারী নাম/ ফোন লিখুন",
     },
   },
   counter: {

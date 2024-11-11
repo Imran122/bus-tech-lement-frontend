@@ -80,6 +80,12 @@ const contactsManagementLinks = {
     },
     {
       icon: LuUserCheck,
+      label: { bn: "সাহায্যকারী তালিকা", en: "Helper List" },
+      key: "helper_list",
+      href: "helper_list",
+    },
+    {
+      icon: LuUserCheck,
       label: { bn: "কাউন্টার তালিকা", en: "Counter List" },
       key: "counter_list",
       href: "counter_list",
