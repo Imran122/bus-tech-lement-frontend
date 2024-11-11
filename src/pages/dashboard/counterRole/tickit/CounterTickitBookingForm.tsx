@@ -62,6 +62,15 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Status from "./Status";
+import TripSheet from "./TripSheet";
+import SeatStatus from "./SeatStatus";
 
 interface ICounterBookingFormProps {
   bookingCoach: any;
@@ -84,6 +93,18 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   const [expirationTime, setExpirationTime] = useState<Date>(new Date());
   const { translate } = useCustomTranslator();
   const user = useSelector((state: any) => state.user);
+  const [status, setStatus] = useState(false);
+  const [statusBookingCoach, setStatusBookingCoach] = useState({
+    CounterBookedSeat:[],
+    orderSeat:[]
+  });
+  const [tripSheet, setTripSheet] = useState(false);
+
+  const [seatStatus, setSeatStatus] = useState(false);
+  const [seatStatusBooking, setSeatStatusBooking] = useState({
+    CounterBookedSeat:[],
+    orderSeat:[],
+  });
 
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [bookingFormState, setBookingFormState] =
@@ -148,6 +169,21 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       seats: [],
     },
   });
+
+  useEffect(() =>{
+    if(bookingCoach){
+      setStatusBookingCoach({
+        CounterBookedSeat:bookingCoach?.CounterBookedSeat,
+        orderSeat:bookingCoach?.orderSeat
+      })
+    }
+  
+    setSeatStatusBooking({
+      CounterBookedSeat:bookingCoach?.CounterBookedSeat,
+      orderSeat:bookingCoach?.orderSeat
+    })
+  } ,[bookingCoach])
+
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset({
@@ -246,9 +282,9 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     totalSeats,
     user.id,
   ]);
-  console.log("bookingType:---x", bookingType);
-  console.log("expirationDate:---::", expirationDate);
-  console.log("selectedSeats QQ:---::", bookingCoach);
+  // console.log("bookingType:---x", bookingType);
+  // console.log("expirationDate:---::", expirationDate);
+  // console.log("selectedSeats QQ:---::", bookingCoach);
   const paymentType = watch("paymentType");
   const partialAmount = watch("paymentAmount");
   const paymentMethod = watch("paymentMethod");
@@ -395,10 +431,75 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
             </div>
           )}
         </PageTransition>
+
+        <div className="flex items-center gap-5 mx-9">
+          {/* STATUS BUTTON */}
+          <Dialog
+            open={status}
+            onOpenChange={(open: boolean) => setStatus(open)}
+          >
+            <DialogTrigger asChild>
+              <Button
+                className="group relative px-10"
+                variant="default"
+                size="icon"
+              >
+                <span className="">{translate("অবস্থা", "Status")}</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent size="lg">
+              <DialogTitle className="sr-only">status</DialogTitle>
+              <Status bookingCoach={statusBookingCoach}/>
+            </DialogContent>
+          </Dialog>
+
+          {/* STRIP SHEET BUTTON */}
+          <Dialog
+            open={tripSheet}
+            onOpenChange={(open: boolean) => setTripSheet(open)}
+          >
+            <DialogTrigger asChild>
+              <Button
+                className="group relative px-14"
+                variant="outline"
+                size="icon"
+              >
+                <span className="">
+                  {translate("ট্রিপ তালিকার ", "Trip Sheet")}
+                </span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent size="xl">
+              <DialogTitle className="sr-only">Strip sheet</DialogTitle>
+              <TripSheet bookingCoach={bookingCoach}/>
+            </DialogContent>
+          </Dialog>
+
+          {/* SEAT STATUS */}
+          <Dialog
+            open={seatStatus}
+            onOpenChange={(open: boolean) => setSeatStatus(open)}
+          >
+            <DialogTrigger asChild>
+              <Button
+                className="group relative px-14"
+                variant="destructive"
+                size="icon"
+              >
+                <span className="">
+                  {translate("আসন অবস্থা", "Seat Status")}
+                </span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent size="xl">
+              <DialogTitle className="sr-only">seat status</DialogTitle>
+              <SeatStatus bookingCoach={seatStatusBooking}/>
+            </DialogContent>
+          </Dialog>
+        </div>
         {/* seat issue or seat booking part counter */}
         <div className="flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
           {/* COUCH SEAT PLAN CONTAINER */}
-
           <PageTransition className="w-4/12 flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <SeatLayoutSelector
               checkingSeat={checkingSeat}
