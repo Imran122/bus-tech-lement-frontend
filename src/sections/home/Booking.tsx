@@ -45,23 +45,26 @@ export interface IBookingStateProps {
   returnCalenderOpen: boolean;
   coachType: string;
   date: Date | null;
-  returnDate: Date | null;
+  returnDate?: Date | null;
   bookingCoachesList: any[];
-  returnBookingCoachesList: any[];
+  roundTripGobookingCoachesList: any[];
+  roundTripReturnBookingCoachesList: any[];
 }
 
 const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   const { translate } = useCustomTranslator();
   const [tripType, setTripType] = useState("One_Trip");
-  //console.log("bookingState@@", bookingState);
+  // console.log("bookingState@@", bookingState);
+
   const shouldFetchData = Boolean(
     bookingState.fromCounterId &&
       bookingState.destinationCounterId &&
       bookingState.coachType &&
       bookingState.date &&
-      bookingState.returnDate &&
+      (tripType === "One_Trip" || bookingState.returnDate) &&
       tripType
   );
+
   const { data: bookingCoachesData, isLoading: coachListLoading } =
     useGetBookingCoachesQuery(
       shouldFetchData
@@ -72,24 +75,41 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
             coachType: bookingState.coachType,
             date: bookingState.date && format(bookingState.date, "yyyy-MM-dd"),
             returnDate:
-              bookingState.returnDate &&
-              format(bookingState.returnDate, "yyyy-MM-dd"),
+              tripType !== "One_Trip" && bookingState.returnDate
+                ? format(bookingState.returnDate, "yyyy-MM-dd")
+                : undefined, // Only include returnDate if it's a round trip
           }
         : {}, // Provide empty query parameters if conditions aren't met
       { skip: !shouldFetchData } // Skip fetching if required fields are missing
     ) as any;
+
+  // Clear previous data when trip type changes
+  useEffect(() => {
+    setBookingState((prevState: IBookingStateProps) => ({
+      ...prevState,
+      bookingCoachesList: [],
+      roundTripGobookingCoachesList: [],
+      roundTripReturnBookingCoachesList: [],
+    }));
+  }, [tripType, setBookingState]);
+
+  // Fetch data and populate the appropriate lists based on trip type
   useEffect(() => {
     if (shouldFetchData && bookingCoachesData?.data) {
-      setBookingState((prevState: IBookingStateProps) => ({
-        ...prevState,
-        bookingCoachesList: bookingCoachesData.data,
-        returnBookingCoachesList: bookingCoachesData.returnData,
-      }));
-    } else {
-      setBookingState((prevState: IBookingStateProps) => ({
-        ...prevState,
-        bookingCoachesList: [],
-      }));
+      if (tripType === "Round_Trip") {
+        setBookingState((prevState: IBookingStateProps) => ({
+          ...prevState,
+          roundTripGobookingCoachesList: bookingCoachesData.data,
+          roundTripReturnBookingCoachesList: bookingCoachesData.returnData,
+        }));
+      } else {
+        setBookingState((prevState: IBookingStateProps) => ({
+          ...prevState,
+          bookingCoachesList: bookingCoachesData.data,
+          roundTripGobookingCoachesList: [],
+          roundTripReturnBookingCoachesList: [],
+        }));
+      }
     }
   }, [
     shouldFetchData,
@@ -100,6 +120,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
     bookingState.returnDate,
     bookingCoachesData,
     setBookingState,
+    tripType,
   ]);
 
   //console.log("tripType", tripType);

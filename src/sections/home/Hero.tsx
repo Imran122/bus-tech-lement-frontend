@@ -24,7 +24,9 @@ const Hero: FC<IHeroProps> = () => {
     date: null,
     returnDate: null,
     bookingCoachesList: [],
-    returnBookingCoachesList: [],
+
+    roundTripGobookingCoachesList: [],
+    roundTripReturnBookingCoachesList: [],
   });
   return (
     <SectionWrapper className="px-4">
