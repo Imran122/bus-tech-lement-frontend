@@ -26,7 +26,8 @@ export default function SearchResult({
           )}
       </Accordion>
       {bookingState.returnBookingCoachesList?.length > 0 && (
-        <div className="my-2 flex justify-center items-center border-2 rounded-md border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+        <div className="my-2 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+          <h2>Return Ticket Selected</h2>
           <span className="py-3">
             <PiKeyReturnBold size={24} />
           </span>

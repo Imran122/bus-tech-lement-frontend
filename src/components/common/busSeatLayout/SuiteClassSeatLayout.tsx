@@ -30,7 +30,7 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
   bookingCoach,
 }) => {
   const { translate } = useCustomTranslator();
-  console.log("bookingFormState suite:--", bookingFormState);
+  //console.log("bookingFormState suite:--", bookingFormState);
 
   const user = useSelector((state: any) => state.user);
 
@@ -92,13 +92,13 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
     );
     const isBookedByOtherCounter =
       bookedByCounter && bookedByCounter.counter.id !== user.id;
-    const tooltipText = isBookedByOtherCounter
-      ? bookedByCounter?.counter?.userName
-      : "";
+
     const shouldDisableSeat = !user.role
       ? isOrdered || bookedByCounter || isBlockedSeat // User role: disable ordered & all booked seats
       : isOrdered || isBookedByOtherCounter || isBlockedSeat; // Counter role: disable ordered & other counters' booked seats
-
+    const tooltipText = isBookedByOtherCounter
+      ? `Name: ${bookedByCounter?.counter?.userName}, Address:${bookedByCounter?.counter?.counter?.address}, Phone:${bookedByCounter?.counter?.counter?.phone}`
+      : "";
     //console.log("isBookedByOtherCounter", isBookedByOtherCounter);
     //console.log("tooltipText:", tooltipText);
     return (

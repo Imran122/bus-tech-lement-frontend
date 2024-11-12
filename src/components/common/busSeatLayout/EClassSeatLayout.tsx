@@ -100,7 +100,7 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
 
     // Tooltip message if the seat is booked by another counter
     const tooltipText = isBookedByOtherCounter
-      ? bookedByCounter?.counter?.userName
+      ? `Name: ${bookedByCounter?.counter?.userName}, Address:${bookedByCounter?.counter?.counter?.address}, Phone:${bookedByCounter?.counter?.counter?.phone}`
       : "";
 
     return (
