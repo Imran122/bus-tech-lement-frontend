@@ -19,9 +19,10 @@ const Hero: FC<IHeroProps> = () => {
     calenderOpen: false,
     fromCounterId: null,
     destinationCounterId: null,
-
+    returnCalenderOpen: false,
     coachType: "",
     date: null,
+    returnDate: null,
     bookingCoachesList: [],
     returnBookingCoachesList: [],
   });
