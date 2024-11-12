@@ -42,21 +42,24 @@ export interface IBookingStateProps {
   calenderOpen: boolean;
   fromCounterId: number | null;
   destinationCounterId: number | null;
-
+  returnCalenderOpen: boolean;
   coachType: string;
   date: Date | null;
+  returnDate: Date | null;
   bookingCoachesList: any[];
+  returnBookingCoachesList: any[];
 }
 
 const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   const { translate } = useCustomTranslator();
   const [tripType, setTripType] = useState("One_Trip");
-  console.log("bookingState@@", bookingState);
+  //console.log("bookingState@@", bookingState);
   const shouldFetchData = Boolean(
     bookingState.fromCounterId &&
       bookingState.destinationCounterId &&
       bookingState.coachType &&
       bookingState.date &&
+      bookingState.returnDate &&
       tripType
   );
   const { data: bookingCoachesData, isLoading: coachListLoading } =
@@ -68,6 +71,9 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
             orderType: tripType,
             coachType: bookingState.coachType,
             date: bookingState.date && format(bookingState.date, "yyyy-MM-dd"),
+            returnDate:
+              bookingState.returnDate &&
+              format(bookingState.returnDate, "yyyy-MM-dd"),
           }
         : {}, // Provide empty query parameters if conditions aren't met
       { skip: !shouldFetchData } // Skip fetching if required fields are missing
@@ -77,6 +83,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
       setBookingState((prevState: IBookingStateProps) => ({
         ...prevState,
         bookingCoachesList: bookingCoachesData.data,
+        returnBookingCoachesList: bookingCoachesData.returnData,
       }));
     } else {
       setBookingState((prevState: IBookingStateProps) => ({
@@ -90,11 +97,12 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
     bookingState.destinationCounterId,
     bookingState.coachType,
     bookingState.date,
+    bookingState.returnDate,
     bookingCoachesData,
     setBookingState,
   ]);
 
-  console.log("tripType", tripType);
+  //console.log("tripType", tripType);
   console.log("bookingCoachesData:--->>", bookingCoachesData);
   const { data: countersData, isLoading: countersLoading } =
     useGetCountersQuery({}) as any;
@@ -240,7 +248,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                     </SelectContent>
                   </Select>
                 </li>
-                {/* DATE */}
+                {/*GOING DATE */}
                 <li>
                   <Popover
                     open={bookingState.calenderOpen}
@@ -290,6 +298,62 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                     </PopoverContent>
                   </Popover>
                 </li>
+
+                {/*RETURN DATE */}
+                {tripType === "Round_Trip" && (
+                  <li>
+                    <Popover
+                      open={bookingState.returnCalenderOpen}
+                      onOpenChange={(open) =>
+                        setBookingState((prevState: IBookingStateProps) => ({
+                          ...prevState,
+                          returnCalenderOpen: open,
+                        }))
+                      }
+                    >
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
+                            !bookingState.returnDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {bookingState.returnDate ? (
+                            format(bookingState.returnDate, "PPP")
+                          ) : (
+                            <span>
+                              {translate(
+                                "ফেরার তারিখ নির্বাচন করুন",
+                                "Pick Return Booking Date"
+                              )}
+                            </span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="end">
+                        <Calendar
+                          mode="single"
+                          // captionLayout="dropdown-buttons"
+                          selected={bookingState?.returnDate || new Date()}
+                          onSelect={(date) => {
+                            setBookingState(
+                              (prevState: IBookingStateProps) => ({
+                                ...prevState,
+                                returnDate: date || new Date(),
+                                returnCalenderOpen: false,
+                              })
+                            );
+                          }}
+                          fromYear={1960}
+                          toYear={new Date().getFullYear()}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </li>
+                )}
+
                 <li>
                   <TooltipProvider>
                     <Tooltip>

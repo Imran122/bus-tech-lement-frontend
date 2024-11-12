@@ -42,7 +42,7 @@ const bookingApi = apiSlice.injectEndpoints({
     //GETTING ALL COACH
     getBookingCoaches: builder.query({
       query: (data) => ({
-        url: `/coach-config/get-coach-list?fromCounterId=${data?.fromCounterId}&destinationCounterId=${data?.destinationCounterId}&coachType=${data?.coachType}&date=${data?.date}&orderType=${data?.orderType}`,
+        url: `/coach-config/get-coach-list?fromCounterId=${data?.fromCounterId}&destinationCounterId=${data?.destinationCounterId}&coachType=${data?.coachType}&date=${data?.date}&returnDate=${data.returnDate}&orderType=${data?.orderType}`,
         method: "GET",
       }),
 
