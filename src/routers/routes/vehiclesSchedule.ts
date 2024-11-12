@@ -40,6 +40,7 @@ export const vehiclesSchedule: IRouteProps[] = [
     path: "coach_configs",
     element: React.createElement(CoachConfigurationList),
   },
+
   {
     path: "fare_list",
     element: React.createElement(FareList),
