@@ -25,11 +25,14 @@ export default function SearchResult({
             )
           )}
       </Accordion>
-      <div className="my-2 flex justify-center items-center border-2 rounded-md border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
-        <span className="py-3">
-          <PiKeyReturnBold size={24} />
-        </span>
-      </div>
+      {bookingState.returnBookingCoachesList?.length > 0 && (
+        <div className="my-2 flex justify-center items-center border-2 rounded-md border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+          <span className="py-3">
+            <PiKeyReturnBold size={24} />
+          </span>
+        </div>
+      )}
+
       <Accordion className=" w-full space-y-3" type="single" collapsible>
         {bookingState.returnBookingCoachesList?.length > 0 &&
           bookingState?.returnBookingCoachesList?.map(
