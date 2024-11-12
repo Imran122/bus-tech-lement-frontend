@@ -41,11 +41,12 @@ import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 
 interface IBookingFormProps {
@@ -60,37 +61,32 @@ export interface IBookingFormStateProps {
 }
 
 const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
+  bookingFormState,
+  goViaRoute,
+  returnViaRoute,
   bookingCoach,
+  setBookingFormState,
+  onClose,
 }) => {
   const { translate } = useCustomTranslator();
-  console.log("zzz:", bookingCoach);
-  const [bookingFormState, setBookingFormState] =
-    useState<IBookingFormStateProps>({
-      selectedSeats: [],
-      targetedSeat: null,
-      redirectLink: null,
-      customerName: null,
-      redirectConfirm: false,
-    });
 
   const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
-    useAddBookingMutation({}) as any;
+    useAddBookingMutation() as any;
   const [
     addBookingPayment,
     { isLoading: addBookingPaymentLoading, error: addBookingPaymentError },
-  ] = useAddBookingPaymentMutation({}) as any;
+  ] = useAddBookingPaymentMutation() as any;
   const [addBookingSeat, { isLoading: addBookingSeatLoading }] =
-    useAddBookingSeatMutation({}) as any;
+    useAddBookingSeatMutation() as any;
   const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
-    useRemoveBookingSeatMutation({}) as any;
+    useRemoveBookingSeatMutation() as any;
   const [
     checkingSeat,
     { isLoading: checkingSeatLoading, error: checkingSeatError },
-  ] = useCheckingSeatMutation({}) as any;
+  ] = useCheckingSeatMutation() as any;
 
   const totalAmount =
     totalCalculator(bookingFormState?.selectedSeats, "currentAmount") || 0;
-
   const totalSeats = bookingFormState?.selectedSeats?.length || 0;
 
   const {
@@ -106,16 +102,17 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       amount: 0,
     },
   });
+  const dispatch = useDispatch();
 
   const partialAmount = watch("paymentAmount");
   const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
+
   const handleBookingSeat = async (seatData: any) => {
     const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
       (current: any) => current.seat === seatData.seat
     );
 
     if (isSeatAlreadySelected) {
-      // Remove the seat if it's already selected
       const result = await removeBookingSeat({
         coachConfigId: bookingCoach?.id,
         date: bookingCoach?.departureDate,
@@ -132,7 +129,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
         }));
       }
     } else {
-      // Add the seat if it's not already selected
       const result = await addBookingSeat({
         coachConfigId: bookingCoach?.id,
         date: bookingCoach?.departureDate,
@@ -157,9 +153,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   };
 
   useEffect(() => {
-    //@ts-ignore
     setValue("coachConfigId", bookingCoach?.id);
-    //@ts-ignore
     setValue("schedule", bookingCoach?.schedule);
     setValue("amount", totalAmount);
     setValue("noOfSeat", totalSeats);
@@ -212,7 +206,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
         });
       }, 3000);
 
-      // Mark redirectConfirm as false to prevent re-running this effect
       setBookingFormState((prevState: IBookingFormStateProps) => ({
         ...prevState,
         redirectConfirm: false,
@@ -224,8 +217,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     bookingFormState?.customerName,
     translate,
   ]);
-  const paymentType = watch("paymentType"); // Watch the paymentType value
-  console.log("bookingFormState", bookingFormState);
+
+  const paymentType = watch("paymentType");
+
   const onSubmit = async (data: AddBookingSeatDataProps) => {
     const cleanedData = removeFalsyProperties(data, [
       "nid",
@@ -235,13 +229,14 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       "customerName",
       "gender",
     ]);
+
     const check = await checkingSeat({
       coachConfigId: bookingCoach?.id,
       schedule: bookingCoach.schedule,
       date: bookingCoach.departureDate,
       seats: cleanedData?.seats,
     });
-    console.log("data", data);
+
     if (check?.data?.data?.available) {
       const finalData = {
         ...cleanedData,
@@ -266,18 +261,14 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
             customerName: booking.data?.data?.customerName,
             redirectConfirm: true,
           }));
+          onClose();
         }
       }
     } else {
       const targetSeat = check?.data?.message?.split(" ")[0];
-
       toast.warning(
-        translate(
-          `দুঃখিত, আপনার নির্বাচিত সিট "${targetSeat}" এখন আর পাওয়া যাচ্ছে না। আপনি অন্য একটি সিট নির্বাচন করতে পারেন।`,
-          `Sorry, your selected seat "${targetSeat}" is no longer available. You can choose another seat.`
-        )
+        `Seat "${targetSeat}" is no longer available. Choose another seat.`
       );
-
       playSound("warning");
     }
   };
@@ -287,9 +278,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
           {/* COUCH SEAT PLAN CONTAINER */}
-          <div></div>
+
           {/* CUSTOMER & PAYMENT INFORMATION */}
-          <PageTransition className="flex flex-col justify-between h-full w-8/12">
+          <PageTransition className="flex flex-col justify-between h-full w-full">
             <div>
               <Heading size="h4">
                 {translate(
@@ -406,20 +397,18 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {bookingCoach?.route?.viaRoute?.length > 0 &&
-                            bookingCoach?.route?.viaRoute?.map(
-                              (singlePoint: any) => (
-                                <SelectItem
-                                  key={singlePoint.en}
-                                  value={singlePoint?.station?.name}
-                                >
-                                  {formatter({
-                                    type: "words",
-                                    words: singlePoint?.station?.name,
-                                  })}
-                                </SelectItem>
-                              )
-                            )}
+                          {goViaRoute.length > 0 &&
+                            goViaRoute?.map((singlePoint: any) => (
+                              <SelectItem
+                                key={singlePoint.en}
+                                value={singlePoint}
+                              >
+                                {formatter({
+                                  type: "words",
+                                  words: singlePoint,
+                                })}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </InputWrapper>
@@ -450,8 +439,8 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {bookingCoach?.route?.viaRoute?.length > 0 &&
-                            bookingCoach?.route?.viaRoute
+                          {returnViaRoute.length > 0 &&
+                            returnViaRoute
                               ?.filter(
                                 (target: any) =>
                                   target?.station?.name !==
@@ -460,11 +449,11 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                               ?.map((singlePoint: any) => (
                                 <SelectItem
                                   key={singlePoint.en}
-                                  value={singlePoint?.station?.name}
+                                  value={singlePoint}
                                 >
                                   {formatter({
                                     type: "words",
-                                    words: singlePoint?.station?.name,
+                                    words: singlePoint,
                                   })}
                                 </SelectItem>
                               ))}

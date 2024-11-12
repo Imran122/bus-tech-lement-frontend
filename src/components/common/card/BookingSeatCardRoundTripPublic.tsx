@@ -5,7 +5,6 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { IBookingStateProps } from "@/sections/home/Booking";
-import { IBookingFormStateProps } from "@/sections/home/BoookingFormRoundTripPublic";
 import {
   useAddBookingSeatMutation,
   useCheckingSeatMutation,
@@ -16,8 +15,7 @@ import { convertTimeToBengali } from "@/utils/helpers/convertTimeToBengali";
 import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { FC, useState } from "react";
-import { Link } from "react-router-dom";
+import { FC, useEffect, useState } from "react";
 import SeatLayoutSelector from "../busSeatLayout/SeatLayoutSelector";
 import PageTransition from "../effect/PageTransition";
 import CardWrapper from "../wrapper/CardWrapper";
@@ -32,15 +30,12 @@ interface IBookingSeatCardProps {
 const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
   coachData,
   index,
+  bookingFormState,
+  setBookingFormState,
+  setGoViaRoute,
+  setReturnViaRoute,
+  setBookingCoachSingle,
 }) => {
-  const [bookingFormState, setBookingFormState] =
-    useState<IBookingFormStateProps>({
-      selectedSeats: [],
-      targetedSeat: null,
-      redirectLink: null,
-      customerName: null,
-      redirectConfirm: false,
-    });
   const { translate } = useCustomTranslator();
   const [addBookingSeat, { isLoading: addBookingSeatLoading }] =
     useAddBookingSeatMutation({}) as any;
@@ -50,7 +45,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
     useState<any>({});
   console.log("all coach:--", coachData);
   console.log("bookingFormState:--", bookingFormState);
-  console.log("selected data for book;", selectedselectedBookingCoach);
+  console.log("ccccc", selectedselectedBookingCoach);
   const totalAvaliableSetas =
     coachData?.seatAvailable - coachData?.CounterBookedSeat.length;
   const [
@@ -126,6 +121,21 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
         }));
       }
     }
+  };
+  // Effect to set goViaRoute and returnViaRoute based on coachData.route.viaRoute
+  useEffect(() => {
+    if (coachData?.route) {
+      const viaRoutes = coachData.route.viaRoute?.map(
+        (routePoint: any) => routePoint.station.name
+      );
+      if (viaRoutes) {
+        setGoViaRoute(viaRoutes);
+        setReturnViaRoute(viaRoutes.reverse());
+      }
+    }
+  }, [coachData, setGoViaRoute, setReturnViaRoute]);
+  const handleViewSeats = () => {
+    setBookingCoachSingle(coachData); // Sets the current booking coach
   };
   return (
     <AccordionItem value={index?.toString()}>
@@ -249,10 +259,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
             </li>
             <li className="ml-6 px-3">
               <AccordionTrigger className="hover:no-underline border backdrop-blur-sm py-1 px-2 rounded-md">
-                <span
-                  onClick={() => setSelectedselectedBookingCoach(coachData.id)}
-                  className="mr-1"
-                >
+                <span onClick={handleViewSeats} className="mr-1">
                   View Seats
                 </span>
               </AccordionTrigger>
@@ -275,14 +282,6 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
                 addBookingSeatLoading={addBookingSeatLoading}
                 removeBookingSeatLoading={removeBookingSeatLoading}
               />
-            </div>
-            <div className="w-full max-w-xs text-center">
-              <Link
-                to="/public-seat-form"
-                className="block px-6 py-3 text-xl bg-primary text-white rounded-md hover:bg-primary-dark"
-              >
-                Proceed
-              </Link>
             </div>
           </div>
         </PageTransition>
