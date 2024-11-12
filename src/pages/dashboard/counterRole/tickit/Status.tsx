@@ -11,8 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Loader } from "@/components/common/Loader";
 import PdfStatusReport from "../../pdf/PdfStatus";
 import StatusExel from "../../exel/StatusExel";
 
@@ -92,7 +90,7 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
             document={<PdfStatusReport result={result} />}
             fileName="counter_booking_status_report.pdf"
           >
-            {({ loading }: { loading: boolean }) => (
+            {/* {({ loading }: { loading: boolean }) => (
               <>
                 {loading ? (
                   <Button
@@ -109,7 +107,7 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
                   </Button>
                 )}
               </>
-            )}
+            )} */}
           </PDFDownloadLink>
         </li>
       </ul>

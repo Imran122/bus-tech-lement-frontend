@@ -1,4 +1,4 @@
-import { Heading } from "@/components/common/typography/Heading";
+
 import InfoWrapper from "@/components/common/wrapper/InfoWrapper";
 import {
   Table,
@@ -31,7 +31,7 @@ interface ITripSheet {
 }
 
 const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
-  const { appName, logo } = appConfiguration;
+  const { logo } = appConfiguration;
   const {
     orderSeat,
     seatAvailable,
