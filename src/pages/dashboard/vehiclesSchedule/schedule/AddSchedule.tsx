@@ -1,19 +1,19 @@
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
+import { TimePicker } from "@/components/common/form/TimePicker";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  AddUpdateScheduleDataProps,
+  addUpdateScheduleSchema,
+} from "@/schemas/vehiclesSchedule/addUpdateScheduleSchema";
+import { useAddScheduleMutation } from "@/store/api/vehiclesSchedule/scheduleApi";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  AddUpdateScheduleDataProps,
-  addUpdateScheduleSchema,
-} from "@/schemas/vehiclesSchedule/addUpdateScheduleSchema";
 import { IScheduleStateProps } from "./ScheduleList";
-import { TimePicker } from "@/components/common/form/TimePicker";
-import { useAddScheduleMutation } from "@/store/api/vehiclesSchedule/scheduleApi";
 
 interface IAddScheduleProps {
   setScheduleState: (
@@ -38,8 +38,11 @@ const AddSchedule: FC<IAddScheduleProps> = ({ setScheduleState }) => {
 
   useEffect(() => {
     if (date) {
-      setValue("time", date?.toLocaleTimeString());
-
+      // Format the time to exclude seconds
+      setValue(
+        "time",
+        date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      );
       setError("time", { type: "custom", message: "" });
     } else {
       setError("time", { type: "custom", message: "Time is required" });
@@ -87,7 +90,13 @@ const AddSchedule: FC<IAddScheduleProps> = ({ setScheduleState }) => {
             <TimePicker date={date} setDate={setDate} />
             <div className="mt-3">
               {translate("নির্বাচিত সময়সূচীঃ ", " Selected Time: ")}
-              {date?.toLocaleTimeString()}
+              {
+                //@ts-ignore
+                date.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              }
             </div>
           </InputWrapper>
         </div>

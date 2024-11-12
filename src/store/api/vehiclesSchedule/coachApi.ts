@@ -46,7 +46,7 @@ const coachApi = apiSlice.injectEndpoints({
     // DELETING COACH
     deleteCoach: builder.mutation({
       query: (id) => ({
-        url: `/coach/delete-coach/${id}`,
+        url: `/coach/delete-coach-single/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["coach"],
