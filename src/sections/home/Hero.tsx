@@ -23,6 +23,7 @@ const Hero: FC<IHeroProps> = () => {
     coachType: "",
     date: null,
     bookingCoachesList: [],
+    returnBookingCoachesList: [],
   });
   return (
     <SectionWrapper className="px-4">
