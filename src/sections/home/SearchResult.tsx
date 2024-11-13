@@ -109,7 +109,7 @@ export default function SearchResult({
       </Accordion>
 
       {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
-        <div className="w-full max-w-xs text-center">
+        <div className="w-full mt-5 max-w-xs text-center">
           <button
             onClick={handleProceedClick}
             className="block px-6 py-3 text-xl bg-primary text-white rounded-md hover:bg-primary-dark"

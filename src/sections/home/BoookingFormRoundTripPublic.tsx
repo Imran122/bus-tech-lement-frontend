@@ -46,7 +46,6 @@ import { useForm } from "react-hook-form";
 
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
-import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 
 interface IBookingFormProps {
@@ -102,7 +101,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       amount: 0,
     },
   });
-  const dispatch = useDispatch();
 
   const partialAmount = watch("paymentAmount");
   const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
@@ -258,8 +256,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
 
       if (booking.data?.success) {
         console.log("finalDataqq:-", finalData);
-        onClose();
-        return;
+
         const payment = await addBookingPayment(booking?.data?.data?.id);
         if (payment.data?.success) {
           playSound("success");
@@ -270,6 +267,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
             redirectConfirm: true,
           }));
         }
+        onClose();
       }
     } else {
       const targetSeat = check?.data?.message?.split(" ")[0];
@@ -442,6 +440,106 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                             placeholder={translate(
                               addBookingSeatForm.droppingPoint.placeholder.bn,
                               addBookingSeatForm.droppingPoint.placeholder.en
+                            )}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {returnViaRoute.length > 0 &&
+                            returnViaRoute
+                              ?.filter(
+                                (target: any) =>
+                                  target?.station?.name !==
+                                  watch("boardingPoint")
+                              )
+                              ?.map((singlePoint: any) => (
+                                <SelectItem
+                                  key={singlePoint.en}
+                                  value={singlePoint}
+                                >
+                                  {formatter({
+                                    type: "words",
+                                    words: singlePoint,
+                                  })}
+                                </SelectItem>
+                              ))}
+                        </SelectContent>
+                      </Select>
+                    </InputWrapper>
+                    {/* BOARDING POINT */}
+                    <InputWrapper
+                      error={errors?.returnBoardingPoint?.message}
+                      labelFor="returnBoardingPoint"
+                      label={translate(
+                        addBookingSeatForm.returnBoardingPoint.label.bn,
+                        addBookingSeatForm.returnBoardingPoint.label.en
+                      )}
+                    >
+                      <Select
+                        onValueChange={(value: string) => {
+                          setValue("returnBoardingPoint", value);
+                          setError("returnBoardingPoint", {
+                            type: "custom",
+                            message: "",
+                          });
+                        }}
+                      >
+                        <SelectTrigger
+                          id="returnBoardingPoint"
+                          className="w-full"
+                        >
+                          <SelectValue
+                            placeholder={translate(
+                              addBookingSeatForm.returnBoardingPoint.placeholder
+                                .bn,
+                              addBookingSeatForm.returnBoardingPoint.placeholder
+                                .en
+                            )}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {goViaRoute.length > 0 &&
+                            goViaRoute?.map((singlePoint: any) => (
+                              <SelectItem
+                                key={singlePoint.en}
+                                value={singlePoint}
+                              >
+                                {formatter({
+                                  type: "words",
+                                  words: singlePoint,
+                                })}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </InputWrapper>
+                    {/* DROPPING POINT */}
+                    <InputWrapper
+                      error={errors?.returnDroppingPoint?.message}
+                      labelFor="returnDroppingPoint"
+                      label={translate(
+                        addBookingSeatForm.returnDroppingPoint.label.bn,
+                        addBookingSeatForm.returnDroppingPoint.label.en
+                      )}
+                    >
+                      <Select
+                        onValueChange={(value: string) => {
+                          setValue("returnDroppingPoint", value);
+                          setError("returnDroppingPoint", {
+                            type: "custom",
+                            message: "",
+                          });
+                        }}
+                      >
+                        <SelectTrigger
+                          id="returnDroppingPoint"
+                          className="w-full"
+                        >
+                          <SelectValue
+                            placeholder={translate(
+                              addBookingSeatForm.returnDroppingPoint.placeholder
+                                .bn,
+                              addBookingSeatForm.returnDroppingPoint.placeholder
+                                .en
                             )}
                           />
                         </SelectTrigger>

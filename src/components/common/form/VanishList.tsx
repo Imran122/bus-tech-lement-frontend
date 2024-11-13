@@ -1,7 +1,3 @@
-import { AnimatePresence, useAnimate, usePresence } from "framer-motion";
-import { FC, useEffect } from "react";
-import { motion } from "framer-motion";
-import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,10 +10,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { LuTrash2 } from "react-icons/lu";
-import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
+import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
+import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import {
+  AnimatePresence,
+  motion,
+  useAnimate,
+  usePresence,
+} from "framer-motion";
+import { FC, useEffect } from "react";
+import { LuTrash2 } from "react-icons/lu";
 
 export const List = <T extends { id: number; checked: false }>({
   items,
@@ -139,7 +143,7 @@ export const VanishList: FC<IVanishListProps> = ({
   handleBookingSeat,
 }) => {
   const { translate } = useCustomTranslator();
-
+  console.log("listItems", listItems);
   return (
     <section className="h-full ">
       <div className="mx-auto w-full">

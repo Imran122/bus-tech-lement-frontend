@@ -131,7 +131,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
       }
     }
   }, [coachData, setGoViaRoute, setReturnViaRoute]);
-  const handleViewSeats = () => {};
+
   return (
     <AccordionItem value={index?.toString()}>
       <CardWrapper rounded="md" variant="muted" className="p-4 ">

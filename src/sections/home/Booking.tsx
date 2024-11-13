@@ -1,5 +1,4 @@
 import PageTransition from "@/components/common/effect/PageTransition";
-import DetailsSkeleton from "@/components/common/skeleton/DetailsSkeleton";
 import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
 import { Heading } from "@/components/common/typography/Heading";
 import { Label } from "@/components/common/typography/Label";
@@ -127,9 +126,9 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   console.log("bookingCoachesData:--->>", bookingCoachesData);
   const { data: countersData, isLoading: countersLoading } =
     useGetCountersQuery({}) as any;
-  if (countersLoading || coachListLoading) {
-    return <DetailsSkeleton />;
-  }
+  // if (countersLoading || coachListLoading) {
+  //   return <DetailsSkeleton />;
+  // }
   return (
     <div className="flex justify-center items-center">
       <PageTransition className=" w-full ">

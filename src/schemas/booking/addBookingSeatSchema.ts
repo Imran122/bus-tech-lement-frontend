@@ -35,6 +35,14 @@ export const addBookingSeatSchema = z.object({
     .string({ required_error: "Dropping point is required" })
     .min(1, "Dropping point is required")
     .or(z.literal("")),
+  returnDroppingPoint: z
+    .string({ required_error: "Return Dropping point is required" })
+    .min(1, "Return Dropping point is required")
+    .or(z.literal("")),
+  returnBoardingPoint: z
+    .string({ required_error: "Return Boarding point is required" })
+    .min(1, "Return Boarding point is required")
+    .or(z.literal("")),
   noOfSeat: z
     .number({ required_error: "Number of seats is required" })
     .int()
