@@ -255,7 +255,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       date: bookingCoach.departureDate,
       seats: cleanedData?.seats,
     });
-    console.log("data", data);
+
     if (check?.data?.data?.available) {
       const finalData = {
         ...cleanedData,
@@ -267,7 +267,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
           date: bookingCoach.departureDate,
         })),
       };
-
+      console.log("finalData:", finalData);
       const booking = await addBooking(finalData);
 
       if (booking.data?.success) {

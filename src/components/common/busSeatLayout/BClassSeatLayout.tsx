@@ -33,7 +33,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
 }) => {
   const { translate } = useCustomTranslator();
   const user = useSelector((state: any) => state.user);
-
+  console.log("dddbookingCoach:--", bookingCoach);
   const getSeatColorClass = (
     seatName: string,
     selected: boolean,

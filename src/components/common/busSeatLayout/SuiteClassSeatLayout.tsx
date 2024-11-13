@@ -30,7 +30,7 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
   bookingCoach,
 }) => {
   const { translate } = useCustomTranslator();
-  //console.log("bookingFormState suite:--", bookingFormState);
+  console.log("dddbookingCoach:--", bookingCoach);
 
   const user = useSelector((state: any) => state.user);
 
