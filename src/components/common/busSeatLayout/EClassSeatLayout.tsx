@@ -20,6 +20,7 @@ interface ISeatLayoutProps {
   addBookingSeatLoading: boolean;
   removeBookingSeatLoading: boolean;
   bookingCoach: any;
+  coachId: any;
 }
 // Helper function to get the seat color class based on status
 
@@ -29,6 +30,7 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
   bookingFormState,
   addBookingSeatLoading,
   bookingCoach,
+  coachId,
 }) => {
   const { translate } = useCustomTranslator();
   // console.log("bookingFormState econ::--", bookingFormState);
@@ -62,7 +64,12 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
     //console.log("order:---", order);
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
-    if (selected) return "border-bule-500 bg-[#00BFFF]";
+    const isSeatSelected = bookingFormState.selectedSeats.some(
+      (selectedSeat: any) =>
+        selectedSeat.seat === seatName && selectedSeat.coachId === coachId
+    );
+
+    if (isSeatSelected) return "bg-blue-500 text-white";
     if (order) {
       return order?.order?.gender === "Male"
         ? "bg-red-700 text-white"

@@ -20,6 +20,7 @@ interface ISeatLayoutProps {
   addBookingSeatLoading: boolean;
   removeBookingSeatLoading: boolean;
   bookingCoach: any;
+  coachId: any;
 }
 
 const BClassSeatLayout: FC<ISeatLayoutProps> = ({
@@ -28,6 +29,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
   bookingFormState,
   bookingCoach,
   addBookingSeatLoading,
+  coachId,
 }) => {
   const { translate } = useCustomTranslator();
   const user = useSelector((state: any) => state.user);
@@ -60,7 +62,12 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
     console.log("bookingCoach:---", bookingCoach);
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
-    if (selected) return "border-bule-500 bg-[#00BFFF]";
+    const isSeatSelected = bookingFormState.selectedSeats.some(
+      (selectedSeat: any) =>
+        selectedSeat.seat === seatName && selectedSeat.coachId === coachId
+    );
+
+    if (isSeatSelected) return "bg-blue-500 text-white";
     if (order) {
       return order?.order?.gender === "Male"
         ? "bg-red-700 text-white"

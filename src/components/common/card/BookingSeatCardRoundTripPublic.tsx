@@ -13,9 +13,10 @@ import {
 import { fallback } from "@/utils/constants/common/fallback";
 import { convertTimeToBengali } from "@/utils/helpers/convertTimeToBengali";
 import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
+import { dynamicSeatAllocation } from "@/utils/helpers/dynamicSeatAllocation";
 import formatter from "@/utils/helpers/formatter";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import SeatLayoutSelector from "../busSeatLayout/SeatLayoutSelector";
 import PageTransition from "../effect/PageTransition";
 import CardWrapper from "../wrapper/CardWrapper";
@@ -35,17 +36,17 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
   setGoViaRoute,
   setReturnViaRoute,
   setBookingCoachSingle,
+  bookingCoachSingle,
 }) => {
   const { translate } = useCustomTranslator();
   const [addBookingSeat, { isLoading: addBookingSeatLoading }] =
     useAddBookingSeatMutation({}) as any;
   const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
     useRemoveBookingSeatMutation({}) as any;
-  const [selectedselectedBookingCoach, setSelectedselectedBookingCoach] =
-    useState<any>({});
+
   console.log("all coach:--", coachData);
   console.log("bookingFormState:--", bookingFormState);
-  console.log("ccccc", selectedselectedBookingCoach);
+  console.log("xxxbookingCoachSinglexxx", bookingCoachSingle);
   const totalAvaliableSetas =
     coachData?.seatAvailable - coachData?.CounterBookedSeat.length;
   const [
@@ -54,23 +55,15 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
   ] = useCheckingSeatMutation({}) as any;
 
   const seatsAllocation = (() => {
-    switch (selectedselectedBookingCoach.coachClass) {
+    switch (bookingCoachSingle?.coachClass) {
       case "E_Class":
-        return dynamicSeatAllocation(
-          selectedselectedBookingCoach?.CoachConfigSeats
-        );
+        return dynamicSeatAllocation(bookingCoachSingle?.CoachConfigSeats);
       case "B_Class":
-        return dynamicSeatAllocation(
-          selectedselectedBookingCoach?.CoachConfigSeats
-        );
+        return dynamicSeatAllocation(bookingCoachSingle?.CoachConfigSeats);
       case "Sleeper":
-        return dynamicSeatAllocation(
-          selectedselectedBookingCoach?.CoachConfigSeats
-        );
+        return dynamicSeatAllocation(bookingCoachSingle?.CoachConfigSeats);
       case "S_Class":
-        return dynamicSeatAllocation(
-          selectedselectedBookingCoach?.CoachConfigSeats
-        );
+        return dynamicSeatAllocation(bookingCoachSingle?.CoachConfigSeats);
       default:
         return { left: [], right: [], lastRow: [], middle: [] };
     }
@@ -114,6 +107,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
             ...prevState.selectedSeats,
             {
               ...seatData,
+              coachId: coachData.id,
               currentAmount: coachData?.fare?.amount,
               previousAmount: coachData?.fare?.amount,
             },
@@ -281,6 +275,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
                 bookingFormState={bookingFormState}
                 addBookingSeatLoading={addBookingSeatLoading}
                 removeBookingSeatLoading={removeBookingSeatLoading}
+                coachId={coachData.id}
               />
             </div>
           </div>

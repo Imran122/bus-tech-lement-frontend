@@ -248,7 +248,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
           date: bookingCoach.departureDate,
         })),
       };
-
+      console.log("finalDataqq:-", finalData);
       const booking = await addBooking(finalData);
 
       if (booking.data?.success) {

@@ -24,10 +24,11 @@ export default function SearchResult({
     });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [bookingCoachSingle, setBookingCoachSingle] = useState({});
+  const [bookingCoachSingle, setBookingCoachSingle] = useState([]);
   const [goViaRoute, setGoViaRoute] = useState([]);
   const [returnViaRoute, setReturnViaRoute] = useState([]);
   console.log("bookingStateaaa", bookingCoachSingle);
+  console.log("bookingFormState", bookingFormState);
   // Open and close modal
   const handleProceedClick = () => {
     setIsModalOpen(true);
@@ -72,6 +73,7 @@ export default function SearchResult({
                 setGoViaRoute={setGoViaRoute}
                 setReturnViaRoute={setReturnViaRoute}
                 setBookingCoachSingle={setBookingCoachSingle}
+                bookingCoachSingle={bookingCoachSingle}
               />
             )
           )}
@@ -100,6 +102,7 @@ export default function SearchResult({
                 setGoViaRoute={setGoViaRoute}
                 setReturnViaRoute={setReturnViaRoute}
                 setBookingCoachSingle={setBookingCoachSingle}
+                bookingCoachSingle={bookingCoachSingle}
               />
             )
           )}
