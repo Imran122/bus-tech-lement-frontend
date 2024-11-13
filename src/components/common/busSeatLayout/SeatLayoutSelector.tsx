@@ -27,7 +27,7 @@ const SeatLayoutSelector: FC<ISeatLayoutSelectorProps> = ({
   coachId,
 }) => {
   const seatsAllocation = dynamicSeatAllocation(coachClass);
-
+  console.log("coachClass--", coachClass);
   if (coachClass === "E_Class") {
     return (
       <EClassSeatLayout

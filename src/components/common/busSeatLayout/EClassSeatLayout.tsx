@@ -40,7 +40,8 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
   const getSeatColorClass = (
     seatName: string,
     selected: boolean,
-    bookingCoach: any
+    bookingCoach: any,
+    coachId: any
   ) => {
     const order = bookingCoach?.orderSeat?.find(
       (order: any) => order.seat === seatName
@@ -64,9 +65,10 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
     //console.log("order:---", order);
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
+
     const isSeatSelected = bookingFormState.selectedSeats.some(
       (selectedSeat: any) =>
-        selectedSeat.seat === seatName && selectedSeat.coachId === coachId
+        selectedSeat.seat === seatName && selectedSeat.coachConfigId === coachId
     );
 
     if (isSeatSelected) return "bg-blue-500 text-white";
@@ -79,15 +81,18 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
   };
 
   const renderSeatButton = (seat: any) => {
-    const isSeatSelected = (seatName: string) =>
-      bookingFormState.selectedSeats.some(
-        (selectedSeat: any) => selectedSeat.seat === seatName
-      );
-    const isSelected = isSeatSelected(seat.seat);
+    const isSelected = bookingFormState.selectedSeats.some(
+      (selectedSeat: any) =>
+        selectedSeat.seat === seat.seat &&
+        selectedSeat.coachConfigId === coachId
+    );
+
+    // Pass coachId to getSeatColorClass for coach-specific color application
     const seatStatusClass = getSeatColorClass(
       seat.seat,
       isSelected,
-      bookingCoach
+      bookingCoach,
+      coachId
     );
 
     // Check if the seat is ordered or booked by another counter

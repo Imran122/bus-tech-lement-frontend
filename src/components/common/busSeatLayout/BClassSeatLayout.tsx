@@ -33,11 +33,12 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
 }) => {
   const { translate } = useCustomTranslator();
   const user = useSelector((state: any) => state.user);
-  console.log("dddbookingCoach:--", bookingCoach);
+
   const getSeatColorClass = (
     seatName: string,
     selected: boolean,
-    bookingCoach: any
+    bookingCoach: any,
+    coachId: any
   ) => {
     const order = bookingCoach?.orderSeat?.find(
       (order: any) => order.seat === seatName
@@ -48,7 +49,9 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
     const bookedByCounter = bookingCoach?.CounterBookedSeat?.find(
       (order: any) => order.seat === seatName
     );
+    console.log("coachId:--", coachId);
     console.log("bookingCoachblass:--", bookingCoach);
+    console.log("bookingFormStateqqq:--", bookingFormState);
     if (bookedByCounter) {
       if (!user.id) {
         return "bg-red-700 text-white";
@@ -59,15 +62,17 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
       return "bg-orange-500 text-white"; // Orange for seats booked by others' counters
     }
 
-    console.log("bookingCoach:---", bookingCoach);
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
+
     const isSeatSelected = bookingFormState.selectedSeats.some(
       (selectedSeat: any) =>
-        selectedSeat.seat === seatName && selectedSeat.coachId === coachId
+        selectedSeat.seat === seatName && selectedSeat.coachConfigId === coachId
     );
-
+    console.log("blue", isSeatSelected);
     if (isSeatSelected) return "bg-blue-500 text-white";
+    if (selected) return "bg-blue-500 text-white";
+
     if (order) {
       return order?.order?.gender === "Male"
         ? "bg-red-700 text-white"
@@ -77,15 +82,18 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
   };
 
   const renderSeatButton = (seat: any) => {
-    const isSeatSelected = (seatName: string) =>
-      bookingFormState.selectedSeats.some(
-        (selectedSeat: any) => selectedSeat.seat === seatName
-      );
-    const isSelected = isSeatSelected(seat.seat);
+    const isSelected = bookingFormState.selectedSeats.some(
+      (selectedSeat: any) =>
+        selectedSeat.seat === seat.seat &&
+        selectedSeat.coachConfigId === coachId
+    );
+
+    // Pass coachId to getSeatColorClass for coach-specific color application
     const seatStatusClass = getSeatColorClass(
       seat.seat,
       isSelected,
-      bookingCoach
+      bookingCoach,
+      coachId
     );
 
     // Check if the seat is ordered or booked by another counter

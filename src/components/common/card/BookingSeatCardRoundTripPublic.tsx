@@ -57,13 +57,13 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
   const seatsAllocation = (() => {
     switch (bookingCoachSingle?.coachClass) {
       case "E_Class":
-        return dynamicSeatAllocation(bookingCoachSingle?.CoachConfigSeats);
+        return dynamicSeatAllocation(bookingCoachSingle?.coachClass);
       case "B_Class":
-        return dynamicSeatAllocation(bookingCoachSingle?.CoachConfigSeats);
+        return dynamicSeatAllocation(bookingCoachSingle?.coachClass);
       case "Sleeper":
-        return dynamicSeatAllocation(bookingCoachSingle?.CoachConfigSeats);
+        return dynamicSeatAllocation(bookingCoachSingle?.coachClass);
       case "S_Class":
-        return dynamicSeatAllocation(bookingCoachSingle?.CoachConfigSeats);
+        return dynamicSeatAllocation(bookingCoachSingle?.coachClass);
       default:
         return { left: [], right: [], lastRow: [], middle: [] };
     }
@@ -80,7 +80,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
         coachConfigId: coachData?.id,
         date: coachData?.departureDate,
         schedule: coachData?.schedule,
-        seat: coachData?.seat,
+        seat: seatData.seat,
       });
 
       if (result?.data?.success) {
@@ -97,7 +97,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
         coachConfigId: coachData?.id,
         date: coachData?.departureDate,
         schedule: coachData?.schedule,
-        seat: seatData?.seat,
+        seat: seatData.seat,
       });
 
       if (result?.data?.data?.available) {
@@ -106,13 +106,16 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
           selectedSeats: [
             ...prevState.selectedSeats,
             {
-              ...seatData,
-              coachId: coachData.id,
+              seat: seatData.seat,
+              coachConfigId: coachData.id, // Store coachConfigId here
+              date: coachData.departureDate, // Store date here
+              schedule: coachData.schedule, // Store schedule here
               currentAmount: coachData?.fare?.amount,
               previousAmount: coachData?.fare?.amount,
             },
           ],
         }));
+        setBookingCoachSingle(coachData); // Set only when booking successfully
       }
     }
   };
@@ -128,9 +131,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
       }
     }
   }, [coachData, setGoViaRoute, setReturnViaRoute]);
-  const handleViewSeats = () => {
-    setBookingCoachSingle(coachData); // Sets the current booking coach
-  };
+  const handleViewSeats = () => {};
   return (
     <AccordionItem value={index?.toString()}>
       <CardWrapper rounded="md" variant="muted" className="p-4 ">
@@ -253,9 +254,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
             </li>
             <li className="ml-6 px-3">
               <AccordionTrigger className="hover:no-underline border backdrop-blur-sm py-1 px-2 rounded-md">
-                <span onClick={handleViewSeats} className="mr-1">
-                  View Seats
-                </span>
+                <span className="mr-1">View Seats</span>
               </AccordionTrigger>
             </li>
           </ul>

@@ -1,4 +1,5 @@
 export const dynamicSeatAllocation = (coachClass: string) => {
+  console.log("coachClassAllocationlog", coachClass);
   const left: any[] = [];
   const right: any[] = [];
   const lastRow: any[] = [];

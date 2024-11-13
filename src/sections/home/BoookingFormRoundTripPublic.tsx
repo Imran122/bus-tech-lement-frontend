@@ -216,11 +216,14 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     bookingFormState?.redirectConfirm,
     bookingFormState?.customerName,
     translate,
+    setBookingFormState,
   ]);
 
   const paymentType = watch("paymentType");
-
+  console.log("bookingCoachzzz", bookingCoach);
+  console.log("bookingFormStatedataa", bookingFormState);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
+    console.log("after submit click", data);
     const cleanedData = removeFalsyProperties(data, [
       "nid",
       "email",
@@ -236,22 +239,27 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       date: bookingCoach.departureDate,
       seats: cleanedData?.seats,
     });
-
+    console.log("check", check);
     if (check?.data?.data?.available) {
+      //console.log("result", result);
       const finalData = {
         ...cleanedData,
         bookingType: "SeatIssue",
+
         seats: bookingFormState.selectedSeats.map((seat) => ({
-          seat: seat?.seat,
-          coachConfigId: bookingCoach?.id,
-          schedule: bookingCoach.schedule,
-          date: bookingCoach.departureDate,
+          seat: seat.seat,
+          coachConfigId: seat.coachConfigId, // Use each seat's specific coachConfigId
+          schedule: seat.schedule, // Use each seat's specific schedule
+          date: seat.date, // Use each seat's specific date
         })),
       };
       console.log("finalDataqq:-", finalData);
       const booking = await addBooking(finalData);
 
       if (booking.data?.success) {
+        console.log("finalDataqq:-", finalData);
+        onClose();
+        return;
         const payment = await addBookingPayment(booking?.data?.data?.id);
         if (payment.data?.success) {
           playSound("success");
@@ -261,7 +269,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
             customerName: booking.data?.data?.customerName,
             redirectConfirm: true,
           }));
-          onClose();
         }
       }
     } else {
