@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   Tooltip,
   TooltipContent,
@@ -126,9 +125,24 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   console.log("bookingCoachesData:--->>", bookingCoachesData);
   const { data: countersData, isLoading: countersLoading } =
     useGetCountersQuery({}) as any;
-  // if (countersLoading || coachListLoading) {
-  //   return <DetailsSkeleton />;
-  // }
+
+  useEffect(() => {
+    if (tripType === "One_Trip") {
+      // Clear round-trip data from localStorage if trip type is "One_Trip"
+      localStorage.removeItem("returnDate");
+      localStorage.removeItem("tripType");
+    } else if (tripType === "Round_Trip" && bookingState.returnDate) {
+      // Store round trip data in localStorage if trip type is "Round_Trip"
+      localStorage.setItem("tripType", tripType);
+
+      // Format the return date as "YYYY-MM-DD" to avoid timezone issues
+      const formattedReturnDate = format(
+        new Date(bookingState.returnDate),
+        "yyyy-MM-dd"
+      );
+      localStorage.setItem("returnDate", formattedReturnDate);
+    }
+  }, [tripType, bookingState.returnDate]);
   return (
     <div className="flex justify-center items-center">
       <PageTransition className=" w-full ">

@@ -20,7 +20,7 @@ import {
   useAnimate,
   usePresence,
 } from "framer-motion";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { LuTrash2 } from "react-icons/lu";
 
 export const List = <T extends { id: number; checked: false }>({
@@ -143,6 +143,12 @@ export const VanishList: FC<IVanishListProps> = ({
   handleBookingSeat,
 }) => {
   const { translate } = useCustomTranslator();
+  const [storedReturnDate, setStoredReturnDate] = useState<string | null>(null);
+
+  useEffect(() => {
+    const savedReturnDate = localStorage.getItem("returnDate");
+    setStoredReturnDate(savedReturnDate);
+  }, []);
   console.log("listItems", listItems);
   return (
     <section className="h-full ">
@@ -157,6 +163,11 @@ export const VanishList: FC<IVanishListProps> = ({
               </li>
               <li className="text-base">
                 {translate("আসন নম্বরঃ ", "Seat No: ")} {t.seat}
+                {t.date === storedReturnDate && (
+                  <span className="ml-2 text-red-500">
+                    {translate("রিটার্ন টিকেট", "Return Ticket")}
+                  </span>
+                )}
               </li>
               <li className="flex gap-x-2 items-center font-anek text-base">
                 <span className="line-through font-light">

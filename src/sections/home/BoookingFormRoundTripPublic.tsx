@@ -46,6 +46,7 @@ import { useForm } from "react-hook-form";
 
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
+import { format } from "date-fns";
 import { toast } from "sonner";
 
 interface IBookingFormProps {
@@ -221,6 +222,20 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   console.log("bookingCoachzzz", bookingCoach);
   console.log("bookingFormStatedataa", bookingFormState);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
+    const tripType = localStorage.getItem("tripType");
+    const returnDate = localStorage.getItem("returnDate");
+
+    if (tripType === "Round_Trip" && returnDate) {
+      const hasReturnSeat = bookingFormState.selectedSeats.some(
+        (seat) => format(new Date(seat.date), "yyyy-MM-dd") === returnDate
+      );
+
+      if (!hasReturnSeat) {
+        toast.error("Please select a return seat for your round trip.");
+        return;
+      }
+    }
+
     console.log("after submit click", data);
     const cleanedData = removeFalsyProperties(data, [
       "nid",
@@ -267,6 +282,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
             redirectConfirm: true,
           }));
         }
+        localStorage.removeItem("returnDate");
         onClose();
       }
     } else {
