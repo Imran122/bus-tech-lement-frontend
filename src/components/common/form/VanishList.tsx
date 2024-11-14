@@ -1,7 +1,3 @@
-import { AnimatePresence, useAnimate, usePresence } from "framer-motion";
-import { FC, useEffect } from "react";
-import { motion } from "framer-motion";
-import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,10 +10,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { LuTrash2 } from "react-icons/lu";
-import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
+import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
+import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import {
+  AnimatePresence,
+  motion,
+  useAnimate,
+  usePresence,
+} from "framer-motion";
+import { FC, useEffect, useState } from "react";
+import { LuTrash2 } from "react-icons/lu";
 
 export const List = <T extends { id: number; checked: false }>({
   items,
@@ -139,7 +143,13 @@ export const VanishList: FC<IVanishListProps> = ({
   handleBookingSeat,
 }) => {
   const { translate } = useCustomTranslator();
+  const [storedReturnDate, setStoredReturnDate] = useState<string | null>(null);
 
+  useEffect(() => {
+    const savedReturnDate = localStorage.getItem("returnDate");
+    setStoredReturnDate(savedReturnDate);
+  }, []);
+  console.log("listItems", listItems);
   return (
     <section className="h-full ">
       <div className="mx-auto w-full">
@@ -153,22 +163,33 @@ export const VanishList: FC<IVanishListProps> = ({
               </li>
               <li className="text-base">
                 {translate("আসন নম্বরঃ ", "Seat No: ")} {t.seat}
+                {t.date === storedReturnDate && (
+                  <span className="ml-2 text-red-500">
+                    {translate("রিটার্ন টিকেট", "Return Ticket")}
+                  </span>
+                )}
               </li>
               <li className="flex gap-x-2 items-center font-anek text-base">
-                <span className="line-through font-light">
-                  {translate(
-                    convertToBnDigit(
-                      formatter({ type: "amount", amount: t.previousAmount })
-                    ),
-                    formatter({ type: "amount", amount: t.previousAmount })
-                  )}
-                </span>
-                <span className="font-semibold">
+                <span className="font-semibold line-through">
                   {translate(
                     convertToBnDigit(
                       formatter({ type: "amount", amount: t.currentAmount })
                     ),
                     formatter({ type: "amount", amount: t.currentAmount })
+                  )}
+                </span>
+                <span className=" font-light">
+                  {translate(
+                    convertToBnDigit(
+                      formatter({
+                        type: "amount",
+                        amount: t.currentAmount - t.previousAmount,
+                      })
+                    ),
+                    formatter({
+                      type: "amount",
+                      amount: t.currentAmount - t.previousAmount,
+                    })
                   )}
                 </span>
               </li>

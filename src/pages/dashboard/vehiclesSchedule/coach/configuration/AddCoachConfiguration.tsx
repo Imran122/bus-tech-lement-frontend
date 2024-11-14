@@ -32,7 +32,6 @@ import { useAddCoachConfigurationMutation } from "@/store/api/vehiclesSchedule/c
 import { useGetFaresQuery } from "@/store/api/vehiclesSchedule/fareApi";
 import { useGetRoutesQuery } from "@/store/api/vehiclesSchedule/routeApi";
 import { useGetSchedulesQuery } from "@/store/api/vehiclesSchedule/scheduleApi";
-import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
 import { addUpdateCoachConfigurationForm } from "@/utils/constants/form/addUpdateCoachConfigurationForm";
 import formatter from "@/utils/helpers/formatter";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
@@ -122,8 +121,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
   ] = useAddCoachConfigurationMutation();
 
   // vehicle list for registration
-  const { data: vehiclesData, isLoading: vehiclesLoading } =
-    useGetVehiclesQuery({});
+
   const { data: schedulesData, isLoading: schedulesLoading } =
     useGetSchedulesQuery({}) as any;
 
@@ -278,54 +276,6 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
             </Select>
           </InputWrapper>
 
-          {/* Registration Number */}
-          <InputWrapper
-            error={errors?.schedule?.message}
-            labelFor="registrationNo"
-            label={translate(
-              addUpdateCoachConfigurationForm?.registrationNo.label.bn,
-              addUpdateCoachConfigurationForm.registrationNo.label.en
-            )}
-          >
-            <Select
-              value={watch("registrationNo")}
-              onValueChange={(value: string) => {
-                setValue("registrationNo", value);
-                setError("registrationNo", {
-                  type: "custom",
-                  message: "",
-                });
-              }}
-            >
-              <SelectTrigger id="registrationNo" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachConfigurationForm.registrationNo.placeholder
-                      .bn,
-                    addUpdateCoachConfigurationForm.registrationNo.placeholder
-                      .en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!vehiclesLoading &&
-                  vehiclesData?.data?.length > 0 &&
-                  vehiclesData?.data?.map(
-                    (singleVehicle: any, vehicleIndex: number) => (
-                      <SelectItem
-                        key={vehicleIndex}
-                        value={singleVehicle?.registrationNo}
-                      >
-                        {singleVehicle?.registrationNo}
-                      </SelectItem>
-                    )
-                  )}
-
-                {vehiclesLoading && <SelectSkeleton />}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
           {/* ROUTE */}
           <InputWrapper
             error={errors?.routeId?.message}
@@ -370,46 +320,6 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
                 )}
               </SelectContent>
             </Select>
-          </InputWrapper>
-
-          {/* DEPARTURE DATE */}
-          <InputWrapper label="Select Date Range✼" labelFor="date_range">
-            <Popover>
-              <PopoverTrigger id="date_range" asChild>
-                <Button
-                  id="date"
-                  variant={"outline"}
-                  className={cn(
-                    "w-[300px] justify-start text-sm text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date?.from ? (
-                    date.to ? (
-                      <>
-                        {format(date.from, "LLL dd, y")} -{" "}
-                        {format(date.to, "LLL dd, y")}
-                      </>
-                    ) : (
-                      format(date.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <span className="font-normal">Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={date?.from}
-                  selected={date}
-                  onSelect={handleDateSelect}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
           </InputWrapper>
 
           {/* STARTING COUNTER */}
@@ -635,25 +545,6 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
               </SelectContent>
             </Select>
           </InputWrapper>
-          {/* token amount */}
-          <InputWrapper
-            error={errors?.tokenAvailable?.message}
-            labelFor="tokenAvailable"
-            label={translate(
-              addUpdateCoachConfigurationForm?.tokenAvailable.label.bn,
-              addUpdateCoachConfigurationForm.tokenAvailable.label.en
-            )}
-          >
-            <Input
-              id="tokenAvailable"
-              {...register("tokenAvailable")}
-              type="number"
-              placeholder={translate(
-                addUpdateCoachConfigurationForm.tokenAvailable.placeholder.bn,
-                addUpdateCoachConfigurationForm.tokenAvailable.placeholder.en
-              )}
-            />
-          </InputWrapper>
 
           {/* SCHEDULE */}
           <InputWrapper
@@ -703,9 +594,67 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
               </SelectContent>
             </Select>
           </InputWrapper>
+          {/* DEPARTURE DATE */}
+          <InputWrapper label="Select Date Range✼" labelFor="date_range">
+            <Popover>
+              <PopoverTrigger id="date_range" asChild>
+                <Button
+                  id="date"
+                  variant={"outline"}
+                  className={cn(
+                    "w-[300px] justify-start text-sm text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date?.from ? (
+                    date.to ? (
+                      <>
+                        {format(date.from, "LLL dd, y")} -{" "}
+                        {format(date.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(date.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span className="font-normal">Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={date?.from}
+                  selected={date}
+                  onSelect={handleDateSelect}
+                  numberOfMonths={2}
+                />
+              </PopoverContent>
+            </Popover>
+          </InputWrapper>
+          {/* token amount */}
 
-          {/* HOLDING TIME */}
           <InputWrapper
+            error={errors?.tokenAvailable?.message}
+            labelFor="tokenAvailable"
+            label={translate(
+              addUpdateCoachConfigurationForm?.tokenAvailable.label.bn,
+              addUpdateCoachConfigurationForm.tokenAvailable.label.en
+            )}
+          >
+            <Input
+              id="tokenAvailable"
+              {...register("tokenAvailable")}
+              type="number"
+              placeholder={translate(
+                addUpdateCoachConfigurationForm.tokenAvailable.placeholder.bn,
+                addUpdateCoachConfigurationForm.tokenAvailable.placeholder.en
+              )}
+            />
+          </InputWrapper>
+          {/* HOLDING TIME */}
+          {/* <InputWrapper
             error={errors?.holdingTime?.message}
             labelFor="holdingTime"
             label={translate(
@@ -722,7 +671,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
                 addUpdateCoachConfigurationForm.holdingTime.placeholder.en
               )}
             />
-          </InputWrapper>
+          </InputWrapper> */}
         </GridWrapper>
         <Submit
           loading={addCoachConfigurationLoading}

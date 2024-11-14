@@ -80,6 +80,12 @@ const contactsManagementLinks = {
     },
     {
       icon: LuUserCheck,
+      label: { bn: "সাহায্যকারী তালিকা", en: "Helper List" },
+      key: "helper_list",
+      href: "helper_list",
+    },
+    {
+      icon: LuUserCheck,
       label: { bn: "কাউন্টার তালিকা", en: "Counter List" },
       key: "counter_list",
       href: "counter_list",
@@ -145,6 +151,12 @@ const vehicleAndScheduleManagementLinks = {
       label: { bn: "কোচ তালিকা", en: "Coach List" },
       key: "coach_list",
       href: "coach_list",
+    },
+    {
+      icon: LuUserCheck,
+      label: { bn: "রিজার্ভ তালিকা", en: "Reserve List" },
+      key: "reserve_list",
+      href: "reserve_list",
     },
     {
       icon: LuUserCheck,
@@ -254,6 +266,8 @@ const FulelManagementLinks = {
     },
   ],
 };
+
+
 // DETAILS REPORTS LIST
 const reportingSuiteLinks = {
   icon: LuClipboardList,
@@ -360,6 +374,7 @@ export const adminNavigationLinks = [
   { ...contactsManagementLinks },
   // VEHICLES & SCHEDULE MANAGEMENT
   { ...vehicleAndScheduleManagementLinks },
+
   // FINANCE MANAGEMENT LINKS
   { ...financialManagementLinks },
   // EXPENDITURE MANAGEMENT LINKS

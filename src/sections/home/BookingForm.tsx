@@ -32,6 +32,7 @@ import {
   useAddBookingPaymentMutation,
   useAddBookingSeatMutation,
   useCheckingSeatMutation,
+  useGetTickitInfoByPhoneQuery,
   useRemoveBookingSeatMutation,
 } from "@/store/api/bookingApi";
 import {
@@ -46,6 +47,7 @@ import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import SeatLayoutSelector from "@/components/common/busSeatLayout/SeatLayoutSelector";
+import { Button } from "@/components/ui/button";
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { toast } from "sonner";
@@ -63,6 +65,7 @@ interface IBookingFormStateProps {
 
 const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   const { translate } = useCustomTranslator();
+  const [phoneNumber, setPhoneNumber] = useState("");
   //console.log("dropdown boardinpoint:", bookingCoach);
   const [bookingFormState, setBookingFormState] =
     useState<IBookingFormStateProps>({
@@ -75,6 +78,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
 
   const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
     useAddBookingMutation({}) as any;
+
   const [
     addBookingPayment,
     { isLoading: addBookingPaymentLoading, error: addBookingPaymentError },
@@ -162,7 +166,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
             {
               ...seatData,
               currentAmount: bookingCoach?.fare?.amount,
-              previousAmount: bookingCoach?.fare?.amount,
+              previousAmount: bookingCoach?.discount,
             },
           ],
         }));
@@ -239,7 +243,42 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     translate,
   ]);
   const paymentType = watch("paymentType"); // Watch the paymentType value
-  console.log("bookingFormState", bookingFormState);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true); // Trigger the API call for fetching user info by phone
+  };
+
+  const { data: userInfoData, isLoading: userInfoLoading } =
+    useGetTickitInfoByPhoneQuery(phoneNumber, {
+      skip: !submitted || !phoneNumber, // Only call API if submitted and phoneNumber is set
+    }) as any;
+  console.log("userInfoData", userInfoData);
+  useEffect(() => {
+    if (submitted) {
+      if (userInfoData?.data) {
+        // Populate all relevant form fields
+        setValue("customerName", userInfoData.data.name || "");
+        setValue("phone", userInfoData.data.phone || "");
+        setValue("gender", userInfoData.data.gender || "");
+        setValue("email", userInfoData.data.email || "");
+        setValue("address", userInfoData.data.address || "");
+        setValue("nationality", userInfoData.data.nationality || "");
+        setValue("nid", userInfoData.data.nid || "");
+
+        // Clear any previous error message
+        setErrorMessage("");
+      } else {
+        // Set error message if no data found
+        setErrorMessage("No data found for this phone number.");
+      }
+
+      // Reset `submitted` to allow for further searches by phone
+      setSubmitted(false);
+    }
+  }, [userInfoData, setValue, submitted]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
     const cleanedData = removeFalsyProperties(data, [
       "nid",
@@ -255,7 +294,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       date: bookingCoach.departureDate,
       seats: cleanedData?.seats,
     });
-    console.log("data", data);
+
     if (check?.data?.data?.available) {
       const finalData = {
         ...cleanedData,
@@ -267,7 +306,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
           date: bookingCoach.departureDate,
         })),
       };
-
+      console.log("finalData:", finalData);
       const booking = await addBooking(finalData);
 
       if (booking.data?.success) {
@@ -298,6 +337,55 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
 
   return (
     <PageTransition>
+      {/* find tickit */}
+      <div className="flex">
+        <div className="w-[35%]"></div>
+        <div className="w-[65%]">
+          <PageTransition>
+            <form
+              onSubmit={handleFormSubmit}
+              className="ml-4 flex justify-start items-center"
+            >
+              <InputWrapper
+                className="w-4/12"
+                labelFor="FinfTickit"
+                error=" "
+                label={translate(
+                  "ফোন নম্বর দ্বারা টিকিট খুঁজুন",
+                  "Find Ticket By Phone Number"
+                )}
+              >
+                <Input
+                  type="text"
+                  name="phoneNumber"
+                  onChange={(e: any) => setPhoneNumber(e.target.value)}
+                  id="phoneNumber"
+                  placeholder={translate(
+                    "ফোন নম্বর দ্বারা টিকিট খুঁজুন",
+                    "Find Ticket By Phone Number"
+                  )}
+                />
+              </InputWrapper>
+              <Button type="submit" className="mt-7 ml-2">
+                <span>
+                  {userInfoLoading && (
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3 ..."
+                      viewBox="0 0 24 24"
+                    ></svg>
+                  )}
+                </span>
+                Search
+              </Button>
+            </form>
+            {errorMessage && (
+              <div className="text-red-500 mt-1 ml-5">{errorMessage}</div>
+            )}
+          </PageTransition>
+        </div>
+      </div>
+
+      {/*end find tickit */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
           {/* COUCH SEAT PLAN CONTAINER */}
@@ -314,6 +402,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
               removeBookingSeatLoading={removeBookingSeatLoading}
             />
           </PageTransition>
+
           {/* CUSTOMER & PAYMENT INFORMATION */}
           <PageTransition className="flex flex-col justify-between h-full w-8/12">
             <div>
@@ -327,10 +416,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
               <GridWrapper>
                 {/* NAME */}
                 <InputWrapper
-                  className={cn(
-                    bookingFormState?.selectedSeats?.length < 3 && "col-span-1"
-                  )}
-                  labelFor="name"
+                  labelFor="customerName"
                   error={errors.customerName?.message}
                   label={translate(
                     addBookingSeatForm.name.label.bn,

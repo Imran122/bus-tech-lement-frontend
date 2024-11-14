@@ -1,5 +1,6 @@
 import CounterList from "@/pages/dashboard/contacts/counter/CounterList";
 import DriverList from "@/pages/dashboard/contacts/driver/DriverList";
+import HelperList from "@/pages/dashboard/contacts/helper/HelperList";
 import PermissionTypeAndUserPermissionList from "@/pages/dashboard/contacts/user/PermissionTypeAndUserPermissionList";
 import Role from "@/pages/dashboard/contacts/user/role/Role";
 import UserList from "@/pages/dashboard/contacts/user/UserList";
@@ -20,6 +21,10 @@ export const contactsRoutes: IRouteProps[] = [
   {
     path: "driver_list",
     element: React.createElement(DriverList),
+  },
+  {
+    path: "helper_list",
+    element: React.createElement(HelperList),
   },
   {
     path: "user_list",

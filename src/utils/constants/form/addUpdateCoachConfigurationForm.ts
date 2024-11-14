@@ -22,6 +22,8 @@ interface IAddUpdateCoachConfigurationFromProps {
   driverId: ILabelPlaceholder;
   tokenAvailable: ILabelPlaceholder;
   discount: ILabelPlaceholder;
+  coachConfig: ILabelPlaceholder;
+  helperId: ILabelPlaceholder;
 }
 
 export const addUpdateCoachConfigurationForm: IAddUpdateCoachConfigurationFromProps =
@@ -67,6 +69,16 @@ export const addUpdateCoachConfigurationForm: IAddUpdateCoachConfigurationFromPr
         bn: "চালক নির্বাচন করুন",
       },
     },
+    helperId: {
+      label: {
+        en: "Helper ✼",
+        bn: "সাহায্যকারী ✼",
+      },
+      placeholder: {
+        en: "Select Helper",
+        bn: "সাহায্যকারী নির্বাচন করুন",
+      },
+    },
     departureDate: {
       label: {
         en: "Departure Date ✼",
@@ -85,6 +97,16 @@ export const addUpdateCoachConfigurationForm: IAddUpdateCoachConfigurationFromPr
       placeholder: {
         en: "Enter coach number",
         bn: "কোচ নম্বর লিখুন",
+      },
+    },
+    coachConfig: {
+      label: {
+        en: "Select Coach Config ✼",
+        bn: "কোচ নির্বাচন করুন ✼",
+      },
+      placeholder: {
+        en: "Select coach Config",
+        bn: "কোচ নির্বাচন করুন",
       },
     },
     registrationNo: {
@@ -159,8 +181,8 @@ export const addUpdateCoachConfigurationForm: IAddUpdateCoachConfigurationFromPr
     },
     schedule: {
       label: {
-        en: "Schedule ✼",
-        bn: "সময়সূচী ✼",
+        en: "Schedule (Time) ✼",
+        bn: "সময়সূচী (Time) ✼",
       },
       placeholder: {
         en: "Select schedule",

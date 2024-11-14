@@ -103,6 +103,37 @@ const UpdateCoach: FC<IUpdateCoachProps> = ({ id }) => {
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-x-4 gap-y-2">
+          {/* Schedule */}
+          <InputWrapper
+            error={errors.schedule?.message}
+            labelFor="schedule"
+            label={translate(
+              addUpdateCoachForm.schedule.label.bn,
+              addUpdateCoachForm.schedule.label.en
+            )}
+          >
+            <Select
+              value={watch("schedule")}
+              onValueChange={(value) => setValue("schedule", value)}
+            >
+              <SelectTrigger id="schedule" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachForm.schedule.placeholder.bn,
+                    addUpdateCoachForm.schedule.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {!schedulesLoading &&
+                  schedulesData?.data?.map((schedule: any, idx: any) => (
+                    <SelectItem key={idx} value={schedule.time}>
+                      {schedule.time}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
           <InputWrapper
             error={errors.coachNo?.message}
             labelFor="coachNo"
@@ -121,7 +152,37 @@ const UpdateCoach: FC<IUpdateCoachProps> = ({ id }) => {
               )}
             />
           </InputWrapper>
-
+          {/* Route */}
+          <InputWrapper
+            error={errors.routeId?.message}
+            labelFor="routeId"
+            label={translate(
+              addUpdateCoachForm.routeId.label.bn,
+              addUpdateCoachForm.routeId.label.en
+            )}
+          >
+            <Select
+              value={watch("routeId")?.toString()}
+              onValueChange={(value) => setValue("routeId", +value)}
+            >
+              <SelectTrigger id="routeId" className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachForm.routeId.placeholder.bn,
+                    addUpdateCoachForm.routeId.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {!routesLoading &&
+                  routesData?.data?.map((route: any, idx: any) => (
+                    <SelectItem key={idx} value={route.id.toString()}>
+                      {route.routeName}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
           {/* Starting Counter */}
           <InputWrapper
             error={errors?.fromCounterId?.message}
@@ -190,6 +251,35 @@ const UpdateCoach: FC<IUpdateCoachProps> = ({ id }) => {
             </Select>
           </InputWrapper>
 
+          {/* Number of Seats */}
+          <InputWrapper
+            labelFor="noOfSeat"
+            error={errors?.noOfSeat?.message}
+            label={translate(
+              addUpdateCoachForm.noOfSeat.label.bn,
+              addUpdateCoachForm.noOfSeat.label.en
+            )}
+          >
+            <Select
+              value={watch("noOfSeat")?.toString() || ""}
+              onValueChange={(value) => setValue("noOfSeat", parseInt(value))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue
+                  placeholder={translate(
+                    addUpdateCoachForm.noOfSeat.placeholder.bn,
+                    addUpdateCoachForm.noOfSeat.placeholder.en
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="28">Ac Business Class (28 seats)</SelectItem>
+                <SelectItem value="30">Sleeper Coach (30 Seats)</SelectItem>
+                <SelectItem value="41">Ac Economy Class (41 Seats)</SelectItem>
+                <SelectItem value="43">Suite Class (43 Seats)</SelectItem>
+              </SelectContent>
+            </Select>
+          </InputWrapper>
           {/* Fare Amount */}
           <InputWrapper
             error={errors.fareId?.message}
@@ -218,100 +308,6 @@ const UpdateCoach: FC<IUpdateCoachProps> = ({ id }) => {
                       {fare.amount}
                     </SelectItem>
                   ))}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* Route */}
-          <InputWrapper
-            error={errors.routeId?.message}
-            labelFor="routeId"
-            label={translate(
-              addUpdateCoachForm.routeId.label.bn,
-              addUpdateCoachForm.routeId.label.en
-            )}
-          >
-            <Select
-              value={watch("routeId")?.toString()}
-              onValueChange={(value) => setValue("routeId", +value)}
-            >
-              <SelectTrigger id="routeId" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachForm.routeId.placeholder.bn,
-                    addUpdateCoachForm.routeId.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!routesLoading &&
-                  routesData?.data?.map((route: any, idx: any) => (
-                    <SelectItem key={idx} value={route.id.toString()}>
-                      {route.routeName}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* Schedule */}
-          <InputWrapper
-            error={errors.schedule?.message}
-            labelFor="schedule"
-            label={translate(
-              addUpdateCoachForm.schedule.label.bn,
-              addUpdateCoachForm.schedule.label.en
-            )}
-          >
-            <Select
-              value={watch("schedule")}
-              onValueChange={(value) => setValue("schedule", value)}
-            >
-              <SelectTrigger id="schedule" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachForm.schedule.placeholder.bn,
-                    addUpdateCoachForm.schedule.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!schedulesLoading &&
-                  schedulesData?.data?.map((schedule: any, idx: any) => (
-                    <SelectItem key={idx} value={schedule.time}>
-                      {schedule.time}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* Number of Seats */}
-          <InputWrapper
-            labelFor="noOfSeat"
-            error={errors?.noOfSeat?.message}
-            label={translate(
-              addUpdateCoachForm.noOfSeat.label.bn,
-              addUpdateCoachForm.noOfSeat.label.en
-            )}
-          >
-            <Select
-              value={watch("noOfSeat")?.toString() || ""}
-              onValueChange={(value) => setValue("noOfSeat", parseInt(value))}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateCoachForm.noOfSeat.placeholder.bn,
-                    addUpdateCoachForm.noOfSeat.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="28">Ac Business Class (28 seats)</SelectItem>
-                <SelectItem value="30">Sleeper Coach (30 Seats)</SelectItem>
-                <SelectItem value="41">Ac Economy Class (41 Seats)</SelectItem>
-                <SelectItem value="43">Suite Class (43 Seats)</SelectItem>
               </SelectContent>
             </Select>
           </InputWrapper>

@@ -42,7 +42,7 @@ const bookingApi = apiSlice.injectEndpoints({
     //GETTING ALL COACH
     getBookingCoaches: builder.query({
       query: (data) => ({
-        url: `/coach-config/get-coach-list?fromCounterId=${data?.fromCounterId}&destinationCounterId=${data?.destinationCounterId}&coachType=${data?.coachType}&date=${data?.date}&orderType=${data?.orderType}`,
+        url: `/coach-config/get-coach-list?fromCounterId=${data?.fromCounterId}&destinationCounterId=${data?.destinationCounterId}&coachType=${data?.coachType}&date=${data?.date}&returnDate=${data.returnDate}&orderType=${data?.orderType}`,
         method: "GET",
       }),
 
@@ -66,6 +66,11 @@ const bookingApi = apiSlice.injectEndpoints({
     getTickitInfo: builder.query({
       query: (ticketNumber) => ({
         url: `/order/find-ticket/${ticketNumber}`,
+      }),
+    }),
+    getTickitInfoByPhone: builder.query({
+      query: (phoneNumber) => ({
+        url: `/order/find-customer?phoneNumber=${phoneNumber}`,
       }),
     }),
     //due payemnt
@@ -118,4 +123,5 @@ export const {
   useGetTickitInfoQuery,
   useDueAmountPaymentMutation,
   useUnBookSeatFromCounterBookingMutation,
+  useGetTickitInfoByPhoneQuery,
 } = bookingApi;

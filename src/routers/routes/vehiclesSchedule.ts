@@ -1,5 +1,6 @@
+import ReserveList from "@/pages/dashboard/admin/reserve/ReserveList";
 import CoachList from "@/pages/dashboard/vehiclesSchedule/coach/CoachList";
-import CoachConfigurationList from "@/pages/dashboard/vehiclesSchedule/coach/configuration/CoachConfigurationList";
+import ConfigurationList from "@/pages/dashboard/vehiclesSchedule/coach/configuration/ConfigurationList";
 import FareList from "@/pages/dashboard/vehiclesSchedule/fare/FareList";
 import RouteList from "@/pages/dashboard/vehiclesSchedule/route/RouteList";
 import ScheduleList from "@/pages/dashboard/vehiclesSchedule/schedule/ScheduleList";
@@ -20,6 +21,10 @@ export const vehiclesSchedule: IRouteProps[] = [
     element: React.createElement(CoachList),
   },
   {
+    path: "reserve_list",
+    element: React.createElement(ReserveList),
+  },
+  {
     path: "schedule_list",
     element: React.createElement(ScheduleList),
   },
@@ -38,8 +43,9 @@ export const vehiclesSchedule: IRouteProps[] = [
   },
   {
     path: "coach_configs",
-    element: React.createElement(CoachConfigurationList),
+    element: React.createElement(ConfigurationList),
   },
+
   {
     path: "fare_list",
     element: React.createElement(FareList),

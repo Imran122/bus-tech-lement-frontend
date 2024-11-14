@@ -14,13 +14,13 @@ const version = "V1.0.0";
 //////////// BETA VERSION ////////////
 
 export const appConfiguration: IConfigurationProps = {
-  appName: "Transportation Beta",
+  appName: "Iconic Express",
   appCode: "__t_beta__",
   baseUrl: "https://iconify-backend.vercel.app/api/v1/",
   databaseResetAPI:
     "https://pos-software-with-my-sql-kry-test.vercel.app/api/v1/admin/db-reset-tebd2024",
   favicon: "/devs.png",
-  logo: "/devs.png",
+  logo: "/src/assets/longeng.png",
   version,
   progressMessage:
     "Thank you for your interest! 🚀 We're currently working on implementing this feature. Stay tuned, as we'll be activating it very soon!",
