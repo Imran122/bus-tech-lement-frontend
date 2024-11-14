@@ -26,6 +26,12 @@ interface IBookingSeatCardProps {
   coachData: any;
   setBookingState: (bookingState: IBookingStateProps) => void;
   index: number;
+  bookingFormState: any;
+  setBookingFormState: any;
+  setGoViaRoute: any;
+  setReturnViaRoute: any;
+  setBookingCoachSingle: any;
+  bookingCoachSingle: any;
 }
 
 const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
@@ -49,10 +55,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
   console.log("xxxbookingCoachSinglexxx", bookingCoachSingle);
   const totalAvaliableSetas =
     coachData?.seatAvailable - coachData?.CounterBookedSeat.length;
-  const [
-    checkingSeat,
-    { isLoading: checkingSeatLoading, error: checkingSeatError },
-  ] = useCheckingSeatMutation({}) as any;
+  const [checkingSeat] = useCheckingSeatMutation({}) as any;
 
   const seatsAllocation = (() => {
     switch (bookingCoachSingle?.coachClass) {
@@ -84,10 +87,10 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
       });
 
       if (result?.data?.success) {
-        setBookingFormState((prevState) => ({
+        setBookingFormState((prevState: any) => ({
           ...prevState,
           selectedSeats: prevState.selectedSeats.filter(
-            (seat) => seat.seat !== seatData.seat
+            (seat: any) => seat.seat !== seatData.seat
           ),
         }));
       }
@@ -101,7 +104,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
       });
 
       if (result?.data?.data?.available) {
-        setBookingFormState((prevState) => ({
+        setBookingFormState((prevState: any) => ({
           ...prevState,
           selectedSeats: [
             ...prevState.selectedSeats,
@@ -269,6 +272,8 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
                 checkingSeat={checkingSeat}
                 bookingCoach={coachData}
                 coachClass={coachData.coachClass}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
                 seatsAllocation={seatsAllocation} // removed @ts-ignore
                 handleBookingSeat={handleBookingSeat}
                 bookingFormState={bookingFormState}

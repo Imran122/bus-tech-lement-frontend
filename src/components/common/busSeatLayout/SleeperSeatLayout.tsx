@@ -28,6 +28,7 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
   bookingFormState,
   bookingCoach,
   addBookingSeatLoading,
+  coachId,
 }) => {
   const { translate } = useCustomTranslator();
   const user = useSelector((state: any) => state.user);

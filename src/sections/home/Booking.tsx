@@ -63,23 +63,22 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
       tripType
   );
 
-  const { data: bookingCoachesData, isLoading: coachListLoading } =
-    useGetBookingCoachesQuery(
-      shouldFetchData
-        ? {
-            fromCounterId: bookingState?.fromCounterId,
-            destinationCounterId: bookingState?.destinationCounterId,
-            orderType: tripType,
-            coachType: bookingState.coachType,
-            date: bookingState.date && format(bookingState.date, "yyyy-MM-dd"),
-            returnDate:
-              tripType !== "One_Trip" && bookingState.returnDate
-                ? format(bookingState.returnDate, "yyyy-MM-dd")
-                : undefined, // Only include returnDate if it's a round trip
-          }
-        : {}, // Provide empty query parameters if conditions aren't met
-      { skip: !shouldFetchData } // Skip fetching if required fields are missing
-    ) as any;
+  const { data: bookingCoachesData } = useGetBookingCoachesQuery(
+    shouldFetchData
+      ? {
+          fromCounterId: bookingState?.fromCounterId,
+          destinationCounterId: bookingState?.destinationCounterId,
+          orderType: tripType,
+          coachType: bookingState.coachType,
+          date: bookingState.date && format(bookingState.date, "yyyy-MM-dd"),
+          returnDate:
+            tripType !== "One_Trip" && bookingState.returnDate
+              ? format(bookingState.returnDate, "yyyy-MM-dd")
+              : undefined, // Only include returnDate if it's a round trip
+        }
+      : {}, // Provide empty query parameters if conditions aren't met
+    { skip: !shouldFetchData } // Skip fetching if required fields are missing
+  ) as any;
 
   // Clear previous data when trip type changes
   useEffect(() => {

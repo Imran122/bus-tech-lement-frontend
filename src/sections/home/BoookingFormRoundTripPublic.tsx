@@ -51,6 +51,11 @@ import { toast } from "sonner";
 
 interface IBookingFormProps {
   bookingCoach: any;
+  bookingFormState: any;
+  goViaRoute: any;
+  returnViaRoute: any;
+  setBookingFormState: any;
+  onClose: any;
 }
 export interface IBookingFormStateProps {
   targetedSeat: number | null;
@@ -76,10 +81,8 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     addBookingPayment,
     { isLoading: addBookingPaymentLoading, error: addBookingPaymentError },
   ] = useAddBookingPaymentMutation() as any;
-  const [addBookingSeat, { isLoading: addBookingSeatLoading }] =
-    useAddBookingSeatMutation() as any;
-  const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
-    useRemoveBookingSeatMutation() as any;
+  const [addBookingSeat] = useAddBookingSeatMutation() as any;
+  const [removeBookingSeat] = useRemoveBookingSeatMutation() as any;
   const [
     checkingSeat,
     { isLoading: checkingSeatLoading, error: checkingSeatError },
@@ -120,10 +123,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       });
 
       if (result?.data?.success) {
-        setBookingFormState((prevState) => ({
+        setBookingFormState((prevState: any) => ({
           ...prevState,
           selectedSeats: prevState.selectedSeats.filter(
-            (seat) => seat.seat !== seatData.seat
+            (seat: any) => seat.seat !== seatData.seat
           ),
         }));
       }
@@ -136,7 +139,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       });
 
       if (result?.data?.data?.available) {
-        setBookingFormState((prevState) => ({
+        setBookingFormState((prevState: any) => ({
           ...prevState,
           selectedSeats: [
             ...prevState.selectedSeats,
@@ -152,7 +155,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   };
 
   useEffect(() => {
+    //@ts-ignore
     setValue("coachConfigId", bookingCoach?.id);
+    //@ts-ignore
     setValue("schedule", bookingCoach?.schedule);
     setValue("amount", totalAmount);
     setValue("noOfSeat", totalSeats);
@@ -227,7 +232,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
 
     if (tripType === "Round_Trip" && returnDate) {
       const hasReturnSeat = bookingFormState.selectedSeats.some(
-        (seat) => format(new Date(seat.date), "yyyy-MM-dd") === returnDate
+        (seat: any) => format(new Date(seat.date), "yyyy-MM-dd") === returnDate
       );
 
       if (!hasReturnSeat) {
@@ -259,7 +264,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
         ...cleanedData,
         bookingType: "SeatIssue",
 
-        seats: bookingFormState.selectedSeats.map((seat) => ({
+        seats: bookingFormState.selectedSeats.map((seat: any) => ({
           seat: seat.seat,
           coachConfigId: seat.coachConfigId, // Use each seat's specific coachConfigId
           schedule: seat.schedule, // Use each seat's specific schedule

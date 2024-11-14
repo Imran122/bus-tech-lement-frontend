@@ -12,6 +12,8 @@ export interface IAddBookingFromProps {
   nationality: ILabelPlaceholder;
   boardingPoint: ILabelPlaceholder;
   droppingPoint: ILabelPlaceholder;
+  returnBoardingPoint: ILabelPlaceholder;
+  returnDroppingPoint: ILabelPlaceholder;
   paymentMethod: ILabelPlaceholder;
 }
 
