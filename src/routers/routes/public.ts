@@ -10,6 +10,7 @@ import PaymentFailed from "@/pages/public/PaymentFailed";
 import PaymentSuccess from "@/pages/public/PaymentSuccess";
 import ResetPassword from "@/pages/public/ResetPassword";
 import Route from "@/pages/public/Route";
+import BoookingFormRoundTripPublic from "@/sections/home/BoookingFormRoundTripPublic";
 import React from "react";
 import { IRouteProps } from "./contacts";
 
@@ -65,5 +66,9 @@ export const publicRoutes: IRouteProps[] = [
   {
     path: "payment-canceled",
     element: React.createElement(PaymentCancel),
+  },
+  {
+    path: "public-seat-form",
+    element: React.createElement(BoookingFormRoundTripPublic),
   },
 ];

@@ -69,13 +69,17 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
                 </li>
               )
             )}
+          <li>
+            {" "}
+            <button
+              onClick={() => dispatch(openModal())}
+              className="btn btn-primary"
+            >
+              Update Coach Configs
+            </button>
+          </li>
         </ul>
-        <button
-          onClick={() => dispatch(openModal())}
-          className="btn btn-primary"
-        >
-          Update Coach Configs
-        </button>
+
         <ul className="flex gap-x-2 items-center">
           <li>
             <LocaleSwitcher />

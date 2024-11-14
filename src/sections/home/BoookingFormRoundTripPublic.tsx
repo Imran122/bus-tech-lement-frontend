@@ -16,7 +16,6 @@ import {
   nationalitiesOptions,
 } from "@/utils/constants/common/nationalitiesOptions";
 import { addBookingSeatForm } from "@/utils/constants/form/addBookingForm";
-import { dynamicSeatAllocation } from "@/utils/helpers/dynamicSeatAllocation";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 
 import PageTransition from "@/components/common/effect/PageTransition";
@@ -24,17 +23,21 @@ import Submit from "@/components/common/form/Submit";
 import { VanishList } from "@/components/common/form/VanishList";
 import { Paragraph } from "@/components/common/typography/Paragraph";
 import {
+  AddBookingSeatDataProps,
+  addBookingSeatSchema,
+} from "@/schemas/booking/addBookingSeatSchema";
+import {
   useAddBookingMutation,
+  useAddBookingPaymentMutation,
   useAddBookingSeatMutation,
   useCheckingSeatMutation,
+  useGetTickitInfoByPhoneQuery,
   useRemoveBookingSeatMutation,
-  useUnBookSeatFromCounterBookingMutation,
 } from "@/store/api/bookingApi";
 import {
-  counterPaymentMethodOptions,
-  ICounterPaymentMethodOptions,
+  IPaymentMethodOptions,
+  paymentMethodOptions,
 } from "@/utils/constants/common/paymentMethodOptions";
-
 import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
@@ -42,41 +45,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import SeatLayoutSelector from "@/components/common/busSeatLayout/SeatLayoutSelector";
-
-import { TimePicker } from "@/components/common/form/TimePicker";
-import { Label } from "@/components/common/typography/Label";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  addBookingSeatFromCounterProps,
-  addBookingSeatFromCounterSchema,
-} from "@/schemas/counter/addBookingSeatFromCounter";
+import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import SeatStatus from "./SeatStatus";
-import Status from "./Status";
-import TripSheet from "./TripSheet";
 
-interface ICounterBookingFormProps {
+interface IBookingFormProps {
   bookingCoach: any;
+  bookingFormState: any;
+  goViaRoute: any;
+  returnViaRoute: any;
+  setBookingFormState: any;
+  onClose: any;
 }
-interface ICounterBookingFormStateProps {
+export interface IBookingFormStateProps {
   targetedSeat: number | null;
   selectedSeats: any[];
   redirectLink: string | null;
@@ -84,64 +67,32 @@ interface ICounterBookingFormStateProps {
   redirectConfirm: boolean;
 }
 
-const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
+const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
+  bookingFormState,
+  goViaRoute,
+  returnViaRoute,
   bookingCoach,
+  setBookingFormState,
+  onClose,
 }) => {
-  const [bookingType, setBookingType] = useState("SeatIssue");
-  const [expirationDate, setExpirationDate] = useState<Date | undefined>(
-    undefined
-  );
-  const [expirationTime, setExpirationTime] = useState<Date>(new Date());
   const { translate } = useCustomTranslator();
-  const user = useSelector((state: any) => state.user);
-  const [status, setStatus] = useState(false);
-  const [statusBookingCoach, setStatusBookingCoach] = useState({
-    CounterBookedSeat: [],
-    orderSeat: [],
-  });
-  const [tripSheet, setTripSheet] = useState(false);
 
-  const [seatStatus, setSeatStatus] = useState(false);
-  const [seatStatusBooking, setSeatStatusBooking] = useState({
-    CounterBookedSeat: [],
-    orderSeat: [],
-  });
-
-  const [popoverOpen, setPopoverOpen] = useState(false);
-  const [bookingFormState, setBookingFormState] =
-    useState<ICounterBookingFormStateProps>({
-      selectedSeats: [],
-      targetedSeat: null,
-      redirectLink: null,
-      customerName: null,
-      redirectConfirm: false,
-    });
-  const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
-    useRemoveBookingSeatMutation({}) as any;
-  const [unBookSeatFromCounterBooking] =
-    useUnBookSeatFromCounterBookingMutation({}) as any;
   const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
-    useAddBookingMutation();
+    useAddBookingMutation() as any;
+  const [
+    addBookingPayment,
+    { isLoading: addBookingPaymentLoading, error: addBookingPaymentError },
+  ] = useAddBookingPaymentMutation() as any;
+  const [addBookingSeat] = useAddBookingSeatMutation() as any;
+  const [removeBookingSeat] = useRemoveBookingSeatMutation() as any;
   const [
     checkingSeat,
     { isLoading: checkingSeatLoading, error: checkingSeatError },
-  ] = useCheckingSeatMutation();
-  const [addBookingSeat] = useAddBookingSeatMutation();
+  ] = useCheckingSeatMutation() as any;
 
   const totalAmount =
     totalCalculator(bookingFormState?.selectedSeats, "currentAmount") || 0;
   const totalSeats = bookingFormState?.selectedSeats?.length || 0;
-  const seatsAllocation = (() => {
-    switch (bookingCoach.coachClass) {
-      case "E_Class":
-      case "B_Class":
-      case "Sleeper":
-      case "S_Class":
-        return dynamicSeatAllocation(bookingCoach?.CoachConfigSeats);
-      default:
-        return { left: [], right: [], lastRow: [], middle: [] };
-    }
-  })();
 
   const {
     register,
@@ -149,78 +100,17 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     setError,
     watch,
     handleSubmit,
-    reset,
-    formState: { isSubmitSuccessful, errors },
-  } = useForm<addBookingSeatFromCounterProps>({
-    resolver: zodResolver(addBookingSeatFromCounterSchema),
+    formState: { errors },
+  } = useForm<AddBookingSeatDataProps>({
+    resolver: zodResolver(addBookingSeatSchema),
     defaultValues: {
-      counterId: undefined,
-      customerName: "",
-      paymentType: "", // For dropdowns, empty string is a good default for unselected state
-      paymentAmount: undefined,
-      gender: "Male", // Use undefined instead of empty string for optional enum fields
-      phone: "",
-      email: "",
-      address: "",
-      nid: "",
-      nationality: undefined, // Dropdown reset value
-      paymentMethod: undefined, // Dropdown reset value
-      boardingPoint: undefined, // Dropdown reset value
-      droppingPoint: undefined, // Dropdown reset value
-      noOfSeat: 0,
       amount: 0,
-      date: bookingCoach?.departureDate || "", // Pre-fill if available
-      seats: [],
     },
   });
 
-  useEffect(() => {
-    if (bookingCoach) {
-      setStatusBookingCoach({
-        CounterBookedSeat: bookingCoach?.CounterBookedSeat,
-        orderSeat: bookingCoach?.orderSeat,
-      });
-    }
+  const partialAmount = watch("paymentAmount");
+  const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
 
-    setSeatStatusBooking({
-      CounterBookedSeat: bookingCoach?.CounterBookedSeat,
-      orderSeat: bookingCoach?.orderSeat,
-    });
-  }, [bookingCoach]);
-
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset({
-        counterId: undefined,
-        customerName: "",
-        paymentType: "",
-        paymentAmount: undefined,
-        gender: "Male", // Reset to undefined for optional enum
-        phone: "",
-        email: "",
-        address: "",
-        nid: "",
-        nationality: undefined, // Dropdown reset to undefined
-        paymentMethod: undefined, // Dropdown reset to undefined
-        boardingPoint: undefined, // Dropdown reset to undefined
-        droppingPoint: undefined, // Dropdown reset to undefined
-        noOfSeat: 0,
-        amount: 0,
-        date: bookingCoach?.departureDate || "",
-        seats: [],
-      });
-      setBookingFormState({
-        targetedSeat: null,
-        selectedSeats: [],
-        redirectLink: null,
-        customerName: null,
-        redirectConfirm: false,
-      });
-      setBookingType("SeatIssue");
-      setExpirationDate(undefined);
-      setExpirationTime(new Date());
-    }
-  }, [isSubmitSuccessful, reset, bookingCoach?.departureDate]);
   const handleBookingSeat = async (seatData: any) => {
     const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
       (current: any) => current.seat === seatData.seat
@@ -235,10 +125,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       });
 
       if (result?.data?.success) {
-        setBookingFormState((prevState) => ({
+        setBookingFormState((prevState: any) => ({
           ...prevState,
           selectedSeats: prevState.selectedSeats.filter(
-            (seat) => seat.seat !== seatData.seat
+            (seat: any) => seat.seat !== seatData.seat
           ),
         }));
       }
@@ -251,7 +141,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       });
 
       if (result?.data?.data?.available) {
-        setBookingFormState((prevState) => ({
+        setBookingFormState((prevState: any) => ({
           ...prevState,
           selectedSeats: [
             ...prevState.selectedSeats,
@@ -267,10 +157,13 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   };
 
   useEffect(() => {
+    //@ts-ignore
+    setValue("coachConfigId", bookingCoach?.id);
+    //@ts-ignore
+    setValue("schedule", bookingCoach?.schedule);
     setValue("amount", totalAmount);
     setValue("noOfSeat", totalSeats);
     setValue("date", bookingCoach?.departureDate);
-    setValue("counterId", user?.id);
 
     if (bookingFormState?.selectedSeats?.length) {
       setValue(
@@ -279,290 +172,227 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       );
     }
   }, [
-    bookingCoach,
+    bookingCoach?.departureDate,
+    bookingCoach?.id,
+    bookingCoach?.schedule,
     bookingFormState.selectedSeats,
     setValue,
     totalAmount,
     totalSeats,
-    user.id,
   ]);
-  // console.log("bookingType:---x", bookingType);
-  // console.log("expirationDate:---::", expirationDate);
-  // console.log("selectedSeats QQ:---::", bookingCoach);
-  const paymentType = watch("paymentType");
-  const partialAmount = watch("paymentAmount");
-  const paymentMethod = watch("paymentMethod");
-  const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
-  console.log("watch", paymentMethod);
 
-  const handleCancelBooking = async () => {
-    // Define the data structure for seats to cancel
-    const data = {
-      seats: bookingFormState.selectedSeats.map((seat) => ({
-        seat: seat.seat,
-        coachConfigId: bookingCoach.id,
-        schedule: bookingCoach.schedule,
-        date: bookingCoach.departureDate,
-      })),
-    };
-
-    try {
-      // Call the unbook API with the prepared data
-      const response = await unBookSeatFromCounterBooking(data).unwrap();
-      console.log("res@", response);
-      if (response.success) {
-        setBookingFormState((prevState) => ({
-          ...prevState,
-          selectedSeats: [], // Clear selected seats on successful cancellation
-        }));
-        toast.success(
-          translate(
-            "Booking canceled successfully.",
-            "বুকিং সফলভাবে বাতিল করা হয়েছে।"
-          )
-        );
-      }
-    } catch (error) {
-      console.error(
+  useEffect(() => {
+    if (bookingFormState?.redirectLink && bookingFormState?.redirectConfirm) {
+      toast.success(
         translate(
-          "Failed to cancel booking:",
-          "বুকিং বাতিল করতে ব্যর্থ হয়েছে:"
-        ),
-        error
-      );
-      toast.error(
-        translate(
-          "Failed to cancel booking.",
-          "বুকিং বাতিল করতে ব্যর্থ হয়েছে।"
+          `প্রিয় ${bookingFormState?.customerName}, আপনার সিট সফলভাবে বুক করা হয়েছে! আমাদের সেবা ব্যবহার করার জন্য ধন্যবাদ।`,
+          `Dear ${bookingFormState?.customerName}, your seat has been successfully booked! Thank you for choosing our service.`
         )
       );
+
+      setTimeout(() => {
+        const paymentPromise = new Promise((resolve) =>
+          setTimeout(resolve, 2000)
+        );
+
+        toast.promise(paymentPromise, {
+          loading: translate("পুনঃনির্দেশিত হচ্ছে...", "Redirecting..."),
+          success: () => {
+            setTimeout(() => {
+              if (bookingFormState.redirectLink) {
+                window.location.href = bookingFormState.redirectLink;
+              }
+            }, 1500);
+            return translate(
+              "পেমেন্টের জন্য পুনঃনির্দেশনা সম্পন্ন হয়েছে।",
+              "Redirecting is complete for payment."
+            );
+          },
+          error: translate("ত্রুটি ঘটেছে", "Error occurred"),
+        });
+      }, 3000);
+
+      setBookingFormState((prevState: IBookingFormStateProps) => ({
+        ...prevState,
+        redirectConfirm: false,
+      }));
     }
+  }, [
+    bookingFormState?.redirectLink,
+    bookingFormState?.redirectConfirm,
+    bookingFormState?.customerName,
+    translate,
+    setBookingFormState,
+  ]);
+
+  const paymentType = watch("paymentType");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true); // Trigger the API call for fetching user info by phone
   };
-  //on submit
-  const onSubmit = async (data: addBookingSeatFromCounterProps) => {
+
+  const { data: userInfoData, isLoading: userInfoLoading } =
+    useGetTickitInfoByPhoneQuery(phoneNumber, {
+      skip: !submitted || !phoneNumber, // Only call API if submitted and phoneNumber is set
+    }) as any;
+  console.log("userInfoDatarrr", userInfoData);
+  useEffect(() => {
+    if (submitted) {
+      if (userInfoData?.data) {
+        // Populate all relevant form fields
+        setValue("customerName", userInfoData.data.name || "");
+        setValue("phone", userInfoData.data.phone || "");
+        setValue("gender", userInfoData.data.gender || "");
+        setValue("email", userInfoData.data.email || "");
+        setValue("address", userInfoData.data.address || "");
+        setValue("nationality", userInfoData.data.nationality || "");
+        setValue("nid", userInfoData.data.nid || "");
+
+        // Clear any previous error message
+        setErrorMessage("");
+      } else {
+        // Set error message if no data found
+        setErrorMessage("No data found for this phone number.");
+      }
+
+      // Reset `submitted` to allow for further searches by phone
+      setSubmitted(false);
+    }
+  }, [userInfoData, setValue, submitted]);
+  const onSubmit = async (data: AddBookingSeatDataProps) => {
+    const tripType = localStorage.getItem("tripType");
+    const returnDate = localStorage.getItem("returnDate");
+
+    if (tripType === "Round_Trip" && returnDate) {
+      const hasReturnSeat = bookingFormState.selectedSeats.some(
+        (seat: any) => format(new Date(seat.date), "yyyy-MM-dd") === returnDate
+      );
+
+      if (!hasReturnSeat) {
+        toast.error("Please select a return seat for your round trip.");
+        return;
+      }
+    }
+
+    console.log("after submit click", data);
     const cleanedData = removeFalsyProperties(data, [
-      "customerName",
       "nid",
       "email",
       "nationality",
       "address",
+      "customerName",
+      "gender",
     ]);
-    console.log("submitted data", data);
-    try {
-      const check = await checkingSeat({
-        coachConfigId: bookingCoach.id,
-        schedule: bookingCoach.schedule,
-        date: bookingCoach.departureDate,
-        seats: cleanedData?.seats,
-      });
 
-      if (check?.data?.data?.available) {
-        const finalData = {
-          ...cleanedData,
-          bookingType: bookingType,
-          seats: bookingFormState.selectedSeats.map((seat) => ({
-            seat: seat.seat,
-            coachConfigId: bookingCoach.id,
-            schedule: bookingCoach.schedule,
-            date: bookingCoach.departureDate,
-          })),
-          ...(bookingType === "SeatBooking" && {
-            expiryBookingDate: expirationDate
-              ? format(expirationDate, "yyyy-MM-dd")
-              : undefined,
-            expiryBookingTime: expirationTime
-              ? expirationTime.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              : undefined,
-          }),
-        };
-        // console.log("@final data:", finalData);
-        const booking = await addBooking(finalData);
+    const check = await checkingSeat({
+      coachConfigId: bookingCoach?.id,
+      schedule: bookingCoach.schedule,
+      date: bookingCoach.departureDate,
+      seats: cleanedData?.seats,
+    });
+    console.log("check", check);
+    if (check?.data?.data?.available) {
+      //console.log("result", result);
+      const finalData = {
+        ...cleanedData,
+        bookingType: "SeatIssue",
 
-        if (booking.data?.success) {
-          toast.success(
-            translate(
-              `প্রিয় ${booking.data?.data?.customerName}, আপনার সিট সফলভাবে বুক করা হয়েছে! আমাদের সেবা ব্যবহার করার জন্য ধন্যবাদ।`,
-              `Dear ${booking.data?.data?.customerName}, your seat has been successfully booked! Thank you for choosing our service.`
-            )
-          );
-        } else {
-          toast.error("Booking failed. Please try again.");
+        seats: bookingFormState.selectedSeats.map((seat: any) => ({
+          seat: seat.seat,
+          coachConfigId: seat.coachConfigId, // Use each seat's specific coachConfigId
+          schedule: seat.schedule, // Use each seat's specific schedule
+          date: seat.date, // Use each seat's specific date
+        })),
+      };
+      console.log("finalDataqq:-", finalData);
+      const booking = await addBooking(finalData);
+
+      if (booking.data?.success) {
+        console.log("finalDataqq:-", finalData);
+
+        const payment = await addBookingPayment(booking?.data?.data?.id);
+        if (payment.data?.success) {
+          playSound("success");
+          setBookingFormState((prevState: IBookingFormStateProps) => ({
+            ...prevState,
+            redirectLink: payment?.data?.data?.url,
+            customerName: booking.data?.data?.customerName,
+            redirectConfirm: true,
+          }));
         }
-      } else {
-        toast.warning("Selected seat is no longer available.");
+        localStorage.removeItem("returnDate");
+        onClose();
       }
-    } catch (error) {
-      toast.error("An error occurred during booking submission.");
-      console.error("Error:", error);
+    } else {
+      const targetSeat = check?.data?.message?.split(" ")[0];
+      toast.warning(
+        `Seat "${targetSeat}" is no longer available. Choose another seat.`
+      );
+      playSound("warning");
     }
   };
 
   return (
     <PageTransition>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* seat issue or seat booking part counter */}
-        <PageTransition className="flex py-5 flex-col gap-3 items-center justify-center h-full w-full">
-          <RadioGroup
-            className="flex gap-4"
-            value={bookingType}
-            onValueChange={setBookingType} // Update bookingType state on change
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="SeatIssue" id="r2" />
-              <Label htmlFor="r2">Seat Issue</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="SeatBooking" id="r3" />
-              <Label htmlFor="r3">Seat Booking</Label>
-            </div>
-          </RadioGroup>
-          {bookingType === "SeatBooking" && (
-            <div className="flex items-center justify-center gap-4">
-              <Popover
-                open={popoverOpen}
-                onOpenChange={(open) => setPopoverOpen(open)}
-              >
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    onClick={() => setPopoverOpen(true)}
-                    className={cn(
-                      "bg-background mt-8 justify-start text-left font-normal text-sm h-9",
-                      !expirationDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {expirationDate
-                      ? format(expirationDate, "PPP")
-                      : translate(
-                          "মেয়াদ উত্তীর্ণ তারিখ নির্বাচন",
-                          "Expire Booking Date"
-                        )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="bg-background">
-                  <Calendar
-                    mode="single"
-                    selected={expirationDate || undefined}
-                    onSelect={(date: any) => {
-                      if (date) {
-                        setExpirationDate(date); // Update the expiration date
-                        setPopoverOpen(false); // Close the popover after date selection
-                      }
-                    }}
-                    fromYear={1960}
-                    toYear={new Date().getFullYear()}
-                  />
-                </PopoverContent>
-              </Popover>
-              {/* Expiration Time Input */}
-              {/* //@ts-ignore */}
+      {/* find tickit */}
+      <div className="">
+        <div className="">
+          <PageTransition>
+            <form
+              onSubmit={handleFormSubmit}
+              className="ml-4 flex justify-start items-center"
+            >
               <InputWrapper
-                //@ts-ignore
-                error={errors?.time?.message}
-                //@ts-ignore
-                labelFor="time"
-                label={translate(" ", " ")}
+                className="w-full"
+                labelFor="FinfTickit"
+                error=" "
+                label={translate(
+                  "ফোন নম্বর দ্বারা টিকিট খুঁজুন",
+                  "Find Ticket By Phone Number"
+                )}
               >
-                {" "}
-                {/* //@ts-ignore */}
-                <TimePicker
-                  //@ts-ignore
-                  date={expirationTime}
-                  //@ts-ignore
-                  setDate={setExpirationTime}
+                <Input
+                  type="text"
+                  name="phoneNumber"
+                  onChange={(e: any) => setPhoneNumber(e.target.value)}
+                  id="phoneNumber"
+                  placeholder={translate(
+                    "ফোন নম্বর দ্বারা টিকিট খুঁজুন",
+                    "Find Ticket By Phone Number"
+                  )}
                 />
               </InputWrapper>
-            </div>
-          )}
-        </PageTransition>
-
-        <div className="flex items-center gap-5 mx-9">
-          {/* STATUS BUTTON */}
-          <Dialog
-            open={status}
-            onOpenChange={(open: boolean) => setStatus(open)}
-          >
-            <DialogTrigger asChild>
-              <Button
-                className="group relative px-10"
-                variant="default"
-                size="icon"
-              >
-                <span className="">{translate("অবস্থা", "Status")}</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent size="lg">
-              <DialogTitle className="sr-only">status</DialogTitle>
-              <Status bookingCoach={statusBookingCoach} />
-            </DialogContent>
-          </Dialog>
-
-          {/* STRIP SHEET BUTTON */}
-          <Dialog
-            open={tripSheet}
-            onOpenChange={(open: boolean) => setTripSheet(open)}
-          >
-            <DialogTrigger asChild>
-              <Button
-                className="group relative px-14"
-                variant="outline"
-                size="icon"
-              >
-                <span className="">
-                  {translate("ট্রিপ তালিকার ", "Trip Sheet")}
+              <Button type="submit" className="mt-7 ml-2">
+                <span>
+                  {userInfoLoading && (
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3 ..."
+                      viewBox="0 0 24 24"
+                    ></svg>
+                  )}
                 </span>
+                Search
               </Button>
-            </DialogTrigger>
-            <DialogContent size="xl">
-              <DialogTitle className="sr-only">Strip sheet</DialogTitle>
-              <TripSheet bookingCoach={bookingCoach} />
-            </DialogContent>
-          </Dialog>
-
-          {/* SEAT STATUS */}
-          <Dialog
-            open={seatStatus}
-            onOpenChange={(open: boolean) => setSeatStatus(open)}
-          >
-            <DialogTrigger asChild>
-              <Button
-                className="group relative px-14"
-                variant="destructive"
-                size="icon"
-              >
-                <span className="">
-                  {translate("আসন অবস্থা", "Seat Status")}
-                </span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent size="xl">
-              <DialogTitle className="sr-only">seat status</DialogTitle>
-              <SeatStatus bookingCoach={seatStatusBooking} />
-            </DialogContent>
-          </Dialog>
-        </div>
-        {/* seat issue or seat booking part counter */}
-        <div className="flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
-          {/* COUCH SEAT PLAN CONTAINER */}
-          <PageTransition className="w-4/12 flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-            <SeatLayoutSelector
-              checkingSeat={checkingSeat}
-              bookingCoach={bookingCoach}
-              coachClass={bookingCoach.coachClass}
-              //@ts-ignore
-              seatsAllocation={seatsAllocation}
-              handleBookingSeat={handleBookingSeat}
-              bookingFormState={bookingFormState}
-              removeBookingSeatLoading={removeBookingSeatLoading}
-            />
+            </form>
+            {errorMessage && (
+              <div className="text-red-500 mt-1 ml-5">{errorMessage}</div>
+            )}
           </PageTransition>
+        </div>
+      </div>
+
+      {/*end find tickit */}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-row items-start my-0 h-full mt-3 px-4 gap-x-12 ">
+          {/* COUCH SEAT PLAN CONTAINER */}
 
           {/* CUSTOMER & PAYMENT INFORMATION */}
-          <PageTransition className="flex flex-col justify-between h-full w-8/12">
+          <PageTransition className="flex flex-col justify-between h-full w-full">
             <div>
               <Heading size="h4">
                 {translate(
@@ -570,6 +400,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                   "Client Personal Information"
                 )}
               </Heading>
+
               <GridWrapper>
                 {/* NAME */}
                 <InputWrapper
@@ -646,10 +477,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                     </SelectContent>
                   </Select>
                 </InputWrapper>
+                <Heading size="h4">
+                  {translate("যাত্রার বিবরণ:", "Journey Details:")}
+                </Heading>
                 <div className="col-span-3">
-                  <Heading size="h4">
-                    {translate("যাত্রার বিবরণ:", "Journey Details:")}
-                  </Heading>
                   <GridWrapper>
                     {/* BOARDING POINT */}
                     <InputWrapper
@@ -661,7 +492,6 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                       )}
                     >
                       <Select
-                        value={watch("boardingPoint") || ""}
                         onValueChange={(value: string) => {
                           setValue("boardingPoint", value);
                           setError("boardingPoint", {
@@ -679,20 +509,18 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {bookingCoach?.route?.viaRoute?.length > 0 &&
-                            bookingCoach?.route?.viaRoute?.map(
-                              (singlePoint: any) => (
-                                <SelectItem
-                                  key={singlePoint.en}
-                                  value={singlePoint?.station?.name}
-                                >
-                                  {formatter({
-                                    type: "words",
-                                    words: singlePoint?.station?.name,
-                                  })}
-                                </SelectItem>
-                              )
-                            )}
+                          {goViaRoute.length > 0 &&
+                            goViaRoute?.map((singlePoint: any) => (
+                              <SelectItem
+                                key={singlePoint.en}
+                                value={singlePoint}
+                              >
+                                {formatter({
+                                  type: "words",
+                                  words: singlePoint,
+                                })}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </InputWrapper>
@@ -706,7 +534,6 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                       )}
                     >
                       <Select
-                        value={watch("droppingPoint") || ""}
                         onValueChange={(value: string) => {
                           setValue("droppingPoint", value);
                           setError("droppingPoint", {
@@ -724,8 +551,8 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {bookingCoach?.route?.viaRoute?.length > 0 &&
-                            bookingCoach?.route?.viaRoute
+                          {returnViaRoute.length > 0 &&
+                            returnViaRoute
                               ?.filter(
                                 (target: any) =>
                                   target?.station?.name !==
@@ -734,11 +561,111 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                               ?.map((singlePoint: any) => (
                                 <SelectItem
                                   key={singlePoint.en}
-                                  value={singlePoint?.station?.name}
+                                  value={singlePoint}
                                 >
                                   {formatter({
                                     type: "words",
-                                    words: singlePoint?.station?.name,
+                                    words: singlePoint,
+                                  })}
+                                </SelectItem>
+                              ))}
+                        </SelectContent>
+                      </Select>
+                    </InputWrapper>
+                    {/* BOARDING POINT */}
+                    <InputWrapper
+                      error={errors?.returnBoardingPoint?.message}
+                      labelFor="returnBoardingPoint"
+                      label={translate(
+                        addBookingSeatForm.returnBoardingPoint.label.bn,
+                        addBookingSeatForm.returnBoardingPoint.label.en
+                      )}
+                    >
+                      <Select
+                        onValueChange={(value: string) => {
+                          setValue("returnBoardingPoint", value);
+                          setError("returnBoardingPoint", {
+                            type: "custom",
+                            message: "",
+                          });
+                        }}
+                      >
+                        <SelectTrigger
+                          id="returnBoardingPoint"
+                          className="w-full"
+                        >
+                          <SelectValue
+                            placeholder={translate(
+                              addBookingSeatForm.returnBoardingPoint.placeholder
+                                .bn,
+                              addBookingSeatForm.returnBoardingPoint.placeholder
+                                .en
+                            )}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {goViaRoute.length > 0 &&
+                            goViaRoute?.map((singlePoint: any) => (
+                              <SelectItem
+                                key={singlePoint.en}
+                                value={singlePoint}
+                              >
+                                {formatter({
+                                  type: "words",
+                                  words: singlePoint,
+                                })}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </InputWrapper>
+                    {/* DROPPING POINT */}
+                    <InputWrapper
+                      error={errors?.returnDroppingPoint?.message}
+                      labelFor="returnDroppingPoint"
+                      label={translate(
+                        addBookingSeatForm.returnDroppingPoint.label.bn,
+                        addBookingSeatForm.returnDroppingPoint.label.en
+                      )}
+                    >
+                      <Select
+                        onValueChange={(value: string) => {
+                          setValue("returnDroppingPoint", value);
+                          setError("returnDroppingPoint", {
+                            type: "custom",
+                            message: "",
+                          });
+                        }}
+                      >
+                        <SelectTrigger
+                          id="returnDroppingPoint"
+                          className="w-full"
+                        >
+                          <SelectValue
+                            placeholder={translate(
+                              addBookingSeatForm.returnDroppingPoint.placeholder
+                                .bn,
+                              addBookingSeatForm.returnDroppingPoint.placeholder
+                                .en
+                            )}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {returnViaRoute.length > 0 &&
+                            returnViaRoute
+                              ?.filter(
+                                (target: any) =>
+                                  target?.station?.name !==
+                                  watch("boardingPoint")
+                              )
+                              ?.map((singlePoint: any) => (
+                                <SelectItem
+                                  key={singlePoint.en}
+                                  value={singlePoint}
+                                >
+                                  {formatter({
+                                    type: "words",
+                                    words: singlePoint,
                                   })}
                                 </SelectItem>
                               ))}
@@ -770,6 +697,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                     </InputWrapper>
                   </GridWrapper>
                 </div>
+
                 {/* EMAIL */}
                 <InputWrapper
                   error={errors?.email?.message}
@@ -789,6 +717,29 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                     )}
                   />
                 </InputWrapper>
+
+                {/* PASSPORT OR NID */}
+                <InputWrapper
+                  error={errors?.nid?.message}
+                  className={cn(
+                    bookingFormState?.selectedSeats?.length < 3 && "col-span-1"
+                  )}
+                  labelFor="pass/nid"
+                  label={translate(
+                    addBookingSeatForm.passportOrNID.label.bn,
+                    addBookingSeatForm.passportOrNID.label.en
+                  )}
+                >
+                  <Input
+                    {...register("nid")}
+                    type="text"
+                    id="pass/nid"
+                    placeholder={translate(
+                      addBookingSeatForm.passportOrNID.placeholder.bn,
+                      addBookingSeatForm.passportOrNID.placeholder.en
+                    )}
+                  />
+                </InputWrapper>
                 {/* NATIONALITY */}
                 <InputWrapper
                   error={errors?.nationality?.message}
@@ -799,7 +750,6 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                   )}
                 >
                   <Select
-                    value={watch("nationality") || ""}
                     onValueChange={(value: string) => {
                       setValue("nationality", value);
                       setError("nationality", { type: "custom", message: "" });
@@ -830,32 +780,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                     </SelectContent>
                   </Select>
                 </InputWrapper>
-                {/* PASSPORT OR NID */}
-                <InputWrapper
-                  error={errors?.nid?.message}
-                  className={cn(
-                    bookingFormState?.selectedSeats?.length < 3 && "col-span-1"
-                  )}
-                  labelFor="pass/nid"
-                  label={translate(
-                    addBookingSeatForm.passportOrNID.label.bn,
-                    addBookingSeatForm.passportOrNID.label.en
-                  )}
-                >
-                  <Input
-                    {...register("nid")}
-                    type="text"
-                    id="pass/nid"
-                    placeholder={translate(
-                      addBookingSeatForm.passportOrNID.placeholder.bn,
-                      addBookingSeatForm.passportOrNID.placeholder.en
-                    )}
-                  />
-                </InputWrapper>
               </GridWrapper>
             </div>
 
-            <div className="mt-6">
+            <div className="my-2">
               <Heading size="h4">
                 {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
               </Heading>
@@ -877,11 +805,15 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                 )}
               </div>
             </div>
-            {/* PAYMENT METHOD */}
-            <Heading className="mt-6" size="h4">
-              {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
-            </Heading>
-            <div className="grid grid-cols-3">
+            <div className="mt-4">
+              <Heading className="" size="h4">
+                {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
+              </Heading>
+            </div>
+
+            {/* paymnet div */}
+            <div className="mt-2 grid grid-cols-3">
+              {/* PAYMENT METHOD */}
               <InputWrapper
                 error={errors?.paymentMethod?.message}
                 labelFor="paymentMethod"
@@ -891,7 +823,6 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                 )}
               >
                 <Select
-                  value={watch("paymentMethod") || ""}
                   onValueChange={(value: string) => {
                     setValue("paymentMethod", value);
                     setError("paymentMethod", {
@@ -909,9 +840,9 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    {counterPaymentMethodOptions?.map(
+                    {paymentMethodOptions?.map(
                       (
-                        singleNationality: ICounterPaymentMethodOptions,
+                        singleNationality: IPaymentMethodOptions,
                         nationalityIndex: number
                       ) => (
                         <SelectItem
@@ -997,8 +928,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                 </Paragraph>
               </div>
             )}
-
-            <div className="mt-6">
+            <div className="mt-3">
               <ul className="flex justify-between">
                 <li className="text-lg tracking-tight">
                   <label>{translate("মোট আসনঃ ", "Total Seats: ")}</label>
@@ -1009,6 +939,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                     )}
                   </b>
                 </li>
+
                 <li className="text-lg tracking-tight">
                   <label>{translate("প্রদত্ত বিল: ", "Paid Amount: ")}</label>
                   <b className="font-[500] font-anek">
@@ -1062,24 +993,21 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                 </li>
               </ul>
             </div>
-
-            <div className="flex justify-end items-center gap-5">
-              <p
-                className="mt-7 px-5 py-2 text-[16px] cursor-pointer rounded-md w-1/3 bg-gradient-to-tr from-primary to-tertiary text-primary-foreground hover:from-primary/50 hover:to-tertiary/50 hover:bg-gradient-to-tr hover:text-primary-foreground"
-                onClick={handleCancelBooking}
-              >
-                {translate("বুকিং বাতিল করুন", "Restore Seat")}
-              </p>
-              <Submit
-                loading={addBookingLoading || checkingSeatLoading}
-                errors={addBookingError || checkingSeatError}
-                submitTitle={translate("আসন বুক করুন", "Book Seat")}
-                errorTitle={translate(
-                  "আসন বুক করতে ত্রুটি হয়েছে",
-                  "Seat Booking Error"
-                )}
-              />
-            </div>
+            <Submit
+              loading={
+                addBookingLoading ||
+                checkingSeatLoading ||
+                addBookingPaymentLoading
+              }
+              errors={
+                addBookingError || checkingSeatError || addBookingPaymentError
+              }
+              submitTitle={translate("আসন বুক করুন", "Book Seat")}
+              errorTitle={translate(
+                "আসন বুক করতে ত্রুটি হয়েছে",
+                "Seat Booking Error"
+              )}
+            />
           </PageTransition>
         </div>
       </form>
@@ -1087,4 +1015,4 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   );
 };
 
-export default CounterTickitBookingForm;
+export default BoookingFormRoundTripPublic;
