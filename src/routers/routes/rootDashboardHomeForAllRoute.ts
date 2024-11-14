@@ -1,5 +1,7 @@
+
 import AccountDashboardHome from "@/pages/dashboard/accountsRole/accountDashboardHome/AccountDashboardHome";
 import AdminDashboardHome from "@/pages/dashboard/admin/AdminDashboardHome";
+import CancelTicketRequestList from "@/pages/dashboard/admin/cancelRequest/CancelTicketRequestList";
 import CounterDashboardHome from "@/pages/dashboard/counterRole/counterHome/CounterDashboardHome";
 import SupervisorDashboardHome from "@/pages/dashboard/supervisor/SupervisorDashboardHome";
 import React, { ReactNode } from "react";
@@ -15,6 +17,11 @@ export const rootDasboardHomeRoutesAll: IRouteProps[] = [
     path: "dashboard",
     element: React.createElement(AdminDashboardHome),
   },
+  {
+    path:"today_cancel_request",
+    element:React.createElement(CancelTicketRequestList)
+  },
+ 
 ];
 export const rootCounterDasboardHomeRoutesAll: IRouteProps[] = [
   {
@@ -34,3 +41,4 @@ export const rootAccountsDashboardHome: IRouteProps[] = [
     element: React.createElement(AccountDashboardHome),
   },
 ];
+

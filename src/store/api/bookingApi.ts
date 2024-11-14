@@ -56,6 +56,14 @@ const bookingApi = apiSlice.injectEndpoints({
 
       providesTags: ["booking"],
     }),
+    getTodayCancelRequestList: builder.query({
+      query: () => ({
+        url: `/order/today-cancel-request`,
+        method: "GET",
+      }),
+
+      providesTags: ["booking"],
+    }),
 
     // // GETTING SINGLE COACH
     getPaymentDetailsWithHooks: builder.query({
@@ -73,6 +81,22 @@ const bookingApi = apiSlice.injectEndpoints({
       query: (id) => ({
         url: `/order/due-payment/${id}`,
         method: "PUT",
+      }),
+      invalidatesTags: ["booking"],
+    }),
+    //due payemnt
+    orderCancelRequest: builder.mutation({
+      query: (id) => ({
+        url: `/order/cancel-request/${id}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["booking"],
+    }),
+    acceptCancelTicket: builder.mutation({
+      query: ({ticketNo, data}) => ({
+        url: `/order/cancel-ticket/${ticketNo}`,
+        method: "PUT",
+        body: data,
       }),
       invalidatesTags: ["booking"],
     }),
@@ -118,4 +142,7 @@ export const {
   useGetTickitInfoQuery,
   useDueAmountPaymentMutation,
   useUnBookSeatFromCounterBookingMutation,
+  useOrderCancelRequestMutation,
+  useGetTodayCancelRequestListQuery,
+  useAcceptCancelTicketMutation
 } = bookingApi;

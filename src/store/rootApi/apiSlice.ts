@@ -47,6 +47,7 @@ export const apiSlice = createApi({
     "role",
     "vehicle",
     "helper",
-    "reserve"
+    "reserve",
+    "slider"
   ],
 });

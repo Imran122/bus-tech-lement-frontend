@@ -14,7 +14,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -29,6 +28,22 @@ import { LuDownload } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import CounterOrderDetailsModal from "../sales/CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "../sales/UpdateCounterOrderModal";
+import { useOrderCancelRequestMutation } from "@/store/api/bookingApi";
+import { toast } from "@/components/ui/use-toast";
+import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { SaleData } from "@/types/dashboard/vehicleeSchedule.ts/order";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ISalesListProps {}
 export interface ISalesDataStateProps {
@@ -42,7 +57,7 @@ export interface ISalesDataStateProps {
 
 const CounterDashboardHome: FC<ISalesListProps> = () => {
   const { translate } = useCustomTranslator();
-
+  const { toastMessage } = useMessageGenerator();
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
     page: 1,
@@ -50,6 +65,8 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     meta: { page: 0, size: 10, total: 100, totalPage: 10 },
   });
   const bookingState = useSelector(selectCounterSearchFilter);
+
+  const [cancelRequst] = useOrderCancelRequestMutation();
 
   const [salesTickitState, setSalesTickitState] =
     useState<ISalesDataStateProps>({
@@ -70,6 +87,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       size: query.size,
     });
   console.log("salesTickitList", salesTickitList);
+
   const handleUpdateClick = (orderId: number) => {
     setSalesTickitState((prev) => ({
       ...prev,
@@ -78,26 +96,30 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     }));
   };
 
-  const handleDetailsClick = (orderId: number) => {
-    setSalesTickitState((prev) => ({
-      ...prev,
-      detailsModalOpen: true,
-      selectedOrderId: orderId,
-    }));
+  const handelCancleRequest = async (orderId: number) => {
+    try {
+      const result = await cancelRequst(orderId).unwrap();
+      if (result?.data?.success) {
+        toast({
+          title: translate(
+            "টিকিট বাতিলের অনুরোধের জন্য বার্তা",
+            "Message for cancel ticket request"
+          ),
+          description: toastMessage(
+            "cancel",
+            translate("টিকিট বাতিলের অনুরোধ", "Cancel Ticket Request")
+          ),
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const closeUpdateModal = () => {
     setSalesTickitState((prev) => ({
       ...prev,
       updateModalOpeans: false,
-      selectedOrderId: null,
-    }));
-  };
-
-  const closeDetailsModal = () => {
-    setSalesTickitState((prev) => ({
-      ...prev,
-      detailsModalOpen: false,
       selectedOrderId: null,
     }));
   };
@@ -140,37 +162,88 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     {
       header: translate("কার্যক্রম", "Actions"),
       id: "actions",
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="flex flex-col gap-1">
-            <DropdownMenuLabel>
-              {translate("কার্যক্রম", "Action")}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <Button
-              onClick={() => handleDetailsClick(row.original.id)}
-              variant="outline"
-              size="xs"
-              className="w-full flex justify-start"
-            >
-              {translate("বিস্তারিত", "Details")}
-            </Button>
-            <Button
-              onClick={() => handleUpdateClick(row.original.id)}
-              variant="outline"
-              size="xs"
-              className="w-full flex justify-start"
-            >
-              {translate("পেমেন্ট করুন", "Pay")}
-            </Button>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
+      cell: ({ row }) => {
+        const order = row.original as SaleData;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="flex flex-col gap-1">
+              <DropdownMenuLabel>
+                {translate("কার্যক্রমগুলো", "Actions")}
+              </DropdownMenuLabel>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full flex justify-start"
+                    size="xs"
+                  >
+                    {translate("বিস্তারিত", "Details")}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent size="lg">
+                  <CounterOrderDetailsModal id={order?.id} />
+                </DialogContent>
+              </Dialog>
+
+              <Button
+                onClick={() => handleUpdateClick(row.original.id)}
+                variant="outline"
+                size="xs"
+                className="w-full flex justify-start"
+              >
+                {translate("পেমেন্ট করুন", "Pay")}
+              </Button>
+
+              {/*  CANCEL ALERT */}
+              {order?.status !== "Cancelled" && (
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    className={cn(
+                      "w-full flex bg-destructive text-destructive-foreground hover:bg-destructive/90 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-destructive focus:text-bg-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                    )}
+                  >
+                    <span className="ml-0.5">
+                      {translate("টিকিট বাতিল", "Cancel Ticket")}
+                    </span>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        {translate(
+                          "আপনি কি একদম নিশ্চিত?",
+                          "Are you absolutely sure?"
+                        )}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {translate(
+                          "আপনি টিকিট বাতিল করতে চান? আপনি আপনার টিকিট বাতিল করতে যাচ্ছেন।",
+                          "Are you sure you want to cancel this ticked? You are about to calcel your ticket."
+                        )}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>
+                        {translate("বাতিল করুন", "Cancel")}
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handelCancleRequest(order?.id)}
+                      >
+                        {translate("নিশ্চিত করুন", "Confirm")}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
   ];
   console.log("slice bookingState", bookingState);
@@ -307,15 +380,6 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
         />
       </TableWrapper>
 
-      {salesTickitState.detailsModalOpen && (
-        <CounterOrderDetailsModal
-          isOpen={salesTickitState.detailsModalOpen}
-          onClose={closeDetailsModal}
-          order={salesTickitList?.data?.todaySalesHistory.find(
-            (order: any) => order.id === salesTickitState.selectedOrderId
-          )}
-        />
-      )}
       {salesTickitState.updateModalOpeans && (
         <UpdateCounterOrderModal
           isOpen={salesTickitState.updateModalOpeans}

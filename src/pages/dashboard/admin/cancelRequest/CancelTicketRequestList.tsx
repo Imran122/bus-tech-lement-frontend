@@ -11,23 +11,26 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useGetSalesTickitListQuery } from "@/store/api/counter/counterSalesBookingApi";
+import { selectCounterSearchFilter } from "@/store/api/counter/counterSearchFilterSlice";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useState } from "react";
 import { LuDownload } from "react-icons/lu";
-import CounterOrderDetailsModal from "./CounterOrderDetailsModal";
-import UpdateCounterOrderModal from "./UpdateCounterOrderModal";
+import { useSelector } from "react-redux";
+import { useGetTodayCancelRequestListQuery } from "@/store/api/bookingApi";
+// import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
+import CancelTicketRequestDetails from "./CancelTicketRequestDetails";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { SaleData } from "@/types/dashboard/vehicleeSchedule.ts/order";
+import AcceptRequest from "./AcceptRequest";
 
 interface ISalesListProps {}
-export interface ISalesDataStateProps {
+export interface ICancelTicketRequestProps {
   search: string;
   addUserOpen: boolean;
   updateModalOpeans: boolean;
@@ -36,18 +39,19 @@ export interface ISalesDataStateProps {
   selectedOrderId: number | null;
 }
 
-const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
+const CancelTicketRequestList: FC<ISalesListProps> = () => {
   const { translate } = useCustomTranslator();
-
+  // const { toastMessage } = useMessageGenerator();
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
     page: 1,
     size: 10,
     meta: { page: 0, size: 10, total: 100, totalPage: 10 },
   });
+  const bookingState = useSelector(selectCounterSearchFilter);
 
-  const [salesTickitState, setSalesTickitState] =
-    useState<ISalesDataStateProps>({
+  const [cancelTicketRequest, setCancelTicketRequest] =
+    useState<ICancelTicketRequestProps>({
       search: "",
       addUserOpen: false,
       updateModalOpeans: false,
@@ -57,30 +61,15 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
     });
 
   // Fetch sales data using the API hook
-  const { data: salesTickitList, isLoading: loadingSalesTickit } =
-    useGetSalesTickitListQuery({
-      search: salesTickitState.search,
+  const { data: todayCancelRequest, isLoading: todayCancelRequestLoading } =
+    useGetTodayCancelRequestListQuery({
+      search: cancelTicketRequest.search,
       sort: query.sort,
       page: query.page,
       size: query.size,
     });
-  const handleUpdateClick = (orderId: number) => {
-    setSalesTickitState((prev) => ({
-      ...prev,
-      updateModalOpeans: true,
-      selectedOrderId: orderId,
-    }));
-  };
+  console.log("todayCancelRequest", todayCancelRequest);
 
-
-
-  const closeUpdateModal = () => {
-    setSalesTickitState((prev) => ({
-      ...prev,
-      updateModalOpeans: false,
-      selectedOrderId: null,
-    }));
-  };
 
 
   const columns: ColumnDef<any>[] = [
@@ -122,19 +111,37 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
       header: translate("কার্যক্রম", "Actions"),
       id: "actions",
       cell: ({ row }) => {
-        const offlineSales = row.original as any;
-        return (<DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="flex flex-col gap-1">
-            <DropdownMenuLabel>
-              {translate("কার্যক্রম", "Action")}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <Dialog>
+        const cancel = row.original as SaleData;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="flex flex-col gap-1">
+              <DropdownMenuLabel>
+                {translate("কার্যক্রমগুলো", "Actions")}
+              </DropdownMenuLabel>
+              
+              {/* ACCEEPT REQUEST DATA */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full flex justify-start"
+                    size="xs"
+                  >
+                    {translate("অনুরোধ গ্রহন", "Accept Request")}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent size="lg">
+                  <AcceptRequest requestData={cancel} />
+                </DialogContent>
+              </Dialog>
+              {/* DETAILS TODAY CANCEL REQUEST DATA */}
+              <Dialog>
                 <DialogTrigger asChild>
                   <Button
                     variant="outline"
@@ -145,24 +152,18 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
                   </Button>
                 </DialogTrigger>
                 <DialogContent size="lg">
-                  <CounterOrderDetailsModal id={offlineSales?.id} />
+                  <CancelTicketRequestDetails id={cancel?.id} />
                 </DialogContent>
               </Dialog>
-            <Button
-              onClick={() => handleUpdateClick(row.original.id)}
-              variant="outline"
-              size="xs"
-              className="w-full flex justify-start"
-            >
-              {translate("পেমেন্ট করুন", "Pay")}
-            </Button>
-          </DropdownMenuContent>
-        </DropdownMenu>)
+             
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
       },
     },
   ];
-
-  if (loadingSalesTickit) {
+  console.log("slice bookingState", bookingState);
+  if (todayCancelRequestLoading) {
     return <TableSkeleton columns={7} />;
   }
 
@@ -170,17 +171,20 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
     <PageWrapper>
       <TableWrapper
         subHeading={translate(
-          "আজকের অফলাইন সেলস তথ্য উপাত্ত",
-          "Today's Offline Sales Information"
+          "আজকের টিকিট বাতিলের অনুরোধের তথ্য উপাত্ত",
+          "Today's Sales Information"
         )}
-        heading={translate("আজকের অফলাইন সেলস", "Today's Offline Sales")}
+        heading={translate(
+          "আজকের টিকিট বাতিলের অনুরোধ",
+          "Today's Ticket Cancel Request"
+        )}
       >
         <TableToolbar alignment="end">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setSalesTickitState((prev) => ({
+                  setCancelTicketRequest((prev) => ({
                     ...prev,
                     search: e.target.value,
                   }))
@@ -217,21 +221,22 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
           setQuery={setQuery}
           pagination
           columns={columns}
-          data={salesTickitList?.data?.todaySalesHistory || []}
+          data={todayCancelRequest?.data || []}
         />
       </TableWrapper>
 
-      {salesTickitState.updateModalOpeans && (
+      {/*
+      {cancelTicketRequest.updateModalOpeans && (
         <UpdateCounterOrderModal
-          isOpen={salesTickitState.updateModalOpeans}
+          isOpen={cancelTicketRequest.updateModalOpeans}
           onClose={closeUpdateModal}
           order={salesTickitList?.data?.todaySalesHistory.find(
-            (order: any) => order.id === salesTickitState.selectedOrderId
+            (order: any) => order.id === cancelTicketRequest.selectedOrderId
           )}
         />
-      )}
+      )} */}
     </PageWrapper>
   );
 };
 
-export default CounterTodayOfflineSales;
+export default CancelTicketRequestList;

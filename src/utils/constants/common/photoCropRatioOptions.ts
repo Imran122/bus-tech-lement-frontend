@@ -120,5 +120,5 @@ export const photoCropAspectRatio: IPhotoCropAspectRatioProps[] = [
       bn: "২ঃ৩",
     },
     ratio: 2 / 3,
-  },
+  }
 ];
