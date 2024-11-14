@@ -68,6 +68,11 @@ const bookingApi = apiSlice.injectEndpoints({
         url: `/order/find-ticket/${ticketNumber}`,
       }),
     }),
+    getTickitInfoByPhone: builder.query({
+      query: (phoneNumber) => ({
+        url: `/order/find-customer?phoneNumber=${phoneNumber}`,
+      }),
+    }),
     //due payemnt
     dueAmountPayment: builder.mutation({
       query: (id) => ({
@@ -118,4 +123,5 @@ export const {
   useGetTickitInfoQuery,
   useDueAmountPaymentMutation,
   useUnBookSeatFromCounterBookingMutation,
+  useGetTickitInfoByPhoneQuery,
 } = bookingApi;

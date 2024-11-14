@@ -49,6 +49,12 @@ import { Label } from "@/components/common/typography/Label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -63,15 +69,9 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import SeatStatus from "./SeatStatus";
 import Status from "./Status";
 import TripSheet from "./TripSheet";
-import SeatStatus from "./SeatStatus";
 
 interface ICounterBookingFormProps {
   bookingCoach: any;
@@ -96,15 +96,15 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   const user = useSelector((state: any) => state.user);
   const [status, setStatus] = useState(false);
   const [statusBookingCoach, setStatusBookingCoach] = useState({
-    CounterBookedSeat:[],
-    orderSeat:[]
+    CounterBookedSeat: [],
+    orderSeat: [],
   });
   const [tripSheet, setTripSheet] = useState(false);
 
   const [seatStatus, setSeatStatus] = useState(false);
   const [seatStatusBooking, setSeatStatusBooking] = useState({
-    CounterBookedSeat:[],
-    orderSeat:[],
+    CounterBookedSeat: [],
+    orderSeat: [],
   });
 
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -174,19 +174,19 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     },
   });
 
-  useEffect(() =>{
-    if(bookingCoach){
+  useEffect(() => {
+    if (bookingCoach) {
       setStatusBookingCoach({
-        CounterBookedSeat:bookingCoach?.CounterBookedSeat,
-        orderSeat:bookingCoach?.orderSeat
-      })
+        CounterBookedSeat: bookingCoach?.CounterBookedSeat,
+        orderSeat: bookingCoach?.orderSeat,
+      });
     }
-  
+
     setSeatStatusBooking({
-      CounterBookedSeat:bookingCoach?.CounterBookedSeat,
-      orderSeat:bookingCoach?.orderSeat
-    })
-  } ,[bookingCoach])
+      CounterBookedSeat: bookingCoach?.CounterBookedSeat,
+      orderSeat: bookingCoach?.orderSeat,
+    });
+  }, [bookingCoach]);
 
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -258,7 +258,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
             {
               ...seatData,
               currentAmount: bookingCoach?.fare?.amount,
-              previousAmount: bookingCoach?.fare?.amount,
+              previousAmount: bookingCoach?.discount,
             },
           ],
         }));
@@ -497,7 +497,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
             </DialogTrigger>
             <DialogContent size="lg">
               <DialogTitle className="sr-only">status</DialogTitle>
-              <Status bookingCoach={statusBookingCoach}/>
+              <Status bookingCoach={statusBookingCoach} />
             </DialogContent>
           </Dialog>
 
@@ -519,7 +519,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
             </DialogTrigger>
             <DialogContent size="xl">
               <DialogTitle className="sr-only">Strip sheet</DialogTitle>
-              <TripSheet bookingCoach={bookingCoach}/>
+              <TripSheet bookingCoach={bookingCoach} />
             </DialogContent>
           </Dialog>
 
@@ -541,7 +541,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
             </DialogTrigger>
             <DialogContent size="xl">
               <DialogTitle className="sr-only">seat status</DialogTitle>
-              <SeatStatus bookingCoach={seatStatusBooking}/>
+              <SeatStatus bookingCoach={seatStatusBooking} />
             </DialogContent>
           </Dialog>
         </div>

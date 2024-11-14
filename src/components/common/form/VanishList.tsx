@@ -170,20 +170,26 @@ export const VanishList: FC<IVanishListProps> = ({
                 )}
               </li>
               <li className="flex gap-x-2 items-center font-anek text-base">
-                <span className="line-through font-light">
-                  {translate(
-                    convertToBnDigit(
-                      formatter({ type: "amount", amount: t.previousAmount })
-                    ),
-                    formatter({ type: "amount", amount: t.previousAmount })
-                  )}
-                </span>
-                <span className="font-semibold">
+                <span className="font-semibold line-through">
                   {translate(
                     convertToBnDigit(
                       formatter({ type: "amount", amount: t.currentAmount })
                     ),
                     formatter({ type: "amount", amount: t.currentAmount })
+                  )}
+                </span>
+                <span className=" font-light">
+                  {translate(
+                    convertToBnDigit(
+                      formatter({
+                        type: "amount",
+                        amount: t.currentAmount - t.previousAmount,
+                      })
+                    ),
+                    formatter({
+                      type: "amount",
+                      amount: t.currentAmount - t.previousAmount,
+                    })
                   )}
                 </span>
               </li>

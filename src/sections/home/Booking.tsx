@@ -45,8 +45,8 @@ export interface IBookingStateProps {
   date: Date | null;
   returnDate?: Date | null;
   bookingCoachesList: any[];
-  roundTripGobookingCoachesList: any[];
-  roundTripReturnBookingCoachesList: any[];
+  roundTripGobookingCoachesList?: any[];
+  roundTripReturnBookingCoachesList?: any[];
 }
 
 const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {

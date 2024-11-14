@@ -114,7 +114,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
               date: coachData.departureDate, // Store date here
               schedule: coachData.schedule, // Store schedule here
               currentAmount: coachData?.fare?.amount,
-              previousAmount: coachData?.fare?.amount,
+              previousAmount: coachData?.discount,
             },
           ],
         }));
@@ -159,7 +159,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
                   : "Economy Class"}
               </Badge>
             </li>
-            <li className="text-lg tracking-tight font-semibold mb-0">
+            <li className="text-lg tracking-tight font-semibold mt-1">
               <span className="">{translate("কোচ নম্বরঃ ", "Couch No: ")}</span>
               <span className="font-[500] uppercase">
                 {coachData?.coachNo ||
@@ -168,19 +168,12 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
             </li>
 
             <li className="text-lg tracking-tight">
-              <span className="">
-                {translate("শুরুর স্থানঃ ", "Starting Point: ")}
-              </span>
-              <span className="font-[500]  text-red-400 ml-2 rounded-lg px-2 py-[2px]">
+              <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
                 {coachData?.fromCounter?.name ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
-              </span>
-            </li>
-            <li className="text-lg mt-1 tracking-tight">
-              <span className="">
-                {translate("শেষ স্থানঃ ", "Ending Point: ")}
-              </span>
-              <span className="font-[500]  text-red-400 ml-2 rounded-lg px-2 py-[2px]">
+              </span>{" "}
+              {`=>`}{" "}
+              <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
                 {coachData?.destinationCounter?.name ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>
@@ -226,31 +219,34 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
               <Badge shape="pill" size="sm" variant="tertiary">
                 {translate("অতিরিক্ত কোনো চার্জ নেই", "No Additional Charge")}
               </Badge>
-              <span className="font-anek font-light text-base line-through mt-1">
-                {translate(
-                  convertToBnDigit(
+              {coachData.discount > 0 && (
+                <span className="font-anek font-light text-base line-through mt-1">
+                  {translate(
+                    convertToBnDigit(
+                      formatter({
+                        type: "amount",
+                        amount: coachData?.fare?.amount,
+                      })
+                    ),
                     formatter({
                       type: "amount",
                       amount: coachData?.fare?.amount,
                     })
-                  ),
-                  formatter({
-                    type: "amount",
-                    amount: coachData?.fare?.amount,
-                  })
-                )}
-              </span>
+                  )}
+                </span>
+              )}
+
               <span className="font-anek font-semibold text-xl">
                 {translate(
                   convertToBnDigit(
                     formatter({
                       type: "amount",
-                      amount: coachData?.fare?.amount,
+                      amount: coachData?.fare?.amount - coachData.discount,
                     })
                   ),
                   formatter({
                     type: "amount",
-                    amount: coachData?.fare?.amount,
+                    amount: coachData?.fare?.amount - coachData.discount,
                   })
                 )}
               </span>

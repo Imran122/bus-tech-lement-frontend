@@ -31,6 +31,7 @@ import {
   useAddBookingPaymentMutation,
   useAddBookingSeatMutation,
   useCheckingSeatMutation,
+  useGetTickitInfoByPhoneQuery,
   useRemoveBookingSeatMutation,
 } from "@/store/api/bookingApi";
 import {
@@ -41,9 +42,10 @@ import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { Button } from "@/components/ui/button";
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { format } from "date-fns";
@@ -146,7 +148,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
             {
               ...seatData,
               currentAmount: bookingCoach?.fare?.amount,
-              previousAmount: bookingCoach?.fare?.amount,
+              previousAmount: bookingCoach?.discount,
             },
           ],
         }));
@@ -224,8 +226,44 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   ]);
 
   const paymentType = watch("paymentType");
-  console.log("bookingCoachzzz", bookingCoach);
-  console.log("bookingFormStatedataa", bookingFormState);
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true); // Trigger the API call for fetching user info by phone
+  };
+
+  const { data: userInfoData, isLoading: userInfoLoading } =
+    useGetTickitInfoByPhoneQuery(phoneNumber, {
+      skip: !submitted || !phoneNumber, // Only call API if submitted and phoneNumber is set
+    }) as any;
+  console.log("userInfoDatarrr", userInfoData);
+  useEffect(() => {
+    if (submitted) {
+      if (userInfoData?.data) {
+        // Populate all relevant form fields
+        setValue("customerName", userInfoData.data.name || "");
+        setValue("phone", userInfoData.data.phone || "");
+        setValue("gender", userInfoData.data.gender || "");
+        setValue("email", userInfoData.data.email || "");
+        setValue("address", userInfoData.data.address || "");
+        setValue("nationality", userInfoData.data.nationality || "");
+        setValue("nid", userInfoData.data.nid || "");
+
+        // Clear any previous error message
+        setErrorMessage("");
+      } else {
+        // Set error message if no data found
+        setErrorMessage("No data found for this phone number.");
+      }
+
+      // Reset `submitted` to allow for further searches by phone
+      setSubmitted(false);
+    }
+  }, [userInfoData, setValue, submitted]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
     const tripType = localStorage.getItem("tripType");
     const returnDate = localStorage.getItem("returnDate");
@@ -301,8 +339,56 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
 
   return (
     <PageTransition>
+      {/* find tickit */}
+      <div className="">
+        <div className="">
+          <PageTransition>
+            <form
+              onSubmit={handleFormSubmit}
+              className="ml-4 flex justify-start items-center"
+            >
+              <InputWrapper
+                className="w-full"
+                labelFor="FinfTickit"
+                error=" "
+                label={translate(
+                  "ফোন নম্বর দ্বারা টিকিট খুঁজুন",
+                  "Find Ticket By Phone Number"
+                )}
+              >
+                <Input
+                  type="text"
+                  name="phoneNumber"
+                  onChange={(e: any) => setPhoneNumber(e.target.value)}
+                  id="phoneNumber"
+                  placeholder={translate(
+                    "ফোন নম্বর দ্বারা টিকিট খুঁজুন",
+                    "Find Ticket By Phone Number"
+                  )}
+                />
+              </InputWrapper>
+              <Button type="submit" className="mt-7 ml-2">
+                <span>
+                  {userInfoLoading && (
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3 ..."
+                      viewBox="0 0 24 24"
+                    ></svg>
+                  )}
+                </span>
+                Search
+              </Button>
+            </form>
+            {errorMessage && (
+              <div className="text-red-500 mt-1 ml-5">{errorMessage}</div>
+            )}
+          </PageTransition>
+        </div>
+      </div>
+
+      {/*end find tickit */}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
+        <div className="flex flex-row items-start my-0 h-full mt-3 px-4 gap-x-12 ">
           {/* COUCH SEAT PLAN CONTAINER */}
 
           {/* CUSTOMER & PAYMENT INFORMATION */}
@@ -697,7 +783,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
               </GridWrapper>
             </div>
 
-            <div className="my-12">
+            <div className="my-2">
               <Heading size="h4">
                 {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
               </Heading>
@@ -719,14 +805,14 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                 )}
               </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-4">
               <Heading className="" size="h4">
                 {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
               </Heading>
             </div>
 
             {/* paymnet div */}
-            <div className="mt-6 grid grid-cols-3">
+            <div className="mt-2 grid grid-cols-3">
               {/* PAYMENT METHOD */}
               <InputWrapper
                 error={errors?.paymentMethod?.message}
@@ -842,7 +928,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                 </Paragraph>
               </div>
             )}
-            <div className="mt-6">
+            <div className="mt-3">
               <ul className="flex justify-between">
                 <li className="text-lg tracking-tight">
                   <label>{translate("মোট আসনঃ ", "Total Seats: ")}</label>
