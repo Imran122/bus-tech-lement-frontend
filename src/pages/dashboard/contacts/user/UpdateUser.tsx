@@ -101,13 +101,13 @@ const UpdateUser: FC<IUpdateUserProps> = ({ id }) => {
 
   const [uploadPhoto, { isLoading: uploadPhotoLoading }] =
     useUploadPhotoMutation({});
-  //console.log("userData", userData);
-  //console.log("roleListData", roleListData);
+  //
+  //
   useEffect(() => {
     if (userData?.data) {
-      //console.log("Full effect userData:", userData); // Check if roleId exists in userData
+      //
 
-      //console.log("userData", userData?.data?.roleId);
+      //
       setValue("address", userData?.data.address || "");
       setValue("userName", userData?.data?.userName || "");
       setValue("gender", userData?.data?.gender || "");
@@ -116,11 +116,11 @@ const UpdateUser: FC<IUpdateUserProps> = ({ id }) => {
       setValue("dateOfBirth", new Date(userData?.data?.dateOfBirth) || null);
       setValue("maritalStatus", userData?.data?.maritalStatus || "");
       const roleId = userData?.data?.role?.id || ""; // Access roleId from the role object
-      //console.log("Setting roleId to:", roleId); // This should log the correct roleId (5 in your case)
+      //
       setValue("roleId", roleId);
       const counterId = userData?.data?.counter?.id;
       setValue("counterId", counterId || "");
-      //console.log("Setting roleId to:", userData?.data?.roleId);
+      //
       setUpdateUserFormState((prevState: IUpdateUserFormStateProps) => ({
         ...prevState,
         date: userData?.data?.dateOfBirth,

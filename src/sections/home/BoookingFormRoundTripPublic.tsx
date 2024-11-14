@@ -240,7 +240,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     useGetTickitInfoByPhoneQuery(phoneNumber, {
       skip: !submitted || !phoneNumber, // Only call API if submitted and phoneNumber is set
     }) as any;
-  console.log("userInfoDatarrr", userInfoData);
+
   useEffect(() => {
     if (submitted) {
       if (userInfoData?.data) {
@@ -279,7 +279,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       }
     }
 
-    console.log("after submit click", data);
     const cleanedData = removeFalsyProperties(data, [
       "nid",
       "email",
@@ -295,9 +294,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       date: bookingCoach.departureDate,
       seats: cleanedData?.seats,
     });
-    console.log("check", check);
+
     if (check?.data?.data?.available) {
-      //console.log("result", result);
+      //
       const finalData = {
         ...cleanedData,
         bookingType: "SeatIssue",
@@ -309,12 +308,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
           date: seat.date, // Use each seat's specific date
         })),
       };
-      console.log("finalDataqq:-", finalData);
+
       const booking = await addBooking(finalData);
 
       if (booking.data?.success) {
-        console.log("finalDataqq:-", finalData);
-
         const payment = await addBookingPayment(booking?.data?.data?.id);
         if (payment.data?.success) {
           playSound("success");

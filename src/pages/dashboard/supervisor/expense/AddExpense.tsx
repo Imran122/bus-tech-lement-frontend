@@ -121,7 +121,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
 
     try {
       const uploadResult = await uploadPhoto(file).unwrap();
-      // console.log("after submit uploadResult file:", uploadResult);
+      //
       if (uploadResult?.data) {
         const expenseData = {
           ...data,

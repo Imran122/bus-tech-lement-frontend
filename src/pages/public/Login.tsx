@@ -59,7 +59,7 @@ const Login = () => {
     const result = await login(data);
 
     const authData = jwtDecode(result?.data?.accessToken || "") as any;
-    //console.log(authData);
+    //
     if (result?.data?.success) {
       const role = authData?.role?.toLowerCase();
 

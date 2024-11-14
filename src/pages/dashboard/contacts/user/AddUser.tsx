@@ -134,7 +134,7 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
       }));
     }
   };
-  //console.log("roleListData", roleListData);
+  //
   if (roleLoading || counterLoading) {
     <FormSkeleton columns={7} />;
   }

@@ -69,7 +69,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       page: query.page,
       size: query.size,
     });
-  console.log("salesTickitList", salesTickitList);
+
   const handleUpdateClick = (orderId: number) => {
     setSalesTickitState((prev) => ({
       ...prev,
@@ -173,7 +173,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       ),
     },
   ];
-  console.log("slice bookingState", bookingState);
+
   if (loadingSalesTickit) {
     return <TableSkeleton columns={7} />;
   }

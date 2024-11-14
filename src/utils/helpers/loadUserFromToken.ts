@@ -18,7 +18,7 @@ export const loadUserFromToken = async (dispatch: any) => {
   if (token) {
     try {
       const decoded: DecodedToken = jwtDecode(token);
-      console.log("decoded token: ", decoded);
+
       dispatch(
         setUser({
           id: decoded.id,

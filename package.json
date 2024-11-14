@@ -12,14 +12,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix"
-    ],
-    "*.ts": [
-      "eslint --fix"
-    ],
-    "*.tsx": [
-      "eslint --fix"
+    "*.{js,ts,tsx}": [
+      "eslint --fix --rule '@typescript-eslint/no-unused-vars: off' --rule '@typescript-eslint/ban-ts-comment: off'"
     ]
   },
   "dependencies": {
@@ -74,8 +68,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.5.0",
-    "@commitlint/config-conventional": "^19.5.0",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",

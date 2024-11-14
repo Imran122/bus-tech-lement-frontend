@@ -107,7 +107,7 @@ const CoachConfigurationList: FC<ICoachConfigurationListProps> = () => {
         ),
       })
     );
-    console.log("coachConfigurationsData", coachConfigurationsData);
+
     setCoachConfigurationState((prevState: ICoachConfigurationStateProps) => ({
       ...prevState,
       coachConfigurationsList: customizeCoachConfigurationData || [],

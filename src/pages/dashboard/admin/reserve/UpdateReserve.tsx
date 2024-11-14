@@ -2,6 +2,7 @@ import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
 import { TimePicker } from "@/components/common/form/TimePicker";
 import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
+import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -19,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import {
   addUpdateResurbSchema,
   ReservationDataProps,
@@ -28,7 +30,11 @@ import {
   useUpdateReserveMutation,
 } from "@/store/api/reserve/reserveApi";
 import { useGetRoutesQuery } from "@/store/api/vehiclesSchedule/routeApi";
+import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
 import { addUpdateResurbForm } from "@/utils/constants/form/addUpdateResurbForm";
+import { convertTimeStringToISO } from "@/utils/helpers/convertTimeStringToISO";
+import formatter from "@/utils/helpers/formatter";
+import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,12 +42,6 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { cn } from "@/lib/utils";
-import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
-import formatter from "@/utils/helpers/formatter";
-import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
-import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
-import { convertTimeStringToISO } from "@/utils/helpers/convertTimeStringToISO";
 
 interface IUpdateReserveProps {
   id: number | null;
@@ -82,7 +82,7 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
     useGetVehiclesQuery({});
   const { data: reserveData, isLoading: reserveLoading } =
     useGetSingleReserveQuery(id);
-  console.log("reservedata", reserveData);
+
   const [
     updateReserve,
     { isLoading: updateReserveLoading, error: updateReserveError },
@@ -101,7 +101,9 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
 
   useEffect(() => {
     if (reserveData?.data?.fromDateTime) {
-      const fromDateTime = convertTimeStringToISO(reserveData.data.fromDateTime);
+      const fromDateTime = convertTimeStringToISO(
+        reserveData.data.fromDateTime
+      );
       const toDateTime = convertTimeStringToISO(reserveData.data.toDateTime);
       if (fromDateTime && toDateTime) {
         setFromDateTime(fromDateTime);
@@ -124,30 +126,34 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
       setValue("remarks", reserveData.data.remarks || "");
       setValue("fromDate", reserveData.data.fromDate || "");
       setValue("toDate", reserveData.data.toDate || "");
-     
-        setUpdateReserveFormState(
-          (prevState: IUpdateReserveFormStateProps) => ({
-            ...prevState,
-            fromDate: reserveData.data.fromDate
-              ? new Date(reserveData.data.fromDate)
-              : null,
-            toDate: reserveData.data.toDate
-              ? new Date(reserveData.data.toDate)
-              : null,
-          })
-        );
-       if(fromDateTime && toDateTime){
+
+      setUpdateReserveFormState((prevState: IUpdateReserveFormStateProps) => ({
+        ...prevState,
+        fromDate: reserveData.data.fromDate
+          ? new Date(reserveData.data.fromDate)
+          : null,
+        toDate: reserveData.data.toDate
+          ? new Date(reserveData.data.toDate)
+          : null,
+      }));
+      if (fromDateTime && toDateTime) {
         setValue(
           "fromDateTime",
-          fromDateTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          fromDateTime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
         );
         setValue(
-          "toDateTime", toDateTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) 
+          "toDateTime",
+          toDateTime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
         );
-       }
+      }
     }
   }, [fromDateTime, reserveData, setValue, toDateTime]);
-
 
   const onSubmit = async (data: ReservationDataProps) => {
     const withoutRemarks = {
@@ -176,7 +182,6 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
     return <TableSkeleton columns={6} />;
   }
 
-  console.log(fromDateTime, toDateTime)
   return (
     <FormWrapper
       heading={translate("রিজার্ভ হালনাগাত করুন", "Update Reserve")}
@@ -588,10 +593,7 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
               addUpdateResurbForm.fromDateTime.label.en
             )}
           >
-            <TimePicker
-              date={fromDateTime}
-              setDate={setFromDateTime}
-            />
+            <TimePicker date={fromDateTime} setDate={setFromDateTime} />
             <div className="mt-3">
               {translate("নির্বাচিত সময়সূচীঃ ", " Selected Time: ")}
               {

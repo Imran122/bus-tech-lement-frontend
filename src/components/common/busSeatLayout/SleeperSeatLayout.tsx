@@ -59,7 +59,7 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
       return "bg-orange-500 text-white"; // Orange for seats booked by others' counters
     }
 
-    //console.log("order:---", order);
+    //
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
     const isSeatSelected = bookingFormState.selectedSeats.some(

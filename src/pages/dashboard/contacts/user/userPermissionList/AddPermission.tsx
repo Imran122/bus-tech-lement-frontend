@@ -22,8 +22,8 @@ import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { IPermissionStateProps } from "../PermissionList";
 import { z } from "zod";
+import { IPermissionStateProps } from "../PermissionList";
 
 interface IAddPermissionProps {
   setPermissionState: (
@@ -48,7 +48,6 @@ const AddPermission: FC<IAddPermissionProps> = ({ setPermissionState }) => {
   // Fetch permission types
   const { data: permissionTypeData, isLoading: permissionTypeLoading } =
     useGetPermissionTypeListQuery({});
-  console.log("permissionTypeData:---$", permissionTypeData);
 
   const [
     addPermissionbyId,
@@ -56,8 +55,6 @@ const AddPermission: FC<IAddPermissionProps> = ({ setPermissionState }) => {
   ] = useAddPermissionbyIdMutation();
 
   const onSubmit = async (data: AddPermissionDataProps) => {
-    console.log("Form data before submission:", data);
-
     try {
       // Manually validate the form data using Zod
       const validatedData = addPermissionSchema.parse(data);
@@ -148,7 +145,7 @@ const AddPermission: FC<IAddPermissionProps> = ({ setPermissionState }) => {
                   // Convert the string value (id) to a number before updating the form
                   onValueChange={(value) => {
                     const numberValue = Number(value); // Convert the string value to a number
-                    console.log("Selected id:", numberValue); // Debugging
+
                     field.onChange(numberValue); // Update form's state with numeric id
                   }}
                   value={field.value?.toString() || ""} // Convert the numeric value back to a string for display
@@ -157,7 +154,7 @@ const AddPermission: FC<IAddPermissionProps> = ({ setPermissionState }) => {
                     {/* Display the selected name or placeholder */}
                     <SelectValue>
                       {permissionTypeData?.data?.find(
-                        (type:any) => type.id === field.value
+                        (type: any) => type.id === field.value
                       )?.name ||
                         translate(
                           "অনুমতির ধরন নির্বাচন করুন",
@@ -169,7 +166,7 @@ const AddPermission: FC<IAddPermissionProps> = ({ setPermissionState }) => {
                     {/* Safely access permissionTypeData and map through the items */}
                     {Array.isArray(permissionTypeData?.data) &&
                     permissionTypeData.data.length > 0 ? (
-                      permissionTypeData.data.map((type:any) => (
+                      permissionTypeData.data.map((type: any) => (
                         // Ensure the value is a string but the id is sent as a number
                         <SelectItem key={type.id} value={type.id}>
                           {type.name}

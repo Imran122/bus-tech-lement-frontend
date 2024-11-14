@@ -28,8 +28,6 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
 }) => {
   const { translate } = useCustomTranslator();
   const [selectedBookingCoach, setSelectedBookingCoach] = useState<any>({});
-  console.log("selected single coach data", coachData);
-  console.log("selected data for book;", selectedBookingCoach);
 
   return (
     <AccordionItem value={index?.toString()}>

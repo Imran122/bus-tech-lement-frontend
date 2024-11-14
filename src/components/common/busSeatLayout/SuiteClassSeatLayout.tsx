@@ -32,7 +32,6 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
   coachId,
 }) => {
   const { translate } = useCustomTranslator();
-  console.log("dddbookingCoach:--", bookingCoach);
 
   const user = useSelector((state: any) => state.user);
 
@@ -61,7 +60,7 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
       // Otherwise, show it as orange
       return "bg-orange-500 text-white"; // Orange for seats booked by others' counters
     }
-    //console.log("order:---", order);
+    //
 
     const isSeatSelected = bookingFormState.selectedSeats.some(
       (selectedSeat: any) =>
@@ -112,8 +111,8 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
     const tooltipText = isBookedByOtherCounter
       ? `Name: ${bookedByCounter?.counter?.userName}, Address:${bookedByCounter?.counter?.counter?.address}, Phone:${bookedByCounter?.counter?.counter?.phone}`
       : "";
-    //console.log("isBookedByOtherCounter", isBookedByOtherCounter);
-    //console.log("tooltipText:", tooltipText);
+    //
+    //
     return (
       <TooltipProvider key={seat.id}>
         <Tooltip>

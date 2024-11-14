@@ -36,7 +36,7 @@ interface IUpdatePermissionsFormStateProps {
 
 interface IUpdatePermissionsProps {
   id: number; // ID of the permission to update
-  onUpdateSuccess:any
+  onUpdateSuccess: any;
   setPermissionState?: (
     permissionState: (prevState: IPermissionStateProps) => IPermissionStateProps
   ) => void;
@@ -75,14 +75,14 @@ const UpdatePermission: FC<IUpdatePermissionsProps> = ({
       ); // Set the permission type ID
     }
   }, [singlePermissionData, setValue]);
-  //console.log("singlePermissionData", singlePermissionData);
+  //
   const [
     updatePermission,
     { isLoading: updatePermissionLoading, error: updatePermissionError },
   ] = useUpdatePermissionMutation();
 
   const onSubmit = async (data: UpdatePermissionDataProps) => {
-    //console.log("Form Submitted with Data:", data);
+    //
 
     try {
       const { name, permissionTypeId } = data;
@@ -92,7 +92,7 @@ const UpdatePermission: FC<IUpdatePermissionsProps> = ({
         data: { name, permissionTypeId },
       });
 
-      //console.log("Mutation Result:", result);
+      //
 
       if (result?.data?.success) {
         toast({
@@ -164,7 +164,7 @@ const UpdatePermission: FC<IUpdatePermissionsProps> = ({
                   <SelectTrigger id="permissionType" className="w-full">
                     <SelectValue>
                       {permissionTypeData?.data?.find(
-                        (type:any) => type.id === field.value
+                        (type: any) => type.id === field.value
                       )?.name ||
                         translate(
                           "অনুমতির ধরন নির্বাচন করুন",
@@ -175,7 +175,7 @@ const UpdatePermission: FC<IUpdatePermissionsProps> = ({
                   <SelectContent>
                     {permissionTypeData?.data &&
                     permissionTypeData.data.length > 0 ? (
-                      permissionTypeData.data.map((type:any) => (
+                      permissionTypeData.data.map((type: any) => (
                         <SelectItem key={type.id} value={type.id}>
                           {type.name}
                         </SelectItem>

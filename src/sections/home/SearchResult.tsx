@@ -27,7 +27,6 @@ export default function SearchResult({
   const [bookingCoachSingle, setBookingCoachSingle] = useState({});
   const [goViaRoute, setGoViaRoute] = useState([]);
   const [returnViaRoute, setReturnViaRoute] = useState([]);
-  console.log("bookingCoachSingle", bookingCoachSingle);
 
   // Open and close modal
   const handleProceedClick = () => {

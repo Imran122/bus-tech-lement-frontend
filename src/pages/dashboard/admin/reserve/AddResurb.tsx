@@ -19,13 +19,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import {
   addUpdateResurbSchema,
   ReservationDataProps,
 } from "@/schemas/resurb/addUpdateResurbSchema";
 import { useAddReserveMutation } from "@/store/api/reserve/reserveApi";
 import { useGetRoutesQuery } from "@/store/api/vehiclesSchedule/routeApi";
+import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
 import { addUpdateResurbForm } from "@/utils/constants/form/addUpdateResurbForm";
+import formatter from "@/utils/helpers/formatter";
+import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,10 +38,6 @@ import { CalendarIcon } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IReserveStateProps } from "./ReserveList";
-import { cn } from "@/lib/utils";
-import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
-import formatter from "@/utils/helpers/formatter";
-import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 
 interface IAddReserveProps {
   setReserveState: (
@@ -112,7 +112,7 @@ const AddResurb: FC<IAddReserveProps> = ({ setReserveState, reserveState }) => {
       dueAmount: data.amount - data?.paidAmount,
     };
     const updatedData = removeFalsyProperties(withoutRemarks, ["remarks"]);
-    console.log("this is updated data", updatedData);
+
     const result = await addReserve(updatedData);
     if (result?.data?.success) {
       toast({
@@ -556,7 +556,7 @@ const AddResurb: FC<IAddReserveProps> = ({ setReserveState, reserveState }) => {
             <TimePicker
               date={toDateTime}
               setDate={(date) => {
-                setToDateTime(date); 
+                setToDateTime(date);
                 setValue("toDateTime", date ? date.toISOString() : "");
               }}
             />

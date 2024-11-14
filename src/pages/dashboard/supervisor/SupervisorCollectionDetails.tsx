@@ -17,7 +17,7 @@ const SupervisorCollectionDetails: FC<ISupervisorCollectionDetailsProps> = ({
   const { data: collectionData, isLoading: collectionLoading } =
     useGetSingleCollectionSupervisorQuery(id);
   const { translate } = useCustomTranslator();
-  console.log("collectionData details", collectionData);
+
   if (collectionLoading) {
     return <DetailsSkeleton columns={3} items={9} />;
   }

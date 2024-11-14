@@ -149,7 +149,7 @@ export const VanishList: FC<IVanishListProps> = ({
     const savedReturnDate = localStorage.getItem("returnDate");
     setStoredReturnDate(savedReturnDate);
   }, []);
-  console.log("listItems", listItems);
+
   return (
     <section className="h-full ">
       <div className="mx-auto w-full">

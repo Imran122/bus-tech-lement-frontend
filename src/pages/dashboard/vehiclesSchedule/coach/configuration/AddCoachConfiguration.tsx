@@ -70,8 +70,6 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
 
   const [departureDates, setDepartureDates] = useState<string[]>([]);
 
-  console.log("depratureDates", departureDates);
-
   // Update the `onSelect` function to handle the date array
   const handleDateSelect = (selectedDate: DateRange | undefined) => {
     setDate(selectedDate);
@@ -178,7 +176,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
     const selectedCoach = coachListData?.data.find(
       (coach: any) => coach.coachNo === selectedCoachNo
     );
-    console.log("this is selectedcoach", selectedCoach);
+
     // If a matching coach is found, set its registration number and related values
     if (selectedCoach) {
       // Set routeId, fromCounterId, and destinationCounterId if available
@@ -215,8 +213,6 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
       }
     }
   }, [selectedCoachNo, setValue, coachListData]);
-
-  console.log("supervisorsData", supervisorsData);
 
   if (supervisorsLoading || coachListDataLoading) {
     return <FormSkeleton columns={7} />;

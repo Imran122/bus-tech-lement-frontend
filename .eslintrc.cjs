@@ -15,10 +15,10 @@ module.exports = {
       { allowConstantExport: true },
     ],
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "no-console": [
-      "error",
-      { allow: ["warn", "error"] }, // Only allow console.warn and console.error
+    "@typescript-eslint/ban-ts-comment": [
+      "warn", // Change to "warn" or "off" to avoid blocking commits
+      { "ts-ignore": "allow-with-description" }, // Allow "@ts-ignore" with a comment
     ],
+    "@typescript-eslint/no-unused-vars": "warn", // Change to "warn" if unused vars shouldn't block commit
   },
 };

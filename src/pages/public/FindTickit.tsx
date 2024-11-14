@@ -48,13 +48,10 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
   const handleTicketNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTicketNumber(e.target.value);
   };
-  console.log("dueAmount", dueAmount);
-  console.log("all tikcit data", data);
+
   // Validate amount on change
   const validateAmount = () => {
     if (enteredAmount !== dueAmount && enteredAmount !== undefined) {
-      console.log("enteredAmountzzz", enteredAmount);
-      console.log("dueAmountzzz", dueAmount);
       setError("dueAmount", {
         type: "manual",
         message: translate(
@@ -69,7 +66,6 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
 
   // Handle form submission
   const onSubmit = async () => {
-    console.log("onSubmitxxxx");
     try {
       const payment = await addBookingPayment(ticketData?.id);
       if (payment.data?.success) {

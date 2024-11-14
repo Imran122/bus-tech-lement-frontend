@@ -66,7 +66,7 @@ interface IBookingFormStateProps {
 const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   const { translate } = useCustomTranslator();
   const [phoneNumber, setPhoneNumber] = useState("");
-  //console.log("dropdown boardinpoint:", bookingCoach);
+  //
   const [bookingFormState, setBookingFormState] =
     useState<IBookingFormStateProps>({
       selectedSeats: [],
@@ -255,7 +255,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     useGetTickitInfoByPhoneQuery(phoneNumber, {
       skip: !submitted || !phoneNumber, // Only call API if submitted and phoneNumber is set
     }) as any;
-  console.log("userInfoData", userInfoData);
+
   useEffect(() => {
     if (submitted) {
       if (userInfoData?.data) {
@@ -306,7 +306,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
           date: bookingCoach.departureDate,
         })),
       };
-      console.log("finalData:", finalData);
+
       const booking = await addBooking(finalData);
 
       if (booking.data?.success) {

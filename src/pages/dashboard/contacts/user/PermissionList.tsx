@@ -74,11 +74,11 @@ const PermissionList: FC<IPermissionListProps> = () => {
     }
   );
 
-  //console.log("permissionState.PermissionList", permissionState.PermissionList);
+  //
   const { data: permissionData, isLoading: permissionLoading } =
     useGetAllUserPermissionListQuery({});
   const [deletePermission] = useDeletePermissionMutation({});
-  const handleAddPermissionSuccess = (newPermission:any) => {
+  const handleAddPermissionSuccess = (newPermission: any) => {
     setPermissionState((prevState) => ({
       ...prevState,
       PermissionList: [...prevState.PermissionList, newPermission],
@@ -106,7 +106,7 @@ const PermissionList: FC<IPermissionListProps> = () => {
       }));
     }
   };
-  const handleUpdatePermissionSuccess = (updatedPermission:any) => {
+  const handleUpdatePermissionSuccess = (updatedPermission: any) => {
     // Update the permission in the list
     const updatedPermissionList = permissionState.PermissionList.map(
       (permission) =>
@@ -129,7 +129,7 @@ const PermissionList: FC<IPermissionListProps> = () => {
   };
   useEffect(() => {
     if (permissionData) {
-      //console.log("Permission Data:", permissionData); // Add logging to inspect the data structure
+      //
       const customizedPermissionData = permissionData.data.map(
         (singlePermission: Permission, permissionIndex: number) => ({
           ...singlePermission,
@@ -144,7 +144,7 @@ const PermissionList: FC<IPermissionListProps> = () => {
       }));
     }
   }, [permissionData]);
-  //console.log("permissionData", permissionData);
+  //
   const columns: ColumnDef<unknown>[] = [
     {
       accessorKey: "index",
@@ -156,13 +156,13 @@ const PermissionList: FC<IPermissionListProps> = () => {
     {
       accessorKey: "name",
       header: translate("নাম", "Name"),
-       //@ts-ignore
+      //@ts-ignore
       accessorFn: (row) => row.name ?? "Unknown Name",
     },
     {
       accessorKey: "permissionType.name", // Accessing nested permission type name
       header: translate("অনুমতির ধরন", "Permission Type"), // Column Header
-       //@ts-ignore
+      //@ts-ignore
       accessorFn: (row) => row.permissionType?.name ?? "Unknown Type", // Fallback if undefined
     },
     {
@@ -200,7 +200,7 @@ const PermissionList: FC<IPermissionListProps> = () => {
                 <DialogContent size="lg">
                   <DialogTitle className="sr-only">empty</DialogTitle>
                   <UpdatePermission
-                   //@ts-ignore
+                    //@ts-ignore
                     onUpdateSuccess={handleUpdatePermissionSuccess}
                     id={permission?.id}
                   />
@@ -291,7 +291,7 @@ const PermissionList: FC<IPermissionListProps> = () => {
                 <DialogContent size="lg">
                   <DialogTitle className="sr-only">empty</DialogTitle>
                   <AddPermission
-                  //@ts-ignore
+                    //@ts-ignore
                     onAddSuccess={handleAddPermissionSuccess}
                     setPermissionState={setPermissionState}
                   />

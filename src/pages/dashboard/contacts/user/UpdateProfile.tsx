@@ -82,12 +82,11 @@ const UpdateProfile: FC<IUpdateProfileProps> = ({ userData, userLoading }) => {
   });
   const [uploadPhoto, { isLoading: uploadPhotoLoading }] =
     useUploadPhotoMutation({});
-  //console.log("dateOfBirth", watch("dateOfBirth"));
+  //
   const [updateUser, { isLoading: updateUserLoading, error: updateUserError }] =
     useUpdateUserMutation({});
-  // console.log("userData", userData);
+  //
   const onSubmit = async (data: UpdateUserProfileDataProps) => {
-    console.log("data submit", data);
     const updateData = removeFalsyProperties(data, [
       "contactNo",
       "dateOfBirth",
@@ -107,7 +106,7 @@ const UpdateProfile: FC<IUpdateProfileProps> = ({ userData, userLoading }) => {
 
     const result = await updateUser({ data: updateData, id: userData.id });
 
-    // console.log("result", result);
+    //
     if (result?.data?.success) {
       toast({
         title: translate(

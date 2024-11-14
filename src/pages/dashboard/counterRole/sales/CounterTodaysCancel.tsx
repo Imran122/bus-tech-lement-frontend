@@ -55,7 +55,6 @@ const CounterTodaysCancel: FC<ISalesListProps> = () => {
     useGetSalesTickitListQuery({});
 
   // Log the sales data
-  console.log("alldata counter for tickit:", salesTickitList);
 
   // Calculate total items for pagination
   const totalItems = salesTickitList?.data?.todaySalesHistory?.length || 0;

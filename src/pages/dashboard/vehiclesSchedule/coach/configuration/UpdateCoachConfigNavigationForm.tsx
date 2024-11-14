@@ -110,7 +110,7 @@ const UpdateCoachConfigNavigationForm: FC<
   } = useForm<IAddUpdateCoachConfigurationDataProps>({
     resolver: zodResolver(addUpdateCoachConfigurationSchema),
   });
-  console.log("Form errors:", errors);
+
   const [
     updateCoachConfigurationFormState,
     setUpdateCoachConfigurationFormState,
@@ -166,7 +166,7 @@ const UpdateCoachConfigNavigationForm: FC<
   const { data: supervisorsData, isLoading: supervisorsLoading } =
     useGetUsersQuery({}) as any;
 
-  //console.log("vehiclesData", vehiclesData);
+  //
 
   useEffect(() => {
     if (selectedCoachInfo) {
@@ -194,14 +194,11 @@ const UpdateCoachConfigNavigationForm: FC<
   }, [selectedCoachInfo, setValue]);
 
   const onSubmit = async (data: IAddUpdateCoachConfigurationDataProps) => {
-    console.log("@data", data);
     const updateData = removeFalsyProperties(data, [
       "discount",
       "tokenAvailable",
       "registrationNo",
     ]);
-
-    console.log("@updata", updateData);
 
     const result = await updateCoachConfiguration({
       data: updateData,
@@ -228,7 +225,7 @@ const UpdateCoachConfigNavigationForm: FC<
   ) {
     return <FormSkeleton columns={3} inputs={16} />;
   }
-  //console.log("selectedCoachInfo", selectedCoachInfo);
+  //
   return (
     <FormWrapper
       heading={translate(
@@ -288,7 +285,6 @@ const UpdateCoachConfigNavigationForm: FC<
               onValueChange={(value: any) => {
                 const parsedValue = JSON.parse(value);
                 setSelectedCoachInfo(parsedValue);
-                console.log("Updated Selected Coach Info:", parsedValue);
               }}
             >
               <SelectTrigger id="coachConfig" className="w-full">

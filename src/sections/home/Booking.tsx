@@ -52,7 +52,7 @@ export interface IBookingStateProps {
 const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   const { translate } = useCustomTranslator();
   const [tripType, setTripType] = useState("One_Trip");
-  // console.log("bookingState@@", bookingState);
+  //
 
   const shouldFetchData = Boolean(
     bookingState.fromCounterId &&
@@ -120,8 +120,8 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
     tripType,
   ]);
 
-  //console.log("tripType", tripType);
-  console.log("bookingCoachesData:--->>", bookingCoachesData);
+  //
+
   const { data: countersData, isLoading: countersLoading } =
     useGetCountersQuery({}) as any;
 

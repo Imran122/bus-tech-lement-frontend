@@ -22,7 +22,7 @@ const CounterOrderDetailsModal: FC<ICounterOrderDetailsModalProps> = ({
   const { data: orderData, isLoading: orderLoading } =
     useGetSingleOrderDetailsQuery(order.id);
   const { translate } = useCustomTranslator();
-  console.log("orderData", orderData);
+
   if (orderLoading) {
     return <DetailsSkeleton columns={3} items={15} />;
   }

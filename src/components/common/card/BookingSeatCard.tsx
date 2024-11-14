@@ -25,8 +25,7 @@ interface IBookingSeatCardProps {
 const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
   const { translate } = useCustomTranslator();
   const [selectedBookingCoach, setSelectedBookingCoach] = useState<any>({});
-  console.log("all coach:--", coachData);
-  console.log("selected data for book;", selectedBookingCoach);
+
   const totalAvaliableSetas =
     coachData?.seatAvailable - coachData?.CounterBookedSeat.length;
   return (

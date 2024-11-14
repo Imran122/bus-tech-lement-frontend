@@ -50,9 +50,6 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
   const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
     useRemoveBookingSeatMutation({}) as any;
 
-  console.log("all coach:--", coachData);
-  console.log("bookingFormState:--", bookingFormState);
-  console.log("xxxbookingCoachSinglexxx", bookingCoachSingle);
   const totalAvaliableSetas =
     coachData?.seatAvailable - coachData?.CounterBookedSeat.length;
   const [checkingSeat] = useCheckingSeatMutation({}) as any;

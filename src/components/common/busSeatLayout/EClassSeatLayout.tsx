@@ -33,7 +33,7 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
   coachId,
 }) => {
   const { translate } = useCustomTranslator();
-  // console.log("bookingFormState econ::--", bookingFormState);
+  //
 
   const user = useSelector((state: any) => state.user);
 
@@ -62,7 +62,7 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
       return "bg-orange-500 text-white"; // Orange for seats booked by others' counters
     }
 
-    //console.log("order:---", order);
+    //
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
 

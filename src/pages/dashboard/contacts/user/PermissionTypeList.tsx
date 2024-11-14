@@ -74,11 +74,11 @@ const PermissionTypeList: FC<IPermissionListProps> = () => {
       permissionTypeId: null,
     }
   );
-  // console.log("permissionState.PermissionList", permissionState.PermissionList);
+  //
   const { data: permissionData, isLoading: permissionLoading } =
     useGetPermissionTypeListQuery({});
   const [deletePermissionType] = useDeletePermissionTypeMutation({});
-  const handleAddPermissionSuccess = (newPermission:any) => {
+  const handleAddPermissionSuccess = (newPermission: any) => {
     setPermissionState((prevState) => ({
       ...prevState,
       PermissionList: [...prevState.PermissionList, newPermission],
@@ -87,7 +87,7 @@ const PermissionTypeList: FC<IPermissionListProps> = () => {
 
   const permissionDeleteHandler = async (id: number) => {
     const result = await deletePermissionType(id);
-    //console.log("delte id", id);
+    //
     if (result?.data?.success) {
       toast({
         title: translate(
@@ -108,8 +108,8 @@ const PermissionTypeList: FC<IPermissionListProps> = () => {
     }
   };
 
-  const handleUpdatePermissionSuccess = (updatedPermission:any) => {
-    //console.log("Handling updated permission:", updatedPermission); // Debugging log
+  const handleUpdatePermissionSuccess = (updatedPermission: any) => {
+    //
 
     // Update the permission in the list
     const updatedPermissionList = permissionState.PermissionList.map(
@@ -284,7 +284,7 @@ const PermissionTypeList: FC<IPermissionListProps> = () => {
                 <DialogContent size="lg">
                   <DialogTitle className="sr-only">empty</DialogTitle>
                   <AddPermissionType
-                  //@ts-ignore
+                    //@ts-ignore
                     onAddSuccess={handleAddPermissionSuccess}
                     setPermissionState={setPermissionState}
                   />

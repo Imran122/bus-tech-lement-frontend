@@ -53,7 +53,7 @@ const SupervisorDashboardSidebarLargeDevices: FC<
     navigate("/login", { replace: true });
     window.location.reload();
   };
-  console.log("locale", locale);
+
   return (
     <aside
       className={cn(

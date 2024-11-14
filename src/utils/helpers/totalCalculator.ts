@@ -2,7 +2,6 @@ export const totalCalculator = (
   numbersCollection: object[],
   propertyName: string
 ) => {
-  console.log("numbersCollection", numbersCollection);
   const total =
     numbersCollection?.length > 0 &&
     numbersCollection

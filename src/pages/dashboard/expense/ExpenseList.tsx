@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { useFontShifter } from "@/utils/hooks/useFontShifter";
@@ -22,9 +23,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { FC, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
-import { cn } from "@/lib/utils";
-import AddExpense from "./AddExpense";
 import { dummyData } from "../contacts/user/UserList";
+import AddExpense from "./AddExpense";
 
 interface IExpenseListProps {}
 
@@ -84,7 +84,6 @@ const ExpenseList: FC<IExpenseListProps> = () => {
       enableHiding: false,
       cell: ({ row }) => {
         const user = row.original as any;
-        console.log(user);
 
         return (
           <DropdownMenu>

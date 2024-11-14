@@ -66,7 +66,6 @@ const UpdateSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
     size: 1000,
     page: 1,
   });
-  console.log("collectionData", collectionData);
 
   // Populate form with default values when the modal opens
   useEffect(() => {
@@ -87,7 +86,6 @@ const UpdateSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
   }, [collectionData, setValue]);
 
   const onSubmit = async (data: any) => {
-    console.log("user idsupe: ", user.id);
     const cleanData = {
       ...data,
       supervisorId: user.id,

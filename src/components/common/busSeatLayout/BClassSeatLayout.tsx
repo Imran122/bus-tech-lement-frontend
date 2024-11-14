@@ -49,9 +49,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
     const bookedByCounter = bookingCoach?.CounterBookedSeat?.find(
       (order: any) => order.seat === seatName
     );
-    console.log("coachId:--", coachId);
-    console.log("bookingCoachblass:--", bookingCoach);
-    console.log("bookingFormStateqqq:--", bookingFormState);
+
     if (bookedByCounter) {
       if (!user.id) {
         return "bg-red-700 text-white";
@@ -69,7 +67,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
       (selectedSeat: any) =>
         selectedSeat.seat === seatName && selectedSeat.coachConfigId === coachId
     );
-    console.log("blue", isSeatSelected);
+
     if (isSeatSelected) return "bg-blue-500 text-white";
     if (selected) return "bg-blue-500 text-white";
 
@@ -110,7 +108,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
     const shouldDisableSeat = !user.role
       ? isOrdered || bookedByCounter // User role: disable ordered & all booked seats
       : isOrdered || isBookedByOtherCounter; // Counter role: disable ordered & other counters' booked seats
-    //console.log("bookedByCounter", bookedByCounter);
+    //
     // Tooltip message if the seat is booked by another counter
     const tooltipText = isBookedByOtherCounter
       ? `Name: ${bookedByCounter?.counter?.userName}, Address:${bookedByCounter?.counter?.counter?.address}, Phone:${bookedByCounter?.counter?.counter?.phone}`

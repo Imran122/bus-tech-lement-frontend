@@ -286,14 +286,13 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     totalSeats,
     user.id,
   ]);
-  // console.log("bookingType:---x", bookingType);
-  // console.log("expirationDate:---::", expirationDate);
-  // console.log("selectedSeats QQ:---::", bookingCoach);
+  //
+  //
+  //
   const paymentType = watch("paymentType");
   const partialAmount = watch("paymentAmount");
   const paymentMethod = watch("paymentMethod");
   const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
-  console.log("watch", paymentMethod);
 
   const handleCancelBooking = async () => {
     // Define the data structure for seats to cancel
@@ -309,7 +308,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     try {
       // Call the unbook API with the prepared data
       const response = await unBookSeatFromCounterBooking(data).unwrap();
-      console.log("res@", response);
+
       if (response.success) {
         setBookingFormState((prevState) => ({
           ...prevState,
@@ -347,7 +346,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       "nationality",
       "address",
     ]);
-    console.log("submitted data", data);
+
     try {
       const check = await checkingSeat({
         coachConfigId: bookingCoach.id,
@@ -378,7 +377,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
               : undefined,
           }),
         };
-        // console.log("@final data:", finalData);
+        //
         const booking = await addBooking(finalData);
 
         if (booking.data?.success) {
