@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/table";
 import PdfStatusReport from "../../pdf/PdfStatus";
 import StatusExel from "../../exel/StatusExel";
+import { Button } from "@/components/ui/button";
+import { Loader } from "@/components/common/Loader";
 
 interface IStatus {
   bookingCoach: any;
@@ -84,30 +86,32 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
         <li>
           <StatusExel result={result} />
         </li>
-        
+
         <li>
           <PDFDownloadLink
             document={<PdfStatusReport result={result} />}
             fileName="counter_booking_status_report.pdf"
           >
-            {/* {({ loading }: { loading: boolean }) => (
-              <>
-                {loading ? (
-                  <Button
-                    disabled
-                    className="transition-all duration-150"
-                    variant="destructive"
-                    size="xs"
-                  >
-                    <Loader /> Pdf
-                  </Button>
-                ) : (
-                  <Button variant="destructive" size="xs">
-                    Pdf
-                  </Button>
-                )}
-              </>
-            )} */}
+            
+            {
+            //@ts-ignore
+            (params) => {
+              const { loading } = params;
+              return loading ? (
+                <Button
+                  disabled
+                  className="transition-all duration-150"
+                  variant="destructive"
+                  size="xs"
+                >
+                  <Loader /> Pdf
+                </Button>
+              ) : (
+                <Button variant="destructive" size="xs">
+                  Pdf
+                </Button>
+              );
+            }}
           </PDFDownloadLink>
         </li>
       </ul>
