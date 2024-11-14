@@ -24,6 +24,7 @@ interface IBookingSeatCardProps {
 
 const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
   const { translate } = useCustomTranslator();
+  //@ts-ignore
   const [selectedBookingCoach, setSelectedBookingCoach] = useState<any>({});
 
   const totalAvaliableSetas =

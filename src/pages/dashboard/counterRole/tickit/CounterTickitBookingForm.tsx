@@ -291,6 +291,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   //
   const paymentType = watch("paymentType");
   const partialAmount = watch("paymentAmount");
+  //@ts-ignore
   const paymentMethod = watch("paymentMethod");
   const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
 

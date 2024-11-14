@@ -83,6 +83,7 @@ const ExpenseList: FC<IExpenseListProps> = () => {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
+        //@ts-ignore
         const user = row.original as any;
 
         return (

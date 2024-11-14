@@ -27,6 +27,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
   index,
 }) => {
   const { translate } = useCustomTranslator();
+  //@ts-ignore
   const [selectedBookingCoach, setSelectedBookingCoach] = useState<any>({});
 
   return (

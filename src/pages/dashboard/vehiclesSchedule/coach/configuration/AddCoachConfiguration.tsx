@@ -133,7 +133,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
   const { data: routesData, isLoading: routesLoading } = useGetRoutesQuery(
     {}
   ) as any;
-
+  //@ts-ignore
   const { data: supervisorsData, isLoading: supervisorsLoading } =
     useGetUsersQuery({}) as any;
 
