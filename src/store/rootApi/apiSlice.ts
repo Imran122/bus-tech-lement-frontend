@@ -36,6 +36,7 @@ export const apiSlice = createApi({
     "route",
     "coach",
     "coach_configuration",
+    "update_coach_configuration",
     "account",
     "partner",
     "fare",
@@ -46,5 +47,6 @@ export const apiSlice = createApi({
     "role",
     "vehicle",
     "helper",
+    "reserve"
   ],
 });

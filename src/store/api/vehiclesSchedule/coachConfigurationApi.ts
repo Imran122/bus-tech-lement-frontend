@@ -24,6 +24,17 @@ const coachApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["coach_configuration"],
     }),
+    //GETTING ALL UPDATE COACH CONFIGURATIONS
+    getUpdateCoachConfigurations: builder.query({
+      query: (data) => ({
+        url: `/coach-config/get-coach-config-update?search=${
+          data?.search || ""
+        }&size=${data?.size || fallback.querySize}&page=${
+          data?.page || 1
+        }&sortOrder=${data?.sort || fallback.sortOrder}`,
+      }),
+      providesTags: ["coach_configuration","update_coach_configuration"],
+    }),
 
     // GETTING SINGLE COACH CONFIGURATION
     getSingleCoachConfiguration: builder.query({
@@ -59,6 +70,7 @@ const coachApi = apiSlice.injectEndpoints({
 
 export const {
   useAddCoachConfigurationMutation,
+  useGetUpdateCoachConfigurationsQuery,
   useDeleteCoachConfigurationMutation,
   useGetCoachConfigurationsQuery,
   useGetSingleCoachConfigurationQuery,
