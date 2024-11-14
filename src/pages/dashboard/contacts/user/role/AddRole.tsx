@@ -45,7 +45,6 @@ const AddRole: FC<IAddRoleProps> = ({ setRoleState }) => {
 
   const [addRole, { isLoading: addRoleLoading, error: addRoleError }] =
     useAddRoleMutation();
-  console.log("hello");
   const onSubmit = async (data: AddPermissionDataProps) => {
     try {
       // Manually validate the form data using Zod
