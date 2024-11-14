@@ -16,7 +16,6 @@ import {
   nationalitiesOptions,
 } from "@/utils/constants/common/nationalitiesOptions";
 import { addBookingSeatForm } from "@/utils/constants/form/addBookingForm";
-import { dynamicSeatAllocation } from "@/utils/helpers/dynamicSeatAllocation";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 
 import PageTransition from "@/components/common/effect/PageTransition";
@@ -46,16 +45,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import SeatLayoutSelector from "@/components/common/busSeatLayout/SeatLayoutSelector";
 import { Button } from "@/components/ui/button";
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
+import { format } from "date-fns";
 import { toast } from "sonner";
 
 interface IBookingFormProps {
   bookingCoach: any;
+  bookingFormState: any;
+  goViaRoute: any;
+  returnViaRoute: any;
+  setBookingFormState: any;
+  onClose: any;
 }
-interface IBookingFormStateProps {
+export interface IBookingFormStateProps {
   targetedSeat: number | null;
   selectedSeats: any[];
   redirectLink: string | null;
@@ -63,53 +67,32 @@ interface IBookingFormStateProps {
   redirectConfirm: boolean;
 }
 
-const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
+const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
+  bookingFormState,
+  goViaRoute,
+  returnViaRoute,
+  bookingCoach,
+  setBookingFormState,
+  onClose,
+}) => {
   const { translate } = useCustomTranslator();
-  const [phoneNumber, setPhoneNumber] = useState("");
-  //
-  const [bookingFormState, setBookingFormState] =
-    useState<IBookingFormStateProps>({
-      selectedSeats: [],
-      targetedSeat: null,
-      redirectLink: null,
-      customerName: null,
-      redirectConfirm: false,
-    });
 
   const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
-    useAddBookingMutation({}) as any;
-
+    useAddBookingMutation() as any;
   const [
     addBookingPayment,
     { isLoading: addBookingPaymentLoading, error: addBookingPaymentError },
-  ] = useAddBookingPaymentMutation({}) as any;
-  const [addBookingSeat, { isLoading: addBookingSeatLoading }] =
-    useAddBookingSeatMutation({}) as any;
-  const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
-    useRemoveBookingSeatMutation({}) as any;
+  ] = useAddBookingPaymentMutation() as any;
+  const [addBookingSeat] = useAddBookingSeatMutation() as any;
+  const [removeBookingSeat] = useRemoveBookingSeatMutation() as any;
   const [
     checkingSeat,
     { isLoading: checkingSeatLoading, error: checkingSeatError },
-  ] = useCheckingSeatMutation({}) as any;
+  ] = useCheckingSeatMutation() as any;
 
   const totalAmount =
     totalCalculator(bookingFormState?.selectedSeats, "currentAmount") || 0;
-
   const totalSeats = bookingFormState?.selectedSeats?.length || 0;
-  const seatsAllocation = (() => {
-    switch (bookingCoach.coachClass) {
-      case "E_Class":
-        return dynamicSeatAllocation(bookingCoach?.CoachConfigSeats);
-      case "B_Class":
-        return dynamicSeatAllocation(bookingCoach?.CoachConfigSeats);
-      case "Sleeper":
-        return dynamicSeatAllocation(bookingCoach?.CoachConfigSeats);
-      case "S_Class":
-        return dynamicSeatAllocation(bookingCoach?.CoachConfigSeats);
-      default:
-        return { left: [], right: [], lastRow: [], middle: [] };
-    }
-  })();
 
   const {
     register,
@@ -127,13 +110,13 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
 
   const partialAmount = watch("paymentAmount");
   const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
+
   const handleBookingSeat = async (seatData: any) => {
     const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
       (current: any) => current.seat === seatData.seat
     );
 
     if (isSeatAlreadySelected) {
-      // Remove the seat if it's already selected
       const result = await removeBookingSeat({
         coachConfigId: bookingCoach?.id,
         date: bookingCoach?.departureDate,
@@ -142,15 +125,14 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       });
 
       if (result?.data?.success) {
-        setBookingFormState((prevState) => ({
+        setBookingFormState((prevState: any) => ({
           ...prevState,
           selectedSeats: prevState.selectedSeats.filter(
-            (seat) => seat.seat !== seatData.seat
+            (seat: any) => seat.seat !== seatData.seat
           ),
         }));
       }
     } else {
-      // Add the seat if it's not already selected
       const result = await addBookingSeat({
         coachConfigId: bookingCoach?.id,
         date: bookingCoach?.departureDate,
@@ -159,7 +141,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       });
 
       if (result?.data?.data?.available) {
-        setBookingFormState((prevState) => ({
+        setBookingFormState((prevState: any) => ({
           ...prevState,
           selectedSeats: [
             ...prevState.selectedSeats,
@@ -230,7 +212,6 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
         });
       }, 3000);
 
-      // Mark redirectConfirm as false to prevent re-running this effect
       setBookingFormState((prevState: IBookingFormStateProps) => ({
         ...prevState,
         redirectConfirm: false,
@@ -241,8 +222,12 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     bookingFormState?.redirectConfirm,
     bookingFormState?.customerName,
     translate,
+    setBookingFormState,
   ]);
-  const paymentType = watch("paymentType"); // Watch the paymentType value
+
+  const paymentType = watch("paymentType");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -280,6 +265,20 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     }
   }, [userInfoData, setValue, submitted]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
+    const tripType = localStorage.getItem("tripType");
+    const returnDate = localStorage.getItem("returnDate");
+
+    if (tripType === "Round_Trip" && returnDate) {
+      const hasReturnSeat = bookingFormState.selectedSeats.some(
+        (seat: any) => format(new Date(seat.date), "yyyy-MM-dd") === returnDate
+      );
+
+      if (!hasReturnSeat) {
+        toast.error("Please select a return seat for your round trip.");
+        return;
+      }
+    }
+
     const cleanedData = removeFalsyProperties(data, [
       "nid",
       "email",
@@ -288,6 +287,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       "customerName",
       "gender",
     ]);
+
     const check = await checkingSeat({
       coachConfigId: bookingCoach?.id,
       schedule: bookingCoach.schedule,
@@ -296,14 +296,16 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     });
 
     if (check?.data?.data?.available) {
+      //
       const finalData = {
         ...cleanedData,
         bookingType: "SeatIssue",
-        seats: bookingFormState.selectedSeats.map((seat) => ({
-          seat: seat?.seat,
-          coachConfigId: bookingCoach?.id,
-          schedule: bookingCoach.schedule,
-          date: bookingCoach.departureDate,
+
+        seats: bookingFormState.selectedSeats.map((seat: any) => ({
+          seat: seat.seat,
+          coachConfigId: seat.coachConfigId, // Use each seat's specific coachConfigId
+          schedule: seat.schedule, // Use each seat's specific schedule
+          date: seat.date, // Use each seat's specific date
         })),
       };
 
@@ -320,17 +322,14 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
             redirectConfirm: true,
           }));
         }
+        localStorage.removeItem("returnDate");
+        onClose();
       }
     } else {
       const targetSeat = check?.data?.message?.split(" ")[0];
-
       toast.warning(
-        translate(
-          `দুঃখিত, আপনার নির্বাচিত সিট "${targetSeat}" এখন আর পাওয়া যাচ্ছে না। আপনি অন্য একটি সিট নির্বাচন করতে পারেন।`,
-          `Sorry, your selected seat "${targetSeat}" is no longer available. You can choose another seat.`
-        )
+        `Seat "${targetSeat}" is no longer available. Choose another seat.`
       );
-
       playSound("warning");
     }
   };
@@ -338,16 +337,15 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   return (
     <PageTransition>
       {/* find tickit */}
-      <div className="flex">
-        <div className="w-[35%]"></div>
-        <div className="w-[65%]">
+      <div className="">
+        <div className="">
           <PageTransition>
             <form
               onSubmit={handleFormSubmit}
               className="ml-4 flex justify-start items-center"
             >
               <InputWrapper
-                className="w-4/12"
+                className="w-full"
                 labelFor="FinfTickit"
                 error=" "
                 label={translate(
@@ -387,24 +385,11 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
 
       {/*end find tickit */}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
+        <div className="flex flex-row items-start my-0 h-full mt-3 px-4 gap-x-12 ">
           {/* COUCH SEAT PLAN CONTAINER */}
-          <PageTransition className="w-4/12 flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-            <SeatLayoutSelector
-              checkingSeat={checkingSeat}
-              bookingCoach={bookingCoach}
-              coachClass={bookingCoach.coachClass}
-              //@ts-ignore
-              seatsAllocation={seatsAllocation}
-              handleBookingSeat={handleBookingSeat}
-              bookingFormState={bookingFormState}
-              addBookingSeatLoading={addBookingSeatLoading}
-              removeBookingSeatLoading={removeBookingSeatLoading}
-            />
-          </PageTransition>
 
           {/* CUSTOMER & PAYMENT INFORMATION */}
-          <PageTransition className="flex flex-col justify-between h-full w-8/12">
+          <PageTransition className="flex flex-col justify-between h-full w-full">
             <div>
               <Heading size="h4">
                 {translate(
@@ -416,7 +401,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
               <GridWrapper>
                 {/* NAME */}
                 <InputWrapper
-                  labelFor="customerName"
+                  className={cn(
+                    bookingFormState?.selectedSeats?.length < 3 && "col-span-1"
+                  )}
+                  labelFor="name"
                   error={errors.customerName?.message}
                   label={translate(
                     addBookingSeatForm.name.label.bn,
@@ -518,20 +506,18 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {bookingCoach?.route?.viaRoute?.length > 0 &&
-                            bookingCoach?.route?.viaRoute?.map(
-                              (singlePoint: any) => (
-                                <SelectItem
-                                  key={singlePoint.en}
-                                  value={singlePoint?.station?.name}
-                                >
-                                  {formatter({
-                                    type: "words",
-                                    words: singlePoint?.station?.name,
-                                  })}
-                                </SelectItem>
-                              )
-                            )}
+                          {goViaRoute.length > 0 &&
+                            goViaRoute?.map((singlePoint: any) => (
+                              <SelectItem
+                                key={singlePoint.en}
+                                value={singlePoint}
+                              >
+                                {formatter({
+                                  type: "words",
+                                  words: singlePoint,
+                                })}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </InputWrapper>
@@ -562,8 +548,8 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {bookingCoach?.route?.viaRoute?.length > 0 &&
-                            bookingCoach?.route?.viaRoute
+                          {returnViaRoute.length > 0 &&
+                            returnViaRoute
                               ?.filter(
                                 (target: any) =>
                                   target?.station?.name !==
@@ -572,11 +558,111 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                               ?.map((singlePoint: any) => (
                                 <SelectItem
                                   key={singlePoint.en}
-                                  value={singlePoint?.station?.name}
+                                  value={singlePoint}
                                 >
                                   {formatter({
                                     type: "words",
-                                    words: singlePoint?.station?.name,
+                                    words: singlePoint,
+                                  })}
+                                </SelectItem>
+                              ))}
+                        </SelectContent>
+                      </Select>
+                    </InputWrapper>
+                    {/* BOARDING POINT */}
+                    <InputWrapper
+                      error={errors?.returnBoardingPoint?.message}
+                      labelFor="returnBoardingPoint"
+                      label={translate(
+                        addBookingSeatForm.returnBoardingPoint.label.bn,
+                        addBookingSeatForm.returnBoardingPoint.label.en
+                      )}
+                    >
+                      <Select
+                        onValueChange={(value: string) => {
+                          setValue("returnBoardingPoint", value);
+                          setError("returnBoardingPoint", {
+                            type: "custom",
+                            message: "",
+                          });
+                        }}
+                      >
+                        <SelectTrigger
+                          id="returnBoardingPoint"
+                          className="w-full"
+                        >
+                          <SelectValue
+                            placeholder={translate(
+                              addBookingSeatForm.returnBoardingPoint.placeholder
+                                .bn,
+                              addBookingSeatForm.returnBoardingPoint.placeholder
+                                .en
+                            )}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {goViaRoute.length > 0 &&
+                            goViaRoute?.map((singlePoint: any) => (
+                              <SelectItem
+                                key={singlePoint.en}
+                                value={singlePoint}
+                              >
+                                {formatter({
+                                  type: "words",
+                                  words: singlePoint,
+                                })}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </InputWrapper>
+                    {/* DROPPING POINT */}
+                    <InputWrapper
+                      error={errors?.returnDroppingPoint?.message}
+                      labelFor="returnDroppingPoint"
+                      label={translate(
+                        addBookingSeatForm.returnDroppingPoint.label.bn,
+                        addBookingSeatForm.returnDroppingPoint.label.en
+                      )}
+                    >
+                      <Select
+                        onValueChange={(value: string) => {
+                          setValue("returnDroppingPoint", value);
+                          setError("returnDroppingPoint", {
+                            type: "custom",
+                            message: "",
+                          });
+                        }}
+                      >
+                        <SelectTrigger
+                          id="returnDroppingPoint"
+                          className="w-full"
+                        >
+                          <SelectValue
+                            placeholder={translate(
+                              addBookingSeatForm.returnDroppingPoint.placeholder
+                                .bn,
+                              addBookingSeatForm.returnDroppingPoint.placeholder
+                                .en
+                            )}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {returnViaRoute.length > 0 &&
+                            returnViaRoute
+                              ?.filter(
+                                (target: any) =>
+                                  target?.station?.name !==
+                                  watch("boardingPoint")
+                              )
+                              ?.map((singlePoint: any) => (
+                                <SelectItem
+                                  key={singlePoint.en}
+                                  value={singlePoint}
+                                >
+                                  {formatter({
+                                    type: "words",
+                                    words: singlePoint,
                                   })}
                                 </SelectItem>
                               ))}
@@ -694,7 +780,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
               </GridWrapper>
             </div>
 
-            <div className="my-12">
+            <div className="my-2">
               <Heading size="h4">
                 {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
               </Heading>
@@ -716,14 +802,14 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                 )}
               </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-4">
               <Heading className="" size="h4">
                 {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
               </Heading>
             </div>
 
             {/* paymnet div */}
-            <div className="mt-6 grid grid-cols-3">
+            <div className="mt-2 grid grid-cols-3">
               {/* PAYMENT METHOD */}
               <InputWrapper
                 error={errors?.paymentMethod?.message}
@@ -839,7 +925,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                 </Paragraph>
               </div>
             )}
-            <div className="mt-6">
+            <div className="mt-3">
               <ul className="flex justify-between">
                 <li className="text-lg tracking-tight">
                   <label>{translate("মোট আসনঃ ", "Total Seats: ")}</label>
@@ -926,4 +1012,4 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   );
 };
 
-export default BookingForm;
+export default BoookingFormRoundTripPublic;

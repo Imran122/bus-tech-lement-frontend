@@ -17,7 +17,7 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
   const handlePrint = () => {
     window.print();
   };
-  console.log("data", data);
+
   if (isLoading) {
     return <DetailsSkeleton />;
   }

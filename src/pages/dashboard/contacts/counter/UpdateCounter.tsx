@@ -60,8 +60,7 @@ const UpdateCounter: FC<IUpdateCounterProps> = ({ id }) => {
     updateCounter,
     { isLoading: updateCounterLoading, error: updateCounterError },
   ] = useUpdateCounterMutation({});
-  console.log("stationsData", stationsData);
-  console.log("counterData", counterData);
+
   useEffect(() => {
     setValue("address", counterData?.data?.address || "");
     setValue(

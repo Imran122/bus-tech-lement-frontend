@@ -15,7 +15,7 @@ const DetailsCounter: FC<IDetailsCounterProps> = ({ id }) => {
   const { data: counterData, isLoading: counterLoading } =
     useGetSingleCounterQuery(id);
   const { translate } = useCustomTranslator();
-  console.log("&&counterData", counterData);
+
   if (counterLoading) {
     return <DetailsSkeleton columns={3} items={18} />;
   }

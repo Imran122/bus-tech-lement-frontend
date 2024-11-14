@@ -24,7 +24,7 @@ const UpdateCounterOrderModal: FC<IUpdateCounterOrderModalProps> = ({
   const { translate } = useCustomTranslator();
   const { toast } = useToast();
   const [updateDuePayment, { isLoading }] = useUpdateDuePaymentMutation();
-  console.log("orderhhhhh", order);
+
   const handlePayment = async () => {
     try {
       await updateDuePayment(order.id).unwrap();

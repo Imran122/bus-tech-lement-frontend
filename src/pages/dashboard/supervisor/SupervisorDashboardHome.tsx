@@ -108,7 +108,7 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
           }
         : skipToken
     );
-  console.log("coachDetailsData", coachDetailsData);
+
   const totalItems = coachData?.data?.length || 0;
   //@ts-ignore
   const upDownTotal =

@@ -36,7 +36,6 @@ const AddFuelCompany: FC<IAddFuelCompanyProps> = ({ setOpen }) => {
     try {
       const cleanedData = removeFalsyProperties(data, ["website", "email"]);
       const result = await addFuelCompany(cleanedData).unwrap(); // Unwraps the promise to handle errors properly
-      console.log("Result:", result); // Debug to ensure correct result
 
       if (result?.success) {
         toast({

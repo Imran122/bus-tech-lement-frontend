@@ -5,13 +5,19 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { IBookingStateProps } from "@/sections/home/Booking";
-import BookingForm from "@/sections/home/BookingForm";
+import {
+  useAddBookingSeatMutation,
+  useCheckingSeatMutation,
+  useRemoveBookingSeatMutation,
+} from "@/store/api/bookingApi";
 import { fallback } from "@/utils/constants/common/fallback";
 import { convertTimeToBengali } from "@/utils/helpers/convertTimeToBengali";
 import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
+import { dynamicSeatAllocation } from "@/utils/helpers/dynamicSeatAllocation";
 import formatter from "@/utils/helpers/formatter";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { FC, useState } from "react";
+import { FC, useEffect } from "react";
+import SeatLayoutSelector from "../busSeatLayout/SeatLayoutSelector";
 import PageTransition from "../effect/PageTransition";
 import CardWrapper from "../wrapper/CardWrapper";
 
@@ -20,15 +26,112 @@ interface IBookingSeatCardProps {
   coachData: any;
   setBookingState: (bookingState: IBookingStateProps) => void;
   index: number;
+  bookingFormState: any;
+  setBookingFormState: any;
+  setGoViaRoute: any;
+  setReturnViaRoute: any;
+  setBookingCoachSingle: any;
+  bookingCoachSingle: any;
 }
 
-const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
+const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
+  coachData,
+  index,
+  bookingFormState,
+  setBookingFormState,
+  setGoViaRoute,
+  setReturnViaRoute,
+  setBookingCoachSingle,
+  bookingCoachSingle,
+}) => {
   const { translate } = useCustomTranslator();
-  //@ts-ignore
-  const [selectedBookingCoach, setSelectedBookingCoach] = useState<any>({});
+  const [addBookingSeat, { isLoading: addBookingSeatLoading }] =
+    useAddBookingSeatMutation({}) as any;
+  const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
+    useRemoveBookingSeatMutation({}) as any;
 
   const totalAvaliableSetas =
     coachData?.seatAvailable - coachData?.CounterBookedSeat.length;
+  const [checkingSeat] = useCheckingSeatMutation({}) as any;
+
+  const seatsAllocation = (() => {
+    switch (bookingCoachSingle?.coachClass) {
+      case "E_Class":
+        return dynamicSeatAllocation(bookingCoachSingle?.coachClass);
+      case "B_Class":
+        return dynamicSeatAllocation(bookingCoachSingle?.coachClass);
+      case "Sleeper":
+        return dynamicSeatAllocation(bookingCoachSingle?.coachClass);
+      case "S_Class":
+        return dynamicSeatAllocation(bookingCoachSingle?.coachClass);
+      default:
+        return { left: [], right: [], lastRow: [], middle: [] };
+    }
+  })();
+
+  const handleBookingSeat = async (seatData: any) => {
+    const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
+      (current: any) => current.seat === seatData.seat
+    );
+
+    if (isSeatAlreadySelected) {
+      // Remove the seat if it's already selected
+      const result = await removeBookingSeat({
+        coachConfigId: coachData?.id,
+        date: coachData?.departureDate,
+        schedule: coachData?.schedule,
+        seat: seatData.seat,
+      });
+
+      if (result?.data?.success) {
+        setBookingFormState((prevState: any) => ({
+          ...prevState,
+          selectedSeats: prevState.selectedSeats.filter(
+            (seat: any) => seat.seat !== seatData.seat
+          ),
+        }));
+      }
+    } else {
+      // Add the seat if it's not already selected
+      const result = await addBookingSeat({
+        coachConfigId: coachData?.id,
+        date: coachData?.departureDate,
+        schedule: coachData?.schedule,
+        seat: seatData.seat,
+      });
+
+      if (result?.data?.data?.available) {
+        setBookingFormState((prevState: any) => ({
+          ...prevState,
+          selectedSeats: [
+            ...prevState.selectedSeats,
+            {
+              seat: seatData.seat,
+              coachConfigId: coachData.id, // Store coachConfigId here
+              date: coachData.departureDate, // Store date here
+              schedule: coachData.schedule, // Store schedule here
+              currentAmount: coachData?.fare?.amount,
+              previousAmount: coachData?.discount,
+            },
+          ],
+        }));
+        setBookingCoachSingle(coachData); // Set only when booking successfully
+      }
+    }
+  };
+  // Effect to set goViaRoute and returnViaRoute based on coachData.route.viaRoute
+  useEffect(() => {
+    if (coachData?.route) {
+      const viaRoutes = coachData.route.viaRoute?.map(
+        (routePoint: any) => routePoint.station.name
+      );
+      if (viaRoutes) {
+        setGoViaRoute(viaRoutes);
+        setReturnViaRoute(viaRoutes.reverse());
+      }
+    }
+  }, [coachData, setGoViaRoute, setReturnViaRoute]);
+
   return (
     <AccordionItem value={index?.toString()}>
       <CardWrapper rounded="md" variant="muted" className="p-4 ">
@@ -74,7 +177,7 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
             </li>
           </ul>
           <ul className="grid grid-cols-3 gap-x-4">
-            <li className="flex flex-col p-4 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+            <li className="flex flex-col p-2 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
               <span className="font-semibold text-lg tracking-tighter">
                 {translate("যাত্রা শুরু সময়", "Departure Time")}
               </span>
@@ -85,7 +188,7 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
                 )}
               </span>
             </li>
-            <li className="flex flex-col p-4 rounded-md justify-center items-center border-2 border-warning/50 border-dashed bg-warning/5 backdrop-blur-[2px]">
+            <li className="flex flex-col p-2 rounded-md justify-center items-center border-2 border-warning/50 border-dashed bg-warning/5 backdrop-blur-[2px]">
               <span className="font-semibold text-lg tracking-tighter">
                 {translate("পৌঁছানোর সময়", "Arrival time")}
               </span>
@@ -96,7 +199,7 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
                 )}
               </span>
             </li>
-            <li className="flex flex-col p-4 rounded-md justify-center items-center border-2 border-success/50 border-dashed bg-success/5 backdrop-blur-[2px]">
+            <li className="flex flex-col px-2 rounded-md justify-center items-center border-2 border-success/50 border-dashed bg-success/5 backdrop-blur-[2px]">
               <span className="font-semibold text-lg tracking-tighter">
                 {translate("খালি আসন", "Available Seat")}
               </span>
@@ -147,25 +250,36 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
             </li>
             <li className="ml-6 px-3">
               <AccordionTrigger className="hover:no-underline border backdrop-blur-sm py-1 px-2 rounded-md">
-                <span
-                  onClick={() => setSelectedBookingCoach(coachData.id)}
-                  className="mr-1"
-                >
-                  View Seats
-                </span>
+                <span className="mr-1">View Seats</span>
               </AccordionTrigger>
             </li>
           </ul>
         </div>
       </CardWrapper>
-
+      {/* <BoookingFormRoundTripPublic selectedBookingCoach={coachData} /> */}
       <AccordionContent>
         <PageTransition>
-          <BookingForm bookingCoach={coachData} />
+          <div className="flex items-center justify-center flex-col gap-4">
+            <div className="w-full max-w-lg flex items-center justify-center border-2 rounded-md border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300 p-4">
+              <SeatLayoutSelector
+                checkingSeat={checkingSeat}
+                bookingCoach={coachData}
+                coachClass={coachData.coachClass}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
+                seatsAllocation={seatsAllocation} // removed @ts-ignore
+                handleBookingSeat={handleBookingSeat}
+                bookingFormState={bookingFormState}
+                addBookingSeatLoading={addBookingSeatLoading}
+                removeBookingSeatLoading={removeBookingSeatLoading}
+                coachId={coachData.id}
+              />
+            </div>
+          </div>
         </PageTransition>
       </AccordionContent>
     </AccordionItem>
   );
 };
 
-export default BookingSeatCard;
+export default BookingSeatCardRoundTripPublic;

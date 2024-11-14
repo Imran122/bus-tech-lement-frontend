@@ -246,7 +246,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       },
     },
   ];
-  console.log("slice bookingState", bookingState);
+
   if (loadingSalesTickit) {
     return <TableSkeleton columns={7} />;
   }

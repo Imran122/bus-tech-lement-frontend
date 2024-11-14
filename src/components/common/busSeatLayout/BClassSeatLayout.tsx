@@ -20,6 +20,7 @@ interface ISeatLayoutProps {
   addBookingSeatLoading: boolean;
   removeBookingSeatLoading: boolean;
   bookingCoach: any;
+  coachId: any;
 }
 
 const BClassSeatLayout: FC<ISeatLayoutProps> = ({
@@ -28,6 +29,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
   bookingFormState,
   bookingCoach,
   addBookingSeatLoading,
+  coachId,
 }) => {
   const { translate } = useCustomTranslator();
   const user = useSelector((state: any) => state.user);
@@ -35,7 +37,8 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
   const getSeatColorClass = (
     seatName: string,
     selected: boolean,
-    bookingCoach: any
+    bookingCoach: any,
+    coachId: any
   ) => {
     const order = bookingCoach?.orderSeat?.find(
       (order: any) => order.seat === seatName
@@ -46,7 +49,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
     const bookedByCounter = bookingCoach?.CounterBookedSeat?.find(
       (order: any) => order.seat === seatName
     );
-    // console.log("bookedByCounter:--", bookedByCounter);
+
     if (bookedByCounter) {
       if (!user.id) {
         return "bg-red-700 text-white";
@@ -57,10 +60,17 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
       return "bg-orange-500 text-white"; // Orange for seats booked by others' counters
     }
 
-    console.log("bookingCoach:---", bookingCoach);
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";
-    if (selected) return "border-bule-500 bg-[#00BFFF]";
+
+    const isSeatSelected = bookingFormState.selectedSeats.some(
+      (selectedSeat: any) =>
+        selectedSeat.seat === seatName && selectedSeat.coachConfigId === coachId
+    );
+
+    if (isSeatSelected) return "bg-blue-500 text-white";
+    if (selected) return "bg-blue-500 text-white";
+
     if (order) {
       return order?.order?.gender === "Male"
         ? "bg-red-700 text-white"
@@ -70,15 +80,18 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
   };
 
   const renderSeatButton = (seat: any) => {
-    const isSeatSelected = (seatName: string) =>
-      bookingFormState.selectedSeats.some(
-        (selectedSeat: any) => selectedSeat.seat === seatName
-      );
-    const isSelected = isSeatSelected(seat.seat);
+    const isSelected = bookingFormState.selectedSeats.some(
+      (selectedSeat: any) =>
+        selectedSeat.seat === seat.seat &&
+        selectedSeat.coachConfigId === coachId
+    );
+
+    // Pass coachId to getSeatColorClass for coach-specific color application
     const seatStatusClass = getSeatColorClass(
       seat.seat,
       isSelected,
-      bookingCoach
+      bookingCoach,
+      coachId
     );
 
     // Check if the seat is ordered or booked by another counter
@@ -95,10 +108,10 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
     const shouldDisableSeat = !user.role
       ? isOrdered || bookedByCounter // User role: disable ordered & all booked seats
       : isOrdered || isBookedByOtherCounter; // Counter role: disable ordered & other counters' booked seats
-
+    //
     // Tooltip message if the seat is booked by another counter
     const tooltipText = isBookedByOtherCounter
-      ? bookedByCounter?.counter?.userName
+      ? `Name: ${bookedByCounter?.counter?.userName}, Address:${bookedByCounter?.counter?.counter?.address}, Phone:${bookedByCounter?.counter?.counter?.phone}`
       : "";
 
     return (

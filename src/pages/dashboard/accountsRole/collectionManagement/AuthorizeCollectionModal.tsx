@@ -47,7 +47,7 @@ const AuthorizeCollectionModal: FC<AuthorizeCollectionModalProps> = ({
   ]);
   const [edit, setEdit] = useState(editStatus);
   const [amountError, setAmountError] = useState<string | null>(null);
-  console.log("edit", edit);
+
   const onSubmit = async () => {
     const totalAmount = accounts.reduce(
       (sum, acc) => sum + Number(acc.amount),

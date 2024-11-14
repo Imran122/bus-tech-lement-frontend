@@ -25,7 +25,6 @@ const UserProfile: FC<IUserProfileProps> = () => {
     user?.id ?? skipToken
   );
 
-  console.log("userData:----", userData);
   return (
     <PageWrapper>
       <SectionWrapper className="flex gap-x-6 flex-row items-start w-full my-8">

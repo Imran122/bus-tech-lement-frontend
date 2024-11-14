@@ -1,4 +1,3 @@
-
 import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 import { DataTable, IQueryProps } from "@/components/common/table/DataTable";
 import PageWrapper from "@/components/common/wrapper/PageWrapper";
@@ -27,6 +26,7 @@ import {
   useGetUpdateCoachConfigurationsQuery,
   useUpdateCoachConfigurationMutation,
 } from "@/store/api/vehiclesSchedule/coachConfigurationApi";
+import { UpdateCoachConfiguration } from "@/types/dashboard/vehicleeSchedule.ts/updateCoachConfig";
 import { fallback } from "@/utils/constants/common/fallback";
 import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
 import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
@@ -37,7 +37,6 @@ import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuDownload } from "react-icons/lu";
 import UpdateCoachConfigarationDetails from "./UpdateCoachConfigerationDetails";
-import { UpdateCoachConfiguration } from "@/types/dashboard/vehicleeSchedule.ts/updateCoachConfig";
 
 interface IUpdateCoachConfigurationListProps {}
 export interface ICoachConfigurationStateProps {
@@ -45,7 +44,9 @@ export interface ICoachConfigurationStateProps {
   updateCoachConfigurationsList: UpdateCoachConfiguration[];
 }
 
-const UpdateCoachConfigurationList: FC<IUpdateCoachConfigurationListProps> = () => {
+const UpdateCoachConfigurationList: FC<
+  IUpdateCoachConfigurationListProps
+> = () => {
   const { toast } = useToast();
   const { translate } = useCustomTranslator();
   const { toastMessage } = useMessageGenerator();
@@ -65,8 +66,6 @@ const UpdateCoachConfigurationList: FC<IUpdateCoachConfigurationListProps> = () 
       search: "",
       updateCoachConfigurationsList: [],
     });
-
-    console.log("update coach",coachConfigurationState.updateCoachConfigurationsList )
 
   const {
     data: coachConfigurationsData,
@@ -103,7 +102,7 @@ const UpdateCoachConfigurationList: FC<IUpdateCoachConfigurationListProps> = () 
         ),
       })
     );
-    console.log("coachConfigurationsData", coachConfigurationsData);
+
     setCoachConfigurationState((prevState: ICoachConfigurationStateProps) => ({
       ...prevState,
       updateCoachConfigurationsList: customizeCoachConfigurationData || [],
@@ -303,7 +302,10 @@ const UpdateCoachConfigurationList: FC<IUpdateCoachConfigurationListProps> = () 
           "কোচ কনফিগারেইশনের হালনাগাদ তালিকা এবং সকল তথ্য উপাত্ত",
           "Coach configuration list and all ralevnet information & data"
         )}
-        heading={translate("কোচ কনফিগারেইশন হালনাগাদ", "Update Coach Configuration")}
+        heading={translate(
+          "কোচ কনফিগারেইশন হালনাগাদ",
+          "Update Coach Configuration"
+        )}
       >
         <TableToolbar alignment="end">
           <ul className="flex items-center gap-x-2">
@@ -324,7 +326,7 @@ const UpdateCoachConfigurationList: FC<IUpdateCoachConfigurationListProps> = () 
                 )}
               />
             </li>
-         
+
             <li>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

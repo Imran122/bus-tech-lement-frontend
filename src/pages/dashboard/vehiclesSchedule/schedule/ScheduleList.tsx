@@ -78,7 +78,6 @@ const ScheduleList: FC<IScheduleListProps> = () => {
       page: query.page,
       size: query.size,
     });
-  console.log("Search query parameter:", scheduleState.search); // Debug log
 
   const [deleteSchedule] = useDeleteScheduleMutation({});
 
@@ -196,7 +195,7 @@ const ScheduleList: FC<IScheduleListProps> = () => {
                 //@ts-ignore
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   const searchValue = e.target.value;
-                  //console.log("Search input:", searchValue); // Debug log
+                  //
                   setScheduleState((prevState: IScheduleStateProps) => ({
                     ...prevState,
                     search: searchValue,

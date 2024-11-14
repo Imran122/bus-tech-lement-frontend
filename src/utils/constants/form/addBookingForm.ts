@@ -12,6 +12,8 @@ export interface IAddBookingFromProps {
   nationality: ILabelPlaceholder;
   boardingPoint: ILabelPlaceholder;
   droppingPoint: ILabelPlaceholder;
+  returnBoardingPoint: ILabelPlaceholder;
+  returnDroppingPoint: ILabelPlaceholder;
   paymentMethod: ILabelPlaceholder;
 }
 
@@ -118,14 +120,35 @@ export const addBookingSeatForm: IAddBookingFromProps = {
       bn: "আপনার বোর্ডিং পয়েন্ট লিখুন",
     },
   },
+
   droppingPoint: {
     label: {
       en: "Dropping Point ✼",
-      bn: "ড্রপিং পয়েন্ট ✼",
+      bn: "ফিরে আসা ড্রপিং পয়েন্ট ✼",
     },
     placeholder: {
       en: "Enter your dropping point",
-      bn: "আপনার ড্রপিং পয়েন্ট লিখুন",
+      bn: "আপনার ফিরে আসা ড্রপিং পয়েন্ট লিখুন",
+    },
+  },
+  returnBoardingPoint: {
+    label: {
+      en: "Return Boarding Point ✼",
+      bn: "ফিরে আসা বোর্ডিং পয়েন্ট ✼",
+    },
+    placeholder: {
+      en: "Enter your Return boarding point",
+      bn: "আপনার ফিরে আসা বোর্ডিং পয়েন্ট লিখুন",
+    },
+  },
+  returnDroppingPoint: {
+    label: {
+      en: "Return Dropping Point ✼",
+      bn: "ফিরে আসা বোর্ডিং পয়েন্ট ✼",
+    },
+    placeholder: {
+      en: "Enter your return dropping point",
+      bn: "আপনার ফিরে আসা বোর্ডিং পয়েন্ট লিখুন",
     },
   },
   paymentMethod: {

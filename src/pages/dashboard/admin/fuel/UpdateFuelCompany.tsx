@@ -32,7 +32,7 @@ const UpdateFuelCompany: FC<IUpdateFuelCompanyProps> = ({ id, setOpen }) => {
     useGetSingleFuelCompanyQuery(id);
   const [updateFuelCompany, { isLoading: updateLoading, error: updateError }] =
     useUpdateFuelCompanyMutation();
-  console.log("fuelCompanyData single", fuelCompanyData);
+
   const {
     register,
     handleSubmit,

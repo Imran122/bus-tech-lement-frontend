@@ -72,15 +72,15 @@ const UserRoleList: FC<IRoleListProps> = () => {
   });
   const { data: roleListData, isLoading: roleLoading } =
     useGetAllUserRoleListQuery({});
-  //console.log("role:-", roleListData);
-  const handleAddRoleSuccess = (newPermission:any) => {
+  //
+  const handleAddRoleSuccess = (newPermission: any) => {
     setRoleState((prevState) => ({
       ...prevState,
       roleList: [...prevState.roleList, newPermission],
     }));
   };
   const [deleteRole] = useDeleteRoleMutation({});
-  const handleUpdateRoleSuccess = (updatedRole:any) => {
+  const handleUpdateRoleSuccess = (updatedRole: any) => {
     // Update the permission in the list
     const updatedRoleList = roleState.roleList.map((role) =>
       role!.id === updatedRole.id ? updatedRole : role
@@ -120,7 +120,7 @@ const UserRoleList: FC<IRoleListProps> = () => {
   };
   useEffect(() => {
     if (roleListData) {
-      //console.log("roleListData Data:", roleListData); // Add logging to inspect the data structure
+      //
       const customizedRoleData = roleListData.data.map(
         (singleRole: Role, roleIndex: number) => ({
           ...singleRole,
@@ -258,7 +258,7 @@ const UserRoleList: FC<IRoleListProps> = () => {
                 <DialogContent size="lg">
                   <DialogTitle className="sr-only">empty</DialogTitle>
                   <AddRole
-                  //@ts-ignore
+                    //@ts-ignore
                     onAddSuccess={handleAddRoleSuccess}
                     setRoleState={setRoleState}
                   />

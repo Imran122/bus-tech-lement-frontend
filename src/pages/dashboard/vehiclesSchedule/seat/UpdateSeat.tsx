@@ -1,12 +1,9 @@
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
+import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import {
   AddUpdateSeatDataProps,
   addUpdateSeatSchema,
@@ -15,9 +12,12 @@ import {
   useGetSingleSeatQuery,
   useUpdateSeatMutation,
 } from "@/store/api/vehiclesSchedule/seatApi";
-import { Input } from "@/components/ui/input";
+import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FC, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { ISeatStateProps } from "./SeatList";
-import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
 
 interface IUpdateSeatProps {
   id: number | boolean;
@@ -67,8 +67,6 @@ const UpdateSeat: FC<IUpdateSeatProps> = ({ id, setSeatState }) => {
   useEffect(() => {
     setValue("name", seatDate?.data?.name);
   }, [seatDate, setValue]);
-
-  console.log(seatDate?.data?.name);
 
   if (seatLoading) {
     return <FormSkeleton columns={1} inputs={1} />;

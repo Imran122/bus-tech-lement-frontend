@@ -86,7 +86,6 @@ const ExpenseCategoryList: FC<IExpenseCategoryListProps> = () => {
       cell: ({ row }) => {
         //@ts-ignore
         const user = row.original as any;
-        console.log(user);
 
         return (
           <DropdownMenu>

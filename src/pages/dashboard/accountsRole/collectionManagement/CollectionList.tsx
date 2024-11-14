@@ -114,7 +114,7 @@ const CollectionList: FC<ICollectionManagementDashboardProps> = () => {
     (item) => item.id === expenseState.selectedCollectionId
   );
   const selectedAmount = selectedCollection ? selectedCollection.amount : 0;
-  console.log("collectionData", collectionData);
+
   const columns = [
     { accessorKey: "id", header: translate("আইডি", "ID") },
     {

@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { useFontShifter } from "@/utils/hooks/useFontShifter";
@@ -27,7 +28,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { FC, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
-import { cn } from "@/lib/utils";
 import { dummyData } from "../../contacts/user/UserList";
 import AddFinance from "./AddFinance";
 
@@ -88,8 +88,8 @@ const FinanceList: FC<IFinanceListProps> = () => {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
+        //@ts-ignore
         const user = row.original as any;
-        console.log(user);
 
         return (
           <DropdownMenu>

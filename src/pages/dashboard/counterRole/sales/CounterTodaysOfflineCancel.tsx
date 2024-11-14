@@ -64,7 +64,7 @@ const CounterTodaysOfflineCancel: FC<ISalesListProps> = () => {
       page: query.page,
       size: query.size,
     });
-  console.log("cancel", salesTickitList);
+
   const handleUpdateClick = (orderId: number) => {
     setSalesTickitState((prev) => ({
       ...prev,

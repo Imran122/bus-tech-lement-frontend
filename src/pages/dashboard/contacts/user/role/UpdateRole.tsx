@@ -52,7 +52,7 @@ const UpdateRole: FC<IUpdateRoleProps> = ({ id, onUpdateSuccess }) => {
     updateRole,
     { isLoading: updateRoleLoading, error: updateRoleTypeError },
   ] = useUpdateRoleMutation();
-  //console.log("singleRoleData", singleRoleData);
+  //
   useEffect(() => {
     setValue("name", singleRoleData?.data?.name || "");
   }, [singleRoleData, setValue]);
@@ -63,7 +63,7 @@ const UpdateRole: FC<IUpdateRoleProps> = ({ id, onUpdateSuccess }) => {
     ]) as AddRoleDataProps;
 
     const result = await updateRole({ data: updateData, id });
-    //console.log("Update result:", result);
+    //
     if (result?.data?.success) {
       toast({
         title: translate(
@@ -111,7 +111,7 @@ const UpdateRole: FC<IUpdateRoleProps> = ({ id, onUpdateSuccess }) => {
           </InputWrapper>
         </div>
         <Submit
-        errorTitle="Update role failed"
+          errorTitle="Update role failed"
           loading={updateRoleLoading}
           errors={updateRoleTypeError}
           submitTitle={translate("ভূমিকা সম্পাদনা করুন", "Update Role")}

@@ -89,8 +89,6 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
     resolver: zodResolver(addUpdateCoachConfigurationSchema),
   });
 
-  console.log(errors);
-
   const [
     updateCoachConfigurationFormState,
     setUpdateCoachConfigurationFormState,
@@ -137,8 +135,6 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
   ) as any;
   const { data: supervisorsData, isLoading: supervisorsLoading } =
     useGetUsersQuery({}) as any;
-
-  console.log("coachListData", coachListData);
 
   useEffect(() => {
     setValue("coachNo", coachConfigurationData?.data?.coachNo);
@@ -202,7 +198,7 @@ const UpdateCoachConfiguration: FC<IUpdateCoachConfigurationProps> = ({
       });
     }
   };
-  console.log("Current coachConfigurationData:", coachConfigurationData);
+
   if (coachConfigurationLoading || schedulesLoading || coachListDataLoading) {
     return <FormSkeleton columns={3} inputs={16} />;
   }

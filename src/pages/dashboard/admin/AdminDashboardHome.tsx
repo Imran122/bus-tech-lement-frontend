@@ -36,7 +36,7 @@ const AdminDashboardHome: FC<IReportSuite> = () => {
   });
   const { data: salesData, isLoading: salesLoading } =
     useGetTodaysSaleAdminReportQuery({});
-  console.log("salesData", salesData);
+
   const totalItems = salesData?.data?.todaySalesHistory?.length || 0;
 
   const columns: ColumnDef<any>[] = [

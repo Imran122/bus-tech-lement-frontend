@@ -1,5 +1,4 @@
 import PageTransition from "@/components/common/effect/PageTransition";
-import DetailsSkeleton from "@/components/common/skeleton/DetailsSkeleton";
 import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
 import { Heading } from "@/components/common/typography/Heading";
 import { Label } from "@/components/common/typography/Label";
@@ -18,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   Tooltip,
   TooltipContent,
@@ -42,47 +40,73 @@ export interface IBookingStateProps {
   calenderOpen: boolean;
   fromCounterId: number | null;
   destinationCounterId: number | null;
-
+  returnCalenderOpen: boolean;
   coachType: string;
   date: Date | null;
+  returnDate?: Date | null;
   bookingCoachesList: any[];
+  roundTripGobookingCoachesList?: any[];
+  roundTripReturnBookingCoachesList?: any[];
 }
 
 const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   const { translate } = useCustomTranslator();
   const [tripType, setTripType] = useState("One_Trip");
-  console.log("bookingState@@", bookingState);
+  //
+
   const shouldFetchData = Boolean(
     bookingState.fromCounterId &&
       bookingState.destinationCounterId &&
       bookingState.coachType &&
       bookingState.date &&
+      (tripType === "One_Trip" || bookingState.returnDate) &&
       tripType
   );
-  const { data: bookingCoachesData, isLoading: coachListLoading } =
-    useGetBookingCoachesQuery(
-      shouldFetchData
-        ? {
-            fromCounterId: bookingState?.fromCounterId,
-            destinationCounterId: bookingState?.destinationCounterId,
-            orderType: tripType,
-            coachType: bookingState.coachType,
-            date: bookingState.date && format(bookingState.date, "yyyy-MM-dd"),
-          }
-        : {}, // Provide empty query parameters if conditions aren't met
-      { skip: !shouldFetchData } // Skip fetching if required fields are missing
-    ) as any;
+
+  const { data: bookingCoachesData } = useGetBookingCoachesQuery(
+    shouldFetchData
+      ? {
+          fromCounterId: bookingState?.fromCounterId,
+          destinationCounterId: bookingState?.destinationCounterId,
+          orderType: tripType,
+          coachType: bookingState.coachType,
+          date: bookingState.date && format(bookingState.date, "yyyy-MM-dd"),
+          returnDate:
+            tripType !== "One_Trip" && bookingState.returnDate
+              ? format(bookingState.returnDate, "yyyy-MM-dd")
+              : undefined, // Only include returnDate if it's a round trip
+        }
+      : {}, // Provide empty query parameters if conditions aren't met
+    { skip: !shouldFetchData } // Skip fetching if required fields are missing
+  ) as any;
+
+  // Clear previous data when trip type changes
+  useEffect(() => {
+    setBookingState((prevState: IBookingStateProps) => ({
+      ...prevState,
+      bookingCoachesList: [],
+      roundTripGobookingCoachesList: [],
+      roundTripReturnBookingCoachesList: [],
+    }));
+  }, [tripType, setBookingState]);
+
+  // Fetch data and populate the appropriate lists based on trip type
   useEffect(() => {
     if (shouldFetchData && bookingCoachesData?.data) {
-      setBookingState((prevState: IBookingStateProps) => ({
-        ...prevState,
-        bookingCoachesList: bookingCoachesData.data,
-      }));
-    } else {
-      setBookingState((prevState: IBookingStateProps) => ({
-        ...prevState,
-        bookingCoachesList: [],
-      }));
+      if (tripType === "Round_Trip") {
+        setBookingState((prevState: IBookingStateProps) => ({
+          ...prevState,
+          roundTripGobookingCoachesList: bookingCoachesData.data,
+          roundTripReturnBookingCoachesList: bookingCoachesData.returnData,
+        }));
+      } else {
+        setBookingState((prevState: IBookingStateProps) => ({
+          ...prevState,
+          bookingCoachesList: bookingCoachesData.data,
+          roundTripGobookingCoachesList: [],
+          roundTripReturnBookingCoachesList: [],
+        }));
+      }
     }
   }, [
     shouldFetchData,
@@ -90,17 +114,34 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
     bookingState.destinationCounterId,
     bookingState.coachType,
     bookingState.date,
+    bookingState.returnDate,
     bookingCoachesData,
     setBookingState,
+    tripType,
   ]);
 
-  console.log("tripType", tripType);
-  console.log("bookingCoachesData:--->>", bookingCoachesData);
+  //
+
   const { data: countersData, isLoading: countersLoading } =
     useGetCountersQuery({}) as any;
-  if (countersLoading || coachListLoading) {
-    return <DetailsSkeleton />;
-  }
+
+  useEffect(() => {
+    if (tripType === "One_Trip") {
+      // Clear round-trip data from localStorage if trip type is "One_Trip"
+      localStorage.removeItem("returnDate");
+      localStorage.removeItem("tripType");
+    } else if (tripType === "Round_Trip" && bookingState.returnDate) {
+      // Store round trip data in localStorage if trip type is "Round_Trip"
+      localStorage.setItem("tripType", tripType);
+
+      // Format the return date as "YYYY-MM-DD" to avoid timezone issues
+      const formattedReturnDate = format(
+        new Date(bookingState.returnDate),
+        "yyyy-MM-dd"
+      );
+      localStorage.setItem("returnDate", formattedReturnDate);
+    }
+  }, [tripType, bookingState.returnDate]);
   return (
     <div className="flex justify-center items-center">
       <PageTransition className=" w-full ">
@@ -240,7 +281,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                     </SelectContent>
                   </Select>
                 </li>
-                {/* DATE */}
+                {/*GOING DATE */}
                 <li>
                   <Popover
                     open={bookingState.calenderOpen}
@@ -290,6 +331,62 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                     </PopoverContent>
                   </Popover>
                 </li>
+
+                {/*RETURN DATE */}
+                {tripType === "Round_Trip" && (
+                  <li>
+                    <Popover
+                      open={bookingState.returnCalenderOpen}
+                      onOpenChange={(open) =>
+                        setBookingState((prevState: IBookingStateProps) => ({
+                          ...prevState,
+                          returnCalenderOpen: open,
+                        }))
+                      }
+                    >
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
+                            !bookingState.returnDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {bookingState.returnDate ? (
+                            format(bookingState.returnDate, "PPP")
+                          ) : (
+                            <span>
+                              {translate(
+                                "ফেরার তারিখ নির্বাচন করুন",
+                                "Pick Return Booking Date"
+                              )}
+                            </span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="end">
+                        <Calendar
+                          mode="single"
+                          // captionLayout="dropdown-buttons"
+                          selected={bookingState?.returnDate || new Date()}
+                          onSelect={(date) => {
+                            setBookingState(
+                              (prevState: IBookingStateProps) => ({
+                                ...prevState,
+                                returnDate: date || new Date(),
+                                returnCalenderOpen: false,
+                              })
+                            );
+                          }}
+                          fromYear={1960}
+                          toYear={new Date().getFullYear()}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </li>
+                )}
+
                 <li>
                   <TooltipProvider>
                     <Tooltip>

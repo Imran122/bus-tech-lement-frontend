@@ -110,7 +110,6 @@ const UpdateCoachConfigNavigationForm: FC<
   } = useForm<IAddUpdateCoachConfigurationDataProps>({
     resolver: zodResolver(addUpdateCoachConfigurationSchema),
   });
-  console.log("Form errors:", errors);
   const [
     updateCoachConfigurationFormState,
     setUpdateCoachConfigurationFormState,
@@ -166,7 +165,6 @@ const UpdateCoachConfigNavigationForm: FC<
   const { data: supervisorsData, isLoading: supervisorsLoading } =
     useGetUsersQuery({}) as any;
 
-  //console.log("vehiclesData", vehiclesData);
 
   useEffect(() => {
     if (selectedCoachInfo) {
@@ -192,16 +190,13 @@ const UpdateCoachConfigNavigationForm: FC<
       );
     }
   }, [selectedCoachInfo, setValue]);
-
   const onSubmit = async (data: IAddUpdateCoachConfigurationDataProps) => {
-    console.log("@data", data);
     const updateData = removeFalsyProperties(data, [
       "discount",
       "tokenAvailable",
       "registrationNo",
     ]);
 
-    console.log("@updata", updateData);
 
     const result = await updateCoachConfiguration({
       data: updateData,
@@ -228,7 +223,6 @@ const UpdateCoachConfigNavigationForm: FC<
   ) {
     return <FormSkeleton columns={3} inputs={16} />;
   }
-  //console.log("selectedCoachInfo", selectedCoachInfo);
   return (
     <FormWrapper
       heading={translate(
@@ -240,6 +234,25 @@ const UpdateCoachConfigNavigationForm: FC<
         "Fill out the details below to update existing coach configuration to the system."
       )}
     >
+      <div>
+        {selectedCoachInfo && (
+          <h2 className="text-red-400 text-lg font-semibold">{`This ${
+            selectedCoachInfo?.coachNo
+          } / ${selectedCoachInfo?.coachType} / ${
+            selectedCoachInfo?.coachClass === "B_Class"
+              ? "Business Class"
+              : selectedCoachInfo?.coachClass === "S_Class"
+              ? "Suite Class"
+              : selectedCoachInfo?.coachClass === "Sleeper"
+              ? "Sleeper Coach"
+              : "Economy Class"
+          } going to ${selectedCoachInfo?.route?.routeName} at ${
+            selectedCoachInfo?.departureDate
+          } - [ ${selectedCoachInfo?.schedule} ], Each Seat Fare ${
+            selectedCoachInfo?.fare?.amount
+          }`}</h2>
+        )}
+      </div>
       <div>
         {/* Date Selector */}
         <InputWrapper labelFor="departureDate" label="Select Date">
@@ -283,12 +296,12 @@ const UpdateCoachConfigNavigationForm: FC<
               "কোচ কনফিগারেশন নির্বাচন করুন",
               "Select Coach Configuration"
             )}
+            className="col-span-2"
           >
             <Select
               onValueChange={(value: any) => {
                 const parsedValue = JSON.parse(value);
                 setSelectedCoachInfo(parsedValue);
-                console.log("Updated Selected Coach Info:", parsedValue);
               }}
             >
               <SelectTrigger id="coachConfig" className="w-full">
@@ -305,7 +318,7 @@ const UpdateCoachConfigNavigationForm: FC<
                   tomorrowsCoachConfigurationData.data.map(
                     (coach: any, index: number) => (
                       <SelectItem key={index} value={JSON.stringify(coach)}>
-                        {`${coach.coachNo} - (${coach.schedule})`}
+                        {` ${coach.coachNo} - ${coach.route.routeName} - (${coach.schedule})`}
                       </SelectItem>
                     )
                   )

@@ -68,7 +68,7 @@ const UpdatePermissionType: FC<IUpdatePermissionProps> = ({
     ]) as AddPermissionTypeDataProps;
 
     const result = await updatePermissionType({ data: updateData, id });
-    console.log("Update result:", result);
+
     if (result?.data?.success) {
       toast({
         title: translate(
@@ -77,7 +77,7 @@ const UpdatePermissionType: FC<IUpdatePermissionProps> = ({
         ),
         description: toastMessage("update", translate("অনুমতি", "permission")),
       });
-      console.log("onUpdateSuccess", onUpdateSuccess);
+
       // Call the onUpdateSuccess callback with the updated permission data
       if (onUpdateSuccess) {
         onUpdateSuccess(result.data.data); // Assuming `result.data.data` is the updated permission

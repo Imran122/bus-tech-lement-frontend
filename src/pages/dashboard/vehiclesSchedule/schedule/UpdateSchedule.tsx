@@ -42,7 +42,6 @@ const UpdateSchedule: FC<IUpdateScheduleProps> = ({ id }) => {
 
   useEffect(() => {
     if (scheduleData?.data?.time) {
-      console.log("Received time format from backend:", scheduleData.data.time);
       const date = convertTimeStringToISO(scheduleData.data.time);
       if (date) {
         setDate(date);

@@ -87,11 +87,11 @@ const CoachList: FC<ICoachListProps> = () => {
       (singleCoach: Coach, userIndex: number) => ({
         ...singleCoach,
         noOfSeat: singleCoach?.noOfSeat || fallback.quantity,
-        schedule:singleCoach?.schedule,
-        fare:singleCoach?.fare?.amount,
-        fromCounter:singleCoach?.fromCounter?.name,
-        destinationCounter:singleCoach?.destinationCounter?.name,
-        route:singleCoach?.route?.routeName,
+        schedule: singleCoach?.schedule,
+        fare: singleCoach?.fare?.amount,
+        fromCounter: singleCoach?.fromCounter?.name,
+        destinationCounter: singleCoach?.destinationCounter?.name,
+        route: singleCoach?.route?.routeName,
         dummyActive: singleCoach?.active ? "Activate" : "Deactivate",
         index: generateDynamicIndexWithMeta(coachesData, userIndex),
       })
@@ -147,7 +147,6 @@ const CoachList: FC<ICoachListProps> = () => {
       playSound("remove");
     }
   };
-  console.log(coachesData);
 
   const columns: ColumnDef<unknown>[] = [
     { accessorKey: "index", header: translate("ইনডেক্স", "Index") },
@@ -181,7 +180,7 @@ const CoachList: FC<ICoachListProps> = () => {
       accessorKey: "route",
       header: translate("রুট", "Route"),
     },
-    
+
     {
       header: translate("অবস্থা", "Status"),
       cell: ({ row }) => {

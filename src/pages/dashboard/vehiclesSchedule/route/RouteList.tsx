@@ -78,7 +78,6 @@ const RouteList: FC<IRouteListProps> = () => {
     size: query.size,
   });
   const [deleteRoute] = useDeleteRouteMutation({});
-  console.log("Search Value Sent to Query:", routeState.search);
 
   useEffect(() => {
     const customizeRoutesData = routesData?.data?.map(
@@ -201,7 +200,7 @@ const RouteList: FC<IRouteListProps> = () => {
               <Input
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   const searchValue = e.target.value;
-                  console.log("Search Input:", searchValue); // Debug log
+
                   setRouteState((prevState: IRouteStateProps) => ({
                     ...prevState,
                     search: searchValue,

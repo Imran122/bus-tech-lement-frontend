@@ -11,8 +11,9 @@ interface ISeatLayoutSelectorProps {
   bookingFormState: any;
   addBookingSeatLoading: boolean;
   removeBookingSeatLoading: boolean;
-  checkingSeat:any,
-  bookingCoach:any
+  checkingSeat: any;
+  bookingCoach: any;
+  coachId: any;
 }
 
 const SeatLayoutSelector: FC<ISeatLayoutSelectorProps> = ({
@@ -23,9 +24,10 @@ const SeatLayoutSelector: FC<ISeatLayoutSelectorProps> = ({
   removeBookingSeatLoading,
   checkingSeat,
   bookingCoach,
+  coachId,
 }) => {
   const seatsAllocation = dynamicSeatAllocation(coachClass);
-  console.log("coachClass:---", coachClass);
+
   if (coachClass === "E_Class") {
     return (
       <EClassSeatLayout
@@ -37,6 +39,7 @@ const SeatLayoutSelector: FC<ISeatLayoutSelectorProps> = ({
         bookingFormState={bookingFormState}
         addBookingSeatLoading={addBookingSeatLoading}
         removeBookingSeatLoading={removeBookingSeatLoading}
+        coachId={coachId}
       />
     );
   } else if (coachClass === "B_Class") {
@@ -50,6 +53,7 @@ const SeatLayoutSelector: FC<ISeatLayoutSelectorProps> = ({
         bookingFormState={bookingFormState}
         addBookingSeatLoading={addBookingSeatLoading}
         removeBookingSeatLoading={removeBookingSeatLoading}
+        coachId={coachId}
       />
     );
   } else if (coachClass === "Sleeper") {
@@ -76,6 +80,7 @@ const SeatLayoutSelector: FC<ISeatLayoutSelectorProps> = ({
         bookingFormState={bookingFormState}
         addBookingSeatLoading={addBookingSeatLoading}
         removeBookingSeatLoading={removeBookingSeatLoading}
+        coachId={coachId}
       />
     );
   } else {

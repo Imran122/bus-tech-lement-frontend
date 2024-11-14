@@ -85,7 +85,7 @@ const UserList: FC<IUserListProps> = () => {
   });
 
   const [deleteUser] = useDeleteUserMutation({});
-  console.log("mmmmmmm9;--", usersData);
+
   useEffect(() => {
     const customizeUsersData = usersData?.data?.map(
       (singleUser: User, userIndex: number) => ({

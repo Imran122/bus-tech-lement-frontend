@@ -111,7 +111,7 @@ const SupervisorManagement: FC<ISupervisorCollectionListProps> = () => {
   //     refetch();
   //   }
   // };
-  console.log("collectionData", collectionData);
+
   const columns: ColumnDef<SupervisorCollection>[] = [
     { accessorKey: "index", header: translate("ইনডেক্স", "Index") },
     {

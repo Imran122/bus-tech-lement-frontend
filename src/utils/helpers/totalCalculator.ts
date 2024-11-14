@@ -7,5 +7,11 @@ export const totalCalculator = (
     numbersCollection
       ?.map((singleItem: any) => singleItem[propertyName])
       ?.reduce((total: number, num: number) => +total + +num, 0);
-  return +total;
+  const discount =
+    numbersCollection?.length > 0 &&
+    numbersCollection
+      ?.map((singleItem: any) => singleItem["previousAmount"])
+      ?.reduce((total: number, num: number) => +total + +num, 0);
+
+  return total - discount;
 };

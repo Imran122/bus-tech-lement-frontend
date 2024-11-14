@@ -16,7 +16,7 @@ const CoachDetailsForSupervisor: React.FC = () => {
   const { coachId } = useParams();
   const { data: coachDetailsData, isLoading: coachDetailsLoading } =
     useGetSupervisorCoachDetailsQuery(coachId);
-  //console.log("coachDetailsData", coachDetailsData);
+  //
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
     page: 1,

@@ -4,20 +4,17 @@ import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { AddPermissionDataProps } from "@/schemas/contact/addPermissionSchema";
-import {
-  addRoleSchema,
-} from "@/schemas/contact/addRoleSchema";
+import { addRoleSchema } from "@/schemas/contact/addRoleSchema";
 import { useAddRoleMutation } from "@/store/api/contact/roleApi";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import { IRoleStateProps } from "./UserRoleList";
 import { z } from "zod";
+import { IRoleStateProps } from "./UserRoleList";
 
 interface IAddRoleProps {
-  
   setRoleState: (
     permissionState: (prevState: IRoleStateProps) => IRoleStateProps
   ) => void;
@@ -48,10 +45,7 @@ const AddRole: FC<IAddRoleProps> = ({ setRoleState }) => {
 
   const [addRole, { isLoading: addRoleLoading, error: addRoleError }] =
     useAddRoleMutation();
-
   const onSubmit = async (data: AddPermissionDataProps) => {
-    console.log("Form data before submission:", data);
-
     try {
       // Manually validate the form data using Zod
       const validatedData = addRoleSchema.parse(data);
@@ -106,7 +100,7 @@ const AddRole: FC<IAddRoleProps> = ({ setRoleState }) => {
         "Fill out the details below to add a new role to the system."
       )}
     >
-       <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           {/* PERMISSION NAME */}
           <InputWrapper
