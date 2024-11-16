@@ -13,6 +13,7 @@ interface IFileInputProps {
   photo: string | undefined;
   setCropState: (cropState: any) => void;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 const FileInput: FC<IFileInputProps> = ({
@@ -21,6 +22,7 @@ const FileInput: FC<IFileInputProps> = ({
   photo,
   setCropState,
   placeholder,
+  disabled = false
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { translate } = useCustomTranslator();
@@ -41,9 +43,13 @@ const FileInput: FC<IFileInputProps> = ({
       };
     }
   };
+
   const onChooseImg = () => {
-    inputRef?.current?.click();
+    if (!disabled) {
+      inputRef?.current?.click();
+    }
   };
+
   return (
     <div>
       <input
@@ -54,6 +60,7 @@ const FileInput: FC<IFileInputProps> = ({
         onChange={handleOnChange}
         className="hidden"
         ref={inputRef}
+        disabled={disabled}  
       />
 
       <Button
@@ -62,6 +69,7 @@ const FileInput: FC<IFileInputProps> = ({
         size="sm"
         variant="outline"
         className="relative text-muted-foreground font-normal mt-[10px] w-full justify-start"
+        disabled={disabled}  
       >
         {photo
           ? photo.slice(0, 25)

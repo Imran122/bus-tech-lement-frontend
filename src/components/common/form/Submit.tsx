@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { getPropertyValues } from "@/utils/helpers/getPropertyValues";
 import { fallback } from "@/utils/constants/common/fallback";
@@ -14,7 +14,8 @@ interface ISubmitErrorWrapperProps {
   errors: any;
   loading: boolean;
   className?: string;
-  submitTitle: string;
+  submitTitle?: string;
+  icon?:ReactNode;
   errorTitle: string;
   direction?: "horizontal" | "vertical";
 }
@@ -26,6 +27,7 @@ const Submit: FC<ISubmitErrorWrapperProps> = ({
   submitTitle,
   errorTitle,
   direction = "horizontal",
+  icon
 }) => {
   const { translate } = useCustomTranslator();
   return (
@@ -83,6 +85,7 @@ const Submit: FC<ISubmitErrorWrapperProps> = ({
           >
             {loading && <Loader />}
             {submitTitle}
+            {icon}
           </Button>
         </PageTransition>
       </div>

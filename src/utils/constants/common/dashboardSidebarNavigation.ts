@@ -329,6 +329,12 @@ const settingsLinks = {
   subLinks: [
     {
       icon: LuUser,
+      label: { bn: "সিএমএস", en: "CMS" },
+      key: "cms",
+      href: "cms",
+    },
+    {
+      icon: LuUser,
       label: { bn: "স্লাইডার", en: "Slider" },
       key: "slider_list",
       href: "slider_list",

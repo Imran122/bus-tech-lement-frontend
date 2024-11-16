@@ -96,18 +96,17 @@ const UpdateSlider: FC<ISliderProps> = ({ id }) => {
       )}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
+        <div className="relative">
+          <div className="absolute left-16 top-2 z-50">
+            <Images className="text-gray-400" />
+          </div>
           <InputWrapper
-            className="relative"
             labelFor="image"
             label={translate(
               addUpdateSliderForm.image.label.bn,
               addUpdateSliderForm.image.label.en
             )}
           >
-            <div className="absolute right-3 bottom-2.5 z-50">
-              <Images className="text-gray-400" />
-            </div>
             <PhotoCropper
               ratio={3 / 4}
               id="avatar"
