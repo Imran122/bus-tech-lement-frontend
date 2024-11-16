@@ -149,6 +149,6 @@ export const {
   useUnBookSeatFromCounterBookingMutation,
   useOrderCancelRequestMutation,
   useGetTodayCancelRequestListQuery,
-  useAcceptCancelTicketMutation
-  // useGetTickitInfoByPhoneQuery,
+  useAcceptCancelTicketMutation,
+  useGetTickitInfoByPhoneQuery
 } = bookingApi;
