@@ -68,8 +68,8 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
         selectedSeat.seat === seatName && selectedSeat.coachConfigId === coachId
     );
 
-    if (isSeatSelected) return "bg-blue-500 text-white";
-    if (selected) return "bg-blue-500 text-white";
+    if (isSeatSelected) return "bg-[#00BFFF] text-white";
+    //if (selected) return "bg-[#00BFFF] text-white";
 
     if (order) {
       return order?.order?.gender === "Male"

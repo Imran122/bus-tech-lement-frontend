@@ -1,28 +1,33 @@
-import PageTransition from "@/components/common/effect/PageTransition";
 import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 import { DataTable, IQueryProps } from "@/components/common/table/DataTable";
 import PageWrapper from "@/components/common/wrapper/PageWrapper";
-import {
-  TableToolbar,
-  TableWrapper,
-} from "@/components/common/wrapper/TableWrapper";
-import { Input } from "@/components/ui/input";
+import { TableWrapper } from "@/components/common/wrapper/TableWrapper";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useGetSupervisorCoachDetailsQuery } from "@/store/api/superviosr/supervisorExpenseApi";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import React, { ChangeEvent, useState } from "react";
-import { useParams } from "react-router-dom";
-const CoachDetailsForSupervisor: React.FC = () => {
+import React, { useState } from "react";
+import AddSupervisorCollection from "./AddSupervisorCollection";
+
+const CoachDetailsForSupervisor: React.FC = ({ coachId }) => {
   const { translate } = useCustomTranslator();
-  const { coachId } = useParams();
   const { data: coachDetailsData, isLoading: coachDetailsLoading } =
     useGetSupervisorCoachDetailsQuery(coachId);
-  //
+  const [counterId, setCounterId] = useState(null);
+  const [collectionModalOpen, setCollectionModalOpen] = useState(false);
+
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
     page: 1,
     size: 10,
     meta: { page: 0, size: 10, total: 0, totalPage: 0 },
   });
+  const handelDataInfo = (id, boolean) => {
+    setCounterId(id);
+    setCollectionModalOpen(boolean);
+  };
+  const findAllCollection = JSON.parse(localStorage.getItem("collection"));
+
   const columns = [
     {
       accessorKey: "index",
@@ -37,68 +42,75 @@ const CoachDetailsForSupervisor: React.FC = () => {
       header: translate("কাউন্টার নাম", "Counter Name"),
     },
     {
+      accessorKey: "totalSeat",
+      header: translate("যাত্রী সংখ্যা", "Total Passenger"),
+    },
+    {
+      accessorKey: "seatNumbers",
+      header: translate("আসন সংখ্যা", "Seat No"),
+      cell: ({ row }) => {
+        const seatinfo = row.original.seatNumbers;
+
+        if (!seatinfo || seatinfo.length === 0) {
+          return translate("কোনো আসন নেই", "No Seats"); // Handle empty or undefined cases
+        }
+
+        // Remove the last item
+        const filteredSeatInfo = seatinfo.slice(0, -1);
+
+        // Format as "1A - 2B"
+        return filteredSeatInfo.map((data) => data.seat).join(" - ");
+      },
+    },
+    {
       accessorKey: "totalAmount",
-      header: translate("মোট টাকা", "Total Taka"),
+      header: translate("মোট টাকা", "Total Amount"),
+    },
+    {
+      accessorKey: "commission",
+      header: translate("মোট কমিশন", "Total Commission "),
+    },
+    {
+      accessorKey: "totalAmountWithoutCommission",
+      header: translate("কমিশন ছাড়া মোট পরিমাণ", "Collection Amount"),
+    },
+    {
+      header: translate("কার্যক্রম", "Actions"),
+      id: "actions",
+      cell: ({ row }) => {
+        const counterId = row.original.counterId;
+        const coachId = coachDetailsData?.data?.coachInfo?.id;
+        const collectionKey = `${coachId}-${counterId}`;
+
+        // Check if the collectionKey exists in findAllCollection
+        const shouldHideCollectionButton =
+          findAllCollection?.includes(collectionKey);
+
+        // Conditionally render the button
+        return !shouldHideCollectionButton ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handelDataInfo(counterId, true)}
+          >
+            {translate("সংগ্রহ", "Collection")}
+          </Button>
+        ) : (
+          <h2>Completed</h2>
+        );
+      },
     },
   ];
+
   if (coachDetailsLoading) {
     return <TableSkeleton columns={10} />;
   }
+
   return (
     <PageWrapper>
-      <h2 className="font-bold text-2xl py-5">
-        {translate(
-          `কোচ তথ্য উপাত্ত: ${coachDetailsData?.data?.coachInfo?.coachNo}`,
-          `Coach Information Data: ${coachDetailsData?.data?.coachInfo?.coachNo}`
-        )}
-      </h2>
-      <div className="grid grid-cols-4 gap-5 my-5">
-        <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-          <div className="p-6 flex flex-col justify-start items-start w-full">
-            <h2>Available Seat:</h2>
-            <h2 className="mt-3">Total: {coachDetailsData?.data.available}</h2>
-          </div>
-        </PageTransition>
-
-        <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-          <div className="p-6 flex flex-col justify-start items-start w-full">
-            <h2>Sold Seat:</h2>
-            <h2 className="mt-3">Total: {coachDetailsData?.data?.soled}</h2>
-          </div>
-        </PageTransition>
-        <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-          <div className="p-6 flex flex-col justify-start items-start w-full">
-            <h2>Online Seat Booking:</h2>
-            <h2 className="mt-3">
-              Total: {coachDetailsData?.data?.onlineOrders?.totalSeat}
-            </h2>
-          </div>
-        </PageTransition>
-        <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-          <div className="p-6 flex flex-col justify-start items-start w-full">
-            <h2>Online Total Sales:</h2>
-            <h2 className="mt-3">
-              Taka: {coachDetailsData?.data?.onlineOrders?.totalAmount}
-            </h2>
-          </div>
-        </PageTransition>
-      </div>
-
-      <TableWrapper heading={translate("কাউন্টার বিবরণ", "Counter Details")}>
-        <TableToolbar alignment="end">
-          <ul className="flex items-center gap-x-2">
-            <li>
-              <Input
-                placeholder={translate("অনুসন্ধান", "Search")}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setQuery((prev) => ({ ...prev, search: e.target.value }))
-                }
-                className="w-[300px]"
-              />
-            </li>
-          </ul>
-        </TableToolbar>
-
+      <TableWrapper
+        heading={translate("সংগ্রহ তথ্য উপাত্ত", "Collection Information")}
+      >
         <DataTable
           query={query}
           setQuery={setQuery}
@@ -107,6 +119,22 @@ const CoachDetailsForSupervisor: React.FC = () => {
           data={coachDetailsData?.data?.counterWiseReport || []}
         />
       </TableWrapper>
+
+      {/* Dialog for Add Collection */}
+      <Dialog open={collectionModalOpen} onOpenChange={setCollectionModalOpen}>
+        <DialogContent size="lg">
+          <DialogTitle>
+            {translate("সংগ্রহ যোগ করুন", "Add Collection")}
+          </DialogTitle>
+          <AddSupervisorCollection
+            setCollectionState={() => {
+              setCollectionModalOpen(false);
+            }}
+            coachDetailsData={coachDetailsData} // Pass coachId if needed
+            counterId={counterId}
+          />
+        </DialogContent>
+      </Dialog>
     </PageWrapper>
   );
 };

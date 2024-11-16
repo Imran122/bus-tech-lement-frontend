@@ -27,7 +27,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ChangeEvent, FC, useEffect, useState } from "react"; // Ensure ChangeEvent is imported
 import { FiEdit } from "react-icons/fi";
 import { LuDownload, LuPlus } from "react-icons/lu";
-import AddSupervisorCollection from "./AddSupervisorCollection";
+import AddExtraIncome from "./AddExtraIncome";
 import SupervisorCollectionDetails from "./SupervisorCollectionDetails";
 import UpdateSupervisorCollection from "./UpdateSupervisorCollection";
 
@@ -234,9 +234,7 @@ const SupervisorManagement: FC<ISupervisorCollectionListProps> = () => {
                 </DialogTrigger>
                 <DialogContent size="lg">
                   <DialogTitle>Add Collection</DialogTitle>
-                  <AddSupervisorCollection
-                    setCollectionState={setCollectionState}
-                  />
+                  <AddExtraIncome setCollectionState={setCollectionState} />
                 </DialogContent>
               </Dialog>
             </li>

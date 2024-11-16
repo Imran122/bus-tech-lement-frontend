@@ -171,7 +171,6 @@ const UpdateCoachConfigurationList: FC<
   //     playSound("remove");
   //   }
   // };
-
   const columns: ColumnDef<unknown>[] = [
     { accessorKey: "index", header: translate("ইনডেক্স", "Index") },
 
@@ -194,12 +193,63 @@ const UpdateCoachConfigurationList: FC<
       header: translate("সময়সূচী", "Schedule"),
     },
     {
-      accessorKey: "type",
-      header: translate("ধরণ", "Type"),
+      accessorKey: "supervisor", // Base key to fetch supervisor data
+      header: translate("সুপারভাইজার", "Supervisor"),
+      cell: ({ row }) => {
+        const supervisor = row.original.supervisor; // Access supervisor data
+        if (!supervisor) {
+          return fallback.notFound.en;
+        }
+        return (
+          <div>
+            <div>{supervisor.userName || fallback.notFound.en}</div>
+            <div className="text-muted-foreground text-xs">
+              {row.original.supervisorStatus || fallback.notFound.en}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "driver", // Base key to fetch supervisor data
+      header: translate("ড্রাইভার", "ড্রাইভার"),
+      cell: ({ row }) => {
+        const driver = row.original.driver; // Access driver data
+        if (!driver) {
+          return fallback.notFound.en;
+        }
+        return (
+          <div>
+            <div>{driver.name || fallback.notFound.en}</div>
+            <div className="text-muted-foreground text-xs">
+              {row.original.driverStatus || fallback.notFound.en}
+            </div>
+          </div>
+        );
+      },
     },
 
     {
-      header: translate("বিক্রয়ের অবস্থা", "Sale Status"),
+      accessorKey: "helper", // Base key to fetch helper data
+      header: translate("সহকারী", "Helper"),
+      cell: ({ row }) => {
+        const helper = row.original.helper; // Access helper data
+        if (!helper) {
+          return fallback.notFound.en;
+        }
+        return (
+          <div>
+            <div>{helper.name || fallback.notFound.en}</div>
+            <div className="text-muted-foreground text-xs">
+              {row.original.helperStatus || fallback.notFound.en}
+            </div>
+          </div>
+        );
+      },
+    },
+
+    {
+      header: translate("অবস্থা", "Status"),
       cell: ({ row }) => {
         const coachConfig = row.original as UpdateCoachConfiguration & {
           dummySaleStatus: string;
@@ -215,8 +265,8 @@ const UpdateCoachConfigurationList: FC<
             }
           >
             {coachConfig?.active
-              ? translate("বিক্রয় সক্রিয় করুন", "Activate Sale")
-              : translate("বিক্রয় নিষ্ক্রিয় করুন", "Deactivate Sale")}
+              ? translate("বিক্রয় সক্রিয় করুন", "Activate")
+              : translate("বিক্রয় নিষ্ক্রিয় করুন", "Deactivate")}
           </Button>
         );
       },
