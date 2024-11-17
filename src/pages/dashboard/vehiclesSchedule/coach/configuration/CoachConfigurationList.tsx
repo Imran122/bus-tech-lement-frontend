@@ -184,11 +184,6 @@ const CoachConfigurationList: FC<ICoachConfigurationListProps> = () => {
     },
 
     {
-      accessorKey: "registrationNo",
-      header: translate("রেজিস্ট্রেশন নম্বর", "Registration No"),
-    },
-
-    {
       accessorKey: "departureDate",
       header: translate("তারিখ", "Date"),
     },

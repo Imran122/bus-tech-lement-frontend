@@ -156,17 +156,18 @@ const vehicleAndScheduleManagementLinks = {
       key: "coach_list",
       href: "coach_list",
     },
-    {
-      icon: LuUserCheck,
-      label: { bn: "রিজার্ভ তালিকা", en: "Reserve List" },
-      key: "reserve_list",
-      href: "reserve_list",
-    },
+
     {
       icon: LuUserCheck,
       label: { bn: "কোচ কনফিগস", en: "Coach Configs" },
       key: "coach_configs",
       href: "coach_configs",
+    },
+    {
+      icon: LuUserCheck,
+      label: { bn: "রিজার্ভ তালিকা", en: "Reserve List" },
+      key: "reserve_list",
+      href: "reserve_list",
     },
   ],
 };
@@ -270,7 +271,6 @@ const FulelManagementLinks = {
     },
   ],
 };
-
 
 // DETAILS REPORTS LIST
 const reportingSuiteLinks = {

@@ -67,7 +67,7 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
         selectedSeat.seat === seatName && selectedSeat.coachConfigId === coachId
     );
 
-    if (isSeatSelected) return "bg-blue-500 text-white";
+    if (isSeatSelected) return "bg-[#00BFFF] text-white";
 
     if (blockedSeat && !selected)
       return "border-gray-800 bg-gray-800 text-white";

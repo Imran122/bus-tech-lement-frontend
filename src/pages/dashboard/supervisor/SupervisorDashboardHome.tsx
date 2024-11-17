@@ -34,12 +34,12 @@ import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { LuDownload } from "react-icons/lu";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import CoachDetailsForSupervisor from "./CoachDetailsForSupervisor";
 interface IReportSuite {}
 
 const SupervisorDashboardHome: FC<IReportSuite> = () => {
   const { translate } = useCustomTranslator();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
@@ -126,7 +126,6 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
     coachDetailsData?.data?.othersIncomeDownWay +
     coachDetailsData?.data?.othersIncomeUpWay -
     coachDetailsData?.data?.totalExpense;
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "index",
@@ -143,9 +142,10 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
     },
     { accessorKey: "coachType", header: translate("কোচের ধরন", "Coach Type") },
     {
-      accessorKey: "seatPlan",
-      header: translate("আসন পরিকল্পনা", "Seat Plan"),
+      accessorKey: "supervisorStatus",
+      header: translate("সুপারভাইজার অবস্থা", "Supervisor Status"),
     },
+
     {
       accessorKey: "seatAvailable",
       header: translate("আসন সংখ্যা", "Available Seats"),
@@ -153,29 +153,22 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
     {
       accessorKey: "coachClass",
       header: translate("কোচ শ্রেণী", "Coach Class"),
+      cell: ({ row }) => {
+        const coachinfo = row.original;
+        return coachinfo.coachClass === "B_Class"
+          ? "Business Class"
+          : coachinfo.coachClass === "S_Class"
+          ? "Suite Class"
+          : coachinfo.coachClass === "Sleeper"
+          ? "Sleeper Coach"
+          : "Economy Class";
+      },
     },
     { accessorKey: "schedule", header: translate("সময়সূচি", "Schedule") },
     {
       accessorKey: "departureDate",
       header: translate("প্রস্থানের তারিখ", "Departure Date"),
       cell: (info: any) => new Date(info.getValue()).toLocaleDateString(),
-    },
-    {
-      header: translate("কার্যক্রম", "Actions"),
-      id: "actions",
-      cell: ({ row }) => {
-        const coachId = row.original.id;
-
-        return (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(`/supervisor/coach-details/${coachId}`)}
-          >
-            {translate("দেখুন", "View")}
-          </Button>
-        );
-      },
     },
   ];
 
@@ -189,6 +182,7 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
       <div className="page-container">
         <div className="flex space-x-4 mb-6">
           {/* Up Date Picker */}
+          {/* Journey Date Picker */}
           <Popover
             open={dateRange.upCalendarOpen}
             onOpenChange={(open) =>
@@ -199,26 +193,36 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
               <Button
                 variant="outline"
                 className="w-48"
-                disabled={!!dateRange.upDate}
+                disabled={!!dateRange.upDate} // Disable if the journey date is already selected
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {dateRange.upDate
                   ? format(dateRange.upDate, "PPP")
-                  : "Select Start Date"}
+                  : translate(
+                      "যাত্রার তারিখ নির্বাচন করুন",
+                      "Select Journey Date"
+                    )}
               </Button>
             </PopoverTrigger>
             <PopoverContent align="end">
               <Calendar
                 mode="single"
-                selected={dateRange.upDate || new Date()}
-                onSelect={(date: any) => handleDateChange(date, "upDate")}
+                selected={dateRange.upDate || undefined}
+                onSelect={(date: any) => {
+                  if (date && !dateRange.upDate) {
+                    handleDateChange(date, "upDate");
+                  }
+                }}
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
+                disabled={(date) =>
+                  dateRange.downDate ? date > dateRange.downDate : false
+                } // Disable dates after the return date
               />
             </PopoverContent>
           </Popover>
 
-          {/* Down Date Picker */}
+          {/* Return Date Picker */}
           <Popover
             open={dateRange.downCalendarOpen}
             onOpenChange={(open) =>
@@ -229,24 +233,50 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
               <Button
                 variant="outline"
                 className="w-48"
-                disabled={!!dateRange.downDate}
+                disabled={!!dateRange.downDate} // Disable if the return date is already selected
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {dateRange.downDate
                   ? format(dateRange.downDate, "PPP")
-                  : "Select End Date"}
+                  : translate(
+                      "ফেরার তারিখ নির্বাচন করুন",
+                      "Select Return Date"
+                    )}
               </Button>
             </PopoverTrigger>
             <PopoverContent align="end">
               <Calendar
                 mode="single"
-                selected={dateRange.downDate || new Date()}
-                onSelect={(date: any) => handleDateChange(date, "downDate")}
+                //@ts-ignore
+                selected={dateRange.downDate || undefined}
+                onSelect={(date: any) => {
+                  if (date && !dateRange.downDate) {
+                    handleDateChange(date, "downDate");
+                  }
+                }}
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
+                disabled={(date) =>
+                  dateRange.upDate ? date < dateRange.upDate : false
+                } // Disable dates before the journey date
               />
             </PopoverContent>
           </Popover>
+          {/* reset date button */}
+          <Button
+            variant="outline"
+            onClick={() => {
+              localStorage.removeItem("upDate");
+              localStorage.removeItem("downDate");
+              setDateRange((prev) => ({
+                ...prev,
+                upDate: null,
+                downDate: null,
+              }));
+            }}
+          >
+            Reset
+          </Button>
         </div>
       </div>
       {/* code for date select */}
@@ -347,11 +377,16 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
         <DataTable
           query={query}
           setQuery={setQuery}
-          pagination
           columns={columns}
           data={coachData?.data || []}
         />
       </TableWrapper>
+      {coachData?.data?.length > 0 && coachData?.data[0]?.id && (
+        <CoachDetailsForSupervisor
+          //@ts-ignore
+          coachId={coachData.data[0].id}
+        />
+      )}
     </PageWrapper>
   );
 };

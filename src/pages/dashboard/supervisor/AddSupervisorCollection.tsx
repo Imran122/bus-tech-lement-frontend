@@ -1,49 +1,34 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
-import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import {
   AddUpdateCollectionDataProps,
   addUpdateCollectionSchema,
 } from "@/schemas/addUpdateCollectionSchema";
-import { useGetCountersQuery } from "@/store/api/contact/counterApi";
-import {
-  useAddCollectionOfSupervisorMutation,
-  useGetTodaysCoachConfigListQuery,
-} from "@/store/api/superviosr/supervisorCollectionApi";
+import { useAddCollectionOfSupervisorMutation } from "@/store/api/superviosr/supervisorCollectionApi";
 import { playSound } from "@/utils/helpers/playSound";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { FC, useEffect } from "react";
+import { UploadIcon } from "lucide-react";
+import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 
 interface IAddSupervisorCollectionProps {
   setCollectionState: (state: (prevState: any) => any) => void;
+  counterId: number;
+  coachDetailsData: any;
 }
 
 const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
   setCollectionState,
+  counterId,
+  coachDetailsData,
 }) => {
   const { toast } = useToast();
   const { translate } = useCustomTranslator();
@@ -53,12 +38,12 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
   const [addCollectionOfSupervisor, { isLoading, error }] =
     useAddCollectionOfSupervisorMutation();
 
-  const { data: coachConfigs, isLoading: coachConfigLoading } =
-    useGetTodaysCoachConfigListQuery({});
-  const { data: counters, isLoading: counterLoading } = useGetCountersQuery({
-    size: 1000,
-    page: 1,
-  });
+  // const { data: coachConfigs, isLoading: coachConfigLoading } =
+  //   useGetTodaysCoachConfigListQuery({});
+  // const { data: counters, isLoading: counterLoading } = useGetCountersQuery({
+  //   size: 1000,
+  //   page: 1,
+  // });
 
   const {
     register,
@@ -69,7 +54,10 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
   } = useForm<AddUpdateCollectionDataProps>({
     resolver: zodResolver(addUpdateCollectionSchema),
   });
-
+  const [file, setFile] = useState<File | null>(null);
+  const counterInfo = coachDetailsData.data.counterWiseReport.find(
+    (c: any) => c.counterId === counterId
+  );
   const collectionType = watch("collectionType");
 
   // Effect to handle changes in collectionType
@@ -79,23 +67,42 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
     }
   }, [collectionType, setValue]);
 
-  const onDateSelect = (date: Date | null) => {
-    if (date) {
-      setValue("date", date.toISOString().split("T")[0]); // Format to YYYY-MM-DD
-    } else {
-      setValue("date", "");
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      //@ts-ignore
+      setValue("file", e.target.files[0].name); // Sync with form
     }
   };
-
+  useEffect(() => {
+    setValue("counterId", counterId); // Sync with form
+    setValue("coachConfigId", coachDetailsData?.data?.coachInfo?.id); // Sync with form
+    setValue("collectionType", "CounterCollection"); // Sync with form
+    setValue(
+      "routeDirection",
+      coachDetailsData?.data?.coachInfo?.route?.routeDirection
+    ); // Sync with form
+    setValue("date", coachDetailsData?.data?.coachInfo?.departureDate); // Sync with form
+    setValue("noOfPassenger", counterInfo?.totalSeat); // Sync with form
+    setValue("amount", counterInfo?.totalAmountWithoutCommission); // Sync with form
+    //setValue("file", counterInfo.totalAmountWithoutCommission); // Sync with form
+  }, [collectionType, setValue, counterId, user]);
   const onSubmit = async (data: AddUpdateCollectionDataProps) => {
-    const cleanedData = {
+    const result = await addCollectionOfSupervisor({
       ...data,
       supervisorId: user.id,
-      date: new Date(data.date),
-    };
-
-    const result = await addCollectionOfSupervisor(cleanedData);
+    });
     if (result.data?.success) {
+      const localData = localStorage.getItem("collection");
+      const findCollection = localData ? JSON.parse(localData) : [];
+      const uniqueId = `${coachDetailsData?.data?.coachInfo?.id}-${counterId}`;
+      if (!findCollection?.length) {
+        const collection = [uniqueId];
+        localStorage.setItem("collection", JSON.stringify(collection));
+      } else {
+        findCollection.push(uniqueId);
+        localStorage.setItem("collection", JSON.stringify(findCollection));
+      }
       toast({
         title: translate(
           "সংগ্রহ যোগ করা হয়েছে",
@@ -104,17 +111,10 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
         description: toastMessage("add", translate("সংগ্রহ", "Collection")),
       });
       playSound("add");
-
-      setCollectionState((prevState: any) => ({
-        ...prevState,
-        addCollectionOpen: false,
-      }));
+      //@ts-ignore
+      setCollectionState();
     }
   };
-
-  if (counterLoading || coachConfigLoading) {
-    return <FormSkeleton />;
-  }
 
   return (
     <FormWrapper
@@ -124,162 +124,11 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
         "Fill in the details below to add a new collection."
       )}
     >
+      <div>
+        <h3 className="text-lg font-semibold text-green-500">{`This counter ${counterInfo.counterName} has toal seats ${counterInfo.totalSeat} with total taka ${counterInfo.totalAmountWithoutCommission}, date ${coachDetailsData?.data?.coachInfo?.departureDate}`}</h3>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-x-4 gap-y-2">
-          {/* Coach Config */}
-          <InputWrapper
-            labelFor="coachConfigId"
-            error={errors.coachConfigId?.message}
-            label={translate("কোচ কনফিগ", "Coach Config")}
-          >
-            <Select
-              onValueChange={(value) =>
-                setValue("coachConfigId", parseInt(value))
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    "কোচ কনফিগ নির্বাচন করুন",
-                    "Select Coach Config"
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!coachConfigLoading &&
-                  coachConfigs?.data?.map((config: any) => (
-                    <SelectItem key={config.id} value={config.id.toString()}>
-                      {config.coachNo}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* Counter */}
-          <InputWrapper
-            labelFor="counterId"
-            error={errors.counterId?.message}
-            label={translate("কাউন্টার", "Counter")}
-          >
-            <Select
-              onValueChange={(value) => setValue("counterId", parseInt(value))}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    "কাউন্টার নির্বাচন করুন",
-                    "Select Counter"
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!counterLoading &&
-                  counters?.data?.map((counter: any) => (
-                    <SelectItem key={counter.id} value={counter.id.toString()}>
-                      {counter.name}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* Collection Type */}
-          <InputWrapper
-            labelFor="collectionType"
-            error={errors.collectionType?.message}
-            label={translate("সংগ্রহের ধরন", "Collection Type")}
-          >
-            <Select
-              onValueChange={(value: "OpeningBalance" | "CounterCollection") =>
-                setValue("collectionType", value)
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    "সংগ্রহের ধরন নির্বাচন করুন",
-                    "Select Collection Type"
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="CounterCollection">
-                  {translate("কাউন্টার সংগ্রহ", "Counter Collection")}
-                </SelectItem>
-                <SelectItem value="OthersIncome">
-                  {translate("অন্যান্য সংগ্রহ", "Others Collection")}
-                </SelectItem>
-                <SelectItem value="OpeningBalance">
-                  {translate("প্রারম্ভিক ব্যালেন্স", "Opening Balance")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* Route Direction */}
-          <InputWrapper
-            labelFor="routeDirection"
-            error={errors.routeDirection?.message}
-            label={translate("রুটের দিক", "Route Direction")}
-          >
-            <Select
-              onValueChange={(value: "Down_Way" | "Up_Way") =>
-                setValue("routeDirection", value)
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    "রুটের দিক নির্বাচন করুন",
-                    "Select Route Direction"
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Up_Way">
-                  {translate("উপায়", "Up Way")}
-                </SelectItem>
-                <SelectItem value="Down_Way">
-                  {translate("ডাউন ওয়ে", "Down Way")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* Number of Passengers */}
-          <InputWrapper
-            labelFor="noOfPassenger"
-            error={errors.noOfPassenger?.message}
-            label={translate("যাত্রীর সংখ্যা", "Number of Passengers")}
-          >
-            <Input
-              {...register("noOfPassenger", { valueAsNumber: true })}
-              type="number"
-              disabled={collectionType === "OpeningBalance"} // Disable input if OpeningBalance
-              placeholder={
-                collectionType === "OpeningBalance"
-                  ? ""
-                  : translate(
-                      "যাত্রীর সংখ্যা লিখুন",
-                      "Enter Number of Passengers"
-                    )
-              }
-            />
-          </InputWrapper>
-
-          {/* Amount */}
-          <InputWrapper
-            labelFor="amount"
-            error={errors.amount?.message}
-            label={translate("পরিমাণ", "Amount")}
-          >
-            <Input
-              {...register("amount", { valueAsNumber: true })}
-              type="number"
-            />
-          </InputWrapper>
-
           {/* Token */}
           <InputWrapper
             labelFor="token"
@@ -292,32 +141,23 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
             />
           </InputWrapper>
 
-          {/* Date */}
-          <InputWrapper
-            labelFor="date"
-            error={errors.date?.message}
-            label={translate("তারিখ", "Date")}
-          >
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full text-left">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {watch("date")
-                    ? format(new Date(watch("date")), "PPP")
-                    : translate("তারিখ নির্বাচন করুন", "Pick a Date")}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <Calendar
-                  mode="single"
-                  //@ts-ignore
-                  selected={watch("date") ? new Date(watch("date")) : null}
-                  onSelect={(date: any) => onDateSelect(date)} // Ensure the date is selected correctly
-                  fromYear={1960}
-                  toYear={new Date().getFullYear()}
+          {/* File Upload */}
+          <InputWrapper label={translate("ফাইল নির্বাচন করুন", "Select File")}>
+            <Button asChild variant="outline" className="w-full">
+              <label htmlFor="file-upload" className="flex items-center">
+                <UploadIcon className="mr-2" />
+                {file
+                  ? file.name
+                  : translate("ফাইল নির্বাচন করুন", "Select File")}
+                <input
+                  id="file-upload"
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  accept=".jpg,.jpeg,.png,.pdf"
                 />
-              </PopoverContent>
-            </Popover>
+              </label>
+            </Button>
           </InputWrapper>
         </div>
 

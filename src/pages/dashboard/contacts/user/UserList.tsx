@@ -85,7 +85,6 @@ const UserList: FC<IUserListProps> = () => {
   });
 
   const [deleteUser] = useDeleteUserMutation({});
-
   useEffect(() => {
     const customizeUsersData = usersData?.data?.map(
       (singleUser: User, userIndex: number) => ({
@@ -154,20 +153,22 @@ const UserList: FC<IUserListProps> = () => {
       header: translate("ভূমিকা", "Role"),
       cell: ({ row }) => {
         //@ts-ignore
-        const user = row?.original?.data as User;
+
+        const user = row?.original as any;
+
         return (
           <Badge
             size="sm"
             shape="pill"
             variant={
-              user?.role?.name.toLowerCase() === "admin"
+              user?.role?.toLowerCase() === "admin"
                 ? "tertiary"
-                : user?.role?.name.toLowerCase() === "supervisor"
+                : user?.role?.toLowerCase() === "supervisor"
                 ? "primary"
                 : "warning"
             }
           >
-            {user?.role?.name}
+            {user?.role}
           </Badge>
         );
       },
