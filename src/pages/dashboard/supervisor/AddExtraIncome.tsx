@@ -54,7 +54,7 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
     useAddCollectionOfSupervisorMutation();
 
   const { data: coachConfigs, isLoading: coachConfigLoading } =
-    useGetTodaysCoachConfigListQuery({});
+    useGetTodaysCoachConfigListQuery("supervisor");
   const { data: counters, isLoading: counterLoading } = useGetCountersQuery({
     size: 1000,
     page: 1,

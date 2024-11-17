@@ -5,14 +5,8 @@ import Submit from "@/components/common/form/Submit";
 import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -34,7 +28,6 @@ import {
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, parseISO } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -59,7 +52,7 @@ const UpdateExpense: FC<IUpdateExpenseProps> = ({ id, setOpen }) => {
     useGetFuelCompanyAllListQuery({});
 
   const { data: coachConfigs, isLoading: coachConfigLoading } =
-    useGetTodaysCoachConfigListQuery({});
+    useGetTodaysCoachConfigListQuery("supervisor");
   const { data: expenseData, isLoading: loadingExpenseData } =
     useGetSingleSupervisorExpenseQuery(id);
   const [updateExpense, { isLoading: updatingExpense, error: errorUpdate }] =
@@ -273,7 +266,7 @@ const UpdateExpense: FC<IUpdateExpenseProps> = ({ id, setOpen }) => {
               <Input {...register("paidAmount", { valueAsNumber: true })} />
             </InputWrapper>
 
-            {/* Date */}
+            {/* Date 
             <InputWrapper label={translate("তারিখ", "Date")}>
               <Popover>
                 <PopoverTrigger asChild>
@@ -292,7 +285,7 @@ const UpdateExpense: FC<IUpdateExpenseProps> = ({ id, setOpen }) => {
                 </PopoverContent>
               </Popover>
             </InputWrapper>
-
+*/}
             <InputWrapper label={translate("ফাইল আপলোড করুন", "Upload File")}>
               <Button asChild variant="outline">
                 <label>

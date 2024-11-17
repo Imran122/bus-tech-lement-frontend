@@ -57,10 +57,9 @@ const CoachDetailsForSupervisor: React.FC = ({ coachId }: { coachId: any }) => {
         }
 
         // Remove the last item
-        const filteredSeatInfo = seatinfo.slice(0, -1);
 
         // Format as "1A - 2B"
-        return filteredSeatInfo.map((data: any) => data.seat).join(" - ");
+        return seatinfo.map((data: any) => data.seat).join(" - ");
       },
     },
     {
@@ -97,7 +96,7 @@ const CoachDetailsForSupervisor: React.FC = ({ coachId }: { coachId: any }) => {
             {translate("সংগ্রহ", "Collection")}
           </Button>
         ) : (
-          <h2>Completed</h2>
+          <h2 className="text-green-600 font-semibold">Completed</h2>
         );
       },
     },

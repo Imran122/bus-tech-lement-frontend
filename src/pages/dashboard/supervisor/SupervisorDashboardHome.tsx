@@ -22,10 +22,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import {
-  useGetSupervisorDashboardCoachInfoQuery,
-  useGetSupervisorUpDownDetailsQuery,
-} from "@/store/api/superviosr/supervisorExpenseApi";
+import { useGetTodaysCoachConfigListQuery } from "@/store/api/superviosr/supervisorCollectionApi";
+import { useGetSupervisorUpDownDetailsQuery } from "@/store/api/superviosr/supervisorExpenseApi";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { skipToken } from "@reduxjs/toolkit/query/react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -65,11 +63,7 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
   });
 
   const { data: coachData, isLoading: coachLoading } =
-    useGetSupervisorDashboardCoachInfoQuery({
-      sort: query.sort,
-      page: query.page,
-      size: query.size,
-    });
+    useGetTodaysCoachConfigListQuery("supervisor");
 
   const user = useSelector((state: any) => state.user);
   const handleDateChange = (
