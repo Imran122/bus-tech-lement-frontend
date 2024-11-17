@@ -94,7 +94,30 @@ const collectionManagementLinks = {
   ],
 };
 // DETAILS REPORTS LIST
-
+const accountantExpenseManagementLinks = {
+  icon: LuCar,
+  label: {
+    bn: "হিসাব ব্যবস্থাপনা",
+    en: "Expense Management",
+  },
+  key: "expense_category_account",
+  href: "expense_category_account",
+  subLinks: [
+    {
+      icon: LuUserCheck,
+      label: { bn: "ব্যয় বিভাগ অ্যাকাউন্ট", en: "Expense Categorey" },
+      key: "expense_category_account",
+      href: "expense_category_account",
+    },
+    {
+      icon: LuBus,
+      label: { bn: "ব্যয় সাব বিভাগ অ্যাকাউন্ট", en: "Expense Sub Categorey" },
+      key: "expense_sub_category_account",
+      href: "expense_sub_category_account",
+    },
+  ],
+};
+//new
 const settingsLinks = {
   icon: LuSettings,
   label: { bn: "সেটিংস", en: "Settings" },
@@ -153,7 +176,7 @@ export const accountsNavigationLinks = [
   { ...accountsManagementLinks },
   { ...collectionManagementLinks },
   // FINANCE MANAGEMENT LINKS
-
+  { ...accountantExpenseManagementLinks },
   // EXPENDITURE MANAGEMENT LINKS
 
   // SETTINGS LINKS

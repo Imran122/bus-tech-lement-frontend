@@ -70,7 +70,7 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
 
   const collectionType = watch("collectionType");
   //const coachConfigId = watch("coachConfigId");
-  const formValues = watch(["coachConfigId", "counterId", "collectionType"]);
+  //const formValues = watch(["coachConfigId", "counterId", "collectionType"]);
   const handleCoachChange = (coachId: number) => {
     const coach = coachConfigs?.data.find(
       (config: CoachConfig) => config.id === coachId
@@ -81,6 +81,7 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
   };
   useEffect(() => {
     if (selectedCoach) {
+      //@ts-ignore
       setValue("date", format(selectedCoach.departureDate, "yyyy-MM-dd"));
       //setDate(new Date(selectedCoach.departureDate));
       setValue("coachConfigId", selectedCoach.id); // Sync `coachConfigId` with form
