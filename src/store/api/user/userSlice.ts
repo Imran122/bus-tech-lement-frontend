@@ -6,7 +6,7 @@ interface UserState {
   role: string | null;
   address: string | null;
   name: string | null;
-  counterId: number | null;
+  counterId?: number | null;
 }
 
 const initialState: UserState = {

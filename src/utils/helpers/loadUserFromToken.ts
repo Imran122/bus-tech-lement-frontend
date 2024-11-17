@@ -10,7 +10,7 @@ interface DecodedToken {
   address?: string;
   role: string;
   counter?: Counter;
-  counterId?: number;
+  counterId?: any;
 }
 
 export const loadUserFromToken = async (dispatch: any) => {
@@ -25,7 +25,7 @@ export const loadUserFromToken = async (dispatch: any) => {
           id: decoded.id,
           email: decoded.email,
           name: decoded.name,
-          counterId: decoded.counterId,
+          counterId: decoded.counterId ? Number(decoded.counterId) : null,
           address: decoded.counter?.address || "",
           role: decoded.role,
         })
@@ -35,6 +35,15 @@ export const loadUserFromToken = async (dispatch: any) => {
     }
   } else {
     // Dispatch an empty user object to avoid `null`
-    dispatch(setUser({ id: "", email: "", name: "", address: "", role: "" }));
+    dispatch(
+      setUser({
+        id: "",
+        counterId: null,
+        email: "",
+        name: "",
+        address: "",
+        role: "",
+      })
+    );
   }
 };

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const supervisorExpenseSchema = z
+const supervisorExpenseSchema = z
   .object({
     expenseType: z.enum(["Fuel", "Others"], {
       errorMap: () => ({ message: "Invalid expense type" }),
@@ -41,3 +41,9 @@ export const supervisorExpenseSchema = z
       path: ["fuelCompanyId"], // Point to one field for the error
     }
   );
+
+// Export the schema
+export { supervisorExpenseSchema };
+
+// Export the inferred type
+export type SupervisorExpenseData = z.infer<typeof supervisorExpenseSchema>;

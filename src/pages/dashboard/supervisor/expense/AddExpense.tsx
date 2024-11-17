@@ -58,7 +58,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
     useGetFuelCompanyAllListQuery({});
   //@ts-ignore
   const user = useSelector((state: any) => state.user);
-  const [departureCoachDate, setDepartureCoachDate] = useState(null);
+  //const [departureCoachDate, setDepartureCoachDate] = useState(null);
   //const [date, setDate] = useState<Date | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [selectedCoach, setSelectedCoach] = useState<CoachConfig | null>(null);
@@ -77,16 +77,16 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
   const amount = watch("amount");
   const fuelWeight = watch("fuelWeight");
   const fuelPrice = watch("fuelPrice");
-  const date = watch("date");
-  const formValues = watch();
+  //const date = watch("date");
+  //const formValues = watch();
   useEffect(() => {
     if (expenseType === "Fuel") {
-      const weight = parseFloat(fuelWeight) || 0; // Ensure valid numbers
-      const price = parseFloat(fuelPrice) || 0; // Ensure valid numbers
+      const weight = parseFloat(fuelWeight?.toString() || "0"); // Handle undefined
+      const price = parseFloat(fuelPrice?.toString() || "0"); // Handle undefined
       const totalCost = weight * price; // Calculate total cost
-      setValue("amount", totalCost || 0); // Update amount
+      setValue("amount", totalCost || 0); // Ensure valid amount
     } else {
-      setValue("paidAmount", amount || 0); // Handle non-Fuel cases
+      setValue("paidAmount", amount || 0); // Ensure paidAmount is a number
     }
   }, [expenseType, amount, fuelWeight, fuelPrice, setValue]); // Include fuelWeight and fuelPrice
   // Sync routeDirection with form value
@@ -141,9 +141,9 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
       if (uploadResult?.data) {
         const expenseData = {
           ...data,
-          date: selectedCoach.departureDate
+          date: selectedCoach?.departureDate
             ? format(selectedCoach.departureDate, "yyyy-MM-dd")
-            : "",
+            : null,
           dueAmount: data.amount - data.paidAmount,
           supervisorId: user?.id,
           file: uploadResult.data, // Set uploaded file URL

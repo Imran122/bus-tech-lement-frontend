@@ -35,7 +35,8 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
   const { translate } = useCustomTranslator();
   const { toastMessage } = useMessageGenerator();
   const user = useSelector((state: any) => state.user);
-  const [uploadPhoto, { uploadPhotoLoading }] = useUploadPhotoMutation();
+  const [uploadPhoto, { isLoading: uploadPhotoLoading }] =
+    useUploadPhotoMutation();
 
   const [addCollectionOfSupervisor, { isLoading, error }] =
     useAddCollectionOfSupervisorMutation();
