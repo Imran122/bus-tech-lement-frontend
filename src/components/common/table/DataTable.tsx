@@ -1,24 +1,14 @@
-import { useState } from "react";
 import {
   ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
-  useReactTable,
-  SortingState,
   getSortedRowModel,
+  useReactTable,
 } from "@tanstack/react-table";
+import { useState } from "react";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { cn } from "@/lib/utils";
-import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { fallback } from "@/utils/constants/common/fallback";
+import { Button } from "@/components/ui/button";
 import {
   Pagination,
   PaginationContent,
@@ -32,7 +22,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+import { fallback } from "@/utils/constants/common/fallback";
+import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface IQueryProps {
@@ -49,6 +49,7 @@ export interface IQueryProps {
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
+  //@ts-ignore
   data: TData[];
   pagination?: boolean;
   query?: IQueryProps;

@@ -153,7 +153,9 @@ const UserList: FC<IUserListProps> = () => {
       header: translate("ভূমিকা", "Role"),
       cell: ({ row }) => {
         //@ts-ignore
-        const user = row?.original as User;
+
+        const user = row?.original as any;
+
         return (
           <Badge
             size="sm"

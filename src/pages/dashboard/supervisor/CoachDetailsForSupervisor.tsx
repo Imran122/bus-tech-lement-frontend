@@ -8,8 +8,8 @@ import { useGetSupervisorCoachDetailsQuery } from "@/store/api/superviosr/superv
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import React, { useState } from "react";
 import AddSupervisorCollection from "./AddSupervisorCollection";
-
-const CoachDetailsForSupervisor: React.FC = ({ coachId }) => {
+//@ts-ignore
+const CoachDetailsForSupervisor: React.FC = ({ coachId }: { coachId: any }) => {
   const { translate } = useCustomTranslator();
   const { data: coachDetailsData, isLoading: coachDetailsLoading } =
     useGetSupervisorCoachDetailsQuery(coachId);
@@ -22,11 +22,12 @@ const CoachDetailsForSupervisor: React.FC = ({ coachId }) => {
     size: 10,
     meta: { page: 0, size: 10, total: 0, totalPage: 0 },
   });
-  const handelDataInfo = (id, boolean) => {
+  const handelDataInfo = (id: any, boolean: boolean) => {
     setCounterId(id);
     setCollectionModalOpen(boolean);
   };
-  const findAllCollection = JSON.parse(localStorage.getItem("collection"));
+  const localData = localStorage.getItem("collection");
+  const findAllCollection = localData ? JSON.parse(localData) : [];
 
   const columns = [
     {
@@ -48,7 +49,7 @@ const CoachDetailsForSupervisor: React.FC = ({ coachId }) => {
     {
       accessorKey: "seatNumbers",
       header: translate("আসন সংখ্যা", "Seat No"),
-      cell: ({ row }) => {
+      cell: ({ row }: { row: any }) => {
         const seatinfo = row.original.seatNumbers;
 
         if (!seatinfo || seatinfo.length === 0) {
@@ -59,7 +60,7 @@ const CoachDetailsForSupervisor: React.FC = ({ coachId }) => {
         const filteredSeatInfo = seatinfo.slice(0, -1);
 
         // Format as "1A - 2B"
-        return filteredSeatInfo.map((data) => data.seat).join(" - ");
+        return filteredSeatInfo.map((data: any) => data.seat).join(" - ");
       },
     },
     {
@@ -77,7 +78,7 @@ const CoachDetailsForSupervisor: React.FC = ({ coachId }) => {
     {
       header: translate("কার্যক্রম", "Actions"),
       id: "actions",
-      cell: ({ row }) => {
+      cell: ({ row }: { row: any }) => {
         const counterId = row.original.counterId;
         const coachId = coachDetailsData?.data?.coachInfo?.id;
         const collectionKey = `${coachId}-${counterId}`;
@@ -131,6 +132,7 @@ const CoachDetailsForSupervisor: React.FC = ({ coachId }) => {
               setCollectionModalOpen(false);
             }}
             coachDetailsData={coachDetailsData} // Pass coachId if needed
+            //@ts-ignore
             counterId={counterId}
           />
         </DialogContent>

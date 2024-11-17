@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
-import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,11 +9,7 @@ import {
   AddUpdateCollectionDataProps,
   addUpdateCollectionSchema,
 } from "@/schemas/addUpdateCollectionSchema";
-import { useGetCountersQuery } from "@/store/api/contact/counterApi";
-import {
-  useAddCollectionOfSupervisorMutation,
-  useGetTodaysCoachConfigListQuery,
-} from "@/store/api/superviosr/supervisorCollectionApi";
+import { useAddCollectionOfSupervisorMutation } from "@/store/api/superviosr/supervisorCollectionApi";
 import { playSound } from "@/utils/helpers/playSound";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
@@ -26,7 +21,7 @@ import { useSelector } from "react-redux";
 
 interface IAddSupervisorCollectionProps {
   setCollectionState: (state: (prevState: any) => any) => void;
-  counterId: null;
+  counterId: number;
   coachDetailsData: any;
 }
 
@@ -43,12 +38,12 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
   const [addCollectionOfSupervisor, { isLoading, error }] =
     useAddCollectionOfSupervisorMutation();
 
-  const { data: coachConfigs, isLoading: coachConfigLoading } =
-    useGetTodaysCoachConfigListQuery({});
-  const { data: counters, isLoading: counterLoading } = useGetCountersQuery({
-    size: 1000,
-    page: 1,
-  });
+  // const { data: coachConfigs, isLoading: coachConfigLoading } =
+  //   useGetTodaysCoachConfigListQuery({});
+  // const { data: counters, isLoading: counterLoading } = useGetCountersQuery({
+  //   size: 1000,
+  //   page: 1,
+  // });
 
   const {
     register,
@@ -61,7 +56,7 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
   });
   const [file, setFile] = useState<File | null>(null);
   const counterInfo = coachDetailsData.data.counterWiseReport.find(
-    (c) => c.counterId === counterId
+    (c: any) => c.counterId === counterId
   );
   const collectionType = watch("collectionType");
 
@@ -75,6 +70,7 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
+      //@ts-ignore
       setValue("file", e.target.files[0].name); // Sync with form
     }
   };
@@ -97,9 +93,10 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
       supervisorId: user.id,
     });
     if (result.data?.success) {
-      const findCollection = JSON.parse(localStorage.getItem("collection"));
+      const localData = localStorage.getItem("collection");
+      const findCollection = localData ? JSON.parse(localData) : [];
       const uniqueId = `${coachDetailsData?.data?.coachInfo?.id}-${counterId}`;
-      if (!findCollection) {
+      if (!findCollection?.length) {
         const collection = [uniqueId];
         localStorage.setItem("collection", JSON.stringify(collection));
       } else {
@@ -114,14 +111,10 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
         description: toastMessage("add", translate("সংগ্রহ", "Collection")),
       });
       playSound("add");
-
+      //@ts-ignore
       setCollectionState();
     }
   };
-
-  if (counterLoading || coachConfigLoading) {
-    return <FormSkeleton />;
-  }
 
   return (
     <FormWrapper

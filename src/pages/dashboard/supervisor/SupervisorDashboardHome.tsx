@@ -34,13 +34,12 @@ import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { LuDownload } from "react-icons/lu";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import CoachDetailsForSupervisor from "./CoachDetailsForSupervisor";
 interface IReportSuite {}
 
 const SupervisorDashboardHome: FC<IReportSuite> = () => {
   const { translate } = useCustomTranslator();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
@@ -208,7 +207,7 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
             <PopoverContent align="end">
               <Calendar
                 mode="single"
-                selected={dateRange.upDate || null}
+                selected={dateRange.upDate || undefined}
                 onSelect={(date: any) => {
                   if (date && !dateRange.upDate) {
                     handleDateChange(date, "upDate");
@@ -248,7 +247,8 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
             <PopoverContent align="end">
               <Calendar
                 mode="single"
-                selected={dateRange.downDate || null}
+                //@ts-ignore
+                selected={dateRange.downDate || undefined}
                 onSelect={(date: any) => {
                   if (date && !dateRange.downDate) {
                     handleDateChange(date, "downDate");
@@ -381,10 +381,11 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
           data={coachData?.data || []}
         />
       </TableWrapper>
-      {coachData?.data?.length > 0 && (
-        <div>
-          <CoachDetailsForSupervisor coachId={coachData.data[0].id} />
-        </div>
+      {coachData?.data?.length > 0 && coachData?.data[0]?.id && (
+        <CoachDetailsForSupervisor
+          //@ts-ignore
+          coachId={coachData.data[0].id}
+        />
       )}
     </PageWrapper>
   );

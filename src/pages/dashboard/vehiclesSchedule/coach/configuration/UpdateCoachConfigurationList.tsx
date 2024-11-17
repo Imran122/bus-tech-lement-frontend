@@ -195,8 +195,8 @@ const UpdateCoachConfigurationList: FC<
     {
       accessorKey: "supervisor", // Base key to fetch supervisor data
       header: translate("সুপারভাইজার", "Supervisor"),
-      cell: ({ row }) => {
-        const supervisor = row.original.supervisor; // Access supervisor data
+      cell: ({ row }: { row: any }) => {
+        const supervisor = row.original.supervisor as any; // Access supervisor data
         if (!supervisor) {
           return fallback.notFound.en;
         }
@@ -213,8 +213,8 @@ const UpdateCoachConfigurationList: FC<
     {
       accessorKey: "driver", // Base key to fetch supervisor data
       header: translate("ড্রাইভার", "ড্রাইভার"),
-      cell: ({ row }) => {
-        const driver = row.original.driver; // Access driver data
+      cell: ({ row }: { row: any }) => {
+        const driver = row.original.driver as any; // Access driver data
         if (!driver) {
           return fallback.notFound.en;
         }
@@ -232,14 +232,14 @@ const UpdateCoachConfigurationList: FC<
     {
       accessorKey: "helper", // Base key to fetch helper data
       header: translate("সহকারী", "Helper"),
-      cell: ({ row }) => {
-        const helper = row.original.helper; // Access helper data
+      cell: ({ row }: { row: any }) => {
+        const helper = row?.original?.helper as any; // Access helper data
         if (!helper) {
           return fallback.notFound.en;
         }
         return (
           <div>
-            <div>{helper.name || fallback.notFound.en}</div>
+            <div>{helper?.name || fallback.notFound.en}</div>
             <div className="text-muted-foreground text-xs">
               {row.original.helperStatus || fallback.notFound.en}
             </div>
@@ -250,7 +250,7 @@ const UpdateCoachConfigurationList: FC<
 
     {
       header: translate("অবস্থা", "Status"),
-      cell: ({ row }) => {
+      cell: ({ row }: { row: any }) => {
         const coachConfig = row.original as UpdateCoachConfiguration & {
           dummySaleStatus: string;
         };
