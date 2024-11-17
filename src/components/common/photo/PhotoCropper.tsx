@@ -33,6 +33,7 @@ interface IPhotoCropperProps {
   id?: string;
   ratio?: number;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 interface Crop {
@@ -57,6 +58,7 @@ const PhotoCropper: FC<IPhotoCropperProps> = ({
   ratio,
   placeholder,
   photo,
+  disabled = false, // Default to false if not provided
 }) => {
   const { translate } = useCustomTranslator();
 
@@ -133,6 +135,7 @@ const PhotoCropper: FC<IPhotoCropperProps> = ({
         photo={photo}
         id={id}
         setPhoto={setPhoto}
+        disabled={disabled}
       />
       {photo && cropState.step === "crop" && (
         <Dialog
@@ -312,19 +315,24 @@ const PhotoCropper: FC<IPhotoCropperProps> = ({
                       setPhoto("");
                       setCropState((prevState: IPhotoCropStateProps) => ({
                         ...prevState,
-                        open: false,
-                        photo: "",
-                        restore: "",
+                        crop: { x: 0, y: 0 },
+                        rotation: 0,
+                        zoom: 1,
+                        croppedAreaPixels: null,
+                        step: "done",
                       }));
                     }}
                   >
-                    {translate("পুনরায় নির্বাচন করুন", "Select Again")}
+                    {translate("নতুন ছবি নির্বাচন করুন", "Select New Image")}
                   </Button>
                 </li>
-
                 <li>
-                  <Button size="sm" onClick={() => croppedPhoto()}>
-                    {translate("কাটুন", "Crop")}
+                  <Button
+                    size="sm"
+                    onClick={croppedPhoto}
+                    disabled={disabled || step === "done"}
+                  >
+                    {translate("ফটো ক্রপ করুন", "Crop Photo")}
                   </Button>
                 </li>
               </ul>

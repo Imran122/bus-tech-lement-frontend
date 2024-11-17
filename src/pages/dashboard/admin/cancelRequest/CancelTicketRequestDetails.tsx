@@ -1,111 +1,118 @@
 import DetailsSkeleton from "@/components/common/skeleton/DetailsSkeleton";
 import LabelDescription from "@/components/common/typography/LabelDescription";
 import DetailsWrapper from "@/components/common/wrapper/DetailsWrapper";
-import { GridWrapper } from "@/components/common/wrapper/GridWrapper"; // Import Dialog components
+import { GridWrapper } from "@/components/common/wrapper/GridWrapper";
 import { useGetSingleOrderDetailsQuery } from "@/store/api/counter/counterSalesBookingApi";
 import formatter from "@/utils/helpers/formatter";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { FC } from "react";
 
-interface ICounterOrderDetailsModalProps {
+interface ICancelTicketRequestDetailsProps {
   id: number | null;
 }
 
-const CounterOrderDetailsModal: FC<ICounterOrderDetailsModalProps> = ({
+const CancelTicketRequestDetails: FC<ICancelTicketRequestDetailsProps> = ({
   id,
-}: any) => {
-  const { data: orderData, isLoading: orderLoading } =
-    useGetSingleOrderDetailsQuery(id);
+}) => {
+  
   const { translate } = useCustomTranslator();
+  const { data: cancelData, isLoading: cancelLoading } =
+  useGetSingleOrderDetailsQuery(id);
 
-  if (orderLoading) {
-    return <DetailsSkeleton columns={3} items={15} />;
+  if (cancelLoading) {
+   return <DetailsSkeleton columns={3} items={15} />;
   }
 
   return (
     <DetailsWrapper
-      heading={translate("অর্ডার ওভারভিউ", "Order Overview")}
+      heading={translate(
+        "আজকের টিকিট বাতিলের ওভারভিউ",
+        "Today's Ticket Cancel Overview"
+      )}
       subHeading={translate(
-        "এই অর্ডারের তথ্য এবং সাম্প্রতিক কার্যকলাপের সারসংক্ষেপ।",
-        "Summary of this order's information and recent activities."
+        "আজকের টিকিট বাতিলের তথ্য এবং সাম্প্রতিক কার্যকলাপের সারসংক্ষেপ।",
+        "Summary of today's ticket cancel request information and recent activities."
       )}
     >
       <GridWrapper>
         <LabelDescription
           heading={translate("অর্ডার আইডি", "Order ID")}
-          paragraph={orderData?.data?.id}
+          paragraph={cancelData?.data?.id}
         />
         <LabelDescription
           heading={translate("গ্রাহকের নাম", "Customer Name")}
-          paragraph={orderData?.data?.customerName}
+          paragraph={cancelData?.data?.customerName}
         />
         <LabelDescription
           heading={translate("ফোন", "Phone")}
-          paragraph={orderData?.data?.phone}
+          paragraph={cancelData?.data?.phone}
         />
         <LabelDescription
           heading={translate("ইমেইল", "Email")}
-          paragraph={orderData?.data?.email || "N/A"}
+          paragraph={cancelData?.data?.email || "N/A"}
         />
         <LabelDescription
           heading={translate("ঠিকানা", "Address")}
-          paragraph={orderData?.data?.address}
+          paragraph={cancelData?.data?.address}
         />
         <LabelDescription
           heading={translate("সর্বমোট পরিমাণ", "Total Amount")}
-          paragraph={orderData?.data?.amount}
+          paragraph={cancelData?.data?.amount}
         />
         <LabelDescription
           heading={translate("পেমেন্ট", "Payment")}
           paragraph={
-            orderData?.data?.payment ? "Paid" : translate("অপরিশোধিত", "Unpaid")
+            cancelData?.data?.payment
+              ? "Paid"
+              : translate("অপরিশোধিত", "Unpaid")
           }
         />
         <LabelDescription
           heading={translate("বাকি পরিমাণ", "Due Amount")}
           paragraph={
-            orderData?.data?.dueAmount === 0
+            cancelData?.data?.dueAmount === 0
               ? "No Due"
-              : orderData?.data?.dueAmount
+              : cancelData?.data?.dueAmount
           }
         />
         <LabelDescription
           heading={translate("পেমেন্ট পদ্ধতি", "Payment Method")}
-          paragraph={orderData?.data?.paymentMethod}
+          paragraph={cancelData?.data?.paymentMethod}
         />
         <LabelDescription
           heading={translate("বুকিং টাইপ", "Booking Type")}
-          paragraph={orderData?.data?.paymentType}
+          paragraph={cancelData?.data?.paymentType}
         />
         <LabelDescription
           heading={translate("বোর্ডিং পয়েন্ট", "Boarding Point")}
-          paragraph={orderData?.data?.boardingPoint}
+          paragraph={cancelData?.data?.boardingPoint}
         />
         <LabelDescription
           heading={translate("ড্রপিং পয়েন্ট", "Dropping Point")}
-          paragraph={orderData?.data?.droppingPoint}
+          paragraph={cancelData?.data?.droppingPoint}
         />
         <LabelDescription
           heading={translate("আসন সংখ্যা", "No of Seats")}
-          paragraph={orderData?.data?.noOfSeat}
+          paragraph={cancelData?.data?.noOfSeat}
         />
         <LabelDescription
           heading={translate("তৈরির তারিখ", "Created At")}
           paragraph={formatter({
             type: "date&time",
-            dateTime: orderData?.data?.createdAt,
+            dateTime: cancelData?.data?.createdAt,
           })}
         />
         <LabelDescription
           heading={translate("হালনাগাদ তারিখ", "Updated At")}
           paragraph={formatter({
             type: "date&time",
-            dateTime: orderData?.data?.updatedAt,
+            dateTime: cancelData?.data?.updatedAt,
           })}
         />
       </GridWrapper>
     </DetailsWrapper>
+    
   );
 };
 
-export default CounterOrderDetailsModal;
+export default CancelTicketRequestDetails;

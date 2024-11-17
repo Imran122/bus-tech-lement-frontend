@@ -326,7 +326,7 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
             )}
           >
             <Input
-              value={reserveData?.data?.passengerName}
+              defaultValue={reserveData?.data?.passengerName}
               id="passengerName"
               type="text"
               {...register("passengerName")}

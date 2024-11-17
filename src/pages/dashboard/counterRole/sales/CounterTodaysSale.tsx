@@ -24,6 +24,7 @@ import { ChangeEvent, FC, useState } from "react";
 import { LuDownload } from "react-icons/lu";
 import CounterOrderDetailsModal from "./CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "./UpdateCounterOrderModal";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface ISalesListProps {}
 export interface ISalesDataStateProps {
@@ -72,13 +73,7 @@ const CounterTodaysSale: FC<ISalesListProps> = () => {
     }));
   };
 
-  const handleDetailsClick = (orderId: number) => {
-    setSalesTickitState((prev) => ({
-      ...prev,
-      detailsModalOpen: true,
-      selectedOrderId: orderId,
-    }));
-  };
+
 
   const closeUpdateModal = () => {
     setSalesTickitState((prev) => ({
@@ -88,13 +83,7 @@ const CounterTodaysSale: FC<ISalesListProps> = () => {
     }));
   };
 
-  const closeDetailsModal = () => {
-    setSalesTickitState((prev) => ({
-      ...prev,
-      detailsModalOpen: false,
-      selectedOrderId: null,
-    }));
-  };
+
 
   const columns: ColumnDef<any>[] = [
     {
@@ -134,37 +123,46 @@ const CounterTodaysSale: FC<ISalesListProps> = () => {
     {
       header: translate("কার্যক্রম", "Actions"),
       id: "actions",
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="flex flex-col gap-1">
-            <DropdownMenuLabel>
-              {translate("কার্যক্রম", "Action")}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <Button
-              onClick={() => handleDetailsClick(row.original.id)}
-              variant="outline"
-              size="xs"
-              className="w-full flex justify-start"
-            >
-              {translate("বিস্তারিত", "Details")}
-            </Button>
-            <Button
-              onClick={() => handleUpdateClick(row.original.id)}
-              variant="outline"
-              size="xs"
-              className="w-full flex justify-start"
-            >
-              {translate("পেমেন্ট করুন", "Pay")}
-            </Button>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
+      cell: ({ row }) => {
+        const todaySale = row.original as any;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="flex flex-col gap-1">
+              <DropdownMenuLabel>
+                {translate("কার্যক্রম", "Action")}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full flex justify-start"
+                    size="xs"
+                  >
+                    {translate("বিস্তারিত", "Details")}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent size="lg">
+                  <CounterOrderDetailsModal id={todaySale?.id} />
+                </DialogContent>
+              </Dialog>
+              <Button
+                onClick={() => handleUpdateClick(row.original.id)}
+                variant="outline"
+                size="xs"
+                className="w-full flex justify-start"
+              >
+                {translate("পেমেন্ট করুন", "Pay")}
+              </Button>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
   ];
 
@@ -227,15 +225,6 @@ const CounterTodaysSale: FC<ISalesListProps> = () => {
         />
       </TableWrapper>
 
-      {salesTickitState.detailsModalOpen && (
-        <CounterOrderDetailsModal
-          isOpen={salesTickitState.detailsModalOpen}
-          onClose={closeDetailsModal}
-          order={salesTickitList?.data?.todaySalesHistory.find(
-            (order: any) => order.id === salesTickitState.selectedOrderId
-          )}
-        />
-      )}
       {salesTickitState.updateModalOpeans && (
         <UpdateCounterOrderModal
           isOpen={salesTickitState.updateModalOpeans}
