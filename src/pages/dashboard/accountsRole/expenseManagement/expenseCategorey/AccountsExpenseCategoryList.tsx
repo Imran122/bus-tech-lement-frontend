@@ -106,7 +106,7 @@ const AccountsExpenseCategoryList: FC = () => {
       header: translate("কার্যক্রম", "Actions"),
       id: "actions",
       //@ts-ignore
-      cell: ({ row }) => {
+      cell: ({ row }: { row: any }) => {
         //@ts-ignore
         const category = row.original;
         return (
