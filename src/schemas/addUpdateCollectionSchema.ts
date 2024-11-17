@@ -55,7 +55,7 @@ export const addUpdateCollectionSchema = z.object({
       message: "Amount must be greater than 0",
     }),
 
-  date: z.string({ required_error: "Date is required" }),
+  date: z.string().optional(),
   file: z.any().optional(), // Optional field
 });
 
