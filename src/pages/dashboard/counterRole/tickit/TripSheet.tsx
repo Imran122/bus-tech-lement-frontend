@@ -40,6 +40,8 @@ interface ITripSheet {
 const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
   const { logo } = appConfiguration;
   const currentDateTime = new Date().toLocaleString();
+
+  console.log("tripsheet", bookingCoach)
   const {
     orderSeat,
     seatAvailable,
@@ -54,6 +56,7 @@ const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
     coachNo,
     departureDate,
     helper,
+    supervisor
   } = bookingCoach;
 
   const printRef = useRef(null);
@@ -95,6 +98,8 @@ const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
         (order: any) => order.seat === seat.seat
       );
 
+      // console.log("match order", matchedOrder)
+
       return {
         seat: seat.seat,
         passengerName: matchedOrder?.order?.customerName,
@@ -103,8 +108,8 @@ const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
         fare: matchedOrder?.order?.amount,
         fromStation: fromCounter?.name,
         toStation: destinationCounter?.name,
-        issueCounterName: matchedOrder?.order?.counter?.counter?.name,
-        orderBy: matchedOrder?.order?.counter?.userName,
+        issueCounterName: matchedOrder?.order?.counter?.name,
+        orderBy: matchedOrder?.order?.user?.userName,
         remarks: matchedOrder?.remarks,
       } as TripStatus;
     }
@@ -182,7 +187,7 @@ const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
         <img src={logo} alt="app logo" className="w-60" />
         <div className="flex flex-col justify-end -mr-28">
           <Paragraph size={"sm"}>
-            Printing By: {bookingCoach?.order?.counter?.userName}
+            Printing By: {bookingCoach?.order?.user?.userName}
           </Paragraph>
           <Paragraph size={"sm"}>Date & Time: {currentDateTime}</Paragraph>
         </div>
@@ -194,7 +199,7 @@ const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
               <Table className="overflow-hidden">
                 <TableHeader>
                   <TableRow>
-                    {["Registration No", "Driver", "Guide", "Helper"].map(
+                    {["Registration No", "Driver","Driver Phone", "Guide","Guide Phone", "Helper", "Helper Phone"].map(
                       (header, index) => (
                         <TableHead
                           className="custom-table border-r !leading-4 text-center tracking-tight !text-xs"
@@ -212,10 +217,15 @@ const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
                       {registrationNo}
                     </TableCell>
                     <TableCell className="custom-table border-r">
-                      {driver}
+                      {driver?.name}
                     </TableCell>
-                    <TableCell className="custom-table border-r">""</TableCell>
-                    <TableCell className="custom-table">{helper}</TableCell>
+                    <TableCell className="custom-table border-r">
+                      {driver?.contactNo}
+                    </TableCell>
+                    <TableCell className="custom-table border-r">{supervisor?.userName}</TableCell>
+                    <TableCell className="custom-table border-r">{supervisor?.contactNo}</TableCell>
+                    <TableCell className="custom-table border-r">{helper?.name}</TableCell>
+                    <TableCell className="custom-table">{helper?.contactNo}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -314,42 +324,42 @@ const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
                   {seatsAllocation.map((data, index) => (
                     <TableRow className="text-center border-r" key={index}>
                       <TableCell className="custom-table border-r">
-                        {data.seat}
+                        {data?.seat}
                       </TableCell>
                       <TableCell className="custom-table border-r">
-                        {data.passengerName}
+                        {data?.passengerName}
                       </TableCell>
                       <TableCell className="custom-table border-r">
-                        {data.mobile}
+                        {data?.mobile}
                       </TableCell>
                       <TableCell className="custom-table border-r">
-                        {data.ticketNo}
+                        {data?.ticketNo}
                       </TableCell>
                       <TableCell className="custom-table border-r">
-                        {data.fare}
+                        {data?.fare}
                       </TableCell>
                       <TableCell className="custom-table border-r">
-                        {data?.ticketNo && data.fromStation}
+                        {data?.ticketNo && data?.fromStation}
                       </TableCell>
                       <TableCell className="custom-table border-r">
-                        {data?.ticketNo && data.toStation}
+                        {data?.ticketNo && data?.toStation}
                       </TableCell>
                       <TableCell className="custom-table border-r">
-                        {data.issueCounterName && data.ticketNo
-                          ? data.issueCounterName
-                          : !data.issueCounterName && data.ticketNo
+                        {data?.issueCounterName && data?.ticketNo
+                          ? data?.issueCounterName
+                          : !data?.issueCounterName && data?.ticketNo
                           ? "Online"
                           : ""}
                       </TableCell>
                       <TableCell className="custom-table border-r">
-                        {data.orderBy && data.ticketNo
-                          ? data.orderBy
-                          : !data.orderBy && data.ticketNo
+                        {data?.orderBy && data?.ticketNo
+                          ? data?.orderBy
+                          : !data?.orderBy && data?.ticketNo
                           ? "Online"
                           : ""}
                       </TableCell>
                       <TableCell className="custom-table">
-                        {data.remarks}
+                        {data?.remarks}
                       </TableCell>
                     </TableRow>
                   ))}

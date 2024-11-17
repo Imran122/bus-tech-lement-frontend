@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   logo: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 25,
     marginBottom: 10,
     alignSelf: "center",
   },
@@ -95,13 +95,13 @@ const PdfStatusReport = ({ result }: any) => {
 
             {result?.map((status: any, index: any) => (
               <View style={styles.tableRow} key={index}>
-                <View style={styles.tableCol}><Text>{status.counterName || "N/A"}</Text></View>
-                <View style={styles.tableCol}><Text>{status.orderBy || "N/A"}</Text></View>
-                <View style={styles.tableCol}><Text>{status.phone || "N/A"}</Text></View>
-                <View style={styles.tableCol}><Text>{status.bookedCount || 0}</Text></View>
-                <View style={styles.tableCol}><Text>{status.bookedSeat.join(", ") || "N/A"}</Text></View>
-                <View style={styles.tableCol}><Text>{status.soldCount || 0}</Text></View>
-                <View style={styles.tableCol}><Text>{status.soldSeat.join(", ") || "N/A"}</Text></View>
+                <View style={styles.tableCol}><Text>{status?.counterName}</Text></View>
+                <View style={styles.tableCol}><Text>{status?.orderBy}</Text></View>
+                <View style={styles.tableCol}><Text>{status?.phone}</Text></View>
+                <View style={styles.tableCol}><Text>{status?.bookedCount || 0}</Text></View>
+                <View style={styles.tableCol}><Text>{status?.bookedSeat.join(", ")}</Text></View>
+                <View style={styles.tableCol}><Text>{status?.soldCount || 0}</Text></View>
+                <View style={styles.tableCol}><Text>{status?.soldSeat.join(", ")}</Text></View>
               </View>
             ))}
           </View>

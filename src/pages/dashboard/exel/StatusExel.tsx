@@ -5,13 +5,13 @@ import { CSVLink } from "react-csv";
 const StatusExel = ({ result }: any) => {
   const formattedData = result?.map((item: any) => ({
     counterId: item.counterId,
-    counterName: item.counterName || "N/A",
-    orderBy: item.orderBy || "N/A",
-    phone: item.phone || "N/A",
-    bookedCount: item.bookedCount || 0,
-    bookedSeat: item.bookedSeat?.join(", ") || "N/A", 
-    soldCount: item.soldCount || 0,
-    soldSeat: item.soldSeat?.join(", ") || "N/A", 
+    counterName: item?.counterName,
+    orderBy: item?.orderBy,
+    phone: item?.phone,
+    bookedCount: item?.bookedCount || 0,
+    bookedSeat: item?.bookedSeat?.join(", "), 
+    soldCount: item?.soldCount || 0,
+    soldSeat: item?.soldSeat?.join(", "), 
   }));
 
   return (

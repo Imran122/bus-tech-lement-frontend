@@ -36,6 +36,7 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
   const { CounterBookedSeat, orderSeat } = bookingCoach;
   const result: StatusData[] = [];
 
+
   orderSeat.forEach((item: any) => {
     if (item.order.counterId) {
       const findStatus = result.find(
@@ -47,9 +48,9 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
       } else {
         result.push({
           counterId: item.order.counterId,
-          counterName: item.order.counter.counter.name,
+          counterName: item.order.counter.name,
           orderBy: item.order.counter.userName,
-          phone: item.order.counter.counter.phone,
+          phone: item.order.counter.phone,
           bookedCount: 0,
           bookedSeat: [],
           soldCount: 1,
@@ -68,9 +69,9 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
       } else {
         result.push({
           counterId: item.counter.id,
-          counterName: item.counter.counter.name,
+          counterName: item.counter.name,
           orderBy: item.counter.userName,
-          phone: item.counter.counter.phone,
+          phone: item.counter.phone,
           bookedCount: 1,
           bookedSeat: [item.seat],
           soldCount: 0,
