@@ -10,6 +10,7 @@ interface DecodedToken {
   address?: string;
   role: string;
   counter?: Counter;
+  counterId?: number;
 }
 
 export const loadUserFromToken = async (dispatch: any) => {
@@ -24,7 +25,7 @@ export const loadUserFromToken = async (dispatch: any) => {
           id: decoded.id,
           email: decoded.email,
           name: decoded.name,
-
+          counterId: decoded.counterId,
           address: decoded.counter?.address || "",
           role: decoded.role,
         })
