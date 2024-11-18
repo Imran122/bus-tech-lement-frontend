@@ -9,7 +9,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { FC } from "react";
+import { Button } from "@/components/ui/button";
+import { Loader } from "@/components/common/Loader";
+import PdfSeatStatusReport from "../../pdf/PdfSeatStatus";
+import SeatStatusExel from "../../exel/SeatStatusExel";
 
 interface ISeatStatus {
   bookingCoach: any;
@@ -39,7 +44,7 @@ const SeatStatus: FC<ISeatStatus> = ({ bookingCoach }) => {
     if (item.order.counterId) {
       result.push({
         counterId: item.order.counterId,
-        counterName: item.order.counter.counter.name,
+        counterName: item.order.counter.name,
         orderBy: item.order.counter.userName,
         bookSeat: "",
         soldSeat: item.seat,
@@ -56,13 +61,13 @@ const SeatStatus: FC<ISeatStatus> = ({ bookingCoach }) => {
     if (item.counter.id) {
       result.push({
         counterId: item.counter.id,
-        counterName: item.counter.counter.name,
+        counterName: item.counter.name,
         orderBy: item.counter.userName,
         bookSeat: item.seat,
         soldSeat: "",
         fare: 0,
         discount: 0,
-        createdDate: item.counter.counter.createdAt,
+        createdDate: item.counter.createdAt,
         passengerName: "",
         passengerPhone: "",
       });
@@ -71,6 +76,39 @@ const SeatStatus: FC<ISeatStatus> = ({ bookingCoach }) => {
 
   return (
     <div>
+       <ul className="flex space-x-3 w-full">
+        <li>
+          <SeatStatusExel result={result} />
+        </li>
+
+        <li>
+          <PDFDownloadLink
+            document={<PdfSeatStatusReport result={result} />}
+            fileName="seat_status_report.pdf"
+          >
+            
+            {
+            //@ts-ignore
+            (params) => {
+              const { loading } = params;
+              return loading ? (
+                <Button
+                  disabled
+                  className="transition-all duration-150"
+                  variant="destructive"
+                  size="sm"
+                >
+                  <Loader /> Export To Pdf
+                </Button>
+              ) : (
+                <Button variant="destructive" size="sm">
+                  Export To Pdf
+                </Button>
+              );
+            }}
+          </PDFDownloadLink>
+        </li>
+      </ul>
       <InfoWrapper
         className="my-2"
         heading={translate("কাউন্টারের অবস্থা", "Counter Booking Status")}

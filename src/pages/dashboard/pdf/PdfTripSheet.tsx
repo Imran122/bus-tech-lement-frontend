@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   logo: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 25,
     marginBottom: 10,
     alignSelf: "center",
   },
@@ -100,6 +100,7 @@ const PdfTripSheet = ({ bookingCoach, selectedTables }: any) => {
       coachNo,
       departureDate,
       helper,
+      supervisor
     } = bookingCoach;
   
     const seatsAllocation = dynamicSeatAllocationForReport(coachClass).map(
@@ -139,7 +140,7 @@ const PdfTripSheet = ({ bookingCoach, selectedTables }: any) => {
             <View style={styles.section}>
               <View style={styles.table}>
                 <View style={styles.tableRow}>
-                  {["Registration No", "Driver", "Guide", "Helper"].map((header, index) => (
+                  {["Registration No", "Driver","Driver Phoen", "Guide","Guide Phone", "Helper","Helper Phone"].map((header, index) => (
                     <View style={styles.tableHeader} key={index}>
                       <Text>{header}</Text>
                     </View>
@@ -147,9 +148,12 @@ const PdfTripSheet = ({ bookingCoach, selectedTables }: any) => {
                 </View>
                 <View style={styles.tableRow}>
                   <View style={styles.tableCol}><Text>{registrationNo}</Text></View>
-                  <View style={styles.tableCol}><Text>{driver}</Text></View>
-                  <View style={styles.tableCol}><Text>{driver}</Text></View>
-                  <View style={styles.tableCol}><Text>{helper}</Text></View>
+                  <View style={styles.tableCol}><Text>{driver?.name}</Text></View>
+                  <View style={styles.tableCol}><Text>{driver?.contactNo}</Text></View>
+                  <View style={styles.tableCol}><Text>{supervisor?.userName}</Text></View>
+                  <View style={styles.tableCol}><Text>{supervisor?.contactNo}</Text></View>
+                  <View style={styles.tableCol}><Text>{helper?.name}</Text></View>
+                  <View style={styles.tableCol}><Text>{helper?.contactNo}</Text></View>
                 </View>
               </View>
             </View>

@@ -52,6 +52,7 @@ const TripSheetPrint = React.forwardRef<HTMLDivElement, ITripSheetPrintProps>(
       coachNo,
       departureDate,
       helper,
+      supervisor
     } = bookingCoach;
     const seatsAllocation = dynamicSeatAllocationForReport(coachClass).map(
       (seat: { seat: string }) => {
@@ -99,7 +100,7 @@ const TripSheetPrint = React.forwardRef<HTMLDivElement, ITripSheetPrintProps>(
                   <Table className="overflow-hidden">
                     <TableHeader>
                       <TableRow>
-                        {["Registration No", "Driver", "Guide", "Helper"].map(
+                        {["Registration No", "Driver","Driver Phone", "Guide","Guide Phone", "Helper", "Helper Phone"].map(
                           (header, index) => (
                             <TableHead
                               className="custom-table border-r !leading-4 text-center tracking-tight !text-xs"
@@ -117,12 +118,19 @@ const TripSheetPrint = React.forwardRef<HTMLDivElement, ITripSheetPrintProps>(
                           {registrationNo}
                         </TableCell>
                         <TableCell className="custom-table border-r">
-                          {driver}
+                          {driver?.name}
                         </TableCell>
                         <TableCell className="custom-table border-r">
-                          ""
+                          {driver?.contactNo}
                         </TableCell>
-                        <TableCell className="custom-table">{helper}</TableCell>
+                        <TableCell className="custom-table border-r">
+                          {supervisor?.userName}
+                        </TableCell>
+                        <TableCell className="custom-table border-r">
+                          {supervisor?.contactNo}
+                        </TableCell>
+                        <TableCell className="custom-table border-r">{helper?.name}</TableCell>
+                        <TableCell className="custom-table">{helper?.contactNo}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
