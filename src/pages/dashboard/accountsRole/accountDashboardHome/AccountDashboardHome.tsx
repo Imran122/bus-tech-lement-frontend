@@ -23,7 +23,7 @@ import { Link } from "react-router-dom";
 
 export default function AccountDashboardHome() {
   const { translate } = useCustomTranslator();
-  const [selectedData, setSelectedData] = useState<any>(null);
+  //const [selectedData, setSelectedData] = useState<any>(null);
 
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
@@ -44,10 +44,9 @@ export default function AccountDashboardHome() {
       page: query.page,
       size: query.size,
     });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  //const [isModalOpen, setIsModalOpen] = useState(false);
 
   const totalItems = accountReportData?.data?.length || 0;
-
 
   // Define columns for DataTable
   const columns: ColumnDef<any>[] = [

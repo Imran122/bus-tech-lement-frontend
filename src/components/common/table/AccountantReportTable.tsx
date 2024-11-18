@@ -1,80 +1,87 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import React from "react";
 
-interface ReportTableProps {
-  mainHeaders: string[];
-  subHeaders: string[][];
-  data: { [key: string]: { [subHeader: string]: any } }[];
-  bordered?: boolean;
+interface AccountantReportTableProps {
+  data: Array<{ [key: string]: any }>;
+  mainHeader: string;
+  subHeaders: string[];
+  onFileClick: (file: string | null) => void;
+  maxRows: number; // Maximum number of rows to align table heights
 }
 
-const AccountantReportTable: React.FC<ReportTableProps> = ({
-  mainHeaders,
-  subHeaders,
+const AccountantReportTable: React.FC<AccountantReportTableProps> = ({
   data,
-  bordered = true,
+  mainHeader,
+  subHeaders,
+  onFileClick,
+  maxRows,
 }) => {
-  const colSpans = subHeaders.map((sub) => sub.length);
+  // Calculate the total for the "Taka" column
+  const totalAmount = data.reduce((sum, row) => sum + (row.amount || 0), 0);
 
   return (
-    <div className="w-full overflow-x-auto rounded-lg border border-gray-300">
-      <Table className={cn(bordered && "border-collapse")}>
-        <TableHeader>
-          {/* Main Headers Row */}
-          <TableRow className="">
-            {mainHeaders.map((header, index) => (
-              <TableCell
-                key={index}
-                colSpan={colSpans[index]}
-                className="text-center font-semibold border-r border-gray-300"
-              >
-                {header} {/* Directly display header */}
-              </TableCell>
+    <div className="w-full mb-0">
+      <table className="w-full table-auto border border-gray-300">
+        <thead>
+          <tr>
+            <th colSpan={subHeaders.length} className="text-center p-2">
+              {mainHeader}
+            </th>
+          </tr>
+          <tr>
+            {subHeaders.map((header, index) => (
+              <th key={index} className="border border-gray-300 p-2 text-left">
+                {header}
+              </th>
             ))}
-          </TableRow>
-
-          {/* Sub-Headers Row */}
-          <TableRow className="">
-            {subHeaders.map((subHeaderGroup, index) =>
-              subHeaderGroup.map((subHeader, subIndex) => (
-                <TableCell
-                  key={`${index}-${subIndex}`}
-                  className="text-center font-semibold border-r border-gray-300"
-                >
-                  {subHeader} {/* Directly display sub-header */}
-                </TableCell>
-              ))
-            )}
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {data.map((rowData, rowIndex) => (
-            <TableRow key={rowIndex}>
-              {mainHeaders.map((header, headerIndex) =>
-                subHeaders[headerIndex].map((subHeader, subIndex) => (
-                  <TableCell
-                    key={`${headerIndex}-${subIndex}-${rowIndex}`}
-                    className={cn(
-                      "p-2 text-center",
-                      bordered && "border-b border-r border-gray-300"
-                    )}
+          </tr>
+        </thead>
+        <tbody>
+          {/* Render data rows */}
+          {data.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              <td className="border border-gray-300 p-2">
+                {row.counterName || row.expenseCategory || "-"}
+              </td>
+              <td className="border border-gray-300 p-2">{row.amount || 0}</td>
+              <td className="border border-gray-300 p-2">
+                {row.file ? (
+                  <button
+                    onClick={() => onFileClick(row.file)}
+                    className="text-blue-500"
                   >
-                    {rowData[header]?.[subHeader] ?? "-"}
-                  </TableCell>
-                ))
-              )}
-            </TableRow>
+                    View File
+                  </button>
+                ) : (
+                  "N/A"
+                )}
+              </td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
+
+          {/* Add empty rows to match maxRows */}
+          {Array.from({ length: maxRows - data.length }).map((_, index) => (
+            <tr key={`empty-row-${index}`}>
+              {subHeaders.map((_, colIndex) => (
+                <td
+                  key={`empty-cell-${colIndex}-${index}`}
+                  className="border border-gray-300 p-2"
+                >
+                  -
+                </td>
+              ))}
+            </tr>
+          ))}
+
+          {/* Total row */}
+          <tr>
+            <td className="border border-gray-300 p-2 font-bold">Total</td>
+            <td className="border border-gray-300 p-2 font-bold">
+              {totalAmount}
+            </td>
+            <td className="border border-gray-300 p-2">-</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };
