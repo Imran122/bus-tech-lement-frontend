@@ -24,9 +24,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAppContext } from "@/utils/hooks/useAppContext";
 import { InputWrapper } from "../form/InputWrapper";
-import { accountsData } from "./AddPaymentTable";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import SelectSkeleton from "../skeleton/SelectSkeleton";
+import { useGetAccountsQuery } from "@/store/api/finance/accountApi";
 
 export interface IPaymentTableRequired {
   index: number;
@@ -63,10 +63,9 @@ const AddPaymentTableRequired: FC<IAddPaymentTableRequiredProps> = ({
   // THIS STATE PREVENT TO SET VALUE WHEN DROPDOWN IS CLOSE
   const [accountUpdate, setAccountUpdate] = useState<boolean>(false);
   // GET ALL THE BANK ACCOUNT QUERY
-  // const { data: accountsData, isLoading: accountLoading } = useGetAccountsQuery(
-  //   "All"
-  // ) as any;
-  const accountLoading = false;
+  const { data: accountsData, isLoading: accountLoading } = useGetAccountsQuery(
+    "All"
+  ) as any;
   // REMOVE PAYMENT TABLE HANDLER
   const removePaymentTableHandler = (index: number) => {
     // FILTER OUT THE TABLE WITH THE SPECIFIC INDEX
