@@ -1,3 +1,4 @@
+import DetailsOfReport from "@/pages/dashboard/accountsRole/accountDashboardHome/DetailsOfReport";
 import AccountsManagement from "@/pages/dashboard/accountsRole/accountsManagement/AccountsManagement";
 import CollectionList from "@/pages/dashboard/accountsRole/collectionManagement/CollectionList";
 import AccountsExpenseCategoryList from "@/pages/dashboard/accountsRole/expenseManagement/expenseCategorey/AccountsExpenseCategoryList";
@@ -27,6 +28,10 @@ export const accountsAllLink: IRouteProps[] = [
   {
     path: "expense_sub_category_account",
     element: React.createElement(AccountantExpenseSubCategoreyList),
+  },
+  {
+    path: "dashboard/report_details_account/:id",
+    element: React.createElement(DetailsOfReport),
   },
   {
     path: "collection_management",
