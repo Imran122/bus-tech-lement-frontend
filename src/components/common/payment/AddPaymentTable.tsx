@@ -26,77 +26,9 @@ import { InputWrapper } from "../form/InputWrapper";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { useAppContext } from "@/utils/hooks/useAppContext";
 import SelectSkeleton from "../skeleton/SelectSkeleton";
+import { useGetAccountsQuery } from "@/store/api/finance/accountApi";
 
-export const accountsData = {
-  data: [
-    {
-      id: 45,
-      bankName: "Brac Bank",
-      accountHolderName: "Anamul Hassan",
-      accountName: "Bkash",
-      accountNumber: "098123",
-      accountType: "MobileBanking",
-      branchId: 26,
-      openingBalance: 1000,
-      currentBalance: 79802,
-    },
-    {
-      id: 46,
-      bankName: "Cash",
-      accountHolderName: "Anamul Hassan",
-      accountName: "Cash",
-      accountNumber: "098123",
-      accountType: "Cash",
-      branchId: 26,
-      openingBalance: 1000,
-      currentBalance: 45545,
-    },
-    {
-      id: 47,
-      bankName: "Dutch Bangla Bank",
-      accountHolderName: "Anamul Hassan",
-      accountName: "Rocket",
-      accountNumber: "098124",
-      accountType: "MobileBanking",
-      branchId: 27,
-      openingBalance: 2000,
-      currentBalance: 62000,
-    },
-    {
-      id: 48,
-      bankName: "HSBC",
-      accountHolderName: "Anamul Hassan",
-      accountName: "Savings",
-      accountNumber: "098125",
-      accountType: "Bank",
-      branchId: 28,
-      openingBalance: 5000,
-      currentBalance: 105000,
-    },
-    {
-      id: 49,
-      bankName: "Standard Chartered",
-      accountHolderName: "Anamul Hassan",
-      accountName: "Current",
-      accountNumber: "098126",
-      accountType: "Bank",
-      branchId: 29,
-      openingBalance: 3000,
-      currentBalance: 85000,
-    },
-    {
-      id: 50,
-      bankName: "City Bank",
-      accountHolderName: "Anamul Hassan",
-      accountName: "Personal",
-      accountNumber: "098127",
-      accountType: "Bank",
-      branchId: 30,
-      openingBalance: 4000,
-      currentBalance: 91000,
-    },
-  ],
-};
+
 
 export interface IPaymentTable {
   index: number;
@@ -132,10 +64,10 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
   // THIS STATE PREVENT TO SET VALUE WHEN DROPDOWN IS CLOSE
   const [accountUpdate, setAccountUpdate] = useState<boolean>(false);
   // GET ALL THE BANK ACCOUNT QUERY
-  // const { data: accountsData, isLoading: accountLoading } = useGetAccountsQuery(
-  //   "All"
-  // ) as any;
-  const accountLoading = false;
+  const { data: accountsData, isLoading: accountLoading } = useGetAccountsQuery(
+    "All"
+  ) as any;
+  
   // REMOVE PAYMENT TABLE HANDLER
   const removePaymentTableHandler = (index: number) => {
     // FILTER OUT THE TABLE WITH THE SPECIFIC INDEX
@@ -177,7 +109,7 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
         )}
       >
         {paymentTable?.map((singleAccount: any, accountIndex: number) => (
-          <ul key={accountIndex} className="grid grid-flow-col gap-x-2 gap-y-1">
+          <ul key={accountIndex} className="flex mt-3 grid-flow-col gap-x-2 gap-y-1">
             <li>
               {accountIndex === 0 ? (
                 <InputWrapper label="#" labelFor={"add_account" + accountIndex}>
@@ -335,7 +267,7 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
                             value={singleAccount?.id}
                           >
                             <div className="flex items-center gap-2">
-                              <p>{singleAccount?.accountName}</p>
+                              <p>{singleAccount?.bankName}</p>
                               <p
                                 className={`font-[600] opacity-85 ${
                                   singleAccount?.currentBalance <= 0 &&

@@ -115,6 +115,12 @@ const accountantExpenseManagementLinks = {
       key: "expense_sub_category_account",
       href: "expense_sub_category_account",
     },
+    {
+      icon: LuBus,
+      label: { bn: "ব্যয় অ্যাকাউন্ট", en: "Expense" },
+      key: "expense_account",
+      href: "expense_account",
+    },
   ],
 };
 //new

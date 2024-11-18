@@ -98,6 +98,7 @@ interface ICounterBookingFormStateProps {
 const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   bookingCoach,
 }) => {
+  
   const [bookingType, setBookingType] = useState("SeatIssue");
   const [expirationDate, setExpirationDate] = useState<Date | undefined>(
     undefined
@@ -187,6 +188,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
 
   const handlePrint = useReactToPrint({
     content: () => printSaleRef.current,
+    documentTitle: `${appConfiguration?.appName}_${saleInfo?.data?.ticketNo}`,
     onBeforeGetContent: () => {
       return new Promise((resolve) => {
         promiseResolveRef.current = resolve;
