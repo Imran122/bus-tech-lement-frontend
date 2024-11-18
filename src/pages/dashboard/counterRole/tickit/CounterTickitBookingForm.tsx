@@ -121,7 +121,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   // REFERENCE FOR PRINT SELECTED COMPONENT
   const printSaleRef = useRef(null);
   const [isPrinting, setIsPrinting] = useState(false);
-  const [clear, setClear] = useState(false);
+  // const [clear, setClear] = useState(false);
   const [saleData, setSaleData] = useState<any>();
   const [updateLocal, setUpdateLocal] = useState<boolean>(false);
 
@@ -197,7 +197,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       // RESET THE PROMISE RESOLVE SO WE CAN PRINT AGAIN
       promiseResolveRef.current = null;
       setIsPrinting(false);
-      setClear(false);
+      // setClear(false);
       setSaleData({});
     },
   });
@@ -444,7 +444,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
           setUpdateLocal(true);
           // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
           handlePrint();
-          setClear(true);
+          // setClear(true);
           toast.success(
             translate(
               `প্রিয় ${booking.data?.data?.customerName}, আপনার সিট সফলভাবে বুক করা হয়েছে! আমাদের সেবা ব্যবহার করার জন্য ধন্যবাদ।`,
