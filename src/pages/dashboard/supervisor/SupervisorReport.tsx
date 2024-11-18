@@ -127,99 +127,34 @@ const SupervisorReport: React.FC = () => {
 
     checkAlreadySubmitted();
   }, [dateRange.upDate, dateRange.downDate]);
+
   const [submitSupervisorExpenseReport, { isLoading: submitReportLoading }] =
     useSubmitSupervisorExpenseReportMutation();
 
-  //@ts-ignore
+  const {
+    upWayCollectionReport = [],
+    downWayCollectionReport = [],
+    expenseReport = [],
+  } = coachDetailsData?.data || {};
+
+  const maxRows = Math.max(
+    upWayCollectionReport.length,
+    downWayCollectionReport.length,
+    expenseReport.length
+  );
+
   const upDownTotal =
-    coachDetailsData?.data?.totalDownIncome +
-    coachDetailsData?.data?.totalUpIncome;
-
-  //@ts-ignore
+    (coachDetailsData?.data?.totalUpIncome || 0) +
+    (coachDetailsData?.data?.totalDownIncome || 0);
   const totalOtherIncome =
-    coachDetailsData?.data?.othersIncomeDownWay +
-    coachDetailsData?.data?.othersIncomeUpWay;
-
-  //@ts-ignore
-  const chasOnHand =
+    (coachDetailsData?.data?.othersIncomeUpWay || 0) +
+    (coachDetailsData?.data?.othersIncomeDownWay || 0);
+  const cashOnHand =
     upDownTotal +
-    coachDetailsData?.data?.totalDownOpeningBalance +
-    coachDetailsData?.data?.totalUpOpeningBalance +
-    coachDetailsData?.data?.othersIncomeDownWay +
-    coachDetailsData?.data?.othersIncomeUpWay -
-    coachDetailsData?.data?.totalExpense;
+    (coachDetailsData?.data?.totalUpOpeningBalance || 0) +
+    (coachDetailsData?.data?.totalDownOpeningBalance || 0) -
+    (coachDetailsData?.data?.totalExpense || 0);
 
-  const handleSubmit = async () => {
-    const mainData = {
-      supervisorId: user?.id,
-      upWayCoachConfigId: coachDetailsData?.data?.upWayCoachConfigId,
-      downWayCoachConfigId: coachDetailsData?.data?.downWayCoachConfigId,
-      upWayDate: coachDetailsData?.data?.upDate,
-      downWayDate: coachDetailsData?.data?.downDate, // Include downWayDate
-      cashOnHand: chasOnHand,
-    };
-
-    try {
-      const result = await submitSupervisorExpenseReport(mainData).unwrap();
-
-      if (result.success) {
-        // Store upWayDate and downWayDate in local storage
-        localStorage.setItem(
-          "submissionData",
-          JSON.stringify({
-            upWayCoachConfigId: coachDetailsData?.data?.upWayCoachConfigId,
-            downWayCoachConfigId: coachDetailsData?.data?.downWayCoachConfigId,
-            upWayDate: coachDetailsData?.data?.upDate,
-            downWayDate: coachDetailsData?.data?.downDate, // Store downWayDate
-            cashOnHand: chasOnHand,
-          })
-        );
-
-        toast({
-          title: "Success",
-          description: "Submission successful!",
-        });
-
-        setAlreadySubmitted(true); // Disable the submit button
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Submission failed. Please try again.",
-      });
-    }
-  };
-
-  const reportData = coachDetailsData
-    ? [
-        ...coachDetailsData.data.upWayCollectionReport.map((upItem: any) => ({
-          upIncome: {
-            "Counter Name": upItem.counterName,
-            Taka: upItem.amount,
-          },
-          downIncome: { "Counter Name": "-", Taka: "-" },
-          expense: { "Expense Name": "-", Taka: "-" },
-        })),
-        ...coachDetailsData.data.downWayCollectionReport.map(
-          (downItem: any) => ({
-            upIncome: { "Counter Name": "-", Taka: "-" },
-            downIncome: {
-              "Counter Name": downItem.counterName,
-              Taka: downItem.amount,
-            },
-            expense: { "Expense Name": "-", Taka: "-" },
-          })
-        ),
-        ...coachDetailsData.data.expenseReport.map((expenseItem: any) => ({
-          upIncome: { "Counter Name": "-", Taka: "-" },
-          downIncome: { "Counter Name": "-", Taka: "-" },
-          expense: {
-            "Expense Name": expenseItem.expenseCategory,
-            Taka: expenseItem.amount,
-          },
-        })),
-      ]
-    : [];
   if (coachDetailsLoading) {
     return <TableSkeleton columns={10} />;
   }
@@ -291,77 +226,100 @@ const SupervisorReport: React.FC = () => {
         </Button>
       </div>
 
-      <ReportTable
-        mainHeaders={["upIncome", "downIncome", "expense"]}
-        subHeaders={[
-          ["Counter Name", "Taka"],
-          ["Counter Name", "Taka"],
-          ["Expense Name", "Taka"],
-        ]}
-        data={reportData}
-        bordered
-      />
+      <div className="flex">
+        {/* Up Way Income Table */}
+        <ReportTable
+          mainHeaders={["Up Income"]}
+          subHeaders={[["Counter Name", "Taka"]]}
+          data={upWayCollectionReport.map((item) => ({
+            "Up Income": {
+              "Counter Name": item.counterName,
+              Taka: item.amount,
+            },
+          }))}
+          maxRows={maxRows}
+        />
 
-      <div className=" w-7/12 flex justify-end items-end">
-        <div className="w-full pt-10  ">
+        {/* Down Way Income Table */}
+        <ReportTable
+          mainHeaders={["Down Income"]}
+          subHeaders={[["Counter Name", "Taka"]]}
+          data={downWayCollectionReport.map((item) => ({
+            "Down Income": {
+              "Counter Name": item.counterName,
+              Taka: item.amount,
+            },
+          }))}
+          maxRows={maxRows}
+        />
+
+        {/* Expense Report Table */}
+        <ReportTable
+          mainHeaders={["Expense"]}
+          subHeaders={[["Expense Name", "Taka"]]}
+          data={expenseReport.map((item) => ({
+            Expense: {
+              "Expense Name": item.expenseCategory,
+              Taka: item.amount,
+            },
+          }))}
+          maxRows={maxRows}
+        />
+      </div>
+
+      <div className="w-7/12 flex justify-end items-end">
+        <div className="w-full pt-10">
           <PageTransition className="border-2 rounded-md border-primary/50 bg-primary/5 backdrop-blur-[2px] p-4 duration-300">
             <table className="w-full border-collapse border-primary/50 bg-primary/5 backdrop-blur-[2px] text-left text-sm">
               <thead>
                 <tr>
-                  <th className="border-primary/50 bg-primary/5 backdrop-blur-[2px] px-4 py-2">
-                    Description
-                  </th>
-                  <th className="border-primary/50 bg-primary/5 backdrop-blur-[2px] px-4 py-2">
-                    Amount
-                  </th>
+                  <th className="border-primary/50 px-4 py-2">Description</th>
+                  <th className="border-primary/50 px-4 py-2">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="border-primary/50  px-4 py-2">
+                  <td className="border-primary/50 px-4 py-2">
                     Up & Down Income Subtotal
                   </td>
-                  <td className="border-primary/50  px-4 py-2">
-                    {upDownTotal ? upDownTotal : 0}
-                  </td>{" "}
+                  <td className="border-primary/50 px-4 py-2">{upDownTotal}</td>
                 </tr>
                 <tr>
-                  <td className="border-primary/50  px-4 py-2">
+                  <td className="border-primary/50 px-4 py-2">
                     Today's Up Opening Balance
                   </td>
-                  <td className="border-primary/50  px-4 py-2">
+                  <td className="border-primary/50 px-4 py-2">
                     {coachDetailsData?.data?.totalUpOpeningBalance || 0.0}
-                  </td>{" "}
+                  </td>
                 </tr>
                 <tr>
-                  <td className="border-primary/50  px-4 py-2">
+                  <td className="border-primary/50 px-4 py-2">
                     Today's Down Opening Balance
                   </td>
-                  <td className="border-primary/50  px-4 py-2">
+                  <td className="border-primary/50 px-4 py-2">
                     {coachDetailsData?.data?.totalDownOpeningBalance || 0.0}
-                  </td>{" "}
+                  </td>
                 </tr>
                 <tr>
-                  <td className="border-primary/50  px-4 py-2">Expense</td>
-                  <td className="border-primary/50  px-4 py-2">
+                  <td className="border-primary/50 px-4 py-2">Expense</td>
+                  <td className="border-primary/50 px-4 py-2">
                     {coachDetailsData?.data?.totalExpense || 0.0}
-                  </td>{" "}
+                  </td>
                 </tr>
                 <tr>
-                  <td className="border-primary/50  px-4 py-2">Other Income</td>
-                  <td className="border-primary/50  px-4 py-2">
+                  <td className="border-primary/50 px-4 py-2">Other Income</td>
+                  <td className="border-primary/50 px-4 py-2">
                     {totalOtherIncome || 0}
-                  </td>{" "}
+                  </td>
                 </tr>
                 <tr>
-                  <td className="border-primary/50  px-4 py-2">Cash On Hand</td>
-                  <td className="border-primary/50  px-4 py-2">
-                    {chasOnHand || 0}
-                  </td>{" "}
+                  <td className="border-primary/50 px-4 py-2">Cash On Hand</td>
+                  <td className="border-primary/50 px-4 py-2">
+                    {cashOnHand || 0}
+                  </td>
                 </tr>
               </tbody>
             </table>
-
             {!alreadySubmitted && coachDetailsData && (
               <Button
                 className="px-10 py-3 bg-primary mt-5 rounded-sm"
