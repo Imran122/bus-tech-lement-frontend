@@ -155,6 +155,45 @@ const SupervisorReport: React.FC = () => {
     (coachDetailsData?.data?.totalDownOpeningBalance || 0) -
     (coachDetailsData?.data?.totalExpense || 0);
 
+  const handleSubmit = async () => {
+    const mainData = {
+      supervisorId: user?.id,
+      upWayCoachConfigId: coachDetailsData?.data?.upWayCoachConfigId,
+      downWayCoachConfigId: coachDetailsData?.data?.downWayCoachConfigId,
+      upWayDate: coachDetailsData?.data?.upDate,
+      downWayDate: coachDetailsData?.data?.downDate,
+      cashOnHand: cashOnHand,
+    };
+
+    try {
+      const result = await submitSupervisorExpenseReport(mainData).unwrap();
+
+      if (result.success) {
+        localStorage.setItem(
+          "submissionData",
+          JSON.stringify({
+            upWayCoachConfigId: coachDetailsData?.data?.upWayCoachConfigId,
+            downWayCoachConfigId: coachDetailsData?.data?.downWayCoachConfigId,
+            upWayDate: coachDetailsData?.data?.upDate,
+            downWayDate: coachDetailsData?.data?.downWayDate,
+            cashOnHand: cashOnHand,
+          })
+        );
+
+        toast({
+          title: "Success",
+          description: "Submission successful!",
+        });
+
+        setAlreadySubmitted(true); // Disable the submit button
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Submission failed. Please try again.",
+      });
+    }
+  };
   if (coachDetailsLoading) {
     return <TableSkeleton columns={10} />;
   }
@@ -231,7 +270,7 @@ const SupervisorReport: React.FC = () => {
         <ReportTable
           mainHeaders={["Up Income"]}
           subHeaders={[["Counter Name", "Taka"]]}
-          data={upWayCollectionReport.map((item) => ({
+          data={upWayCollectionReport.map((item: any) => ({
             "Up Income": {
               "Counter Name": item.counterName,
               Taka: item.amount,
@@ -244,7 +283,7 @@ const SupervisorReport: React.FC = () => {
         <ReportTable
           mainHeaders={["Down Income"]}
           subHeaders={[["Counter Name", "Taka"]]}
-          data={downWayCollectionReport.map((item) => ({
+          data={downWayCollectionReport.map((item: any) => ({
             "Down Income": {
               "Counter Name": item.counterName,
               Taka: item.amount,
@@ -257,7 +296,7 @@ const SupervisorReport: React.FC = () => {
         <ReportTable
           mainHeaders={["Expense"]}
           subHeaders={[["Expense Name", "Taka"]]}
-          data={expenseReport.map((item) => ({
+          data={expenseReport.map((item: any) => ({
             Expense: {
               "Expense Name": item.expenseCategory,
               Taka: item.amount,

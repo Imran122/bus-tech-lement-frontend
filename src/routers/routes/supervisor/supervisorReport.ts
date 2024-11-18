@@ -1,4 +1,5 @@
 import UserProfile from "@/pages/dashboard/contacts/user/UserProfile";
+import AcceptCochBySupervisorOrHelperDriver from "@/pages/dashboard/supervisor/AcceptCochBySupervisorOrHelperDriver";
 import CoachDetailsForSupervisor from "@/pages/dashboard/supervisor/CoachDetailsForSupervisor";
 import ExpenseCategoryList from "@/pages/dashboard/supervisor/expense/ExpenseCategoreyList";
 import SupervisorExpenseList from "@/pages/dashboard/supervisor/expense/SupervisorExpenseList";
@@ -41,5 +42,11 @@ export const supervisorReportDetails: IRouteProps[] = [
   {
     path: "supervisor-report",
     element: React.createElement(SupervisorReport),
+  },
+];
+export const acceptCoachLinks: IRouteProps[] = [
+  {
+    path: "coach-update",
+    element: React.createElement(AcceptCochBySupervisorOrHelperDriver),
   },
 ];

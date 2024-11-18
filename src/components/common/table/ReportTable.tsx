@@ -9,9 +9,9 @@ interface ReportTableProps {
 }
 
 const ReportTable: React.FC<ReportTableProps> = ({
-  mainHeaders,
-  subHeaders,
-  data,
+  mainHeaders = [],
+  subHeaders = [],
+  data = [],
   maxRows,
   bordered = true,
 }) => {
@@ -20,13 +20,13 @@ const ReportTable: React.FC<ReportTableProps> = ({
   // Calculate totals for each section
   const totals = mainHeaders.map((header) =>
     data.reduce((sum, row) => {
-      const value = parseFloat(row[header]?.Taka) || 0; // Safely parse numeric value
+      const value = parseFloat(row[header]?.Taka) || 0;
       return sum + value;
     }, 0)
   );
 
   return (
-    <div className="w-full overflow-x-auto rounded-lg border border-gray-300">
+    <div className={`w-full overflow-x-auto rounded-lg border ${bordered}`}>
       <table className="w-full table-auto border border-gray-300">
         <thead>
           <tr>
@@ -75,7 +75,7 @@ const ReportTable: React.FC<ReportTableProps> = ({
           {/* Fill with Empty Rows to Match maxRows */}
           {Array.from({ length: maxRows - data.length }).map((_, rowIndex) => (
             <tr key={`empty-row-${rowIndex}`}>
-              {mainHeaders.map((header, headerIndex) =>
+              {mainHeaders.map((_, headerIndex) =>
                 subHeaders[headerIndex].map((_, colIndex) => (
                   <td
                     key={`empty-cell-${headerIndex}-${colIndex}-${rowIndex}`}
@@ -90,19 +90,24 @@ const ReportTable: React.FC<ReportTableProps> = ({
 
           {/* Total Row */}
           <tr>
-            {mainHeaders.map((header, headerIndex) => (
-              <React.Fragment key={headerIndex}>
-                <td
-                  colSpan={subHeaders[headerIndex].length - 1}
-                  className="font-semibold text-center p-2 border border-gray-300"
-                >
-                  Total
-                </td>
-                <td className="font-semibold text-center p-2 border border-gray-300">
-                  {totals[headerIndex] || 0}
-                </td>
-              </React.Fragment>
-            ))}
+            {mainHeaders.map(
+              (
+                _,
+                headerIndex: number // Ensure headerIndex is a number
+              ) => (
+                <React.Fragment key={headerIndex}>
+                  <td
+                    colSpan={subHeaders[headerIndex]?.length - 1}
+                    className="font-semibold text-center p-2 border border-gray-300"
+                  >
+                    Total
+                  </td>
+                  <td className="font-semibold text-center p-2 border border-gray-300">
+                    {totals[headerIndex] || 0}
+                  </td>
+                </React.Fragment>
+              )
+            )}
           </tr>
         </tbody>
       </table>
