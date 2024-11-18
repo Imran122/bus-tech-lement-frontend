@@ -10,7 +10,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
-import { useGetSupervisorUpDownDetailsQuery } from "@/store/api/superviosr/supervisorExpenseApi";
+import {
+  useGetSupervisorUpDownDetailsQuery,
+  useSubmitSupervisorExpenseReportMutation,
+} from "@/store/api/superviosr/supervisorExpenseApi";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { skipToken } from "@reduxjs/toolkit/query/react";
 import { format } from "date-fns";
@@ -23,7 +26,6 @@ const SupervisorReport: React.FC = () => {
   const user = useSelector((state: any) => state.user);
   const { toast } = useToast();
 
-  //const { toastMessage } = useMessageGenerator();
   const [dateRange, setDateRange] = useState<{
     upDate: Date | null;
     downDate: Date | null;
@@ -36,15 +38,8 @@ const SupervisorReport: React.FC = () => {
     downCalendarOpen: false,
   });
 
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [fetchData, setFetchData] = useState(false);
-
-  const handleDateChange = (selectedDate: any, type: any) => {
-    setDateRange((prev: any) => ({
-      ...prev,
-      [type]: selectedDate,
-      [`${type}CalendarOpen`]: false,
-    }));
-  };
 
   const { data: coachDetailsData, isLoading: coachDetailsLoading } =
     useGetSupervisorUpDownDetailsQuery(
@@ -57,48 +52,142 @@ const SupervisorReport: React.FC = () => {
         : skipToken
     );
 
-  useEffect(() => {
-    if (dateRange.upDate && dateRange.downDate) {
+  const handleDateChange = (
+    selectedDate: Date | null,
+    type: "upDate" | "downDate"
+  ) => {
+    if (selectedDate) {
+      setDateRange((prev) => ({
+        ...prev,
+        [type]: selectedDate,
+        [`${type}CalendarOpen`]: false,
+      }));
+
+      if (type === "upDate") {
+        localStorage.setItem("upDate", format(selectedDate, "yyyy-MM-dd"));
+      } else if (type === "downDate") {
+        localStorage.setItem("downDate", format(selectedDate, "yyyy-MM-dd"));
+      }
+
       setFetchData(true);
     }
+  };
+
+  const resetDates = () => {
+    localStorage.removeItem("upDate");
+    localStorage.removeItem("downDate");
+    setDateRange({
+      upDate: null,
+      downDate: null,
+      upCalendarOpen: false,
+      downCalendarOpen: false,
+    });
+    setFetchData(false);
+    setAlreadySubmitted(false);
+    toast({
+      title: "Reset",
+      description: "Dates have been cleared from local storage.",
+    });
+  };
+
+  useEffect(() => {
+    const storedUpDate = localStorage.getItem("upDate");
+    const storedDownDate = localStorage.getItem("downDate");
+
+    if (storedUpDate && storedDownDate) {
+      setDateRange((prev) => ({
+        ...prev,
+        upDate: new Date(storedUpDate),
+        downDate: new Date(storedDownDate),
+      }));
+      setFetchData(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkAlreadySubmitted = () => {
+      const savedSubmissionData = JSON.parse(
+        localStorage.getItem("submissionData") || "{}"
+      );
+      if (
+        dateRange.upDate &&
+        dateRange.downDate &&
+        savedSubmissionData.upWayDate ===
+          format(dateRange.upDate, "yyyy-MM-dd") &&
+        savedSubmissionData.downWayDate ===
+          format(dateRange.downDate, "yyyy-MM-dd")
+      ) {
+        setAlreadySubmitted(true);
+      } else {
+        setAlreadySubmitted(false);
+      }
+    };
+
+    checkAlreadySubmitted();
   }, [dateRange.upDate, dateRange.downDate]);
-  // Clear local storage if selected dates match stored dates
-  const handleSubmit = () => {
-    const savedUpDate = localStorage.getItem("upDate");
-    const savedDownDate = localStorage.getItem("downDate");
+  const [submitSupervisorExpenseReport, { isLoading: submitReportLoading }] =
+    useSubmitSupervisorExpenseReportMutation();
 
-    const selectedUpDate = dateRange.upDate
-      ? format(dateRange.upDate, "yyyy-MM-dd")
-      : "";
-    const selectedDownDate = dateRange.downDate
-      ? format(dateRange.downDate, "yyyy-MM-dd")
-      : "";
+  //@ts-ignore
+  const upDownTotal =
+    coachDetailsData?.data?.totalDownIncome +
+    coachDetailsData?.data?.totalUpIncome;
 
-    // Check if the dates match before clearing local storage
-    if (savedUpDate === selectedUpDate && savedDownDate === selectedDownDate) {
-      localStorage.removeItem("upDate");
-      localStorage.removeItem("downDate");
+  //@ts-ignore
+  const totalOtherIncome =
+    coachDetailsData?.data?.othersIncomeDownWay +
+    coachDetailsData?.data?.othersIncomeUpWay;
 
-      toast({
-        title: "Success",
-        description:
-          "The dates were submitted, and local storage has been cleared.",
-      });
-    } else {
+  //@ts-ignore
+  const chasOnHand =
+    upDownTotal +
+    coachDetailsData?.data?.totalDownOpeningBalance +
+    coachDetailsData?.data?.totalUpOpeningBalance +
+    coachDetailsData?.data?.othersIncomeDownWay +
+    coachDetailsData?.data?.othersIncomeUpWay -
+    coachDetailsData?.data?.totalExpense;
+
+  const handleSubmit = async () => {
+    const mainData = {
+      supervisorId: user?.id,
+      upWayCoachConfigId: coachDetailsData?.data?.upWayCoachConfigId,
+      downWayCoachConfigId: coachDetailsData?.data?.downWayCoachConfigId,
+      upWayDate: coachDetailsData?.data?.upDate,
+      downWayDate: coachDetailsData?.data?.downDate, // Include downWayDate
+      cashOnHand: chasOnHand,
+    };
+
+    try {
+      const result = await submitSupervisorExpenseReport(mainData).unwrap();
+
+      if (result.success) {
+        // Store upWayDate and downWayDate in local storage
+        localStorage.setItem(
+          "submissionData",
+          JSON.stringify({
+            upWayCoachConfigId: coachDetailsData?.data?.upWayCoachConfigId,
+            downWayCoachConfigId: coachDetailsData?.data?.downWayCoachConfigId,
+            upWayDate: coachDetailsData?.data?.upDate,
+            downWayDate: coachDetailsData?.data?.downDate, // Store downWayDate
+            cashOnHand: chasOnHand,
+          })
+        );
+
+        toast({
+          title: "Success",
+          description: "Submission successful!",
+        });
+
+        setAlreadySubmitted(true); // Disable the submit button
+      }
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Selected dates do not match the stored dates.",
+        description: "Submission failed. Please try again.",
       });
     }
   };
-  const mainHeaders = ["upIncome", "downIncome", "expense"];
-  const subHeaders = [
-    ["Counter Name", "Taka"],
-    ["Counter Name", "Taka"],
-    ["Expense Name", "Taka"],
-  ];
 
-  // Flatten data to create rows for each item in upIncome, downIncome, and expense
   const reportData = coachDetailsData
     ? [
         ...coachDetailsData.data.upWayCollectionReport.map((upItem: any) => ({
@@ -130,32 +219,17 @@ const SupervisorReport: React.FC = () => {
       ]
     : [];
 
-  //@ts-ignore
-  const upDownTotal =
-    coachDetailsData?.data?.totalDownIncome +
-    coachDetailsData?.data?.totalUpIncome;
-  //@ts-ignore
-  const totalOtherIncome =
-    coachDetailsData?.data?.othersIncomeDownWay +
-    coachDetailsData?.data?.othersIncomeUpWay;
-  //@ts-ignore
-  const chasOnHand =
-    upDownTotal +
-    coachDetailsData?.data?.totalDownOpeningBalance +
-    coachDetailsData?.data?.totalUpOpeningBalance +
-    coachDetailsData?.data?.othersIncomeDownWay +
-    coachDetailsData?.data?.othersIncomeUpWay -
-    coachDetailsData?.data?.totalExpense;
-
   if (coachDetailsLoading) {
     return <TableSkeleton columns={10} />;
   }
 
   return (
     <PageWrapper>
-      <h2 className="font-bold text-2xl py-5">
-        {translate("কোচ তথ্য উপাত্ত", "Coach Information Data")}
-      </h2>
+      <div className="flex justify-between items-center py-5">
+        <h2 className="font-bold text-2xl">
+          {translate("কোচ তথ্য উপাত্ত", "Coach Information Data")}
+        </h2>
+      </div>
 
       <div className="flex space-x-4 mb-6">
         <Popover
@@ -181,8 +255,6 @@ const SupervisorReport: React.FC = () => {
                   handleDateChange(selectedDate, "upDate");
                 }
               }}
-              fromYear={1960}
-              toYear={new Date().getFullYear()}
             />
           </PopoverContent>
         </Popover>
@@ -210,19 +282,25 @@ const SupervisorReport: React.FC = () => {
                   handleDateChange(selectedDate, "downDate");
                 }
               }}
-              fromYear={1960}
-              toYear={new Date().getFullYear()}
             />
           </PopoverContent>
         </Popover>
+        <Button variant="primary" onClick={resetDates}>
+          Reset
+        </Button>
       </div>
 
       <ReportTable
-        mainHeaders={mainHeaders}
-        subHeaders={subHeaders}
+        mainHeaders={["upIncome", "downIncome", "expense"]}
+        subHeaders={[
+          ["Counter Name", "Taka"],
+          ["Counter Name", "Taka"],
+          ["Expense Name", "Taka"],
+        ]}
         data={reportData}
         bordered
       />
+
       <div className=" w-7/12 flex justify-end items-end">
         <div className="w-full pt-10  ">
           <PageTransition className="border-2 rounded-md border-primary/50 bg-primary/5 backdrop-blur-[2px] p-4 duration-300">
@@ -245,62 +323,53 @@ const SupervisorReport: React.FC = () => {
                   <td className="border-primary/50  px-4 py-2">
                     {upDownTotal ? upDownTotal : 0}
                   </td>{" "}
-                  {/* Replace with dynamic subtotal */}
                 </tr>
                 <tr>
                   <td className="border-primary/50  px-4 py-2">
                     Today's Up Opening Balance
                   </td>
                   <td className="border-primary/50  px-4 py-2">
-                    {coachDetailsData?.data?.totalUpOpeningBalance
-                      ? coachDetailsData?.data?.totalUpOpeningBalance
-                      : 0.0}
+                    {coachDetailsData?.data?.totalUpOpeningBalance || 0.0}
                   </td>{" "}
-                  {/* Replace with dynamic subtotal */}
                 </tr>
                 <tr>
                   <td className="border-primary/50  px-4 py-2">
                     Today's Down Opening Balance
                   </td>
                   <td className="border-primary/50  px-4 py-2">
-                    {coachDetailsData?.data?.totalDownOpeningBalance
-                      ? coachDetailsData?.data?.totalDownOpeningBalance
-                      : 0.0}
+                    {coachDetailsData?.data?.totalDownOpeningBalance || 0.0}
                   </td>{" "}
-                  {/* Replace with dynamic subtotal */}
                 </tr>
-
                 <tr>
                   <td className="border-primary/50  px-4 py-2">Expense</td>
                   <td className="border-primary/50  px-4 py-2">
-                    {coachDetailsData?.data?.totalExpense
-                      ? coachDetailsData?.data?.totalExpense
-                      : 0.0}
+                    {coachDetailsData?.data?.totalExpense || 0.0}
                   </td>{" "}
-                  {/* Replace with dynamic total */}
                 </tr>
                 <tr>
                   <td className="border-primary/50  px-4 py-2">Other Income</td>
                   <td className="border-primary/50  px-4 py-2">
-                    {totalOtherIncome ? totalOtherIncome : 0}
+                    {totalOtherIncome || 0}
                   </td>{" "}
-                  {/* Replace with dynamic total */}
                 </tr>
                 <tr>
                   <td className="border-primary/50  px-4 py-2">Cash On Hand</td>
                   <td className="border-primary/50  px-4 py-2">
-                    {chasOnHand ? chasOnHand : 0}
+                    {chasOnHand || 0}
                   </td>{" "}
-                  {/* Replace with dynamic total */}
                 </tr>
               </tbody>
             </table>
-            <Button
-              className="px-10 py-3 bg-primary mt-5 rounded-sm"
-              onClick={handleSubmit}
-            >
-              Submit
-            </Button>
+
+            {!alreadySubmitted && (
+              <Button
+                className="px-10 py-3 bg-primary mt-5 rounded-sm"
+                onClick={handleSubmit}
+                disabled={submitReportLoading}
+              >
+                {submitReportLoading ? "Submitting..." : "Submit"}
+              </Button>
+            )}
           </PageTransition>
         </div>
       </div>

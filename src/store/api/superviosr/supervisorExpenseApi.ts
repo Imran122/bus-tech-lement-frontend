@@ -43,6 +43,13 @@ export const supervisorExpenseApi = apiSlice.injectEndpoints({
       query: ({ upDate, downDate, supervisorId }) =>
         `/user/supervisor-dashboard?upDate=${upDate}&downDate=${downDate}&supervisorId=${supervisorId}`,
     }),
+    submitSupervisorExpenseReport: builder.mutation({
+      query: (data) => ({
+        url: "/user/create-supervisor-report-submit",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -55,4 +62,5 @@ export const {
   useGetSupervisorDashboardCoachInfoQuery,
   useGetSupervisorCoachDetailsQuery,
   useGetSupervisorUpDownDetailsQuery,
+  useSubmitSupervisorExpenseReportMutation,
 } = supervisorExpenseApi;
