@@ -175,8 +175,12 @@ const SupervisorReport: React.FC = () => {
           <PopoverContent align="end">
             <Calendar
               mode="single"
-              selected={dateRange.upDate || new Date()}
-              onSelect={(date: any) => handleDateChange(date, "upDate")}
+              selected={dateRange.upDate || undefined}
+              onSelect={(selectedDate: Date | undefined) => {
+                if (selectedDate) {
+                  handleDateChange(selectedDate, "upDate");
+                }
+              }}
               fromYear={1960}
               toYear={new Date().getFullYear()}
             />
@@ -200,8 +204,12 @@ const SupervisorReport: React.FC = () => {
           <PopoverContent align="end">
             <Calendar
               mode="single"
-              selected={dateRange.downDate || new Date()}
-              onSelect={(date: any) => handleDateChange(date, "downDate")}
+              selected={dateRange.downDate || undefined}
+              onSelect={(selectedDate: Date | undefined) => {
+                if (selectedDate) {
+                  handleDateChange(selectedDate, "downDate");
+                }
+              }}
               fromYear={1960}
               toYear={new Date().getFullYear()}
             />

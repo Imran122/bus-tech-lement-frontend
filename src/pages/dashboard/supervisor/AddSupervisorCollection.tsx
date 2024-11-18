@@ -9,6 +9,7 @@ import {
   AddUpdateCollectionDataProps,
   addUpdateCollectionSchema,
 } from "@/schemas/addUpdateCollectionSchema";
+import { useUploadPhotoMutation } from "@/store/api/fileApi";
 import { useAddCollectionOfSupervisorMutation } from "@/store/api/superviosr/supervisorCollectionApi";
 import { playSound } from "@/utils/helpers/playSound";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
@@ -34,6 +35,8 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
   const { translate } = useCustomTranslator();
   const { toastMessage } = useMessageGenerator();
   const user = useSelector((state: any) => state.user);
+  const [uploadPhoto, { isLoading: uploadPhotoLoading }] =
+    useUploadPhotoMutation();
 
   const [addCollectionOfSupervisor, { isLoading, error }] =
     useAddCollectionOfSupervisorMutation();
@@ -88,31 +91,42 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
     //setValue("file", counterInfo.totalAmountWithoutCommission); // Sync with form
   }, [collectionType, setValue, counterId, user]);
   const onSubmit = async (data: AddUpdateCollectionDataProps) => {
-    const result = await addCollectionOfSupervisor({
-      ...data,
-      supervisorId: user.id,
-    });
-    if (result.data?.success) {
-      const localData = localStorage.getItem("collection");
-      const findCollection = localData ? JSON.parse(localData) : [];
-      const uniqueId = `${coachDetailsData?.data?.coachInfo?.id}-${counterId}`;
-      if (!findCollection?.length) {
-        const collection = [uniqueId];
-        localStorage.setItem("collection", JSON.stringify(collection));
-      } else {
-        findCollection.push(uniqueId);
-        localStorage.setItem("collection", JSON.stringify(findCollection));
-      }
+    if (!file) {
       toast({
-        title: translate(
-          "সংগ্রহ যোগ করা হয়েছে",
-          "Collection Added Successfully"
-        ),
-        description: toastMessage("add", translate("সংগ্রহ", "Collection")),
+        title: "ফাইল নির্বাচন করুন",
+        description: "Please select a file.",
       });
-      playSound("add");
-      //@ts-ignore
-      setCollectionState();
+      return;
+    }
+    const uploadResult = await uploadPhoto(file).unwrap();
+    if (uploadResult?.data) {
+      const result = await addCollectionOfSupervisor({
+        ...data,
+        file: uploadResult.data,
+        supervisorId: user.id,
+      });
+      if (result.data?.success) {
+        const localData = localStorage.getItem("collection");
+        const findCollection = localData ? JSON.parse(localData) : [];
+        const uniqueId = `${coachDetailsData?.data?.coachInfo?.id}-${counterId}`;
+        if (!findCollection?.length) {
+          const collection = [uniqueId];
+          localStorage.setItem("collection", JSON.stringify(collection));
+        } else {
+          findCollection.push(uniqueId);
+          localStorage.setItem("collection", JSON.stringify(findCollection));
+        }
+        toast({
+          title: translate(
+            "সংগ্রহ যোগ করা হয়েছে",
+            "Collection Added Successfully"
+          ),
+          description: toastMessage("add", translate("সংগ্রহ", "Collection")),
+        });
+        playSound("add");
+        //@ts-ignore
+        setCollectionState();
+      }
     }
   };
 
@@ -162,7 +176,7 @@ const AddSupervisorCollection: FC<IAddSupervisorCollectionProps> = ({
         </div>
 
         <Submit
-          loading={isLoading}
+          loading={isLoading || uploadPhotoLoading}
           errors={error}
           errorTitle="Add Collection failed"
           submitTitle={translate("সংগ্রহ যোগ করুন", "Add Collection")}

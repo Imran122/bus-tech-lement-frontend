@@ -52,7 +52,7 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
     if (bookedByCounter) {
       if (!user.id) {
         return "bg-red-700 text-white";
-      } else if (bookedByCounter.counter.id === user.id) {
+      } else if (bookedByCounter.counter.id === user.counterId) {
         return "bg-[#A3D1D5] text-white"; // Green for seats booked by user's counter
       }
       // Otherwise, show it as orange
@@ -99,7 +99,7 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
       (order: any) => order.seat === seat.seat
     );
     const isBookedByOtherCounter =
-      bookedByCounter && bookedByCounter.counter.id !== user.id;
+      bookedByCounter && bookedByCounter.counter.id !== user.counterId;
 
     // Determine if the seat should be disabled
     const shouldDisableSeat = !user.role
@@ -108,7 +108,7 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
 
     // Tooltip message if the seat is booked by another counter
     const tooltipText = isBookedByOtherCounter
-      ? `Name: ${bookedByCounter?.counter?.userName}, Address:${bookedByCounter?.counter?.counter?.address}, Phone:${bookedByCounter?.counter?.counter?.phone}`
+      ? `Name: ${bookedByCounter?.user?.userName}, Address:${bookedByCounter?.counter?.address}, Phone:${bookedByCounter?.counter?.mobile}`
       : "";
 
     return (

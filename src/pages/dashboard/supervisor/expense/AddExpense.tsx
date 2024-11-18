@@ -4,14 +4,8 @@ import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -35,7 +29,7 @@ import { playSound } from "@/utils/helpers/playSound";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon, UploadIcon } from "lucide-react";
+import { UploadIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -43,7 +37,11 @@ import { useSelector } from "react-redux";
 interface IAddExpenseProps {
   setOpen: (open: boolean) => void;
 }
-
+interface CoachConfig {
+  id: number;
+  coachNo: string;
+  departureDate: string;
+}
 const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
   const { toast } = useToast();
   const { translate } = useCustomTranslator();
@@ -60,10 +58,12 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
     useGetFuelCompanyAllListQuery({});
   //@ts-ignore
   const user = useSelector((state: any) => state.user);
-
-  const [date, setDate] = useState<Date | null>(null);
+  //const [departureCoachDate, setDepartureCoachDate] = useState(null);
+  //const [date, setDate] = useState<Date | null>(null);
   const [file, setFile] = useState<File | null>(null);
-
+  const [selectedCoach, setSelectedCoach] = useState<CoachConfig | null>(null);
+  const { data: coachConfigs, isLoading: coachConfigLoading } =
+    useGetTodaysCoachConfigListQuery("supervisor");
   const {
     register,
     handleSubmit,
@@ -75,14 +75,20 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
   });
   const expenseType = watch("expenseType");
   const amount = watch("amount");
+  const fuelWeight = watch("fuelWeight");
+  const fuelPrice = watch("fuelPrice");
+  //const date = watch("date");
+  //const formValues = watch();
   useEffect(() => {
-    if (expenseType !== "Fuel") {
-      setValue("paidAmount", amount ? amount : 0);
+    if (expenseType === "Fuel") {
+      const weight = parseFloat(fuelWeight?.toString() || "0"); // Handle undefined
+      const price = parseFloat(fuelPrice?.toString() || "0"); // Handle undefined
+      const totalCost = weight * price; // Calculate total cost
+      setValue("amount", totalCost || 0); // Ensure valid amount
     } else {
-      //@ts-ignore
-      setValue("paidAmount", "");
+      setValue("paidAmount", amount || 0); // Ensure paidAmount is a number
     }
-  }, [expenseType, setValue, amount]);
+  }, [expenseType, amount, fuelWeight, fuelPrice, setValue]); // Include fuelWeight and fuelPrice
   // Sync routeDirection with form value
   const handleRouteDirectionChange = (value: "Up_Way" | "Down_Way") => {
     setValue("routeDirection", value); // Sync with form
@@ -93,9 +99,6 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
   };
 
   // Sync date with form value
-  useEffect(() => {
-    if (date) setValue("date", format(date, "yyyy-MM-dd")); // Sync date
-  }, [date, setValue]);
 
   // Sync file with form value
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,9 +107,22 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
       setValue("file", e.target.files[0].name); // Sync with form
     }
   };
+  const handleCoachChange = (coachId: number) => {
+    const coach = coachConfigs?.data.find(
+      (config: CoachConfig) => config.id === coachId
+    );
+    if (coach) {
+      setSelectedCoach(coach);
+    }
+  };
 
-  const { data: coachConfigs, isLoading: coachConfigLoading } =
-    useGetTodaysCoachConfigListQuery({});
+  useEffect(() => {
+    if (selectedCoach) {
+      setValue("date", format(selectedCoach.departureDate, "yyyy-MM-dd"));
+      //setDate(new Date(selectedCoach.departureDate));
+      setValue("coachConfigId", selectedCoach.id); // Sync `coachConfigId` with form
+    }
+  }, [selectedCoach, setValue]);
 
   const onSubmit = async (data: SupervisorExpenseData) => {
     if (!file) {
@@ -125,7 +141,9 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
       if (uploadResult?.data) {
         const expenseData = {
           ...data,
-          date: new Date(data.date),
+          date: selectedCoach?.departureDate
+            ? format(selectedCoach.departureDate, "yyyy-MM-dd")
+            : null,
           dueAmount: data.amount - data.paidAmount,
           supervisorId: user?.id,
           file: uploadResult.data, // Set uploaded file URL
@@ -149,7 +167,6 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
       });
     }
   };
-
   if (coachConfigLoading || loadingFuelCOmpany) {
     return <FormSkeleton columns={3} inputs={17} />;
   }
@@ -172,9 +189,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
               label={translate("কোচ কনফিগ", "Coach Config")}
             >
               <Select
-                onValueChange={(value) =>
-                  setValue("coachConfigId", parseInt(value))
-                }
+                onValueChange={(value) => handleCoachChange(parseInt(value))}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue
@@ -256,17 +271,29 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
                 </InputWrapper>
 
                 {/*fule weight*/}
-                <InputWrapper label={translate("জ্বালানী ওজন", "Fuel Weight")}>
+                <InputWrapper
+                  error={errors.fuelWeight?.message}
+                  label={translate("জ্বালানী ওজন", "Fuel Weight")}
+                >
                   <Input
                     {...register("fuelWeight", { valueAsNumber: true })}
                     placeholder={translate("জ্বালানী ওজন", "Fuel Weight")}
                   />
                 </InputWrapper>
                 {/*fule fuelPrice*/}
-                <InputWrapper label={translate("জ্বালানী মূল্য", "Fuel Price")}>
+                <InputWrapper
+                  error={errors.fuelPrice?.message}
+                  label={translate(
+                    "প্রতি ইউনিট জ্বালানীর দাম",
+                    "Fuel Price Per Unit"
+                  )}
+                >
                   <Input
                     {...register("fuelPrice", { valueAsNumber: true })}
-                    placeholder={translate("জ্বালানী মূল্য", "Fuel Price")}
+                    placeholder={translate(
+                      "প্রতি ইউনিট জ্বালানী মূল্য",
+                      "Fuel Price Per Unit"
+                    )}
                   />
                 </InputWrapper>
               </>
@@ -274,6 +301,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
 
             {/* Expense Category */}
             <InputWrapper
+              error={errors.expenseCategoryId?.message}
               label={translate(
                 "খরচ বিভাগ নির্বাচন করুন",
                 "Select Expense Category"
@@ -311,6 +339,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
 
             {/* Route Direction */}
             <InputWrapper
+              error={errors.routeDirection?.message}
               label={translate("রুট নির্বাচন করুন", "Select Route")}
             >
               <Select onValueChange={handleRouteDirectionChange}>
@@ -327,14 +356,21 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
             </InputWrapper>
 
             {/* Amount */}
-            <InputWrapper label={translate("পরিমাণ", "Amount")}>
+            <InputWrapper
+              error={errors.amount?.message}
+              label={translate("পরিমাণ", "Amount")}
+            >
               <Input
                 {...register("amount", { valueAsNumber: true })}
                 placeholder={translate("পরিমাণ", "Amount")}
+                disabled={expenseType === "Fuel"}
               />
             </InputWrapper>
             {/* Paid Amount */}
-            <InputWrapper label={translate("পরিশোধিত পরিমাণ", "Paid Amount")}>
+            <InputWrapper
+              error={errors.paidAmount?.message}
+              label={translate("পরিশোধিত পরিমাণ", "Paid Amount")}
+            >
               <Input
                 {...register("paidAmount", { valueAsNumber: true })}
                 placeholder={translate("পরিশোধিত পরিমাণ", "Paid Amount")}
@@ -349,7 +385,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
               />
             </InputWrapper>
 */}
-            {/* Date Picker */}
+            {/* Date Picker 
             <InputWrapper
               label={translate("তারিখ নির্বাচন করুন", "Select Date")}
             >
@@ -357,24 +393,22 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-full">
                     <CalendarIcon className="mr-2" />
-                    {date
-                      ? format(date, "PPP")
-                      : translate("তারিখ নির্বাচন করুন", "Select Date")}
+                    {date ? format(date, "PPP") : "Select Date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent>
+                <PopoverContent align="end">
                   <Calendar
-                    //@ts-ignore
                     mode="single"
-                    //@ts-ignore
                     selected={date}
-                    //@ts-ignore
-                    onSelect={setDate}
+                    onSelect={() => {}}
+                    fromYear={1960}
+                    toYear={new Date().getFullYear()}
+                    disabled={true}
                   />
                 </PopoverContent>
               </Popover>
             </InputWrapper>
-
+*/}
             {/* File Upload */}
             <InputWrapper
               label={translate("ফাইল নির্বাচন করুন", "Select File")}

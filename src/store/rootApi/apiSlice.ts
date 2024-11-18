@@ -49,6 +49,8 @@ export const apiSlice = createApi({
     "helper",
     "reserve",
     "slider",
-    "cms"
+    "cms",
+    "accounts-expense",
+    "accounts-expense-subcategory",
   ],
 });

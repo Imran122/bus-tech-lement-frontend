@@ -35,8 +35,8 @@ const supervisorCollectionApi = apiSlice.injectEndpoints({
       providesTags: ["supervisor"],
     }),
     getTodaysCoachConfigList: builder.query({
-      query: () => ({
-        url: `/coach-config/get-coach-list-today`,
+      query: (role = "") => ({
+        url: `/coach-config/get-coach-list-today?supervisor=${role}`,
       }),
       providesTags: ["supervisor"],
     }),

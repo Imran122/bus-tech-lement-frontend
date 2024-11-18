@@ -3,14 +3,7 @@ import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
 import FormSkeleton from "@/components/common/skeleton/FormSkeleton";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -33,11 +26,15 @@ import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 
+interface CoachConfig {
+  id: number;
+  coachNo: string;
+  departureDate: string;
+}
 interface IAddSupervisorCollectionProps {
   setCollectionState: (state: (prevState: any) => any) => void;
 }
@@ -49,12 +46,13 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
   const { translate } = useCustomTranslator();
   const { toastMessage } = useMessageGenerator();
   const user = useSelector((state: any) => state.user);
+  const [selectedCoach, setSelectedCoach] = useState<CoachConfig | null>(null);
 
   const [addCollectionOfSupervisor, { isLoading, error }] =
     useAddCollectionOfSupervisorMutation();
 
   const { data: coachConfigs, isLoading: coachConfigLoading } =
-    useGetTodaysCoachConfigListQuery({});
+    useGetTodaysCoachConfigListQuery("supervisor");
   const { data: counters, isLoading: counterLoading } = useGetCountersQuery({
     size: 1000,
     page: 1,
@@ -71,7 +69,24 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
   });
 
   const collectionType = watch("collectionType");
-
+  //const coachConfigId = watch("coachConfigId");
+  //const formValues = watch(["coachConfigId", "counterId", "collectionType"]);
+  const handleCoachChange = (coachId: number) => {
+    const coach = coachConfigs?.data.find(
+      (config: CoachConfig) => config.id === coachId
+    );
+    if (coach) {
+      setSelectedCoach(coach);
+    }
+  };
+  useEffect(() => {
+    if (selectedCoach) {
+      //@ts-ignore
+      setValue("date", format(selectedCoach.departureDate, "yyyy-MM-dd"));
+      //setDate(new Date(selectedCoach.departureDate));
+      setValue("coachConfigId", selectedCoach.id); // Sync `coachConfigId` with form
+    }
+  }, [selectedCoach, setValue]);
   // Effect to handle changes in collectionType
   useEffect(() => {
     if (collectionType === "OpeningBalance") {
@@ -79,19 +94,13 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
     }
   }, [collectionType, setValue]);
 
-  const onDateSelect = (date: Date | null) => {
-    if (date) {
-      setValue("date", date.toISOString().split("T")[0]); // Format to YYYY-MM-DD
-    } else {
-      setValue("date", "");
-    }
-  };
-
   const onSubmit = async (data: AddUpdateCollectionDataProps) => {
     const cleanedData = {
       ...data,
+      date: selectedCoach?.departureDate
+        ? format(selectedCoach.departureDate, "yyyy-MM-dd")
+        : null,
       supervisorId: user.id,
-      date: new Date(data.date),
     };
 
     const result = await addCollectionOfSupervisor(cleanedData);
@@ -99,7 +108,7 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
       toast({
         title: translate(
           "সংগ্রহ যোগ করা হয়েছে",
-          "Collection Added Successfully"
+          "Extra Collection Added Successfully"
         ),
         description: toastMessage("add", translate("সংগ্রহ", "Collection")),
       });
@@ -118,7 +127,7 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
 
   return (
     <FormWrapper
-      heading={translate("সংগ্রহ যোগ করুন", "Add Collection")}
+      heading={translate("সংগ্রহ যোগ করুন", "Add Extra Collection")}
       subHeading={translate(
         "নতুন সংগ্রহ যোগ করতে নিচের তথ্য পূরণ করুন।",
         "Fill in the details below to add a new collection."
@@ -133,9 +142,7 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
             label={translate("কোচ কনফিগ", "Coach Config")}
           >
             <Select
-              onValueChange={(value) =>
-                setValue("coachConfigId", parseInt(value))
-              }
+              onValueChange={(value) => handleCoachChange(parseInt(value))}
             >
               <SelectTrigger className="w-full">
                 <SelectValue
@@ -289,7 +296,7 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
             />
           </InputWrapper>
 
-          {/* Date */}
+          {/* Date 
           <InputWrapper
             labelFor="date"
             error={errors.date?.message}
@@ -316,6 +323,7 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
               </PopoverContent>
             </Popover>
           </InputWrapper>
+          */}
         </div>
 
         <Submit
