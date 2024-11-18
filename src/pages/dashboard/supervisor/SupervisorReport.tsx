@@ -76,14 +76,16 @@ const SupervisorReport: React.FC = () => {
   const resetDates = () => {
     localStorage.removeItem("upDate");
     localStorage.removeItem("downDate");
+
     setDateRange({
       upDate: null,
       downDate: null,
       upCalendarOpen: false,
       downCalendarOpen: false,
     });
-    setFetchData(false);
-    setAlreadySubmitted(false);
+
+    setFetchData(false); // Stop fetching data
+    setAlreadySubmitted(false); // Ensure the submit button is hidden
     toast({
       title: "Reset",
       description: "Dates have been cleared from local storage.",
@@ -218,7 +220,6 @@ const SupervisorReport: React.FC = () => {
         })),
       ]
     : [];
-
   if (coachDetailsLoading) {
     return <TableSkeleton columns={10} />;
   }
@@ -361,7 +362,7 @@ const SupervisorReport: React.FC = () => {
               </tbody>
             </table>
 
-            {!alreadySubmitted && (
+            {!alreadySubmitted && coachDetailsData && (
               <Button
                 className="px-10 py-3 bg-primary mt-5 rounded-sm"
                 onClick={handleSubmit}
