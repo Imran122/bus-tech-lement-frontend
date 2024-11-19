@@ -15,6 +15,7 @@ import {
   INationalityOptionsProps,
   nationalitiesOptions,
 } from "@/utils/constants/common/nationalitiesOptions";
+import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import { addBookingSeatForm } from "@/utils/constants/form/addBookingForm";
 import { dynamicSeatAllocation } from "@/utils/helpers/dynamicSeatAllocation";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
@@ -51,6 +52,7 @@ import { Button } from "@/components/ui/button";
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { toast } from "sonner";
+import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
 
 interface IBookingFormProps {
   bookingCoach: any;
@@ -76,7 +78,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       redirectConfirm: false,
     });
 
-  const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
+  const [addBooking, {data:bookingInfo, isLoading: addBookingLoading, error: addBookingError }] =
     useAddBookingMutation({}) as any;
 
   const [
@@ -173,6 +175,18 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       }
     }
   };
+
+  const [updateLocal, setUpdateLocal] = useState<boolean>(false);
+  
+  // UPDATE THE COMPONENT VIA REFERENCE
+  useEffect(() => {
+    if (bookingInfo && updateLocal) {
+      shareWithLocal("set", `${appConfiguration.appName}`, {
+        bookingInfo,
+      });
+      setUpdateLocal(false);
+    }
+  }, [bookingInfo, updateLocal]);
 
   useEffect(() => {
     //@ts-ignore
@@ -310,6 +324,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       const booking = await addBooking(finalData);
 
       if (booking.data?.success) {
+        setUpdateLocal(true);
         const payment = await addBookingPayment(booking?.data?.data?.id);
         if (payment.data?.success) {
           playSound("success");

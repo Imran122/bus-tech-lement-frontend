@@ -4,34 +4,33 @@ import { Paragraph } from "@/components/common/typography/Paragraph";
 import QRCode from "react-qr-code";
 import bus from "../../../assets/buspng.png";
 
-interface ITickitPrintProps {
+interface ITickitPrintSingleProps {
   tickitData: any;
 }
 
-const TickitPrint = React.forwardRef<HTMLDivElement, ITickitPrintProps>(
+const TickitPrintSingle = React.forwardRef<HTMLDivElement, ITickitPrintSingleProps>(
   ({ tickitData: tickitInfo }, ref) => {
-    console.log(tickitInfo, ref)
     // Generate the QR code data
     const qrData = JSON.stringify({
-      phone: tickitInfo?.data?.phone || "N/A",
-      ticketNo: tickitInfo?.data?.ticketNo || "404NOTFOUND",
+      phone: tickitInfo?.phone || "N/A",
+      ticketNo: tickitInfo?.ticketNo || "404NOTFOUND",
       seats:
-        tickitInfo?.data?.orderSeat
+        tickitInfo?.orderSeat
           ?.map((seat: any) => seat?.seat)
           .join(", ") || "N/A",
-      customerName: tickitInfo?.data?.customerName,
-      address: tickitInfo?.data?.address,
-      gender: tickitInfo?.data?.gender,
-      age: tickitInfo?.data?.age,
-      boardingPoint: tickitInfo?.data?.boardingPoint,
-      droppingPoint: tickitInfo?.data?.droppingPoint,
+      customerName: tickitInfo?.customerName,
+      address: tickitInfo?.address,
+      gender: tickitInfo?.gender,
+      age: tickitInfo?.age,
+      boardingPoint: tickitInfo?.boardingPoint,
+      droppingPoint: tickitInfo?.droppingPoint,
       departureDate:
-        tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.departureDate,
-      createdAt: tickitInfo?.data?.createdAt,
-      schedule: tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.schedule,
-      amount: tickitInfo?.data?.amount,
-      paymentAmount: tickitInfo?.data?.paymentAmount,
-      coachNo: tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.coachNo,
+        tickitInfo?.orderSeat?.[0]?.coachConfig?.departureDate,
+      createdAt: tickitInfo?.createdAt,
+      schedule: tickitInfo?.orderSeat?.[0]?.coachConfig?.schedule,
+      amount: tickitInfo?.amount,
+      paymentAmount: tickitInfo?.paymentAmount,
+      coachNo: tickitInfo?.orderSeat?.[0]?.coachConfig?.coachNo,
     });
 
     return (
@@ -77,39 +76,39 @@ const TickitPrint = React.forwardRef<HTMLDivElement, ITickitPrintProps>(
 
           <div className="relative z-10 left-7 top-0">
             <Paragraph size="sm">
-              Name: {tickitInfo?.data?.customerName}
+              Name: {tickitInfo?.customerName}
             </Paragraph>
-            <Paragraph size="sm">Mobile: {tickitInfo?.data?.phone}</Paragraph>
+            <Paragraph size="sm">Mobile: {tickitInfo?.phone}</Paragraph>
             <Paragraph size="sm">
-              Ticket No: {tickitInfo?.data?.ticketNo}
+              Ticket No: {tickitInfo?.ticketNo}
             </Paragraph>
             <div className="flex gap-2 items-center">
               <Paragraph size="sm">
-                Gender: {tickitInfo?.data?.gender}
+                Gender: {tickitInfo?.gender}
               </Paragraph>
-              <Paragraph size="sm">Age: {tickitInfo?.data?.age}</Paragraph>
+              <Paragraph size="sm">Age: {tickitInfo?.age}</Paragraph>
             </div>
             <Paragraph size="sm">
-              From: {tickitInfo?.data?.boardingPoint}
+              From: {tickitInfo?.boardingPoint}
             </Paragraph>
             <Paragraph size="sm">
-              To: {tickitInfo?.data?.droppingPoint}
+              To: {tickitInfo?.droppingPoint}
             </Paragraph>
             <Paragraph size="sm">
               Departure Time:{" "}
-              {tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.schedule}
+              {tickitInfo?.orderSeat?.[0]?.coachConfig?.schedule}
             </Paragraph>
             <Paragraph size="sm">
-              Seat Fare(Tk): {tickitInfo?.data?.paymentAmount}
+              Seat Fare(Tk): {tickitInfo?.paymentAmount}
             </Paragraph>
             <Paragraph size="sm">
               Seat No:{" "}
-              {tickitInfo?.data?.orderSeat
+              {tickitInfo?.orderSeat
                 ?.map((seat: any) => seat?.seat)
                 .join(", ")}
             </Paragraph>
             <Paragraph size="sm">
-              Coach No: {tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.coachNo}
+              Coach No: {tickitInfo?.orderSeat?.[0]?.coachConfig?.coachNo}
             </Paragraph>
           </div>
 
@@ -171,50 +170,50 @@ const TickitPrint = React.forwardRef<HTMLDivElement, ITickitPrintProps>(
           {/* Content */}
           <div className="relative z-10 left-7 top-0">
             <Paragraph size="sm">
-              Passenger Name: {tickitInfo?.data?.customerName}
+              Passenger Name: {tickitInfo?.customerName}
             </Paragraph>
             <Paragraph size="sm">
-              Address: {tickitInfo?.data?.address}
+              Address: {tickitInfo?.address}
             </Paragraph>
             <div className="flex gap-2 items-center">
-              <Paragraph size="sm">Mobile: {tickitInfo?.data?.phone}</Paragraph>
+              <Paragraph size="sm">Mobile: {tickitInfo?.phone}</Paragraph>
               <Paragraph size="sm">
-                Ticket No: {tickitInfo?.data?.ticketNo}
+                Ticket No: {tickitInfo?.ticketNo}
               </Paragraph>
             </div>
             <div className="flex gap-2 items-center">
               <Paragraph size="sm">
-                Gender: {tickitInfo?.data?.gender}
+                Gender: {tickitInfo?.gender}
               </Paragraph>
-              <Paragraph size="sm">Age: {tickitInfo?.data?.age}</Paragraph>
+              <Paragraph size="sm">Age: {tickitInfo?.age}</Paragraph>
             </div>
             <div className="flex gap-2 items-center">
               <Paragraph size="sm">
-                From: {tickitInfo?.data?.boardingPoint}
+                From: {tickitInfo?.boardingPoint}
               </Paragraph>
               <Paragraph size="sm">
-                To: {tickitInfo?.data?.droppingPoint}
+                To: {tickitInfo?.droppingPoint}
               </Paragraph>
             </div>
             <div className="flex gap-2 items-center">
               <Paragraph size="sm">
                 Journey Dt:{" "}
-                {tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.departureDate}
+                {tickitInfo?.orderSeat?.[0]?.coachConfig?.departureDate}
               </Paragraph>
               <Paragraph size="sm">
                 Issue Dt:{" "}
-                {tickitInfo?.data?.createdAt
-                  ? new Date(tickitInfo.data.createdAt).toLocaleDateString()
+                {tickitInfo?.createdAt
+                  ? new Date(tickitInfo?.createdAt).toLocaleDateString()
                   : "N/A"}
               </Paragraph>
             </div>
             <div className="flex gap-2 items-center">
               <Paragraph size="sm">
                 Reporting Time:{" "}
-                {tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.schedule
+                {tickitInfo?.orderSeat?.[0]?.coachConfig?.schedule
                   ? new Date(
                       new Date(
-                        `1970-01-01T${tickitInfo.data.orderSeat[0].coachConfig.schedule}`
+                        `1970-01-01T${tickitInfo?.orderSeat[0].coachConfig.schedule}`
                       ).getTime() -
                         15 * 60 * 1000
                     ).toLocaleTimeString("en-US", {
@@ -226,28 +225,28 @@ const TickitPrint = React.forwardRef<HTMLDivElement, ITickitPrintProps>(
               </Paragraph>
               <Paragraph size="sm">
                 Departure Time:{" "}
-                {tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.schedule}
+                {tickitInfo?.orderSeat?.[0]?.coachConfig?.schedule}
               </Paragraph>
             </div>
 
             <div className="flex gap-2 items-center">
               <Paragraph size="sm">
-                Seat Fare(Tk): {tickitInfo?.data?.amount}
+                Seat Fare(Tk): {tickitInfo?.amount}
               </Paragraph>
               <Paragraph size="sm">
-                Total Fare(Tk): {tickitInfo?.data?.paymentAmount}
+                Total Fare(Tk): {tickitInfo?.paymentAmount}
               </Paragraph>
             </div>
             <div className="flex gap-2 items-center">
               <Paragraph size="sm">
                 Seat No:{" "}
-                {tickitInfo?.data?.orderSeat
+                {tickitInfo?.orderSeat
                   ?.map((seat: any) => seat?.seat)
                   .join(", ")}
               </Paragraph>
               <Paragraph size="sm">
                 Coach No:{" "}
-                {tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.coachNo}
+                {tickitInfo?.orderSeat?.[0]?.coachConfig?.coachNo}
               </Paragraph>
             </div>
           </div>
@@ -299,39 +298,39 @@ const TickitPrint = React.forwardRef<HTMLDivElement, ITickitPrintProps>(
 
           <div className="relative z-10 left-7 top-0">
             <Paragraph size="sm">
-              Name: {tickitInfo?.data?.customerName}
+              Name: {tickitInfo?.customerName}
             </Paragraph>
-            <Paragraph size="sm">Mobile: {tickitInfo?.data?.phone}</Paragraph>
+            <Paragraph size="sm">Mobile: {tickitInfo?.phone}</Paragraph>
             <Paragraph size="sm">
-              Ticket No: {tickitInfo?.data?.ticketNo}
+              Ticket No: {tickitInfo?.ticketNo}
             </Paragraph>
             <div className="flex gap-2 items-center">
               <Paragraph size="sm">
-                Gender: {tickitInfo?.data?.gender}
+                Gender: {tickitInfo?.gender}
               </Paragraph>
-              <Paragraph size="sm">Age: {tickitInfo?.data?.age}</Paragraph>
+              <Paragraph size="sm">Age: {tickitInfo?.age}</Paragraph>
             </div>
             <Paragraph size="sm">
-              From: {tickitInfo?.data?.boardingPoint}
+              From: {tickitInfo?.boardingPoint}
             </Paragraph>
             <Paragraph size="sm">
-              To: {tickitInfo?.data?.droppingPoint}
+              To: {tickitInfo?.droppingPoint}
             </Paragraph>
             <Paragraph size="sm">
               Departure Time:{" "}
-              {tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.schedule}
+              {tickitInfo?.orderSeat?.[0]?.coachConfig?.schedule}
             </Paragraph>
             <Paragraph size="sm">
-              Seat Fare(Tk): {tickitInfo?.data?.paymentAmount}
+              Seat Fare(Tk): {tickitInfo?.paymentAmount}
             </Paragraph>
             <Paragraph size="sm">
               Seat No:{" "}
-              {tickitInfo?.data?.orderSeat
+              {tickitInfo?.orderSeat
                 ?.map((seat: any) => seat?.seat)
                 .join(", ")}
             </Paragraph>
             <Paragraph size="sm">
-              Coach No: {tickitInfo?.data?.orderSeat?.[0]?.coachConfig?.coachNo}
+              Coach No: {tickitInfo?.orderSeat?.[0]?.coachConfig?.coachNo}
             </Paragraph>
           </div>
 
@@ -355,4 +354,4 @@ const TickitPrint = React.forwardRef<HTMLDivElement, ITickitPrintProps>(
   }
 );
 
-export default TickitPrint;
+export default TickitPrintSingle;

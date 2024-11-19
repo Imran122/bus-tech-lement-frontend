@@ -23,7 +23,7 @@ import { selectCounterSearchFilter } from "@/store/api/counter/counterSearchFilt
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import { ChangeEvent, FC, useState } from "react";
+import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { LuDownload } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import CounterOrderDetailsModal from "../sales/CounterOrderDetailsModal";
@@ -32,7 +32,7 @@ import { useOrderCancelRequestMutation } from "@/store/api/bookingApi";
 import { toast } from "@/components/ui/use-toast";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { SaleData } from "@/types/dashboard/vehicleeSchedule.ts/order";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +44,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useReactToPrint } from "react-to-print";
+import TicketPrintSingle from "../../printLabel/TicketPrintSingle";
 
 interface ISalesListProps {}
 export interface ISalesDataStateProps {
@@ -53,6 +55,7 @@ export interface ISalesDataStateProps {
   detailsModalOpen: boolean;
   usersList: Partial<any[]>;
   selectedOrderId: number | null;
+  isPrinting: boolean;
 }
 
 const CounterDashboardHome: FC<ISalesListProps> = () => {
@@ -67,6 +70,15 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
   const bookingState = useSelector(selectCounterSearchFilter);
 
   const [cancelRequst] = useOrderCancelRequestMutation();
+  const printSaleRef = useRef(null);
+
+  // STORE PROMISE RESOLVE REFERENCE
+  const promiseResolveRef = useRef<any>(null);
+
+
+  const [invoiceData, setInvoiceData] = useState();
+   
+    
 
   const [salesTickitState, setSalesTickitState] =
     useState<ISalesDataStateProps>({
@@ -76,6 +88,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       detailsModalOpen: false,
       usersList: [],
       selectedOrderId: null,
+      isPrinting: false,
     });
 
   // Fetch sales data using the API hook
@@ -95,6 +108,28 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       selectedOrderId: orderId,
     }));
   };
+
+   // UPDATE THE COMPONENT VIA REFERENCE
+   useEffect(() => {
+    if (salesTickitState.isPrinting && promiseResolveRef.current) {
+      promiseResolveRef.current();
+    }
+  }, [salesTickitState.isPrinting]);
+
+  const handlePrint = useReactToPrint({
+    content: () => printSaleRef.current,
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        promiseResolveRef.current = resolve;
+        setSalesTickitState((prevState) => ({ ...prevState, isPrinting: true }));
+      });
+    },
+    onAfterPrint: () => {
+      // RESET THE PROMISE RESOLVE SO WE CAN PRINT AGAIN
+      promiseResolveRef.current = null;
+      setSalesTickitState((prevState) => ({ ...prevState, isPrinting: false }));
+    },
+  });
 
   const handelCancleRequest = async (orderId: number) => {
     try {
@@ -163,11 +198,11 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       header: translate("কার্যক্রম", "Actions"),
       id: "actions",
       cell: ({ row }) => {
-        const order = row.original as SaleData;
+        const order = row.original as any;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button onMouseEnter={() => setInvoiceData(order)} variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -198,6 +233,14 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
                 className="w-full flex justify-start"
               >
                 {translate("পেমেন্ট করুন", "Pay")}
+              </Button>
+              <Button
+                onClick={() => handlePrint()}
+                variant="outline"
+                size="xs"
+                className="w-full flex justify-start"
+              >
+                {translate("টিকেট প্রিন্ট করুন", "Print Ticket")}
               </Button>
 
               {/*  CANCEL ALERT */}
@@ -252,7 +295,8 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
   }
 
   return (
-    <PageWrapper>
+   <section>
+     <PageWrapper>
       <div className="grid grid-cols-5 gap-5 my-5">
         <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
           <div className="p-6 flex flex-col justify-start items-start w-full">
@@ -390,6 +434,12 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
         />
       )}
     </PageWrapper>
+    <div className="invisible hidden -left-full">
+        {salesTickitList && (
+          <TicketPrintSingle ref={printSaleRef} tickitData={invoiceData} />
+        )}
+      </div>
+   </section>
   );
 };
 
