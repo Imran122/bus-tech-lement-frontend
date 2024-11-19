@@ -63,6 +63,14 @@ const accountsDashboardApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["accounts-dashboard-home"],
     }),
+    authorizeReportFromAccount: builder.mutation({
+      query: ({ reportId, body }) => ({
+        url: `/user/authorize-supervisor-report/${reportId}`, // URL using collectionId
+        method: "POST",
+        body, // This should contain the body as per your Joi validation
+      }),
+      //invalidatesTags: ["accounts-dashboard"], // Adjust tags as needed
+    }),
   }),
 });
 
@@ -74,4 +82,5 @@ export const {
   useAuthorizeCollectionMutation,
   useGetAccountDashboardHomeDataQuery,
   useGetAccountReportDetailsByIdQuery,
+  useAuthorizeReportFromAccountMutation,
 } = accountsDashboardApi;

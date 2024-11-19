@@ -22,7 +22,6 @@ import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuDownload } from "react-icons/lu";
-import AuthorizeCollectionModal from "./AuthorizeCollectionModal";
 import CollectionDetails from "./CollectionDetails";
 
 export interface ICollectionStateProps {
@@ -75,14 +74,14 @@ const CollectionList: FC<ICollectionManagementDashboardProps> = () => {
     }
   }, [collectionData]);
 
-  const handleAuthorizeClick = (id: number, editStatus: boolean) => {
-    setExpenseState((prev) => ({
-      ...prev,
-      authorizeModalOpen: true,
-      selectedCollectionId: id,
-      selectedEditStatus: editStatus,
-    }));
-  };
+  // const handleAuthorizeClick = (id: number, editStatus: boolean) => {
+  //   setExpenseState((prev) => ({
+  //     ...prev,
+  //     authorizeModalOpen: true,
+  //     selectedCollectionId: id,
+  //     selectedEditStatus: editStatus,
+  //   }));
+  // };
 
   const handleDetailsClick = (id: number) => {
     setExpenseState((prev) => ({
@@ -92,14 +91,14 @@ const CollectionList: FC<ICollectionManagementDashboardProps> = () => {
     }));
   };
 
-  const closeAuthorizeModal = () => {
-    setExpenseState((prev) => ({
-      ...prev,
-      authorizeModalOpen: false,
-      selectedCollectionId: null,
-      selectedEditStatus: false,
-    }));
-  };
+  // const closeAuthorizeModal = () => {
+  //   setExpenseState((prev) => ({
+  //     ...prev,
+  //     authorizeModalOpen: false,
+  //     selectedCollectionId: null,
+  //     selectedEditStatus: false,
+  //   }));
+  // };
 
   const closeDetailsModal = () => {
     setExpenseState((prev) => ({
@@ -110,10 +109,10 @@ const CollectionList: FC<ICollectionManagementDashboardProps> = () => {
   };
 
   // Find the selected collection and extract its amount
-  const selectedCollection = expenseState.expensesList.find(
-    (item) => item.id === expenseState.selectedCollectionId
-  );
-  const selectedAmount = selectedCollection ? selectedCollection.amount : 0;
+  // const selectedCollection = expenseState.expensesList.find(
+  //   (item) => item.id === expenseState.selectedCollectionId
+  // );
+  //const selectedAmount = selectedCollection ? selectedCollection.amount : 0;
 
   const columns = [
     { accessorKey: "id", header: translate("আইডি", "ID") },
@@ -175,7 +174,7 @@ const CollectionList: FC<ICollectionManagementDashboardProps> = () => {
                 {translate("বিস্তারিত", "Details")}
               </Button>
 
-              {/* Authorize Button */}
+              {/* Authorize Button
               <Button
                 onClick={() =>
                   handleAuthorizeClick(collection.id, collection.edit)
@@ -185,7 +184,7 @@ const CollectionList: FC<ICollectionManagementDashboardProps> = () => {
                 size="xs"
               >
                 {translate("অনুমোদন করুন", "Authorize")}
-              </Button>
+              </Button> */}
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -250,7 +249,7 @@ const CollectionList: FC<ICollectionManagementDashboardProps> = () => {
         />
       </TableWrapper>
 
-      {/* Authorize Collection Modal */}
+      {/* Authorize Collection Modal
       <Dialog
         open={expenseState.authorizeModalOpen}
         onOpenChange={closeAuthorizeModal}
@@ -267,7 +266,7 @@ const CollectionList: FC<ICollectionManagementDashboardProps> = () => {
           )}
         </DialogContent>
       </Dialog>
-
+ */}
       {/* Collection Details Modal */}
       <Dialog
         open={expenseState.detailsModalOpen}

@@ -3,7 +3,6 @@ import { InputWrapper } from "@/components/common/form/InputWrapper";
 import { Heading } from "@/components/common/typography/Heading";
 import { GridWrapper } from "@/components/common/wrapper/GridWrapper";
 import { Input } from "@/components/ui/input";
-import { useReactToPrint } from "react-to-print";
 import {
   Select,
   SelectContent,
@@ -19,6 +18,7 @@ import {
 import { addBookingSeatForm } from "@/utils/constants/form/addBookingForm";
 import { dynamicSeatAllocation } from "@/utils/helpers/dynamicSeatAllocation";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import { useReactToPrint } from "react-to-print";
 
 import PageTransition from "@/components/common/effect/PageTransition";
 import Submit from "@/components/common/form/Submit";
@@ -62,27 +62,27 @@ import {
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
-  addBookingSeatFromCounterProps,
-  addBookingSeatFromCounterSchema,
-} from "@/schemas/counter/addBookingSeatFromCounter";
-import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useSelector } from "react-redux";
-import { toast } from "sonner";
-import SeatStatus from "./SeatStatus";
-import Status from "./Status";
-import TripSheet from "./TripSheet";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { LuRefreshCw } from "react-icons/lu";
+import {
+  addBookingSeatFromCounterProps,
+  addBookingSeatFromCounterSchema,
+} from "@/schemas/counter/addBookingSeatFromCounter";
 import { appConfiguration } from "@/utils/constants/common/appConfiguration";
+import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { LuRefreshCw } from "react-icons/lu";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
 import TickitPrint from "../../printLabel/TickitPrint";
+import SeatStatus from "./SeatStatus";
+import Status from "./Status";
+import TripSheet from "./TripSheet";
 
 interface ICounterBookingFormProps {
   bookingCoach: any;
@@ -98,7 +98,6 @@ interface ICounterBookingFormStateProps {
 const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   bookingCoach,
 }) => {
-  
   const [bookingType, setBookingType] = useState("SeatIssue");
   const [expirationDate, setExpirationDate] = useState<Date | undefined>(
     undefined
@@ -399,6 +398,68 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       );
     }
   };
+  const ResetDataOfForm = async () => {
+    try {
+      if (!bookingFormState.selectedSeats.length) {
+        toast.warning(
+          translate(
+            "No seats selected to reset.",
+            "রিসেট করার জন্য কোনো আসন নির্বাচন করা হয়নি।"
+          )
+        );
+        return;
+      }
+
+      // Iterate over selected seats and call `removeBookingSeat` for each
+      const promises = bookingFormState.selectedSeats.map((seat) =>
+        removeBookingSeat({
+          coachConfigId: bookingCoach?.id,
+          date: bookingCoach?.departureDate,
+          schedule: bookingCoach?.schedule,
+          seat: seat.seat,
+        })
+      );
+
+      // Wait for all API calls to complete
+      const results = await Promise.all(promises);
+
+      // Check if all API calls were successful
+      const allSuccessful = results.every((result) => result?.data?.success);
+
+      if (allSuccessful) {
+        toast.success(
+          translate(
+            "All seats reset successfully.",
+            "সব আসন সফলভাবে রিসেট হয়েছে।"
+          )
+        );
+
+        // Reset the form state
+        setBookingFormState({
+          targetedSeat: null,
+          selectedSeats: [],
+          redirectLink: null,
+          customerName: null,
+          redirectConfirm: false,
+        });
+      } else {
+        toast.error(
+          translate(
+            "Some seats could not be reset. Please try again.",
+            "কিছু আসন রিসেট করা যায়নি। আবার চেষ্টা করুন।"
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error resetting seats:", error);
+      toast.error(
+        translate(
+          "Error resetting the seats. Please try again.",
+          "আসন রিসেট করার সময় ত্রুটি হয়েছে। আবার চেষ্টা করুন।"
+        )
+      );
+    }
+  };
   //on submit
   const onSubmit = async (data: addBookingSeatFromCounterProps) => {
     const cleanedData = removeFalsyProperties(data, [
@@ -623,16 +684,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                   <Button
                     type="button"
                     className="text-muted-foreground"
-                    onClick={() => {
-                      setBookingFormState((prevState) => ({
-                        ...prevState,
-                        targetedSeat: null,
-                        selectedSeats: [],
-                        redirectLink: null,
-                        customerName: null,
-                        redirectConfirm: false,
-                      }));
-                    }}
+                    onClick={ResetDataOfForm}
                     variant="outline"
                     size="icon"
                   >
@@ -1171,25 +1223,26 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
               </div>
 
               <div className="flex justify-end items-center gap-5 mt-8">
-                <Button onClick={handleCancelBooking}
-                 type="button"
-                 variant="outline"
-                 size="sm"
-                 >
+                <Button
+                  onClick={handleCancelBooking}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                >
                   {translate("বুকিং বাতিল করুন", "Restore Seat")}
                 </Button>
-               
-                  <Submit
-                    loading={addBookingLoading || checkingSeatLoading}
-                    errors={addBookingError || checkingSeatError}
-                    submitTitle={translate("আসন বুক করুন", "Book Seat")}
-                    errorTitle={translate(
-                      "আসন বুক করতে ত্রুটি হয়েছে",
-                      "Seat Booking Error"
-                    )}
-                    className="py-0 my-0"
-                  />
-                
+
+                <Submit
+                  loading={addBookingLoading || checkingSeatLoading}
+                  errors={addBookingError || checkingSeatError}
+                  submitTitle={translate("আসন বুক করুন", "Book Seat")}
+                  errorTitle={translate(
+                    "আসন বুক করতে ত্রুটি হয়েছে",
+                    "Seat Booking Error"
+                  )}
+                  className="py-0 my-0"
+                />
+
                 <div className="mt-">
                   <Button
                     onClick={() => invoiceReprintHandler()}
