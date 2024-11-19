@@ -76,6 +76,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   onClose,
 }) => {
   const { translate } = useCustomTranslator();
+  const goingDate = localStorage.getItem("goingDate");
 
   const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
     useAddBookingMutation() as any;
@@ -240,7 +241,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     useGetTickitInfoByPhoneQuery(phoneNumber, {
       skip: !submitted || !phoneNumber, // Only call API if submitted and phoneNumber is set
     }) as any;
-
   useEffect(() => {
     if (submitted) {
       if (userInfoData?.data) {
@@ -300,7 +300,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       const finalData = {
         ...cleanedData,
         bookingType: "SeatIssue",
-
+        returnDate: returnDate,
+        date: goingDate,
+        orderType: tripType,
         seats: bookingFormState.selectedSeats.map((seat: any) => ({
           seat: seat.seat,
           coachConfigId: seat.coachConfigId, // Use each seat's specific coachConfigId
@@ -308,10 +310,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
           date: seat.date, // Use each seat's specific date
         })),
       };
-
       const booking = await addBooking(finalData);
 
       if (booking.data?.success) {
+        // return;
         const payment = await addBookingPayment(booking?.data?.data?.id);
         if (payment.data?.success) {
           playSound("success");
