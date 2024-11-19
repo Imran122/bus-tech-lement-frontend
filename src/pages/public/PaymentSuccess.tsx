@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { useGetPaymentDetailsWithHooksQuery } from "@/store/api/bookingApi";
 import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
 import { appConfiguration } from "@/utils/constants/common/appConfiguration";
-import TickitPrint from "../dashboard/printLabel/TickitPrint";
+import TickitPrintClient from "../dashboard/printLabel/TicketPrintClient";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 
 interface IPaymentSuccessProps {}
 
@@ -18,7 +19,9 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
     useGetPaymentDetailsWithHooksQuery(transactionDetails);
   const [saleData, setSaleData] = useState<any>();
 
-  console.log("saleData", saleData)
+  const { data: singleCms } = useGetSingleCMSQuery(
+    {}
+  );
 
   const handlePrint = () => {
     window.print();
@@ -166,7 +169,7 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
       </PageWrapper>
       <div className="invisible hidden -left-full">
         {saleData?.bookingInfo && (
-          <TickitPrint ref={printSaleRef} tickitData={saleData?.bookingInfo} />
+          <TickitPrintClient ref={printSaleRef} tickitData={saleData?.bookingInfo} logo={singleCms?.data}/>
         )}
       </div>
     </section>

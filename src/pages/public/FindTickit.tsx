@@ -16,14 +16,20 @@ import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useReactToPrint } from "react-to-print";
 import { toast } from "sonner";
-import TickitPrint from "../dashboard/printLabel/TickitPrint";
 import { Button } from "@/components/ui/button";
+import TickitPrintClient from "../dashboard/printLabel/TicketPrintClient";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
+import { Loader } from "@/components/common/Loader";
 
 interface IFindTicketPaymentProps {}
 
 const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
   const { translate } = useCustomTranslator();
   const [ticketNumber, setTicketNumber] = useState("");
+
+  const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
+    {}
+  );
 
   const {
     handleSubmit,
@@ -101,6 +107,10 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
       );
     }
   };
+
+  if(singleCmsLoading){
+    return <Loader/>
+  }
 
   return (
     <section>
@@ -205,7 +215,7 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
         </div>
       </PageWrapper>
       <div className="invisible hidden -left-full">
-        {saleData && <TickitPrint ref={printSaleRef} tickitData={saleData} />}
+        {saleData && <TickitPrintClient ref={printSaleRef} tickitData={saleData} logo={singleCms?.data}/>}
       </div>
     </section>
   );
