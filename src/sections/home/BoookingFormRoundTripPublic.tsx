@@ -337,7 +337,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   return (
     <PageTransition>
       {/* find tickit */}
-      <div className="">
+      <div className=" h-[600px] overflow-y-scroll">
         <div className="">
           <PageTransition>
             <form
@@ -381,390 +381,473 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
             )}
           </PageTransition>
         </div>
-      </div>
 
-      {/*end find tickit */}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row items-start my-0 h-full mt-3 px-4 gap-x-12 ">
-          {/* COUCH SEAT PLAN CONTAINER */}
+        {/*end find tickit */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-row items-start my-0 h-full mt-3 px-4 gap-x-12 ">
+            {/* COUCH SEAT PLAN CONTAINER */}
 
-          {/* CUSTOMER & PAYMENT INFORMATION */}
-          <PageTransition className="flex flex-col justify-between h-full w-full">
-            <div>
-              <Heading size="h4">
-                {translate(
-                  "গ্রাহকের ব্যক্তিগত তথ্য",
-                  "Client Personal Information"
-                )}
-              </Heading>
-
-              <GridWrapper>
-                {/* NAME */}
-                <InputWrapper
-                  className={cn(
-                    bookingFormState?.selectedSeats?.length < 3 && "col-span-1"
-                  )}
-                  labelFor="name"
-                  error={errors.customerName?.message}
-                  label={translate(
-                    addBookingSeatForm.name.label.bn,
-                    addBookingSeatForm.name.label.en
-                  )}
-                >
-                  <Input
-                    {...register("customerName")}
-                    type="text"
-                    id="name"
-                    placeholder={translate(
-                      addBookingSeatForm.name.placeholder.bn,
-                      addBookingSeatForm.name.placeholder.en
-                    )}
-                  />
-                </InputWrapper>
-                {/* PHONE */}
-                <InputWrapper
-                  error={errors?.phone?.message}
-                  labelFor="phone"
-                  label={translate(
-                    addBookingSeatForm.phone.label.bn,
-                    addBookingSeatForm.phone.label.en
-                  )}
-                >
-                  <Input
-                    {...register("phone")}
-                    type="tel"
-                    id="phone"
-                    placeholder={translate(
-                      addBookingSeatForm.phone.placeholder.bn,
-                      addBookingSeatForm.phone.placeholder.en
-                    )}
-                  />
-                </InputWrapper>
-                {/* gender */}
-                <InputWrapper
-                  error={errors?.gender?.message}
-                  labelFor="gender"
-                  label={translate(
-                    addBookingSeatForm?.gender.label.bn,
-                    addBookingSeatForm?.gender.label.en
-                  )}
-                >
-                  <Select
-                    value={watch("gender") || ""}
-                    onValueChange={(value: "Male" | "Female") => {
-                      setValue("gender", value);
-                      setError("gender", { type: "custom", message: "" });
-                    }}
-                  >
-                    <SelectTrigger id="gender" className="w-full">
-                      <SelectValue
-                        placeholder={translate(
-                          addBookingSeatForm.gender.placeholder.bn,
-                          addBookingSeatForm.gender.placeholder.en
-                        )}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Male">
-                        {translate("পুরুষ", "Male")}
-                      </SelectItem>
-                      <SelectItem value="Female">
-                        {translate("মহিলা ", "Female")}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </InputWrapper>
+            {/* CUSTOMER & PAYMENT INFORMATION */}
+            <PageTransition className="flex flex-col justify-between h-full w-full">
+              <div>
                 <Heading size="h4">
-                  {translate("যাত্রার বিবরণ:", "Journey Details:")}
+                  {translate(
+                    "গ্রাহকের ব্যক্তিগত তথ্য",
+                    "Client Personal Information"
+                  )}
                 </Heading>
-                <div className="col-span-3">
-                  <GridWrapper>
-                    {/* BOARDING POINT */}
-                    <InputWrapper
-                      error={errors?.boardingPoint?.message}
-                      labelFor="boardingPoint"
-                      label={translate(
-                        addBookingSeatForm.boardingPoint.label.bn,
-                        addBookingSeatForm.boardingPoint.label.en
+
+                <GridWrapper>
+                  {/* NAME */}
+                  <InputWrapper
+                    className={cn(
+                      bookingFormState?.selectedSeats?.length < 3 &&
+                        "col-span-1"
+                    )}
+                    labelFor="name"
+                    error={errors.customerName?.message}
+                    label={translate(
+                      addBookingSeatForm.name.label.bn,
+                      addBookingSeatForm.name.label.en
+                    )}
+                  >
+                    <Input
+                      {...register("customerName")}
+                      type="text"
+                      id="name"
+                      placeholder={translate(
+                        addBookingSeatForm.name.placeholder.bn,
+                        addBookingSeatForm.name.placeholder.en
                       )}
+                    />
+                  </InputWrapper>
+                  {/* PHONE */}
+                  <InputWrapper
+                    error={errors?.phone?.message}
+                    labelFor="phone"
+                    label={translate(
+                      addBookingSeatForm.phone.label.bn,
+                      addBookingSeatForm.phone.label.en
+                    )}
+                  >
+                    <Input
+                      {...register("phone")}
+                      type="tel"
+                      id="phone"
+                      placeholder={translate(
+                        addBookingSeatForm.phone.placeholder.bn,
+                        addBookingSeatForm.phone.placeholder.en
+                      )}
+                    />
+                  </InputWrapper>
+                  {/* gender */}
+                  <InputWrapper
+                    error={errors?.gender?.message}
+                    labelFor="gender"
+                    label={translate(
+                      addBookingSeatForm?.gender.label.bn,
+                      addBookingSeatForm?.gender.label.en
+                    )}
+                  >
+                    <Select
+                      value={watch("gender") || ""}
+                      onValueChange={(value: "Male" | "Female") => {
+                        setValue("gender", value);
+                        setError("gender", { type: "custom", message: "" });
+                      }}
                     >
-                      <Select
-                        onValueChange={(value: string) => {
-                          setValue("boardingPoint", value);
-                          setError("boardingPoint", {
-                            type: "custom",
-                            message: "",
-                          });
-                        }}
-                      >
-                        <SelectTrigger id="boardingPoint" className="w-full">
-                          <SelectValue
-                            placeholder={translate(
-                              addBookingSeatForm.boardingPoint.placeholder.bn,
-                              addBookingSeatForm.boardingPoint.placeholder.en
-                            )}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {goViaRoute.length > 0 &&
-                            goViaRoute?.map((singlePoint: any) => (
-                              <SelectItem
-                                key={singlePoint.en}
-                                value={singlePoint}
-                              >
-                                {formatter({
-                                  type: "words",
-                                  words: singlePoint,
-                                })}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </InputWrapper>
-                    {/* DROPPING POINT */}
-                    <InputWrapper
-                      error={errors?.droppingPoint?.message}
-                      labelFor="droppingPoint"
-                      label={translate(
-                        addBookingSeatForm.droppingPoint.label.bn,
-                        addBookingSeatForm.droppingPoint.label.en
-                      )}
-                    >
-                      <Select
-                        onValueChange={(value: string) => {
-                          setValue("droppingPoint", value);
-                          setError("droppingPoint", {
-                            type: "custom",
-                            message: "",
-                          });
-                        }}
-                      >
-                        <SelectTrigger id="droppingPoint" className="w-full">
-                          <SelectValue
-                            placeholder={translate(
-                              addBookingSeatForm.droppingPoint.placeholder.bn,
-                              addBookingSeatForm.droppingPoint.placeholder.en
-                            )}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {returnViaRoute.length > 0 &&
-                            returnViaRoute
-                              ?.filter(
-                                (target: any) =>
-                                  target?.station?.name !==
-                                  watch("boardingPoint")
-                              )
-                              ?.map((singlePoint: any) => (
-                                <SelectItem
-                                  key={singlePoint.en}
-                                  value={singlePoint}
-                                >
-                                  {formatter({
-                                    type: "words",
-                                    words: singlePoint,
-                                  })}
-                                </SelectItem>
-                              ))}
-                        </SelectContent>
-                      </Select>
-                    </InputWrapper>
-                    {/* BOARDING POINT */}
-                    <InputWrapper
-                      error={errors?.returnBoardingPoint?.message}
-                      labelFor="returnBoardingPoint"
-                      label={translate(
-                        addBookingSeatForm.returnBoardingPoint.label.bn,
-                        addBookingSeatForm.returnBoardingPoint.label.en
-                      )}
-                    >
-                      <Select
-                        onValueChange={(value: string) => {
-                          setValue("returnBoardingPoint", value);
-                          setError("returnBoardingPoint", {
-                            type: "custom",
-                            message: "",
-                          });
-                        }}
-                      >
-                        <SelectTrigger
-                          id="returnBoardingPoint"
-                          className="w-full"
-                        >
-                          <SelectValue
-                            placeholder={translate(
-                              addBookingSeatForm.returnBoardingPoint.placeholder
-                                .bn,
-                              addBookingSeatForm.returnBoardingPoint.placeholder
-                                .en
-                            )}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {goViaRoute.length > 0 &&
-                            goViaRoute?.map((singlePoint: any) => (
-                              <SelectItem
-                                key={singlePoint.en}
-                                value={singlePoint}
-                              >
-                                {formatter({
-                                  type: "words",
-                                  words: singlePoint,
-                                })}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </InputWrapper>
-                    {/* DROPPING POINT */}
-                    <InputWrapper
-                      error={errors?.returnDroppingPoint?.message}
-                      labelFor="returnDroppingPoint"
-                      label={translate(
-                        addBookingSeatForm.returnDroppingPoint.label.bn,
-                        addBookingSeatForm.returnDroppingPoint.label.en
-                      )}
-                    >
-                      <Select
-                        onValueChange={(value: string) => {
-                          setValue("returnDroppingPoint", value);
-                          setError("returnDroppingPoint", {
-                            type: "custom",
-                            message: "",
-                          });
-                        }}
-                      >
-                        <SelectTrigger
-                          id="returnDroppingPoint"
-                          className="w-full"
-                        >
-                          <SelectValue
-                            placeholder={translate(
-                              addBookingSeatForm.returnDroppingPoint.placeholder
-                                .bn,
-                              addBookingSeatForm.returnDroppingPoint.placeholder
-                                .en
-                            )}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {returnViaRoute.length > 0 &&
-                            returnViaRoute
-                              ?.filter(
-                                (target: any) =>
-                                  target?.station?.name !==
-                                  watch("boardingPoint")
-                              )
-                              ?.map((singlePoint: any) => (
-                                <SelectItem
-                                  key={singlePoint.en}
-                                  value={singlePoint}
-                                >
-                                  {formatter({
-                                    type: "words",
-                                    words: singlePoint,
-                                  })}
-                                </SelectItem>
-                              ))}
-                        </SelectContent>
-                      </Select>
-                    </InputWrapper>
-                    {/* ADDRESS */}
-                    <InputWrapper
-                      error={errors?.address?.message}
-                      className={cn(
-                        bookingFormState?.selectedSeats?.length < 3 &&
-                          "col-span-1"
-                      )}
-                      labelFor="address"
-                      label={translate(
-                        addBookingSeatForm.address.label.bn,
-                        addBookingSeatForm.address.label.en
-                      )}
-                    >
-                      <Input
-                        {...register("address")}
-                        type="text"
-                        id="address"
-                        placeholder={translate(
-                          addBookingSeatForm.address.placeholder.bn,
-                          addBookingSeatForm.address.placeholder.en
+                      <SelectTrigger id="gender" className="w-full">
+                        <SelectValue
+                          placeholder={translate(
+                            addBookingSeatForm.gender.placeholder.bn,
+                            addBookingSeatForm.gender.placeholder.en
+                          )}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Male">
+                          {translate("পুরুষ", "Male")}
+                        </SelectItem>
+                        <SelectItem value="Female">
+                          {translate("মহিলা ", "Female")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </InputWrapper>
+                  <Heading size="h4">
+                    {translate("যাত্রার বিবরণ:", "Journey Details:")}
+                  </Heading>
+                  <div className="col-span-3">
+                    <GridWrapper>
+                      {/* BOARDING POINT */}
+                      <InputWrapper
+                        error={errors?.boardingPoint?.message}
+                        labelFor="boardingPoint"
+                        label={translate(
+                          addBookingSeatForm.boardingPoint.label.bn,
+                          addBookingSeatForm.boardingPoint.label.en
                         )}
-                      />
-                    </InputWrapper>
-                  </GridWrapper>
+                      >
+                        <Select
+                          onValueChange={(value: string) => {
+                            setValue("boardingPoint", value);
+                            setError("boardingPoint", {
+                              type: "custom",
+                              message: "",
+                            });
+                          }}
+                        >
+                          <SelectTrigger id="boardingPoint" className="w-full">
+                            <SelectValue
+                              placeholder={translate(
+                                addBookingSeatForm.boardingPoint.placeholder.bn,
+                                addBookingSeatForm.boardingPoint.placeholder.en
+                              )}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {goViaRoute.length > 0 &&
+                              goViaRoute?.map((singlePoint: any) => (
+                                <SelectItem
+                                  key={singlePoint.en}
+                                  value={singlePoint}
+                                >
+                                  {formatter({
+                                    type: "words",
+                                    words: singlePoint,
+                                  })}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                      </InputWrapper>
+                      {/* DROPPING POINT */}
+                      <InputWrapper
+                        error={errors?.droppingPoint?.message}
+                        labelFor="droppingPoint"
+                        label={translate(
+                          addBookingSeatForm.droppingPoint.label.bn,
+                          addBookingSeatForm.droppingPoint.label.en
+                        )}
+                      >
+                        <Select
+                          onValueChange={(value: string) => {
+                            setValue("droppingPoint", value);
+                            setError("droppingPoint", {
+                              type: "custom",
+                              message: "",
+                            });
+                          }}
+                        >
+                          <SelectTrigger id="droppingPoint" className="w-full">
+                            <SelectValue
+                              placeholder={translate(
+                                addBookingSeatForm.droppingPoint.placeholder.bn,
+                                addBookingSeatForm.droppingPoint.placeholder.en
+                              )}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {returnViaRoute.length > 0 &&
+                              returnViaRoute
+                                ?.filter(
+                                  (target: any) =>
+                                    target?.station?.name !==
+                                    watch("boardingPoint")
+                                )
+                                ?.map((singlePoint: any) => (
+                                  <SelectItem
+                                    key={singlePoint.en}
+                                    value={singlePoint}
+                                  >
+                                    {formatter({
+                                      type: "words",
+                                      words: singlePoint,
+                                    })}
+                                  </SelectItem>
+                                ))}
+                          </SelectContent>
+                        </Select>
+                      </InputWrapper>
+                      {/* BOARDING POINT */}
+                      <InputWrapper
+                        error={errors?.returnBoardingPoint?.message}
+                        labelFor="returnBoardingPoint"
+                        label={translate(
+                          addBookingSeatForm.returnBoardingPoint.label.bn,
+                          addBookingSeatForm.returnBoardingPoint.label.en
+                        )}
+                      >
+                        <Select
+                          onValueChange={(value: string) => {
+                            setValue("returnBoardingPoint", value);
+                            setError("returnBoardingPoint", {
+                              type: "custom",
+                              message: "",
+                            });
+                          }}
+                        >
+                          <SelectTrigger
+                            id="returnBoardingPoint"
+                            className="w-full"
+                          >
+                            <SelectValue
+                              placeholder={translate(
+                                addBookingSeatForm.returnBoardingPoint
+                                  .placeholder.bn,
+                                addBookingSeatForm.returnBoardingPoint
+                                  .placeholder.en
+                              )}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {goViaRoute.length > 0 &&
+                              goViaRoute?.map((singlePoint: any) => (
+                                <SelectItem
+                                  key={singlePoint.en}
+                                  value={singlePoint}
+                                >
+                                  {formatter({
+                                    type: "words",
+                                    words: singlePoint,
+                                  })}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                      </InputWrapper>
+                      {/* DROPPING POINT */}
+                      <InputWrapper
+                        error={errors?.returnDroppingPoint?.message}
+                        labelFor="returnDroppingPoint"
+                        label={translate(
+                          addBookingSeatForm.returnDroppingPoint.label.bn,
+                          addBookingSeatForm.returnDroppingPoint.label.en
+                        )}
+                      >
+                        <Select
+                          onValueChange={(value: string) => {
+                            setValue("returnDroppingPoint", value);
+                            setError("returnDroppingPoint", {
+                              type: "custom",
+                              message: "",
+                            });
+                          }}
+                        >
+                          <SelectTrigger
+                            id="returnDroppingPoint"
+                            className="w-full"
+                          >
+                            <SelectValue
+                              placeholder={translate(
+                                addBookingSeatForm.returnDroppingPoint
+                                  .placeholder.bn,
+                                addBookingSeatForm.returnDroppingPoint
+                                  .placeholder.en
+                              )}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {returnViaRoute.length > 0 &&
+                              returnViaRoute
+                                ?.filter(
+                                  (target: any) =>
+                                    target?.station?.name !==
+                                    watch("boardingPoint")
+                                )
+                                ?.map((singlePoint: any) => (
+                                  <SelectItem
+                                    key={singlePoint.en}
+                                    value={singlePoint}
+                                  >
+                                    {formatter({
+                                      type: "words",
+                                      words: singlePoint,
+                                    })}
+                                  </SelectItem>
+                                ))}
+                          </SelectContent>
+                        </Select>
+                      </InputWrapper>
+                      {/* ADDRESS */}
+                      <InputWrapper
+                        error={errors?.address?.message}
+                        className={cn(
+                          bookingFormState?.selectedSeats?.length < 3 &&
+                            "col-span-1"
+                        )}
+                        labelFor="address"
+                        label={translate(
+                          addBookingSeatForm.address.label.bn,
+                          addBookingSeatForm.address.label.en
+                        )}
+                      >
+                        <Input
+                          {...register("address")}
+                          type="text"
+                          id="address"
+                          placeholder={translate(
+                            addBookingSeatForm.address.placeholder.bn,
+                            addBookingSeatForm.address.placeholder.en
+                          )}
+                        />
+                      </InputWrapper>
+                    </GridWrapper>
+                  </div>
+
+                  {/* EMAIL */}
+                  <InputWrapper
+                    error={errors?.email?.message}
+                    labelFor="email"
+                    label={translate(
+                      addBookingSeatForm.email.label.bn,
+                      addBookingSeatForm.email.label.en
+                    )}
+                  >
+                    <Input
+                      {...register("email")}
+                      type="email"
+                      id="email"
+                      placeholder={translate(
+                        addBookingSeatForm.email.placeholder.bn,
+                        addBookingSeatForm.email.placeholder.en
+                      )}
+                    />
+                  </InputWrapper>
+
+                  {/* PASSPORT OR NID */}
+                  <InputWrapper
+                    error={errors?.nid?.message}
+                    className={cn(
+                      bookingFormState?.selectedSeats?.length < 3 &&
+                        "col-span-1"
+                    )}
+                    labelFor="pass/nid"
+                    label={translate(
+                      addBookingSeatForm.passportOrNID.label.bn,
+                      addBookingSeatForm.passportOrNID.label.en
+                    )}
+                  >
+                    <Input
+                      {...register("nid")}
+                      type="text"
+                      id="pass/nid"
+                      placeholder={translate(
+                        addBookingSeatForm.passportOrNID.placeholder.bn,
+                        addBookingSeatForm.passportOrNID.placeholder.en
+                      )}
+                    />
+                  </InputWrapper>
+                  {/* NATIONALITY */}
+                  <InputWrapper
+                    error={errors?.nationality?.message}
+                    labelFor="nationality"
+                    label={translate(
+                      addBookingSeatForm.nationality.label.bn,
+                      addBookingSeatForm.nationality.label.en
+                    )}
+                  >
+                    <Select
+                      onValueChange={(value: string) => {
+                        setValue("nationality", value);
+                        setError("nationality", {
+                          type: "custom",
+                          message: "",
+                        });
+                      }}
+                    >
+                      <SelectTrigger id="nationality" className="w-full">
+                        <SelectValue
+                          placeholder={translate(
+                            addBookingSeatForm.nationality.label.bn,
+                            addBookingSeatForm.nationality.label.en
+                          )}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {nationalitiesOptions?.map(
+                          (singleNationality: INationalityOptionsProps) => (
+                            <SelectItem
+                              key={singleNationality.en}
+                              value={singleNationality.key}
+                            >
+                              {translate(
+                                singleNationality.bn,
+                                singleNationality.en
+                              )}
+                            </SelectItem>
+                          )
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </InputWrapper>
+                </GridWrapper>
+              </div>
+
+              <div className="my-2">
+                <Heading size="h4">
+                  {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
+                </Heading>
+                <div>
+                  {bookingFormState.selectedSeats?.length > 0 ? (
+                    <VanishList
+                      listItems={bookingFormState.selectedSeats}
+                      handleBookingSeat={handleBookingSeat}
+                    />
+                  ) : (
+                    <div className="flex justify-center text-center">
+                      <Paragraph variant="destructive" size="sm">
+                        {translate(
+                          "আপনি এখনো কোনো আসন নির্বাচন করেননি। বুকিং সম্পূর্ণ করতে দয়া করে একটি আসন নির্বাচন করুন।",
+                          "You haven't selected a seat yet. Please choose a seat to proceed with your booking."
+                        )}
+                      </Paragraph>
+                    </div>
+                  )}
                 </div>
+              </div>
+              <div className="mt-4">
+                <Heading className="" size="h4">
+                  {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
+                </Heading>
+              </div>
 
-                {/* EMAIL */}
+              {/* paymnet div */}
+              <div className="mt-2 grid grid-cols-3">
+                {/* PAYMENT METHOD */}
                 <InputWrapper
-                  error={errors?.email?.message}
-                  labelFor="email"
+                  error={errors?.paymentMethod?.message}
+                  labelFor="paymentMethod"
                   label={translate(
-                    addBookingSeatForm.email.label.bn,
-                    addBookingSeatForm.email.label.en
-                  )}
-                >
-                  <Input
-                    {...register("email")}
-                    type="email"
-                    id="email"
-                    placeholder={translate(
-                      addBookingSeatForm.email.placeholder.bn,
-                      addBookingSeatForm.email.placeholder.en
-                    )}
-                  />
-                </InputWrapper>
-
-                {/* PASSPORT OR NID */}
-                <InputWrapper
-                  error={errors?.nid?.message}
-                  className={cn(
-                    bookingFormState?.selectedSeats?.length < 3 && "col-span-1"
-                  )}
-                  labelFor="pass/nid"
-                  label={translate(
-                    addBookingSeatForm.passportOrNID.label.bn,
-                    addBookingSeatForm.passportOrNID.label.en
-                  )}
-                >
-                  <Input
-                    {...register("nid")}
-                    type="text"
-                    id="pass/nid"
-                    placeholder={translate(
-                      addBookingSeatForm.passportOrNID.placeholder.bn,
-                      addBookingSeatForm.passportOrNID.placeholder.en
-                    )}
-                  />
-                </InputWrapper>
-                {/* NATIONALITY */}
-                <InputWrapper
-                  error={errors?.nationality?.message}
-                  labelFor="nationality"
-                  label={translate(
-                    addBookingSeatForm.nationality.label.bn,
-                    addBookingSeatForm.nationality.label.en
+                    addBookingSeatForm.paymentMethod.label.bn,
+                    addBookingSeatForm.paymentMethod.label.en
                   )}
                 >
                   <Select
                     onValueChange={(value: string) => {
-                      setValue("nationality", value);
-                      setError("nationality", { type: "custom", message: "" });
+                      setValue("paymentMethod", value);
+                      setError("paymentMethod", {
+                        type: "custom",
+                        message: "",
+                      });
                     }}
                   >
-                    <SelectTrigger id="nationality" className="w-full">
+                    <SelectTrigger id="paymentMethod" className="w-full">
                       <SelectValue
                         placeholder={translate(
-                          addBookingSeatForm.nationality.label.bn,
-                          addBookingSeatForm.nationality.label.en
+                          addBookingSeatForm.paymentMethod.placeholder.bn,
+                          addBookingSeatForm.paymentMethod.placeholder.en
                         )}
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      {nationalitiesOptions?.map(
-                        (singleNationality: INationalityOptionsProps) => (
+                      {paymentMethodOptions?.map(
+                        (
+                          singleNationality: IPaymentMethodOptions,
+                          nationalityIndex: number
+                        ) => (
                           <SelectItem
-                            key={singleNationality.en}
+                            key={nationalityIndex}
                             value={singleNationality.key}
                           >
                             {translate(
@@ -777,237 +860,159 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                     </SelectContent>
                   </Select>
                 </InputWrapper>
-              </GridWrapper>
-            </div>
-
-            <div className="my-2">
-              <Heading size="h4">
-                {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
-              </Heading>
-              <div>
-                {bookingFormState.selectedSeats?.length > 0 ? (
-                  <VanishList
-                    listItems={bookingFormState.selectedSeats}
-                    handleBookingSeat={handleBookingSeat}
-                  />
-                ) : (
-                  <div className="flex justify-center text-center">
-                    <Paragraph variant="destructive" size="sm">
-                      {translate(
-                        "আপনি এখনো কোনো আসন নির্বাচন করেননি। বুকিং সম্পূর্ণ করতে দয়া করে একটি আসন নির্বাচন করুন।",
-                        "You haven't selected a seat yet. Please choose a seat to proceed with your booking."
-                      )}
-                    </Paragraph>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="mt-4">
-              <Heading className="" size="h4">
-                {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
-              </Heading>
-            </div>
-
-            {/* paymnet div */}
-            <div className="mt-2 grid grid-cols-3">
-              {/* PAYMENT METHOD */}
-              <InputWrapper
-                error={errors?.paymentMethod?.message}
-                labelFor="paymentMethod"
-                label={translate(
-                  addBookingSeatForm.paymentMethod.label.bn,
-                  addBookingSeatForm.paymentMethod.label.en
-                )}
-              >
-                <Select
-                  onValueChange={(value: string) => {
-                    setValue("paymentMethod", value);
-                    setError("paymentMethod", {
-                      type: "custom",
-                      message: "",
-                    });
-                  }}
-                >
-                  <SelectTrigger id="paymentMethod" className="w-full">
-                    <SelectValue
-                      placeholder={translate(
-                        addBookingSeatForm.paymentMethod.placeholder.bn,
-                        addBookingSeatForm.paymentMethod.placeholder.en
-                      )}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {paymentMethodOptions?.map(
-                      (
-                        singleNationality: IPaymentMethodOptions,
-                        nationalityIndex: number
-                      ) => (
-                        <SelectItem
-                          key={nationalityIndex}
-                          value={singleNationality.key}
-                        >
-                          {translate(
-                            singleNationality.bn,
-                            singleNationality.en
-                          )}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
-              </InputWrapper>
-              {/* payment type */}
-              <InputWrapper
-                error={errors?.paymentType?.message}
-                labelFor="paymentType"
-                label={translate(
-                  addBookingSeatForm?.paymentType.label.bn,
-                  addBookingSeatForm?.paymentType.label.en
-                )}
-              >
-                <Select
-                  value={watch("paymentType") || ""}
-                  onValueChange={(value: "FULL" | "PARTIAL") => {
-                    setValue("paymentType", value);
-                    setError("paymentType", { type: "custom", message: "" });
-                  }}
-                >
-                  <SelectTrigger id="paymentType" className="w-full">
-                    <SelectValue
-                      placeholder={translate(
-                        addBookingSeatForm.paymentType.placeholder.bn,
-                        addBookingSeatForm.paymentType.placeholder.en
-                      )}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="FULL">
-                      {translate("পূর্ণ", "FULL")}
-                    </SelectItem>
-                    <SelectItem value="PARTIAL">
-                      {translate("আংশিক", "PARTIAL")}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </InputWrapper>
-              {/* payment partial amount */}
-              {paymentType === "PARTIAL" && (
+                {/* payment type */}
                 <InputWrapper
-                  labelFor="paymentAmount"
-                  error={errors.paymentAmount?.message}
+                  error={errors?.paymentType?.message}
+                  labelFor="paymentType"
                   label={translate(
-                    addBookingSeatForm.paymentAmount.label.bn,
-                    addBookingSeatForm.paymentAmount.label.en
+                    addBookingSeatForm?.paymentType.label.bn,
+                    addBookingSeatForm?.paymentType.label.en
                   )}
                 >
-                  <Input
-                    {...register("paymentAmount")}
-                    type="number"
-                    id="paymentAmount"
-                    placeholder={translate(
-                      addBookingSeatForm.paymentAmount.placeholder.bn,
-                      addBookingSeatForm.paymentAmount.placeholder.en
-                    )}
-                    onChange={(e) =>
-                      setValue("paymentAmount", parseFloat(e.target.value))
-                    }
-                  />
+                  <Select
+                    value={watch("paymentType") || ""}
+                    onValueChange={(value: "FULL" | "PARTIAL") => {
+                      setValue("paymentType", value);
+                      setError("paymentType", { type: "custom", message: "" });
+                    }}
+                  >
+                    <SelectTrigger id="paymentType" className="w-full">
+                      <SelectValue
+                        placeholder={translate(
+                          addBookingSeatForm.paymentType.placeholder.bn,
+                          addBookingSeatForm.paymentType.placeholder.en
+                        )}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="FULL">
+                        {translate("পূর্ণ", "FULL")}
+                      </SelectItem>
+                      <SelectItem value="PARTIAL">
+                        {translate("আংশিক", "PARTIAL")}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </InputWrapper>
-              )}
-            </div>
-            {paymentType === "PARTIAL" && (
-              <div className="flex justify-center text-center">
-                <Paragraph variant="destructive" size="sm">
-                  {translate(
-                    "“যাত্রীকে অবশ্যই প্রস্থানের সময় কমপক্ষে 2 ঘন্টা আগে বকেয়া অর্থ প্রদান করতে হবে। অন্যথায় আপনার টিকিট বাতিল বলে বিবেচিত হবে।”",
-                    "passenger must pay the due amount at least 2 hours before the departure time.Otherwise your ticket will be considered cancelled"
-                  )}
-                </Paragraph>
-              </div>
-            )}
-            <div className="mt-3">
-              <ul className="flex justify-between">
-                <li className="text-lg tracking-tight">
-                  <label>{translate("মোট আসনঃ ", "Total Seats: ")}</label>
-                  <b className="font-[500]">
-                    {translate(
-                      convertToBnDigit(totalSeats?.toString()),
-                      totalSeats?.toString()
+                {/* payment partial amount */}
+                {paymentType === "PARTIAL" && (
+                  <InputWrapper
+                    labelFor="paymentAmount"
+                    error={errors.paymentAmount?.message}
+                    label={translate(
+                      addBookingSeatForm.paymentAmount.label.bn,
+                      addBookingSeatForm.paymentAmount.label.en
                     )}
-                  </b>
-                </li>
-
-                <li className="text-lg tracking-tight">
-                  <label>{translate("প্রদত্ত বিল: ", "Paid Amount: ")}</label>
-                  <b className="font-[500] font-anek">
+                  >
+                    <Input
+                      {...register("paymentAmount")}
+                      type="number"
+                      id="paymentAmount"
+                      placeholder={translate(
+                        addBookingSeatForm.paymentAmount.placeholder.bn,
+                        addBookingSeatForm.paymentAmount.placeholder.en
+                      )}
+                      onChange={(e) =>
+                        setValue("paymentAmount", parseFloat(e.target.value))
+                      }
+                    />
+                  </InputWrapper>
+                )}
+              </div>
+              {paymentType === "PARTIAL" && (
+                <div className="flex justify-center text-center">
+                  <Paragraph variant="destructive" size="sm">
                     {translate(
-                      convertToBnDigit(
+                      "“যাত্রীকে অবশ্যই প্রস্থানের সময় কমপক্ষে 2 ঘন্টা আগে বকেয়া অর্থ প্রদান করতে হবে। অন্যথায় আপনার টিকিট বাতিল বলে বিবেচিত হবে।”",
+                      "passenger must pay the due amount at least 2 hours before the departure time.Otherwise your ticket will be considered cancelled"
+                    )}
+                  </Paragraph>
+                </div>
+              )}
+              <div className="mt-3">
+                <ul className="flex justify-between">
+                  <li className="text-lg tracking-tight">
+                    <label>{translate("মোট আসনঃ ", "Total Seats: ")}</label>
+                    <b className="font-[500]">
+                      {translate(
+                        convertToBnDigit(totalSeats?.toString()),
+                        totalSeats?.toString()
+                      )}
+                    </b>
+                  </li>
+
+                  <li className="text-lg tracking-tight">
+                    <label>{translate("প্রদত্ত বিল: ", "Paid Amount: ")}</label>
+                    <b className="font-[500] font-anek">
+                      {translate(
+                        convertToBnDigit(
+                          formatter({
+                            type: "amount",
+                            amount: partialAmount?.toString(),
+                          })
+                        ),
                         formatter({
                           type: "amount",
                           amount: partialAmount?.toString(),
                         })
-                      ),
-                      formatter({
-                        type: "amount",
-                        amount: partialAmount?.toString(),
-                      })
-                    )}
-                  </b>
-                </li>
-                <li className="text-lg tracking-tight">
-                  <label>{translate("বকেয়া বিল:", "Due Amount: ")}</label>
-                  <b className="font-[500] font-anek">
-                    {translate(
-                      convertToBnDigit(
+                      )}
+                    </b>
+                  </li>
+                  <li className="text-lg tracking-tight">
+                    <label>{translate("বকেয়া বিল:", "Due Amount: ")}</label>
+                    <b className="font-[500] font-anek">
+                      {translate(
+                        convertToBnDigit(
+                          formatter({
+                            type: "amount",
+                            amount: dueAmount.toString(),
+                          })
+                        ),
                         formatter({
                           type: "amount",
                           amount: dueAmount.toString(),
                         })
-                      ),
-                      formatter({
-                        type: "amount",
-                        amount: dueAmount.toString(),
-                      })
-                    )}
-                  </b>
-                </li>
-                <li className="text-lg tracking-tight">
-                  <label>{translate("মোট বিল: ", "Total Amount: ")}</label>
-                  <b className="font-[500] font-anek">
-                    {translate(
-                      convertToBnDigit(
+                      )}
+                    </b>
+                  </li>
+                  <li className="text-lg tracking-tight">
+                    <label>{translate("মোট বিল: ", "Total Amount: ")}</label>
+                    <b className="font-[500] font-anek">
+                      {translate(
+                        convertToBnDigit(
+                          formatter({
+                            type: "amount",
+                            amount: totalAmount?.toString(),
+                          })
+                        ),
                         formatter({
                           type: "amount",
                           amount: totalAmount?.toString(),
                         })
-                      ),
-                      formatter({
-                        type: "amount",
-                        amount: totalAmount?.toString(),
-                      })
-                    )}
-                  </b>
-                </li>
-              </ul>
-            </div>
-            <Submit
-              loading={
-                addBookingLoading ||
-                checkingSeatLoading ||
-                addBookingPaymentLoading
-              }
-              errors={
-                addBookingError || checkingSeatError || addBookingPaymentError
-              }
-              submitTitle={translate("আসন বুক করুন", "Book Seat")}
-              errorTitle={translate(
-                "আসন বুক করতে ত্রুটি হয়েছে",
-                "Seat Booking Error"
-              )}
-            />
-          </PageTransition>
-        </div>
-      </form>
+                      )}
+                    </b>
+                  </li>
+                </ul>
+              </div>
+              <Submit
+                loading={
+                  addBookingLoading ||
+                  checkingSeatLoading ||
+                  addBookingPaymentLoading
+                }
+                errors={
+                  addBookingError || checkingSeatError || addBookingPaymentError
+                }
+                submitTitle={translate("আসন বুক করুন", "Book Seat")}
+                errorTitle={translate(
+                  "আসন বুক করতে ত্রুটি হয়েছে",
+                  "Seat Booking Error"
+                )}
+              />
+            </PageTransition>
+          </div>
+        </form>
+      </div>
     </PageTransition>
   );
 };
