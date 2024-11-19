@@ -18,7 +18,9 @@ import {
   rootDasboardHomeRoutesAll,
   rootSupervisorDashboardHome,
 } from "./routes/rootDashboardHomeForAllRoute";
+import { settingsRoutes } from "./routes/settingsRoutes";
 import {
+  acceptCoachLinks,
   supervisorCoachDetails,
   supervisorManagement,
   supervisorReportDetails,
@@ -28,7 +30,6 @@ import AccountsRoutes from "./routeWrapper/Accounts";
 import AdminRoutes from "./routeWrapper/AdminRoutes";
 import CounterRoutes from "./routeWrapper/CounterRoutes";
 import SupervisorRoutes from "./routeWrapper/SupervisorRoutes";
-import { settingsRoutes } from "./routes/settingsRoutes";
 
 const routers = createBrowserRouter([
   {
@@ -48,7 +49,7 @@ const routers = createBrowserRouter([
       ...expensesRoutes,
       ...vehiclesSchedule,
       ...adminReportingSuite,
-      ...settingsRoutes
+      ...settingsRoutes,
     ],
   },
   {
@@ -90,6 +91,7 @@ const routers = createBrowserRouter([
       ...supervisorManagement,
       ...supervisorReportDetails,
       ...supervisorCoachDetails,
+      ...acceptCoachLinks,
     ],
   },
   {

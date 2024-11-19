@@ -49,6 +49,20 @@ const accountsDashboardApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["accounts-dashboard"], // Adjust tags as needed
     }),
+    getAccountDashboardHomeData: builder.query({
+      query: () => ({
+        url: "/user/get-supervisor-report",
+        method: "GET",
+      }),
+      providesTags: ["accounts-dashboard-home"],
+    }),
+    getAccountReportDetailsById: builder.query({
+      query: (id) => ({
+        url: `/user/details-supervisor-report/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["accounts-dashboard-home"],
+    }),
   }),
 });
 
@@ -58,4 +72,6 @@ export const {
   useAuthorizeExpenseMutation,
   useGetCollectionAccountDashboardQuery,
   useAuthorizeCollectionMutation,
+  useGetAccountDashboardHomeDataQuery,
+  useGetAccountReportDetailsByIdQuery,
 } = accountsDashboardApi;

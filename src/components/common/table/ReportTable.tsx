@@ -1,80 +1,116 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import React from "react";
 
 interface ReportTableProps {
   mainHeaders: string[];
   subHeaders: string[][];
   data: { [key: string]: { [subHeader: string]: any } }[];
+  maxRows: number; // Maximum number of rows to ensure all tables have the same height
   bordered?: boolean;
 }
 
 const ReportTable: React.FC<ReportTableProps> = ({
-  mainHeaders,
-  subHeaders,
-  data,
+  mainHeaders = [],
+  subHeaders = [],
+  data = [],
+  maxRows,
   bordered = true,
 }) => {
   const colSpans = subHeaders.map((sub) => sub.length);
 
+  // Calculate totals for each section
+  const totals = mainHeaders.map((header) =>
+    data.reduce((sum, row) => {
+      const value = parseFloat(row[header]?.Taka) || 0;
+      return sum + value;
+    }, 0)
+  );
+
   return (
-    <div className="w-full overflow-x-auto rounded-lg border border-gray-300">
-      <Table className={cn(bordered && "border-collapse")}>
-        <TableHeader>
-          {/* Main Headers Row */}
-          <TableRow className="">
+    <div className={`w-full overflow-x-auto rounded-lg border ${bordered}`}>
+      <table className="w-full table-auto border border-gray-300">
+        <thead>
+          <tr>
+            {/* Main Headers */}
             {mainHeaders.map((header, index) => (
-              <TableCell
+              <th
                 key={index}
                 colSpan={colSpans[index]}
-                className="text-center font-semibold border-r border-gray-300"
+                className="text-center font-semibold border border-gray-300 p-2"
               >
-                {header} {/* Directly display header */}
-              </TableCell>
+                {header}
+              </th>
             ))}
-          </TableRow>
-
-          {/* Sub-Headers Row */}
-          <TableRow className="">
+          </tr>
+          <tr>
+            {/* Sub-Headers */}
             {subHeaders.map((subHeaderGroup, index) =>
               subHeaderGroup.map((subHeader, subIndex) => (
-                <TableCell
+                <th
                   key={`${index}-${subIndex}`}
-                  className="text-center font-semibold border-r border-gray-300"
+                  className="text-center font-semibold border border-gray-300 p-2"
                 >
-                  {subHeader} {/* Directly display sub-header */}
-                </TableCell>
+                  {subHeader}
+                </th>
               ))
             )}
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Render Data Rows */}
           {data.map((rowData, rowIndex) => (
-            <TableRow key={rowIndex}>
+            <tr key={rowIndex}>
               {mainHeaders.map((header, headerIndex) =>
                 subHeaders[headerIndex].map((subHeader, subIndex) => (
-                  <TableCell
+                  <td
                     key={`${headerIndex}-${subIndex}-${rowIndex}`}
-                    className={cn(
-                      "p-2 text-center",
-                      bordered && "border-b border-r border-gray-300"
-                    )}
+                    className="p-2 text-center border border-gray-300"
                   >
                     {rowData[header]?.[subHeader] ?? "-"}
-                  </TableCell>
+                  </td>
                 ))
               )}
-            </TableRow>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
+
+          {/* Fill with Empty Rows to Match maxRows */}
+          {Array.from({ length: maxRows - data.length }).map((_, rowIndex) => (
+            <tr key={`empty-row-${rowIndex}`}>
+              {mainHeaders.map((_, headerIndex) =>
+                subHeaders[headerIndex].map((_, colIndex) => (
+                  <td
+                    key={`empty-cell-${headerIndex}-${colIndex}-${rowIndex}`}
+                    className="p-2 text-center border border-gray-300"
+                  >
+                    -
+                  </td>
+                ))
+              )}
+            </tr>
+          ))}
+
+          {/* Total Row */}
+          <tr>
+            {mainHeaders.map(
+              (
+                _,
+                headerIndex: number // Ensure headerIndex is a number
+              ) => (
+                <React.Fragment key={headerIndex}>
+                  <td
+                    colSpan={subHeaders[headerIndex]?.length - 1}
+                    className="font-semibold text-center p-2 border border-gray-300"
+                  >
+                    Total
+                  </td>
+                  <td className="font-semibold text-center p-2 border border-gray-300">
+                    {totals[headerIndex] || 0}
+                  </td>
+                </React.Fragment>
+              )
+            )}
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };
