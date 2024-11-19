@@ -54,28 +54,20 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
                   : "Suite Class"}
               </Badge>
             </li>
-            <li className="text-lg tracking-tight font-semibold mb-3">
+            <li className="text-lg tracking-tight font-semibold mt-1">
               <span className="">{translate("কোচ নম্বরঃ ", "Couch No: ")}</span>
               <span className="font-[500] uppercase">
                 {coachData?.coachNo ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>
             </li>
-
-            <li className="text-lg tracking-tight flex items-center">
-              <span className="">
-                {translate("শুরুর স্থানঃ ", "Starting Point: ")}
-              </span>
-              <span className="font-[500] text-red-400 ml-2 rounded-lg px-2 py-[2px]">
+            <li className="text-lg tracking-tight">
+              <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
                 {coachData?.fromCounter?.name ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
-              </span>
-            </li>
-            <li className="text-lg tracking-tight mt-3">
-              <span className="">
-                {translate("শেষ স্থানঃ ", "Ending Point: ")}
-              </span>
-              <span className="font-[500] text-red-400 ml-2 rounded-lg px-2 py-[2px]">
+              </span>{" "}
+              {`=>`}{" "}
+              <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
                 {coachData?.destinationCounter?.name ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>
