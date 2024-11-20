@@ -22,7 +22,7 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
     <TooltipProvider>
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative w-full max-w-4xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
+          <div className="relative w-full max-w-6xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
             {/* Close Button */}
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -31,7 +31,7 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
             >
               &times;
             </button>
-            <UpdateCoachConfigNavigationForm id={null} />
+            <UpdateCoachConfigNavigationForm />
           </div>
         </div>
       )}
