@@ -420,6 +420,7 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
                   captionLayout="dropdown-buttons"
                   selected={addUserFormState?.date || new Date()}
                   onSelect={(date) => {
+                    //@ts-ignore
                     setValue("dateOfBirth", date);
                     setError("dateOfBirth", { type: "custom", message: "" });
                     setAddUserFormState(

@@ -1,10 +1,13 @@
 import DeleteAlertDialog from "@/components/common/dialog/DeleteAlertDialog";
+import PhotoViewer from "@/components/common/photo/PhotoViewer";
+import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 import { DataTable, IQueryProps } from "@/components/common/table/DataTable";
 import PageWrapper from "@/components/common/wrapper/PageWrapper";
 import {
   TableToolbar,
   TableWrapper,
 } from "@/components/common/wrapper/TableWrapper";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,29 +24,27 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
+import {
+  useDeleteDriverMutation,
+  useGetDriversQuery,
+  useUpdateDriverMutation,
+} from "@/store/api/contact/driverApi";
+import { Driver } from "@/types/dashboard/contacts/driver";
 import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
+import formatter from "@/utils/helpers/formatter";
+import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
+import { playSound } from "@/utils/helpers/playSound";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
-import { cn } from "@/lib/utils";
 import AddDriver from "./AddDriver";
-import {
-  useDeleteDriverMutation,
-  useGetDriversQuery,
-} from "@/store/api/contact/driverApi";
-import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
-import { Badge } from "@/components/ui/badge";
-import PhotoViewer from "@/components/common/photo/PhotoViewer";
-import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
-import { useToast } from "@/components/ui/use-toast";
-import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
-import { playSound } from "@/utils/helpers/playSound";
-import UpdateDriver from "./UpdateDriver";
-import formatter from "@/utils/helpers/formatter";
 import DetailsDriver from "./DetailsDriver";
-import { Driver } from "@/types/dashboard/contacts/driver";
+import UpdateDriver from "./UpdateDriver";
 
 interface IDriverListProps {}
 
@@ -80,8 +81,38 @@ const DriverList: FC<IDriverListProps> = () => {
     page: query.page,
     size: query.size,
   });
+  const [updateDriver] = useUpdateDriverMutation({});
 
   const [deleteDriver] = useDeleteDriverMutation({});
+  const deactivateDriver = async (id: number, status: boolean) => {
+    try {
+      const result = await updateDriver({ id, data: { active: !status } });
+
+      if (result.data?.success) {
+        toast({
+          title: translate("সফল!", "Success!"),
+          description: translate(
+            "ড্রাইভার হাল নাগাদ করা হয়েছে।",
+            "Update Success."
+          ),
+        });
+        playSound("success");
+      } else {
+        throw new Error("Update failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: translate("ত্রুটি", "Error"),
+        description: translate(
+          "ড্রাইভার হাল নাগাদ করতে ব্যর্থ।",
+          "Failed to deactivate driver."
+        ),
+        variant: "destructive",
+      });
+      playSound("warning");
+    }
+  };
 
   useEffect(() => {
     const customizeDriversData = driversData?.data?.map(
@@ -165,14 +196,17 @@ const DriverList: FC<IDriverListProps> = () => {
     {
       header: translate("অবস্থা", "Status"),
       cell: ({ row }) => {
-        const user = row.original as Driver & { dummyActive: string };
+        const driver = row.original as Driver;
+
         return (
           <Badge
             size="sm"
             shape="pill"
-            variant={user?.active ? "success" : "destructive"}
+            variant={driver?.active ? "success" : "destructive"}
+            onClick={() => deactivateDriver(driver.id, driver?.active)} // Call the deactivateDriver function
+            className="cursor-pointer" // Add pointer cursor
           >
-            {user.dummyActive}
+            {driver?.active ? "Active" : "Inactive"}
           </Badge>
         );
       },

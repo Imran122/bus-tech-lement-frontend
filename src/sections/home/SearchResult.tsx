@@ -1,12 +1,22 @@
 import BookingSeatCard from "@/components/common/card/BookingSeatCard";
 import BookingSeatCardRoundTripPublic from "@/components/common/card/BookingSeatCardRoundTripPublic";
 import { Accordion } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useRemoveBookingSeatMutation } from "@/store/api/bookingApi";
+import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { useState } from "react";
+import { LuRefreshCw } from "react-icons/lu";
 import { PiKeyReturnBold } from "react-icons/pi";
+import { toast } from "sonner";
 import BoookingFormRoundTripPublic, {
   IBookingFormStateProps,
 } from "./BoookingFormRoundTripPublic";
-
 export default function SearchResult({
   bookingState,
   setBookingState,
@@ -22,12 +32,13 @@ export default function SearchResult({
       customerName: null,
       redirectConfirm: false,
     });
+  const { translate } = useCustomTranslator();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bookingCoachSingle, setBookingCoachSingle] = useState({});
   const [goViaRoute, setGoViaRoute] = useState([]);
   const [returnViaRoute, setReturnViaRoute] = useState([]);
-
+  const [removeBookingSeat] = useRemoveBookingSeatMutation({}) as any;
   // Open and close modal
   const handleProceedClick = () => {
     setIsModalOpen(true);
@@ -41,7 +52,69 @@ export default function SearchResult({
   if (bookingFormState.redirectConfirm && bookingFormState.redirectLink) {
     window.location.href = bookingFormState.redirectLink;
   }
+  //reset button
+  const ResetDataOfForm = async () => {
+    try {
+      if (!bookingFormState.selectedSeats.length) {
+        toast.warning(
+          translate(
+            "No seats selected to reset.",
+            "রিসেট করার জন্য কোনো আসন নির্বাচন করা হয়নি।"
+          )
+        );
+        return;
+      }
 
+      // Iterate over selected seats and call `removeBookingSeat` for each
+      const promises = bookingFormState.selectedSeats.map((seat) =>
+        removeBookingSeat({
+          coachConfigId: seat?.coachConfigId,
+          date: seat?.date,
+          schedule: seat?.schedule,
+          seat: seat.seat,
+        })
+      );
+
+      // Wait for all API calls to complete
+      const results = await Promise.all(promises);
+
+      // Check if all API calls were successful
+      const allSuccessful = results.every((result) => result?.data?.success);
+
+      if (allSuccessful) {
+        toast.success(
+          translate(
+            "All seats reset successfully.",
+            "সব আসন সফলভাবে রিসেট হয়েছে।"
+          )
+        );
+
+        // Reset the form state
+        setBookingFormState({
+          targetedSeat: null,
+          selectedSeats: [],
+          redirectLink: null,
+          customerName: null,
+          redirectConfirm: false,
+        });
+      } else {
+        toast.error(
+          translate(
+            "Some seats could not be reset. Please try again.",
+            "কিছু আসন রিসেট করা যায়নি। আবার চেষ্টা করুন।"
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error resetting seats:", error);
+      toast.error(
+        translate(
+          "Error resetting the seats. Please try again.",
+          "আসন রিসেট করার সময় ত্রুটি হয়েছে। আবার চেষ্টা করুন।"
+        )
+      );
+    }
+  };
   return (
     <div>
       <Accordion className="w-full space-y-3" type="single" collapsible>
@@ -110,13 +183,35 @@ export default function SearchResult({
       </Accordion>
 
       {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
-        <div className="w-full mt-5 max-w-xs text-center">
+        <div className="w-full mt-5 flex justify-between items-center">
           <button
             onClick={handleProceedClick}
-            className="block px-6 py-3 text-xl bg-primary text-white rounded-md hover:bg-primary-dark"
+            className="block px-10 py-3 text-xl font-semibold bg-primary text-white rounded-md hover:bg-primary-dark"
           >
             Proceed
           </button>
+          <div className="py-3 flex gap-4 items-end px-6 border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+            <h2 className="text-primary text-2xl  font-semibold">Reset Seat</h2>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    className="text-muted-foreground"
+                    onClick={ResetDataOfForm}
+                    variant="outline"
+                    size="icon"
+                  >
+                    <span className="sr-only">Refresh Button</span>
+                    <LuRefreshCw className="size-[21px]" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p> {translate("ফিল্টার রিসেট", "Reset Filter")}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       )}
 

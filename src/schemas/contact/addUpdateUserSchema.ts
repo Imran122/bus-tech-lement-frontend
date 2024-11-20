@@ -14,7 +14,7 @@ export const addUserSchema = z
       .min(6, "Password must be at least 6 characters long")
       .max(12, "Password must be at most 12 characters long")
       .min(1, "Password is required"),
-    contactNo: z.string().optional(),
+    contactNo: z.string().min(1, "Contact No is required"),
 
     roleId: z.number({
       required_error: "Role is required",
@@ -22,7 +22,7 @@ export const addUserSchema = z
     counterId: z.number({
       required_error: "Counter is required",
     }),
-    dateOfBirth: z.date().optional(),
+    dateOfBirth: z.string().optional(),
     gender: z.enum(["Male", "Female"]).optional(),
     maritalStatus: z.enum(["Married", "Unmarried"]).optional(),
     bloodGroup: z.string().optional(),
@@ -44,7 +44,7 @@ export type AddUserDataProps = z.infer<typeof addUserSchema>;
 export const updateUserSchema = z.object({
   userName: z.string().min(1, "Name is required"),
   contactNo: z.string().optional(),
-  dateOfBirth: z.date().optional(),
+  dateOfBirth: z.string().optional(),
   gender: z.enum(["Male", "Female"]).optional(),
   maritalStatus: z.enum(["Married", "Unmarried"]).optional(),
   bloodGroup: z.string().optional(),

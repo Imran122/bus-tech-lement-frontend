@@ -3,6 +3,8 @@ import { InputWrapper } from "@/components/common/form/InputWrapper";
 import { Heading } from "@/components/common/typography/Heading";
 import { GridWrapper } from "@/components/common/wrapper/GridWrapper";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+
 import {
   Select,
   SelectContent,
@@ -11,11 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import {
   INationalityOptionsProps,
   nationalitiesOptions,
 } from "@/utils/constants/common/nationalitiesOptions";
-import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import { addBookingSeatForm } from "@/utils/constants/form/addBookingForm";
 import { dynamicSeatAllocation } from "@/utils/helpers/dynamicSeatAllocation";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
@@ -49,10 +51,16 @@ import { useForm } from "react-hook-form";
 
 import SeatLayoutSelector from "@/components/common/busSeatLayout/SeatLayoutSelector";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
-import { toast } from "sonner";
 import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
+import { LuRefreshCw } from "react-icons/lu";
 
 interface IBookingFormProps {
   bookingCoach: any;
@@ -78,8 +86,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       redirectConfirm: false,
     });
 
-  const [addBooking, {data:bookingInfo, isLoading: addBookingLoading, error: addBookingError }] =
-    useAddBookingMutation({}) as any;
+  const [
+    addBooking,
+    { data: bookingInfo, isLoading: addBookingLoading, error: addBookingError },
+  ] = useAddBookingMutation({}) as any;
 
   const [
     addBookingPayment,
@@ -87,8 +97,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   ] = useAddBookingPaymentMutation({}) as any;
   const [addBookingSeat, { isLoading: addBookingSeatLoading }] =
     useAddBookingSeatMutation({}) as any;
-  const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
-    useRemoveBookingSeatMutation({}) as any;
+
   const [
     checkingSeat,
     { isLoading: checkingSeatLoading, error: checkingSeatError },
@@ -177,7 +186,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   };
 
   const [updateLocal, setUpdateLocal] = useState<boolean>(false);
-  
+
   // UPDATE THE COMPONENT VIA REFERENCE
   useEffect(() => {
     if (bookingInfo && updateLocal) {
@@ -259,19 +268,28 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   const paymentType = watch("paymentType"); // Watch the paymentType value
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
+    useRemoveBookingSeatMutation({}) as any;
+  const {
+    data: userInfoData,
+    isLoading: userInfoLoading,
+    refetch,
+  } = useGetTickitInfoByPhoneQuery(phoneNumber, {
+    skip: !phoneNumber, // Ensure the API doesn't fetch unless the phone number is provided
+  }) as any;
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true); // Trigger the API call for fetching user info by phone
+
+    if (!phoneNumber) {
+      setErrorMessage("Please enter a valid phone number.");
+      return;
+    }
+
+    setSubmitted(true);
+    await refetch(); // Trigger API call manually
   };
-
-  const { data: userInfoData, isLoading: userInfoLoading } =
-    useGetTickitInfoByPhoneQuery(phoneNumber, {
-      skip: !submitted || !phoneNumber, // Only call API if submitted and phoneNumber is set
-    }) as any;
-
   useEffect(() => {
-    if (submitted) {
+    if (submitted && userInfoData) {
       if (userInfoData?.data) {
         // Populate all relevant form fields
         setValue("customerName", userInfoData.data.name || "");
@@ -284,13 +302,14 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
 
         // Clear any previous error message
         setErrorMessage("");
+        setSubmitted(false);
       } else {
         // Set error message if no data found
+        setSubmitted(false);
         setErrorMessage("No data found for this phone number.");
       }
 
       // Reset `submitted` to allow for further searches by phone
-      setSubmitted(false);
     }
   }, [userInfoData, setValue, submitted]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
@@ -349,13 +368,95 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       playSound("warning");
     }
   };
+  const ResetDataOfForm = async () => {
+    try {
+      if (!bookingFormState.selectedSeats.length) {
+        toast.warning(
+          translate(
+            "No seats selected to reset.",
+            "রিসেট করার জন্য কোনো আসন নির্বাচন করা হয়নি।"
+          )
+        );
+        return;
+      }
 
+      // Iterate over selected seats and call `removeBookingSeat` for each
+      const promises = bookingFormState.selectedSeats.map((seat) =>
+        removeBookingSeat({
+          coachConfigId: bookingCoach?.id,
+          date: bookingCoach?.departureDate,
+          schedule: bookingCoach?.schedule,
+          seat: seat.seat,
+        })
+      );
+
+      // Wait for all API calls to complete
+      const results = await Promise.all(promises);
+
+      // Check if all API calls were successful
+      const allSuccessful = results.every((result) => result?.data?.success);
+
+      if (allSuccessful) {
+        toast.success(
+          translate(
+            "All seats reset successfully.",
+            "সব আসন সফলভাবে রিসেট হয়েছে।"
+          )
+        );
+
+        // Reset the form state
+        setBookingFormState({
+          targetedSeat: null,
+          selectedSeats: [],
+          redirectLink: null,
+          customerName: null,
+          redirectConfirm: false,
+        });
+      } else {
+        toast.error(
+          translate(
+            "Some seats could not be reset. Please try again.",
+            "কিছু আসন রিসেট করা যায়নি। আবার চেষ্টা করুন।"
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error resetting seats:", error);
+      toast.error(
+        translate(
+          "Error resetting the seats. Please try again.",
+          "আসন রিসেট করার সময় ত্রুটি হয়েছে। আবার চেষ্টা করুন।"
+        )
+      );
+    }
+  };
   return (
     <PageTransition>
       {/* find tickit */}
       <div className="flex">
-        <div className="w-[35%]"></div>
-        <div className="w-[65%]">
+        <div className="w-[35%] flex gap-4 justify-end items-end px-6">
+          <h2 className="text-primary text-2xl  font-semibold">Reset Seat</h2>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  className="text-muted-foreground"
+                  onClick={ResetDataOfForm}
+                  variant="outline"
+                  size="icon"
+                >
+                  <span className="sr-only">Refresh Button</span>
+                  <LuRefreshCw className="size-[21px]" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p> {translate("ফিল্টার রিসেট", "Reset Filter")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <div className="w-[65%]  ">
           <PageTransition>
             <form
               onSubmit={handleFormSubmit}

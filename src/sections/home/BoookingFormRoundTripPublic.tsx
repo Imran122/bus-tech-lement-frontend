@@ -232,17 +232,28 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const {
+    data: userInfoData,
+    isLoading: userInfoLoading,
+    refetch,
+  } = useGetTickitInfoByPhoneQuery(phoneNumber, {
+    skip: !phoneNumber, // Ensure the API doesn't fetch unless the phone number is provided
+  }) as any;
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true); // Trigger the API call for fetching user info by phone
+
+    if (!phoneNumber) {
+      setErrorMessage("Please enter a valid phone number.");
+      return;
+    }
+
+    setSubmitted(true);
+    await refetch(); // Trigger API call manually
   };
 
-  const { data: userInfoData, isLoading: userInfoLoading } =
-    useGetTickitInfoByPhoneQuery(phoneNumber, {
-      skip: !submitted || !phoneNumber, // Only call API if submitted and phoneNumber is set
-    }) as any;
   useEffect(() => {
-    if (submitted) {
+    if (submitted && userInfoData) {
       if (userInfoData?.data) {
         // Populate all relevant form fields
         setValue("customerName", userInfoData.data.name || "");
@@ -255,13 +266,12 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
 
         // Clear any previous error message
         setErrorMessage("");
+        setSubmitted(false);
       } else {
         // Set error message if no data found
         setErrorMessage("No data found for this phone number.");
+        setSubmitted(false);
       }
-
-      // Reset `submitted` to allow for further searches by phone
-      setSubmitted(false);
     }
   }, [userInfoData, setValue, submitted]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {

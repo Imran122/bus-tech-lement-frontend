@@ -22,7 +22,6 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import {
-  AddUserDataProps,
   UpdateUserDataProps,
   updateUserSchema,
 } from "@/schemas/contact/addUpdateUserSchema";
@@ -32,6 +31,8 @@ import {
   useGetSingleUserQuery,
   useUpdateUserMutation,
 } from "@/store/api/contact/userApi";
+import { format } from "date-fns";
+
 import { useUploadPhotoMutation } from "@/store/api/fileApi";
 import {
   bloodGroupOptions,
@@ -51,11 +52,9 @@ import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skipToken } from "@reduxjs/toolkit/query"; // Import skipToken
-import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-
 interface IUpdateUserProps {
   id: number | null;
 }
@@ -113,7 +112,26 @@ const UpdateUser: FC<IUpdateUserProps> = ({ id }) => {
       setValue("gender", userData?.data?.gender || "");
       setValue("bloodGroup", userData?.data?.bloodGroup || "");
       setValue("contactNo", userData?.data?.contactNo || "");
-      setValue("dateOfBirth", new Date(userData?.data?.dateOfBirth) || null);
+
+      const dateOfBirth = userData?.data?.dateOfBirth
+        ? new Date(userData?.data?.dateOfBirth)
+        : null;
+
+      if (dateOfBirth && !isNaN(dateOfBirth.getTime())) {
+        // Valid date, format it
+        setValue("dateOfBirth", format(dateOfBirth, "yyyy-MM-dd"));
+        setUpdateUserFormState((prevState) => ({
+          ...prevState,
+          date: dateOfBirth,
+        }));
+      } else {
+        // Invalid or null date, set as empty string
+        setValue("dateOfBirth", "");
+        setUpdateUserFormState((prevState) => ({
+          ...prevState,
+          date: null,
+        }));
+      }
       setValue("maritalStatus", userData?.data?.maritalStatus || "");
       const roleId = userData?.data?.role?.id || ""; // Access roleId from the role object
       //
@@ -127,20 +145,21 @@ const UpdateUser: FC<IUpdateUserProps> = ({ id }) => {
       }));
     }
   }, [userData, setValue]);
-
+  const formValues = watch();
   const onSubmit = async (data: UpdateUserDataProps) => {
-    const updateData = removeFalsyProperties(data, [
-      "contactNo",
-      "dateOfBirth",
-      "gender",
-      "maritalStatus",
-      "bloodGroup",
-      "address",
-      "avatar",
-      "roleId",
-      "counterId",
-    ]) as AddUserDataProps;
-
+    const updateData = {
+      ...removeFalsyProperties(data, [
+        "contactNo",
+        "gender",
+        "maritalStatus",
+        "bloodGroup",
+        "address",
+        "avatar",
+        "roleId",
+        "counterId",
+        "dateOfBirth",
+      ]),
+    };
     if (updateData?.avatar) {
       const result = await uploadPhoto(updateData?.avatar).unwrap();
       if (result?.success) {
@@ -272,15 +291,17 @@ const UpdateUser: FC<IUpdateUserProps> = ({ id }) => {
                   captionLayout="dropdown-buttons"
                   selected={updateUserFormState?.date || new Date()}
                   onSelect={(date) => {
-                    setValue("dateOfBirth", date);
-                    setError("dateOfBirth", { type: "custom", message: "" });
-                    setUpdateUserFormState(
-                      (prevState: IUpdateUserFormStateProps) => ({
-                        ...prevState,
-                        calendarOpen: false,
-                        date: date || null,
-                      })
-                    );
+                    if (date) {
+                      setValue("dateOfBirth", format(date, "yyyy-MM-dd")); // Format as "YYYY-MM-DD"
+                      setError("dateOfBirth", { type: "custom", message: "" });
+                    } else {
+                      setValue("dateOfBirth", "");
+                    }
+                    setUpdateUserFormState((prevState) => ({
+                      ...prevState,
+                      calendarOpen: false,
+                      date: date || null,
+                    }));
                   }}
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
