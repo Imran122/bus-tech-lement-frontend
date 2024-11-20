@@ -4,6 +4,7 @@ import Submit from "@/components/common/form/Submit";
 import { Heading } from "@/components/common/typography/Heading";
 import { Paragraph } from "@/components/common/typography/Paragraph";
 import PageWrapper from "@/components/common/wrapper/PageWrapper";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   useAddBookingPaymentMutation,
@@ -17,7 +18,6 @@ import { useForm } from "react-hook-form";
 import { useReactToPrint } from "react-to-print";
 import { toast } from "sonner";
 import TickitPrint from "../dashboard/printLabel/TickitPrint";
-import { Button } from "@/components/ui/button";
 
 interface IFindTicketPaymentProps {}
 
@@ -25,9 +25,7 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
   const { translate } = useCustomTranslator();
   const [ticketNumber, setTicketNumber] = useState("");
 
-  const {
-    handleSubmit,
-  } = useForm<{ dueAmount: number }>();
+  const { handleSubmit } = useForm<{ dueAmount: number }>();
   const [saleData, setSaleData] = useState<any>();
   // Fetch ticket information based on ticket number
   const { data, isLoading, error } = useGetTickitInfoQuery(ticketNumber, {
@@ -40,7 +38,6 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
 
   const dueAmount = data?.data?.dueAmount;
   const ticketData = data?.data;
-
 
   // Handler for ticket number input
   const handleTicketNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,8 +70,6 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
       handlePrint();
     }
   }, [handlePrint, saleData]);
-
-
 
   // Handle form submission
   const onSubmit = async () => {
@@ -185,14 +180,10 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
             {/* Input for Due Amount */}
             {ticketData && dueAmount > 0 && (
               <form onSubmit={handleSubmit(onSubmit)}>
-
                 {/* Submit Button to Make Payment */}
                 <Submit
                   loading={paymentLoading}
-                  submitTitle={translate(
-                    "পেমেন্ট সম্পূর্ণ করুন",
-                    "Complete Payment"
-                  )}
+                  submitTitle={translate("পেমেন্ট করুন", "Pay")}
                   errors={paymentLoadingError}
                   errorTitle={translate(
                     "পেমেন্ট সম্পূর্ণ করতে ত্রুটি হয়েছে",

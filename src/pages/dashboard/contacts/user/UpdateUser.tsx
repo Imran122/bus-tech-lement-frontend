@@ -145,7 +145,7 @@ const UpdateUser: FC<IUpdateUserProps> = ({ id }) => {
       }));
     }
   }, [userData, setValue]);
-  const formValues = watch();
+  //const formValues = watch();
   const onSubmit = async (data: UpdateUserDataProps) => {
     const updateData = {
       ...removeFalsyProperties(data, [
