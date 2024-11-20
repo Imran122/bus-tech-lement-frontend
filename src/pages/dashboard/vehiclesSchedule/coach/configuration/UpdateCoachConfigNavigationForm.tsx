@@ -158,148 +158,226 @@ const UpdateCoachConfigNavigationForm: React.FC = () => {
             <tr key={index}>
               <td className="border px-4 py-2">{coach.coachNo}</td>
               <td className="border px-4 py-2">
-                <Input
-                  value={coach.discount}
-                  onChange={(e) =>
-                    handleInputChange(index, "discount", Number(e.target.value))
-                  }
-                  type="number"
-                />
-                <div className="text-sm text-gray-500">
+                {coach?.helperStatus !== "Accepted" ||
+                coach?.driverStatus !== "Accepted" ||
+                coach?.supervisorStatus !== "Accepted" ? (
+                  <Input
+                    value={coach.discount}
+                    onChange={(e) =>
+                      handleInputChange(
+                        index,
+                        "discount",
+                        Number(e.target.value)
+                      )
+                    }
+                    type="number"
+                  />
+                ) : (
+                  <></>
+                )}
+                <div className="text-sm capitalize">
                   {coach.discount || "N/A"}
                 </div>
               </td>
               <td className="border px-4 py-2">
-                <Select
-                  value={coach.registrationNo || undefined}
-                  onValueChange={(value) =>
-                    handleInputChange(index, "registrationNo", value)
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Registration" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {vehiclesData?.data.map((vehicle: any) => (
-                      <SelectItem
-                        key={vehicle.id}
-                        value={vehicle.registrationNo}
-                      >
-                        {vehicle.registrationNo}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="text-sm text-gray-500">
+                {!coach.registrationNo && (
+                  <Select
+                    value={coach.registrationNo || undefined}
+                    onValueChange={(value) =>
+                      handleInputChange(index, "registrationNo", value)
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Registration" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {vehiclesData?.data.map((vehicle: any) => (
+                        <SelectItem
+                          key={vehicle.id}
+                          value={vehicle.registrationNo}
+                        >
+                          {vehicle.registrationNo}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                <div className="text-sm capitalize">
                   {coach.registrationNo || "N/A"}
                 </div>
               </td>
               <td className="border px-4 py-2">
-                <Select
-                  value={
-                    coach.supervisorId
-                      ? coach.supervisorId.toString()
-                      : undefined
-                  }
-                  onValueChange={(value) =>
-                    handleInputChange(index, "supervisorId", parseInt(value))
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Supervisor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {supervisorsData?.data
-                      .filter((sup: any) => sup.role.name === "supervisor")
-                      .map((supervisor: any) => (
+                {coach?.supervisorStatus !== "Accepted" && (
+                  <Select
+                    value={
+                      coach.supervisorId
+                        ? coach.supervisorId.toString()
+                        : undefined
+                    }
+                    onValueChange={(value) =>
+                      handleInputChange(index, "supervisorId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Supervisor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {supervisorsData?.data
+                        .filter((sup: any) => sup.role.name === "supervisor")
+                        .map((supervisor: any) => (
+                          <SelectItem
+                            key={supervisor.id}
+                            value={supervisor.id.toString()}
+                          >
+                            {supervisor.userName}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                <div className="flex flex-col text-center">
+                  <div className="text-sm capitalize">
+                    {coach?.supervisor?.userName || "N/A"}
+                  </div>
+                  <div
+                    className={`text-sm  ${
+                      coach?.supervisorStatus === "Accepted"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {`${coach?.supervisorStatus}`}
+                  </div>
+                </div>
+              </td>
+              <td className="border px-4 py-2">
+                {coach?.driverStatus !== "Accepted" && (
+                  <Select
+                    value={
+                      coach.driverId ? coach.driverId.toString() : undefined
+                    }
+                    onValueChange={(value) =>
+                      handleInputChange(index, "driverId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Driver" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {driverData?.data.map((driver: any) => (
                         <SelectItem
-                          key={supervisor.id}
-                          value={supervisor.id.toString()}
+                          key={driver.id}
+                          value={driver.id.toString()}
                         >
-                          {supervisor.userName}
+                          {driver.name}
                         </SelectItem>
                       ))}
-                  </SelectContent>
-                </Select>
-                <div className="text-sm text-gray-500">
-                  {supervisorsData?.data.find(
-                    (sup: any) => sup.id === coach.supervisorId
-                  )?.userName || "N/A"}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                <div className="flex flex-col text-center">
+                  <div className="text-sm capitalize">
+                    {driverData?.data.find(
+                      (drv: any) => drv.id === coach.driverId
+                    )?.name || "N/A"}
+                  </div>
+                  <div
+                    className={`text-sm   ${
+                      coach?.driverStatus === "Accepted"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {`${coach?.driverStatus}`}
+                  </div>
                 </div>
               </td>
               <td className="border px-4 py-2">
-                <Select
-                  value={coach.driverId ? coach.driverId.toString() : undefined}
-                  onValueChange={(value) =>
-                    handleInputChange(index, "driverId", parseInt(value))
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Driver" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {driverData?.data.map((driver: any) => (
-                      <SelectItem key={driver.id} value={driver.id.toString()}>
-                        {driver.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="text-sm text-gray-500">
-                  {driverData?.data.find(
-                    (drv: any) => drv.id === coach.driverId
-                  )?.name || "N/A"}
+                {coach?.helperStatus !== "Accepted" && (
+                  <Select
+                    value={
+                      coach.helperId ? coach.helperId.toString() : undefined
+                    }
+                    onValueChange={(value) =>
+                      handleInputChange(index, "helperId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Helper" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {helperData?.data.map((helper: any) => (
+                        <SelectItem
+                          key={helper.id}
+                          value={helper.id.toString()}
+                        >
+                          {helper.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                <div className="flex flex-col text-center">
+                  <div className="text-sm capitalize">
+                    {helperData?.data.find(
+                      (hlp: any) => hlp.id === coach.helperId
+                    )?.name || "N/A"}
+                  </div>
+                  <div
+                    className={`text-sm ${
+                      coach?.helperStatus === "Accepted"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {`${coach?.helperStatus}`}
+                  </div>
                 </div>
               </td>
               <td className="border px-4 py-2">
-                <Select
-                  value={coach.helperId ? coach.helperId.toString() : undefined}
-                  onValueChange={(value) =>
-                    handleInputChange(index, "helperId", parseInt(value))
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Helper" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {helperData?.data.map((helper: any) => (
-                      <SelectItem key={helper.id} value={helper.id.toString()}>
-                        {helper.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="text-sm text-gray-500">
-                  {helperData?.data.find(
-                    (hlp: any) => hlp.id === coach.helperId
-                  )?.name || "N/A"}
-                </div>
-              </td>
-              <td className="border px-4 py-2">
-                <Input
-                  value={coach.tokenAvailable}
-                  onChange={(e) =>
-                    handleInputChange(
-                      index,
-                      "tokenAvailable",
-                      Number(e.target.value)
-                    )
-                  }
-                  type="number"
-                />
-                <div className="text-sm text-gray-500">
+                {coach?.helperStatus !== "Accepted" ||
+                coach?.driverStatus !== "Accepted" ||
+                coach?.supervisorStatus !== "Accepted" ? (
+                  <Input
+                    value={coach.tokenAvailable}
+                    onChange={(e) =>
+                      handleInputChange(
+                        index,
+                        "tokenAvailable",
+                        Number(e.target.value)
+                      )
+                    }
+                    type="number"
+                  />
+                ) : (
+                  <></>
+                )}
+                <div className="text-sm capitalize">
                   {coach.tokenAvailable || "N/A"}
                 </div>
               </td>
+
               <td className="border px-4 py-2">
-                <Button
-                  onClick={() => handleSave(index)}
-                  variant="outline"
-                  className="w-full"
-                  disabled={isUpdating}
-                >
-                  Save
-                </Button>
+                {coach?.helperStatus !== "Accepted" ||
+                coach?.driverStatus !== "Accepted" ||
+                coach?.supervisorStatus !== "Accepted" ? (
+                  <Button
+                    onClick={() => handleSave(index)}
+                    variant="outline"
+                    className="w-full"
+                    disabled={isUpdating}
+                  >
+                    Save
+                  </Button>
+                ) : (
+                  <h2 className="text-sm text-green-500 font-semibold">
+                    Updated
+                  </h2>
+                )}
               </td>
             </tr>
           ))}

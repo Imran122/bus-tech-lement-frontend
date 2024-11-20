@@ -54,5 +54,6 @@ export const apiSlice = createApi({
     "accounts-expense-subcategory",
     "expense_accounts",
     "accounts-dashboard-home",
+    "partial",
   ],
 });

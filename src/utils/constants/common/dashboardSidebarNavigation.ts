@@ -169,6 +169,12 @@ const vehicleAndScheduleManagementLinks = {
       key: "reserve_list",
       href: "reserve_list",
     },
+    {
+      icon: LuUserCheck,
+      label: { bn: "আংশিক তথ্য", en: "Partial Info" },
+      key: "partial_info",
+      href: "partial_info",
+    },
   ],
 };
 
