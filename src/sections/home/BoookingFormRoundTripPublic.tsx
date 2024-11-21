@@ -42,10 +42,11 @@ import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { useGetPartialInfoAllQuery } from "@/store/api/vehiclesSchedule/partialApi";
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { format } from "date-fns";
@@ -108,10 +109,25 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       amount: 0,
     },
   });
+  const { data: partialInfoData } = useGetPartialInfoAllQuery({});
 
+  const paymentType = watch("paymentType");
   const partialAmount = watch("paymentAmount");
-  const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
+  //const amount = watch("amount");
 
+  const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
+  const minimumPartialPayment = useMemo(() => {
+    if (partialInfoData?.data?.partialPercentage) {
+      return (totalAmount * partialInfoData.data.partialPercentage) / 100;
+    }
+    return 0;
+  }, [totalAmount, partialInfoData]);
+
+  useEffect(() => {
+    if (paymentType === "PARTIAL") {
+      setValue("paymentAmount", minimumPartialPayment); // Set minimum partial payment
+    }
+  }, [paymentType, minimumPartialPayment, setValue]);
   const handleBookingSeat = async (seatData: any) => {
     const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
       (current: any) => current.seat === seatData.seat
@@ -226,7 +242,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     setBookingFormState,
   ]);
 
-  const paymentType = watch("paymentType");
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -927,6 +942,8 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       onChange={(e) =>
                         setValue("paymentAmount", parseFloat(e.target.value))
                       }
+                      value={minimumPartialPayment} // Display minimum partial payment
+                      disabled={true}
                     />
                   </InputWrapper>
                 )}

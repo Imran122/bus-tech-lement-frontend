@@ -152,10 +152,10 @@ export default function AccountDashboardHome() {
       {/* Data Table */}
       <TableWrapper
         subHeading={translate(
-          "আজকের সেলস তথ্য উপাত্ত",
-          "Today's Sales Information"
+          "আজকের  তথ্য উপাত্ত",
+          "Today's Report Information"
         )}
-        heading={translate("আজকের সেলস", "Today's Sales")}
+        heading={translate("আজকের তথ্য উপাত্ত", "Today's Report")}
       >
         <TableToolbar alignment="end">
           <ul className="flex items-center gap-x-2">

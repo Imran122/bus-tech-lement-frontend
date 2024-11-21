@@ -46,7 +46,7 @@ import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import SeatLayoutSelector from "@/components/common/busSeatLayout/SeatLayoutSelector";
@@ -57,6 +57,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useGetPartialInfoAllQuery } from "@/store/api/vehiclesSchedule/partialApi";
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
@@ -135,9 +136,24 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       amount: 0,
     },
   });
-
+  const { data: partialInfoData } = useGetPartialInfoAllQuery({});
+  const paymentType = watch("paymentType"); // Watch the paymentType value
   const partialAmount = watch("paymentAmount");
+  //const amount = watch("amount");
+
   const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
+  const minimumPartialPayment = useMemo(() => {
+    if (partialInfoData?.data?.partialPercentage) {
+      return (totalAmount * partialInfoData.data.partialPercentage) / 100;
+    }
+    return 0;
+  }, [totalAmount, partialInfoData]);
+
+  useEffect(() => {
+    if (paymentType === "PARTIAL") {
+      setValue("paymentAmount", minimumPartialPayment); // Set minimum partial payment
+    }
+  }, [paymentType, minimumPartialPayment, setValue]);
   const handleBookingSeat = async (seatData: any) => {
     const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
       (current: any) => current.seat === seatData.seat
@@ -205,7 +221,9 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     setValue("amount", totalAmount);
     setValue("noOfSeat", totalSeats);
     setValue("date", bookingCoach?.departureDate);
-
+    if (paymentType === "PARTIAL") {
+      setValue("paymentAmount", dueAmount);
+    }
     if (bookingFormState?.selectedSeats?.length) {
       setValue(
         "seats",
@@ -265,11 +283,11 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     bookingFormState?.customerName,
     translate,
   ]);
-  const paymentType = watch("paymentType"); // Watch the paymentType value
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
     useRemoveBookingSeatMutation({}) as any;
+
   const {
     data: userInfoData,
     isLoading: userInfoLoading,
@@ -277,6 +295,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   } = useGetTickitInfoByPhoneQuery(phoneNumber, {
     skip: !phoneNumber, // Ensure the API doesn't fetch unless the phone number is provided
   }) as any;
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -941,6 +960,8 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                     onChange={(e) =>
                       setValue("paymentAmount", parseFloat(e.target.value))
                     }
+                    value={minimumPartialPayment} // Display minimum partial payment
+                    disabled={true}
                   />
                 </InputWrapper>
               )}
