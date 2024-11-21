@@ -138,440 +138,448 @@ const AddResurb: FC<IAddReserveProps> = ({ setReserveState, reserveState }) => {
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-x-4 gap-y-2">
-          {/* Registration NUMBER */}
-          <InputWrapper
-            error={errors.registrationNo?.message}
-            labelFor="registrationNo"
-            label={translate(
-              addUpdateResurbForm?.registrationNo.label.bn,
-              addUpdateResurbForm?.registrationNo.label.en
-            )}
-          >
-            <Select
-              value={watch("registrationNo") || ""} // No need to convert to string here
-              onValueChange={(value: string) => {
-                setValue("registrationNo", value); // Keep as string
-                setError("registrationNo", { type: "custom", message: "" });
-              }}
+          <div className="col-span-2 grid grid-cols-2 gap-x-4 gap-y-2">
+            {/* Registration NUMBER */}
+            <InputWrapper
+              error={errors.registrationNo?.message}
+              labelFor="registrationNo"
+              label={translate(
+                addUpdateResurbForm?.registrationNo.label.bn,
+                addUpdateResurbForm?.registrationNo.label.en
+              )}
             >
-              <SelectTrigger id="registrationNo" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateResurbForm.registrationNo.placeholder.bn,
-                    addUpdateResurbForm.registrationNo.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!vehiclesLoading &&
-                  vehiclesData?.data?.length > 0 &&
-                  vehiclesData.data.map((coach: any, index: number) => (
-                    <SelectItem
-                      key={index}
-                      value={coach.registrationNo?.toString()} // Use registrationNo as the value
-                    >
-                      {formatter({
-                        type: "words",
-                        words: coach.registrationNo,
-                      })}
-                    </SelectItem>
-                  ))}
-
-                {vehiclesLoading && <SelectSkeleton />}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* ROUTE */}
-          <InputWrapper
-            error={errors?.routeId?.message}
-            labelFor="routeId"
-            label={translate(
-              addUpdateResurbForm?.routeId.label.bn,
-              addUpdateResurbForm.routeId.label.en
-            )}
-          >
-            <Select
-              value={watch("routeId")?.toString()}
-              onValueChange={(value: string) => {
-                setValue("routeId", +value);
-                setError("routeId", { type: "custom", message: "" });
-              }}
-            >
-              <SelectTrigger id="routeId" className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateResurbForm.routeId.placeholder.bn,
-                    addUpdateResurbForm.routeId.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {!routesLoading &&
-                  routesData?.data?.length > 0 &&
-                  routesData?.data?.map(
-                    (singleRoute: any, routeIndex: number) => (
+              <Select
+                value={watch("registrationNo") || ""} // No need to convert to string here
+                onValueChange={(value: string) => {
+                  setValue("registrationNo", value); // Keep as string
+                  setError("registrationNo", { type: "custom", message: "" });
+                }}
+              >
+                <SelectTrigger id="registrationNo" className="w-full">
+                  <SelectValue
+                    placeholder={translate(
+                      addUpdateResurbForm.registrationNo.placeholder.bn,
+                      addUpdateResurbForm.registrationNo.placeholder.en
+                    )}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {!vehiclesLoading &&
+                    vehiclesData?.data?.length > 0 &&
+                    vehiclesData.data.map((coach: any, index: number) => (
                       <SelectItem
-                        key={routeIndex}
-                        value={singleRoute?.id?.toString()}
+                        key={index}
+                        value={coach.registrationNo?.toString()} // Use registrationNo as the value
                       >
-                        {singleRoute?.routeName}
+                        {formatter({
+                          type: "words",
+                          words: coach.registrationNo,
+                        })}
                       </SelectItem>
-                    )
-                  )}
+                    ))}
 
-                {routesLoading && !routesData?.data?.length && (
-                  <SelectSkeleton />
+                  {vehiclesLoading && <SelectSkeleton />}
+                </SelectContent>
+              </Select>
+            </InputWrapper>
+
+            {/* ROUTE */}
+            <InputWrapper
+              error={errors?.routeId?.message}
+              labelFor="routeId"
+              label={translate(
+                addUpdateResurbForm?.routeId.label.bn,
+                addUpdateResurbForm.routeId.label.en
+              )}
+            >
+              <Select
+                value={watch("routeId")?.toString()}
+                onValueChange={(value: string) => {
+                  setValue("routeId", +value);
+                  setError("routeId", { type: "custom", message: "" });
+                }}
+              >
+                <SelectTrigger id="routeId" className="w-full">
+                  <SelectValue
+                    placeholder={translate(
+                      addUpdateResurbForm.routeId.placeholder.bn,
+                      addUpdateResurbForm.routeId.placeholder.en
+                    )}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {!routesLoading &&
+                    routesData?.data?.length > 0 &&
+                    routesData?.data?.map(
+                      (singleRoute: any, routeIndex: number) => (
+                        <SelectItem
+                          key={routeIndex}
+                          value={singleRoute?.id?.toString()}
+                        >
+                          {singleRoute?.routeName}
+                        </SelectItem>
+                      )
+                    )}
+
+                  {routesLoading && !routesData?.data?.length && (
+                    <SelectSkeleton />
+                  )}
+                </SelectContent>
+              </Select>
+            </InputWrapper>
+
+            {/* NUMBER OF SEATS */}
+            <InputWrapper
+              labelFor="noOfSeat"
+              error={errors?.noOfSeat?.message}
+              label={translate(
+                addUpdateResurbForm.noOfSeat.label.bn,
+                addUpdateResurbForm.noOfSeat.label.en
+              )}
+            >
+              <Select
+                value={watch("noOfSeat")?.toString() || ""}
+                onValueChange={(value) => {
+                  setValue("noOfSeat", parseInt(value));
+                  setError("noOfSeat", { type: "custom", message: "" });
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue
+                    placeholder={translate(
+                      addUpdateResurbForm.noOfSeat.placeholder.bn,
+                      addUpdateResurbForm.noOfSeat.placeholder.en
+                    )}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {/* Options for 28, 30, 41, and 43 */}
+
+                  <SelectItem value="28">
+                    Ac Business Class (28 seats)
+                  </SelectItem>
+                  <SelectItem value="30">Sleeper Coach (30 Seats)</SelectItem>
+                  <SelectItem value="41">
+                    Ac Economy Class (41 Seats)
+                  </SelectItem>
+                  <SelectItem value="43">Suite Class (43 Seats)</SelectItem>
+                </SelectContent>
+              </Select>
+            </InputWrapper>
+            {/* PASSANGER NAME */}
+            <InputWrapper
+              labelFor="passengerName"
+              error={errors.passengerName?.message}
+              label={translate(
+                addUpdateResurbForm?.passengerName.label.bn,
+                addUpdateResurbForm.passengerName.label.en
+              )}
+            >
+              <Input
+                id="passengerName"
+                type="text"
+                {...register("passengerName")}
+                placeholder={translate(
+                  addUpdateResurbForm.passengerName.placeholder.bn,
+                  addUpdateResurbForm.passengerName.placeholder.en
                 )}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-
-          {/* NUMBER OF SEATS */}
-          <InputWrapper
-            labelFor="noOfSeat"
-            error={errors?.noOfSeat?.message}
-            label={translate(
-              addUpdateResurbForm.noOfSeat.label.bn,
-              addUpdateResurbForm.noOfSeat.label.en
-            )}
-          >
-            <Select
-              value={watch("noOfSeat")?.toString() || ""}
-              onValueChange={(value) => {
-                setValue("noOfSeat", parseInt(value));
-                setError("noOfSeat", { type: "custom", message: "" });
-              }}
+              />
+            </InputWrapper>
+            {/* CONTACT NUMBER */}
+            <InputWrapper
+              error={errors?.contactNo?.message}
+              labelFor="contact_number"
+              label={translate(
+                addUpdateResurbForm?.contactNo.label.bn,
+                addUpdateResurbForm.contactNo.label.en
+              )}
             >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={translate(
-                    addUpdateResurbForm.noOfSeat.placeholder.bn,
-                    addUpdateResurbForm.noOfSeat.placeholder.en
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {/* Options for 28, 30, 41, and 43 */}
+              <Input
+                {...register("contactNo")}
+                id="contact_number"
+                type="tel"
+                placeholder={translate(
+                  addUpdateResurbForm.contactNo.placeholder.bn,
+                  addUpdateResurbForm.contactNo.placeholder.en
+                )}
+              />
+            </InputWrapper>
+            {/* Address Field */}
+            <InputWrapper
+              label={translate(
+                addUpdateResurbForm.address.label.bn,
+                addUpdateResurbForm.address.label.en
+              )}
+              labelFor="address"
+              error={errors.address?.message}
+            >
+              <Input
+                {...register("address")}
+                placeholder={translate(
+                  addUpdateResurbForm.address.placeholder.bn,
+                  addUpdateResurbForm.address.placeholder.en
+                )}
+              />
+            </InputWrapper>
 
-                <SelectItem value="28">Ac Business Class (28 seats)</SelectItem>
-                <SelectItem value="30">Sleeper Coach (30 Seats)</SelectItem>
-                <SelectItem value="41">Ac Economy Class (41 Seats)</SelectItem>
-                <SelectItem value="43">Suite Class (43 Seats)</SelectItem>
-              </SelectContent>
-            </Select>
-          </InputWrapper>
-          {/* PASSANGER NAME */}
-          <InputWrapper
-            labelFor="passengerName"
-            error={errors.passengerName?.message}
-            label={translate(
-              addUpdateResurbForm?.passengerName.label.bn,
-              addUpdateResurbForm.passengerName.label.en
-            )}
-          >
-            <Input
-              id="passengerName"
-              type="text"
-              {...register("passengerName")}
-              placeholder={translate(
-                addUpdateResurbForm.passengerName.placeholder.bn,
-                addUpdateResurbForm.passengerName.placeholder.en
+            {/* FROM DATE */}
+            <InputWrapper
+              label={translate(
+                addUpdateResurbForm?.fromDate.label.bn,
+                addUpdateResurbForm.fromDate.label.en
               )}
-            />
-          </InputWrapper>
-          {/* CONTACT NUMBER */}
-          <InputWrapper
-            error={errors?.contactNo?.message}
-            labelFor="contact_number"
-            label={translate(
-              addUpdateResurbForm?.contactNo.label.bn,
-              addUpdateResurbForm.contactNo.label.en
-            )}
-          >
-            <Input
-              {...register("contactNo")}
-              id="contact_number"
-              type="tel"
-              placeholder={translate(
-                addUpdateResurbForm.contactNo.placeholder.bn,
-                addUpdateResurbForm.contactNo.placeholder.en
-              )}
-            />
-          </InputWrapper>
-          {/* Address Field */}
-          <InputWrapper
-            label={translate(
-              addUpdateResurbForm.address.label.bn,
-              addUpdateResurbForm.address.label.en
-            )}
-            labelFor="address"
-            error={errors.address?.message}
-          >
-            <Input
-              {...register("address")}
-              placeholder={translate(
-                addUpdateResurbForm.address.placeholder.bn,
-                addUpdateResurbForm.address.placeholder.en
-              )}
-            />
-          </InputWrapper>
-
-          {/* Amount */}
-          <InputWrapper
-            error={errors?.amount?.message}
-            label={translate(
-              addUpdateResurbForm.amount.label.bn,
-              addUpdateResurbForm.amount.label.en
-            )}
-            labelFor="amount"
-          >
-            <Input
-              id="amount"
-              type="number"
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const inputValue = +e.target.value;
-                setValue("amount", inputValue);
-                if (inputValue) {
-                  setError("amount", { type: "custom", message: "" });
-                } else {
-                  setError("amount", {
-                    type: "custom",
-                    message: "Amount is required",
-                  });
+            >
+              <Popover
+                open={reserveState.calenderFromOpen}
+                onOpenChange={(open) =>
+                  setReserveState((prevState: IReserveStateProps) => ({
+                    ...prevState,
+                    calenderFromOpen: open,
+                  }))
                 }
-              }}
-              placeholder={translate(
-                addUpdateResurbForm.amount.placeholder.bn,
-                addUpdateResurbForm.amount.placeholder.en
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
+                      !reserveState.fromDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {reserveState.fromDate ? (
+                      format(reserveState.fromDate, "PPP")
+                    ) : (
+                      <span>
+                        {translate(
+                          "রিজার্ভ তারিখ নির্বাচন করুন",
+                          "Pick The Reserve From Date"
+                        )}
+                      </span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end">
+                  <Calendar
+                    mode="single"
+                    selected={reserveState?.fromDate || new Date()}
+                    onSelect={(date) => {
+                      const formattedDate = date ? date.toISOString() : "";
+                      setValue("fromDate", formattedDate);
+                      setError("fromDate", { type: "custom", message: "" });
+                      setReserveState((prevState: IReserveStateProps) => ({
+                        ...prevState,
+                        calenderFromOpen: false,
+                        fromDate: date || null,
+                      }));
+                    }}
+                    fromYear={1960}
+                    toYear={new Date().getFullYear()}
+                  />
+                </PopoverContent>
+              </Popover>
+            </InputWrapper>
+            {/*  FROM DATE TIME */}
+            <InputWrapper
+              error={errors?.fromDateTime?.message}
+              labelFor="time"
+              label={translate(
+                addUpdateResurbForm?.fromDateTime.label.bn,
+                addUpdateResurbForm.fromDateTime.label.en
               )}
-            />
-          </InputWrapper>
+            >
+              <TimePicker
+                date={fromDateTime}
+                setDate={(date) => {
+                  setFromDateTime(date); // Update local state
 
-          {/* Paid Amount */}
-          <InputWrapper
-            error={errors?.paidAmount?.message}
-            label={translate(
-              addUpdateResurbForm.paidAmount.label.bn,
-              addUpdateResurbForm.paidAmount.label.en
-            )}
-            labelFor="paidAmount"
-          >
-            <Input
-              id="paidAmount"
-              type="number"
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const inputValue = +e.target.value;
-                setValue("paidAmount", inputValue);
-                if (inputValue) {
-                  setError("paidAmount", { type: "custom", message: "" });
-                } else {
-                  setError("paidAmount", {
-                    type: "custom",
-                    message: "Paid amount is required",
-                  });
+                  // Convert date to ISO string if defined, otherwise set to an empty string
+                  setValue("fromDateTime", date ? date.toISOString() : "");
+                }}
+              />
+              <div className="mt-3">
+                {translate("নির্বাচিত সময়সূচীঃ ", " Selected Time: ")}
+                {
+                  // @ts-ignore
+                  fromDateTime?.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
                 }
-              }}
-              placeholder={translate(
-                addUpdateResurbForm.paidAmount.placeholder.bn,
-                addUpdateResurbForm.paidAmount.placeholder.en
+              </div>
+            </InputWrapper>
+
+            {/* TO DATE */}
+            <InputWrapper
+              label={translate(
+                addUpdateResurbForm?.toDate.label.bn,
+                addUpdateResurbForm.toDate.label.en
               )}
-            />
-          </InputWrapper>
+            >
+              <Popover
+                open={reserveState.calenderToOpen}
+                onOpenChange={(open) =>
+                  setReserveState((prevState: IReserveStateProps) => ({
+                    ...prevState,
+                    calenderToOpen: open,
+                  }))
+                }
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
+                      !reserveState.toDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {reserveState.toDate ? (
+                      format(reserveState.toDate, "PPP")
+                    ) : (
+                      <span>
+                        {translate(
+                          "রিজার্ভ তারিখ নির্বাচন করুন",
+                          "Pick The Reserve To Date"
+                        )}
+                      </span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end">
+                  <Calendar
+                    mode="single"
+                    // captionLayout="dropdown-buttons"
+                    selected={reserveState?.toDate || new Date()}
+                    onSelect={(date) => {
+                      const formattedDate = date ? date.toISOString() : "";
+                      setValue("toDate", formattedDate);
+                      setError("toDate", { type: "custom", message: "" });
+                      setReserveState((prevState: IReserveStateProps) => ({
+                        ...prevState,
+                        calenderToOpen: false,
+                        toDate: date || null,
+                      }));
+                    }}
+                    fromYear={1960}
+                    toYear={new Date().getFullYear()}
+                  />
+                </PopoverContent>
+              </Popover>
+            </InputWrapper>
 
-          {/* REMARKS */}
-          <InputWrapper
-            label={translate(
-              addUpdateResurbForm.remarks.label.bn,
-              addUpdateResurbForm.remarks.label.en
-            )}
-            labelFor="remarks"
-            error={errors.remarks?.message}
-          >
-            <Input
-              {...register("remarks")}
-              placeholder={translate(
-                addUpdateResurbForm.remarks.placeholder.bn,
-                addUpdateResurbForm.remarks.placeholder.en
+            {/*  TO DATE TIME */}
+            <InputWrapper
+              error={errors?.toDateTime?.message}
+              labelFor="time"
+              label={translate(
+                addUpdateResurbForm?.toDateTime.label.bn,
+                addUpdateResurbForm.toDateTime.label.en
               )}
-            />
-          </InputWrapper>
-
-          {/* FROM DATE */}
-          <InputWrapper
-            label={translate(
-              addUpdateResurbForm?.fromDate.label.bn,
-              addUpdateResurbForm.fromDate.label.en
-            )}
-          >
-            <Popover
-              open={reserveState.calenderFromOpen}
-              onOpenChange={(open) =>
-                setReserveState((prevState: IReserveStateProps) => ({
-                  ...prevState,
-                  calenderFromOpen: open,
-                }))
-              }
             >
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
-                    !reserveState.fromDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {reserveState.fromDate ? (
-                    format(reserveState.fromDate, "PPP")
-                  ) : (
-                    <span>
-                      {translate(
-                        "রিজার্ভ তারিখ নির্বাচন করুন",
-                        "Pick The Reserve From Date"
-                      )}
-                    </span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent align="end">
-                <Calendar
-                  mode="single"
-                  selected={reserveState?.fromDate || new Date()}
-                  onSelect={(date) => {
-                    const formattedDate = date ? date.toISOString() : "";
-                    setValue("fromDate", formattedDate);
-                    setError("fromDate", { type: "custom", message: "" });
-                    setReserveState((prevState: IReserveStateProps) => ({
-                      ...prevState,
-                      calenderFromOpen: false,
-                      fromDate: date || null,
-                    }));
-                  }}
-                  fromYear={1960}
-                  toYear={new Date().getFullYear()}
-                />
-              </PopoverContent>
-            </Popover>
-          </InputWrapper>
+              <TimePicker
+                date={toDateTime}
+                setDate={(date) => {
+                  setToDateTime(date);
+                  setValue("toDateTime", date ? date.toISOString() : "");
+                }}
+              />
+              <div className="mt-3">
+                {translate("নির্বাচিত সময়সূচীঃ ", " Selected Time: ")}
+                {
+                  // @ts-ignore
+                  toDateTime?.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                }
+              </div>
+            </InputWrapper>
 
-          {/* TO DATE */}
-          <InputWrapper
-            label={translate(
-              addUpdateResurbForm?.toDate.label.bn,
-              addUpdateResurbForm.toDate.label.en
-            )}
-          >
-            <Popover
-              open={reserveState.calenderToOpen}
-              onOpenChange={(open) =>
-                setReserveState((prevState: IReserveStateProps) => ({
-                  ...prevState,
-                  calenderToOpen: open,
-                }))
-              }
+            {/* REMARKS */}
+            <InputWrapper
+              label={translate(
+                addUpdateResurbForm.remarks.label.bn,
+                addUpdateResurbForm.remarks.label.en
+              )}
+              labelFor="remarks"
+              error={errors.remarks?.message}
+              className="col-span-2"
             >
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
-                    !reserveState.toDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {reserveState.toDate ? (
-                    format(reserveState.toDate, "PPP")
-                  ) : (
-                    <span>
-                      {translate(
-                        "রিজার্ভ তারিখ নির্বাচন করুন",
-                        "Pick The Reserve To Date"
-                      )}
-                    </span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent align="end">
-                <Calendar
-                  mode="single"
-                  // captionLayout="dropdown-buttons"
-                  selected={reserveState?.toDate || new Date()}
-                  onSelect={(date) => {
-                    const formattedDate = date ? date.toISOString() : "";
-                    setValue("toDate", formattedDate);
-                    setError("toDate", { type: "custom", message: "" });
-                    setReserveState((prevState: IReserveStateProps) => ({
-                      ...prevState,
-                      calenderToOpen: false,
-                      toDate: date || null,
-                    }));
-                  }}
-                  fromYear={1960}
-                  toYear={new Date().getFullYear()}
-                />
-              </PopoverContent>
-            </Popover>
-          </InputWrapper>
+              <Input
+                {...register("remarks")}
+                placeholder={translate(
+                  addUpdateResurbForm.remarks.placeholder.bn,
+                  addUpdateResurbForm.remarks.placeholder.en
+                )}
+              />
+            </InputWrapper>
+          </div>
+          <div className="col-span-1">
+            {/* Amount */}
+            <InputWrapper
+              error={errors?.amount?.message}
+              label={translate(
+                addUpdateResurbForm.amount.label.bn,
+                addUpdateResurbForm.amount.label.en
+              )}
+              labelFor="amount"
+            >
+              <Input
+                id="amount"
+                type="number"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  const inputValue = +e.target.value;
+                  setValue("amount", inputValue);
+                  if (inputValue) {
+                    setError("amount", { type: "custom", message: "" });
+                  } else {
+                    setError("amount", {
+                      type: "custom",
+                      message: "Amount is required",
+                    });
+                  }
+                }}
+                placeholder={translate(
+                  addUpdateResurbForm.amount.placeholder.bn,
+                  addUpdateResurbForm.amount.placeholder.en
+                )}
+              />
+            </InputWrapper>
 
-          {/*  FROM DATE TIME */}
-          <InputWrapper
-            error={errors?.fromDateTime?.message}
-            labelFor="time"
-            label={translate(
-              addUpdateResurbForm?.fromDateTime.label.bn,
-              addUpdateResurbForm.fromDateTime.label.en
-            )}
-          >
-            <TimePicker
-              date={fromDateTime}
-              setDate={(date) => {
-                setFromDateTime(date); // Update local state
-
-                // Convert date to ISO string if defined, otherwise set to an empty string
-                setValue("fromDateTime", date ? date.toISOString() : "");
-              }}
-            />
-            <div className="mt-3">
-              {translate("নির্বাচিত সময়সূচীঃ ", " Selected Time: ")}
-              {
-                // @ts-ignore
-                fromDateTime?.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              }
-            </div>
-          </InputWrapper>
-
-          {/*  TO DATE TIME */}
-          <InputWrapper
-            error={errors?.toDateTime?.message}
-            labelFor="time"
-            label={translate(
-              addUpdateResurbForm?.toDateTime.label.bn,
-              addUpdateResurbForm.toDateTime.label.en
-            )}
-          >
-            <TimePicker
-              date={toDateTime}
-              setDate={(date) => {
-                setToDateTime(date);
-                setValue("toDateTime", date ? date.toISOString() : "");
-              }}
-            />
-            <div className="mt-3">
-              {translate("নির্বাচিত সময়সূচীঃ ", " Selected Time: ")}
-              {
-                // @ts-ignore
-                toDateTime?.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              }
-            </div>
-          </InputWrapper>
+            {/* Paid Amount */}
+            <InputWrapper
+              error={errors?.paidAmount?.message}
+              label={translate(
+                addUpdateResurbForm.paidAmount.label.bn,
+                addUpdateResurbForm.paidAmount.label.en
+              )}
+              labelFor="paidAmount"
+            >
+              <Input
+                id="paidAmount"
+                type="number"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  const inputValue = +e.target.value;
+                  setValue("paidAmount", inputValue);
+                  if (inputValue) {
+                    setError("paidAmount", { type: "custom", message: "" });
+                  } else {
+                    setError("paidAmount", {
+                      type: "custom",
+                      message: "Paid amount is required",
+                    });
+                  }
+                }}
+                placeholder={translate(
+                  addUpdateResurbForm.paidAmount.placeholder.bn,
+                  addUpdateResurbForm.paidAmount.placeholder.en
+                )}
+              />
+            </InputWrapper>
+          </div>
         </div>
+
         <Submit
           loading={addReserveLoading}
           errors={addReserveError}

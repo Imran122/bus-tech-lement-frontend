@@ -40,6 +40,7 @@ import { LuDownload, LuPlus } from "react-icons/lu";
 import {
   useDeleteHelperMutation,
   useGetHelpersQuery,
+  useUpdateHelperMutation,
 } from "@/store/api/contact/helperApi";
 import { Helper } from "@/types/dashboard/contacts/helper";
 import AddHelper from "./AddHelper";
@@ -83,6 +84,7 @@ const HelperList: FC<IHelperListProps> = () => {
   });
 
   const [deleteHelper] = useDeleteHelperMutation({});
+  const [updateHelper] = useUpdateHelperMutation({});
 
   useEffect(() => {
     const customizeHelpersData = helpersData?.data?.map(
@@ -103,7 +105,35 @@ const HelperList: FC<IHelperListProps> = () => {
       meta: helpersData?.meta,
     }));
   }, [helpersData]);
+  const deactivateHelper = async (id: number, status: boolean) => {
+    try {
+      const result = await updateHelper({ id, data: { active: !status } });
 
+      if (result.data?.success) {
+        toast({
+          title: translate("সফল!", "Success!"),
+          description: translate(
+            "সাহায্যকারী হাল নাগাদ করা হয়েছে।",
+            "Update Success."
+          ),
+        });
+        playSound("success");
+      } else {
+        throw new Error("Update failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: translate("ত্রুটি", "Error"),
+        description: translate(
+          "সাহায্যকারী হাল নাগাদ করতে ব্যর্থ।",
+          "Failed to deactivate Helper."
+        ),
+        variant: "destructive",
+      });
+      playSound("warning");
+    }
+  };
   const helperDeleteHandler = async (id: number) => {
     const result = await deleteHelper(id);
 
@@ -157,8 +187,10 @@ const HelperList: FC<IHelperListProps> = () => {
             size="sm"
             shape="pill"
             variant={user?.active ? "success" : "destructive"}
+            onClick={() => deactivateHelper(user.id, user?.active)} // Call the deactivateDriver function
+            className="cursor-pointer" // Add pointer cursor
           >
-            {user.dummyActive}
+            {user?.active ? "Active" : "Inactive"}
           </Badge>
         );
       },

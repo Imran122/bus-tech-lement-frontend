@@ -121,7 +121,7 @@ const CoachConfigurationList: FC<ICoachConfigurationListProps> = () => {
     try {
       const result = await updateCoachConfiguration({
         id,
-        data: { saleStatus: !currentStatus },
+        data: { active: !currentStatus },
       });
       if (result.data?.success) {
         toast({
