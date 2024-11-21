@@ -117,7 +117,7 @@ const UpdateCoachConfigurationList: FC<
     try {
       const result = await updateCoachConfiguration({
         id,
-        data: { saleStatus: !currentStatus },
+        data: { active: !currentStatus },
       });
       if (result.data?.success) {
         toast({
@@ -203,7 +203,13 @@ const UpdateCoachConfigurationList: FC<
         return (
           <div>
             <div>{supervisor.userName || fallback.notFound.en}</div>
-            <div className="text-muted-foreground text-xs">
+            <div
+              className={`text-muted-foreground text-xs ${
+                row?.original?.supervisorStatus === "Accepted"
+                  ? "text-green-700"
+                  : "text-red-500"
+              }`}
+            >
               {row.original.supervisorStatus || fallback.notFound.en}
             </div>
           </div>
@@ -221,7 +227,13 @@ const UpdateCoachConfigurationList: FC<
         return (
           <div>
             <div>{driver.name || fallback.notFound.en}</div>
-            <div className="text-muted-foreground text-xs">
+            <div
+              className={`text-muted-foreground text-xs ${
+                row?.original?.driverStatus === "Accepted"
+                  ? "text-green-700"
+                  : "text-red-500"
+              }`}
+            >
               {row.original.driverStatus || fallback.notFound.en}
             </div>
           </div>
@@ -240,7 +252,13 @@ const UpdateCoachConfigurationList: FC<
         return (
           <div>
             <div>{helper?.name || fallback.notFound.en}</div>
-            <div className="text-muted-foreground text-xs">
+            <div
+              className={`text-muted-foreground text-xs ${
+                row?.original?.helperStatus === "Accepted"
+                  ? "text-green-700"
+                  : "text-red-500"
+              }`}
+            >
               {row.original.helperStatus || fallback.notFound.en}
             </div>
           </div>

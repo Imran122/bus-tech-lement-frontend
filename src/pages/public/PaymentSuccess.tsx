@@ -40,7 +40,6 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
   });
   const invoicePrintHandler = () => {
     const data = shareWithLocal("get", `${appConfiguration.appName}`);
-    console.log("Data fetched from localStorage:", data); // Debugging
     if (data) {
       setSaleData(data);
     } else {

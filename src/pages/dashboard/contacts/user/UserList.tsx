@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 import {
   useDeleteUserMutation,
   useGetUsersQuery,
+  useUpdateUserMutation,
 } from "@/store/api/contact/userApi";
 import { User } from "@/types/dashboard/contacts/user";
 import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
@@ -85,6 +86,7 @@ const UserList: FC<IUserListProps> = () => {
   });
 
   const [deleteUser] = useDeleteUserMutation({});
+  const [updateUser] = useUpdateUserMutation({});
   useEffect(() => {
     const customizeUsersData = usersData?.data?.map(
       (singleUser: User, userIndex: number) => ({
@@ -121,6 +123,46 @@ const UserList: FC<IUserListProps> = () => {
     }
   };
 
+  const handleToggleStatus = async (id: number, currentStatus: boolean) => {
+    try {
+      // API call to update the user's active status
+      const result = await updateUser({
+        id,
+        data: { active: !currentStatus }, // Ensure the payload matches API expectations
+      });
+
+      if (result.data?.success) {
+        toast({
+          title: !currentStatus
+            ? translate("সক্রিয় করা হয়েছে", "Activated Successfully")
+            : translate("নিষ্ক্রিয় করা হয়েছে", "Deactivated Successfully"),
+          description: toastMessage("update", translate("ব্যবহারকারী", "User")),
+        });
+
+        // Update the usersList state
+        setUserState((prevState) => ({
+          ...prevState,
+          usersList: prevState.usersList.map((user) =>
+            user && user.id === id ? { ...user, active: !currentStatus } : user
+          ),
+        }));
+      } else {
+        throw new Error("API returned failure response");
+      }
+    } catch (error) {
+      toast({
+        title: translate(
+          "অবস্থা পরিবর্তন ব্যর্থ হয়েছে",
+          "Status Update Failed"
+        ),
+        description: translate(
+          "কিছু সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+          "Something went wrong. Please try again."
+        ),
+      });
+      console.error("Error toggling status:", error);
+    }
+  };
   const columns: ColumnDef<unknown>[] = [
     { accessorKey: "index", header: translate("ইনডেক্স", "Index") },
     {
@@ -181,6 +223,7 @@ const UserList: FC<IUserListProps> = () => {
           <Badge
             size="sm"
             shape="pill"
+            onClick={() => handleToggleStatus(user.id, user?.active)}
             variant={user?.active ? "success" : "destructive"}
           >
             {user.dummyActive}

@@ -541,9 +541,9 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       <PageTransition>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* seat issue or seat booking part counter */}
-          <PageTransition className="flex py-5 flex-col gap-3 items-center justify-center h-full w-full">
+          <PageTransition className="flex py-5 flex-row gap-6 items-center justify-center h-full w-full">
             <RadioGroup
-              className="flex gap-4"
+              className="flex gap-4 mt-8"
               value={bookingType}
               onValueChange={setBookingType} // Update bookingType state on change
             >

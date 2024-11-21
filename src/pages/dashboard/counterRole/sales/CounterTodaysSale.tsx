@@ -6,6 +6,7 @@ import {
   TableWrapper,
 } from "@/components/common/wrapper/TableWrapper";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +25,6 @@ import { ChangeEvent, FC, useState } from "react";
 import { LuDownload } from "react-icons/lu";
 import CounterOrderDetailsModal from "./CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "./UpdateCounterOrderModal";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface ISalesListProps {}
 export interface ISalesDataStateProps {
@@ -73,8 +73,6 @@ const CounterTodaysSale: FC<ISalesListProps> = () => {
     }));
   };
 
-
-
   const closeUpdateModal = () => {
     setSalesTickitState((prev) => ({
       ...prev,
@@ -82,8 +80,6 @@ const CounterTodaysSale: FC<ISalesListProps> = () => {
       selectedOrderId: null,
     }));
   };
-
-
 
   const columns: ColumnDef<any>[] = [
     {

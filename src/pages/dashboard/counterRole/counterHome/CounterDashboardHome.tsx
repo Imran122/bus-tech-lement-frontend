@@ -9,6 +9,7 @@ import {
 } from "@/components/common/wrapper/TableWrapper";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +18,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { useOrderCancelRequestMutation } from "@/store/api/bookingApi";
 import { useGetSalesTickitListQuery } from "@/store/api/counter/counterSalesBookingApi";
 import { selectCounterSearchFilter } from "@/store/api/counter/counterSearchFilterSlice";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
@@ -28,10 +32,6 @@ import { LuDownload } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import CounterOrderDetailsModal from "../sales/CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "../sales/UpdateCounterOrderModal";
-import { useOrderCancelRequestMutation } from "@/store/api/bookingApi";
-import { toast } from "@/components/ui/use-toast";
-import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 import {
   AlertDialog,
@@ -75,10 +75,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
   // STORE PROMISE RESOLVE REFERENCE
   const promiseResolveRef = useRef<any>(null);
 
-
   const [invoiceData, setInvoiceData] = useState();
-   
-    
 
   const [salesTickitState, setSalesTickitState] =
     useState<ISalesDataStateProps>({
@@ -99,7 +96,6 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       page: query.page,
       size: query.size,
     });
-  console.log("salesTickitList", salesTickitList);
 
   const handleUpdateClick = (orderId: number) => {
     setSalesTickitState((prev) => ({
@@ -109,8 +105,8 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     }));
   };
 
-   // UPDATE THE COMPONENT VIA REFERENCE
-   useEffect(() => {
+  // UPDATE THE COMPONENT VIA REFERENCE
+  useEffect(() => {
     if (salesTickitState.isPrinting && promiseResolveRef.current) {
       promiseResolveRef.current();
     }
@@ -121,7 +117,10 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     onBeforeGetContent: () => {
       return new Promise((resolve) => {
         promiseResolveRef.current = resolve;
-        setSalesTickitState((prevState) => ({ ...prevState, isPrinting: true }));
+        setSalesTickitState((prevState) => ({
+          ...prevState,
+          isPrinting: true,
+        }));
       });
     },
     onAfterPrint: () => {
@@ -186,7 +185,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     },
     { accessorKey: "status", header: translate("স্ট্যাটাস", "Status") },
     {
-      accessorKey: "unitPrice",
+      accessorKey: "amount",
       header: translate("ইউনিট মূল্য", "Unit Price"),
     },
     {
@@ -202,7 +201,11 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button onMouseEnter={() => setInvoiceData(order)} variant="ghost" className="h-8 w-8 p-0">
+              <Button
+                onMouseEnter={() => setInvoiceData(order)}
+                variant="ghost"
+                className="h-8 w-8 p-0"
+              >
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -293,153 +296,152 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
   if (loadingSalesTickit) {
     return <TableSkeleton columns={7} />;
   }
-
   return (
-   <section>
-     <PageWrapper>
-      <div className="grid grid-cols-5 gap-5 my-5">
-        <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-          <div className="p-6 flex flex-col justify-start items-start w-full">
-            <h2>Todays Sales</h2>
-            <h2 className="mt-3">
-              Total:{" "}
-              {salesTickitList?.data?.todaySales !== 0
-                ? salesTickitList?.data?.todaySales
-                : 0}
-            </h2>
-          </div>
-        </PageTransition>
-        <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-          <div className="p-6 flex flex-col justify-start items-start w-full">
-            <h2>Todays Online Sales</h2>
-            <h2 className="mt-3">
-              Total:{" "}
-              {salesTickitList?.data?.todayOnlineSales !== 0
-                ? salesTickitList?.data?.todayOnlineSales
-                : 0}
-            </h2>
-          </div>
-        </PageTransition>{" "}
-        <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-          <div className="p-6 flex flex-col justify-start items-start w-full">
-            <h2>Todays Offline Sales</h2>
-            <h2 className="mt-3">
-              Total:{" "}
-              {salesTickitList?.data?.todayOfflineTicketCount !== 0
-                ? salesTickitList?.data?.todayOfflineTicketCount
-                : 0}
-            </h2>
-          </div>
-        </PageTransition>
-        <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-          <div className="p-6 flex flex-col justify-start items-start w-full">
-            <h2>Todays Cancel Tickit</h2>
-            <h2 className="mt-3">
-              Total:{" "}
-              {salesTickitList?.data?.todayCancelTicketCount !== 0
-                ? salesTickitList?.data?.todayCancelTicketCount
-                : 0}
-            </h2>
-          </div>
-        </PageTransition>
-        <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-          <div className="p-6 flex flex-col justify-start items-start w-full">
-            <h2>Todays Online Tickit</h2>
-            <h2 className="mt-3">
-              Total:{" "}
-              {salesTickitList?.data?.todayOnlineTicketCount !== 0
-                ? salesTickitList?.data?.todayOnlineTicketCount
-                : 0}
-            </h2>
-          </div>
-        </PageTransition>
-      </div>
-      {/* search design  */}
-      <div>
-        {bookingState.bookingCoachesList.length > 0 && (
-          <Accordion className="w-full" type="single" collapsible>
-            {bookingState?.bookingCoachesList.map(
-              (singleCoachData: any, coachDataIndex: number) => (
-                <DashboardTickitBookingCard
-                  key={coachDataIndex}
-                  coachData={singleCoachData}
-                  index={coachDataIndex}
-                />
-              )
-            )}
-          </Accordion>
-        )}
-      </div>
-
-      <TableWrapper
-        subHeading={translate(
-          "আজকের সেলস তথ্য উপাত্ত",
-          "Today's Sales Information"
-        )}
-        heading={translate("আজকের সেলস", "Today's Sales")}
-      >
-        <TableToolbar alignment="end">
-          <ul className="flex items-center gap-x-2">
-            <li>
-              <Input
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setSalesTickitState((prev) => ({
-                    ...prev,
-                    search: e.target.value,
-                  }))
-                }
-                className="w-[300px]"
-                placeholder={translate("search", "search")}
-              />
-            </li>
-            <li>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <LuDownload className="size-4 mr-1" />
-                    {translate("এক্সপোর্ট", "Export")}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className={cn("w-[100px] space-y-2")}
-                  align="end"
-                >
-                  <DropdownMenuItem>
-                    {translate("পিডিএফ", "PDF")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    {translate("এক্সেল", "Excel")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </li>
-          </ul>
-        </TableToolbar>
-        <DataTable
-          query={query}
-          setQuery={setQuery}
-          pagination
-          columns={columns}
-          data={salesTickitList?.data?.todaySalesHistory || []}
-        />
-      </TableWrapper>
-
-      {salesTickitState.updateModalOpeans && (
-        <UpdateCounterOrderModal
-          isOpen={salesTickitState.updateModalOpeans}
-          onClose={closeUpdateModal}
-          order={salesTickitList?.data?.todaySalesHistory.find(
-            (order: any) => order.id === salesTickitState.selectedOrderId
+    <section>
+      <PageWrapper>
+        <div className="grid grid-cols-5 gap-5 my-5">
+          <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+            <div className="p-6 flex flex-col justify-start items-start w-full">
+              <h2>Todays Sales</h2>
+              <h2 className="mt-3">
+                Total:{" "}
+                {salesTickitList?.data?.todaySales !== 0
+                  ? salesTickitList?.data?.todaySales
+                  : 0}
+              </h2>
+            </div>
+          </PageTransition>
+          <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+            <div className="p-6 flex flex-col justify-start items-start w-full">
+              <h2>Todays Online Sales</h2>
+              <h2 className="mt-3">
+                Total:{" "}
+                {salesTickitList?.data?.todayOnlineSales !== 0
+                  ? salesTickitList?.data?.todayOnlineSales
+                  : 0}
+              </h2>
+            </div>
+          </PageTransition>{" "}
+          <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+            <div className="p-6 flex flex-col justify-start items-start w-full">
+              <h2>Todays Offline Sales</h2>
+              <h2 className="mt-3">
+                Total:{" "}
+                {salesTickitList?.data?.todayOfflineTicketCount !== 0
+                  ? salesTickitList?.data?.todayOfflineTicketCount
+                  : 0}
+              </h2>
+            </div>
+          </PageTransition>
+          <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+            <div className="p-6 flex flex-col justify-start items-start w-full">
+              <h2>Todays Cancel Tickit</h2>
+              <h2 className="mt-3">
+                Total:{" "}
+                {salesTickitList?.data?.todayCancelTicketCount !== 0
+                  ? salesTickitList?.data?.todayCancelTicketCount
+                  : 0}
+              </h2>
+            </div>
+          </PageTransition>
+          <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+            <div className="p-6 flex flex-col justify-start items-start w-full">
+              <h2>Todays Online Tickit</h2>
+              <h2 className="mt-3">
+                Total:{" "}
+                {salesTickitList?.data?.todayOnlineTicketCount !== 0
+                  ? salesTickitList?.data?.todayOnlineTicketCount
+                  : 0}
+              </h2>
+            </div>
+          </PageTransition>
+        </div>
+        {/* search design  */}
+        <div>
+          {bookingState.bookingCoachesList.length > 0 && (
+            <Accordion className="w-full" type="single" collapsible>
+              {bookingState?.bookingCoachesList.map(
+                (singleCoachData: any, coachDataIndex: number) => (
+                  <DashboardTickitBookingCard
+                    key={coachDataIndex}
+                    coachData={singleCoachData}
+                    index={coachDataIndex}
+                  />
+                )
+              )}
+            </Accordion>
           )}
-        />
-      )}
-    </PageWrapper>
-    <div className="invisible hidden -left-full">
+        </div>
+
+        <TableWrapper
+          subHeading={translate(
+            "আজকের সেলস তথ্য উপাত্ত",
+            "Today's Sales Information"
+          )}
+          heading={translate("আজকের সেলস", "Today's Sales")}
+        >
+          <TableToolbar alignment="end">
+            <ul className="flex items-center gap-x-2">
+              <li>
+                <Input
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setSalesTickitState((prev) => ({
+                      ...prev,
+                      search: e.target.value,
+                    }))
+                  }
+                  className="w-[300px]"
+                  placeholder={translate("search", "search")}
+                />
+              </li>
+              <li>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <LuDownload className="size-4 mr-1" />
+                      {translate("এক্সপোর্ট", "Export")}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className={cn("w-[100px] space-y-2")}
+                    align="end"
+                  >
+                    <DropdownMenuItem>
+                      {translate("পিডিএফ", "PDF")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      {translate("এক্সেল", "Excel")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </li>
+            </ul>
+          </TableToolbar>
+          <DataTable
+            query={query}
+            setQuery={setQuery}
+            pagination
+            columns={columns}
+            data={salesTickitList?.data?.todaySalesHistory || []}
+          />
+        </TableWrapper>
+
+        {salesTickitState.updateModalOpeans && (
+          <UpdateCounterOrderModal
+            isOpen={salesTickitState.updateModalOpeans}
+            onClose={closeUpdateModal}
+            order={salesTickitList?.data?.todaySalesHistory.find(
+              (order: any) => order.id === salesTickitState.selectedOrderId
+            )}
+          />
+        )}
+      </PageWrapper>
+      <div className="invisible hidden -left-full">
         {salesTickitList && (
           <TicketPrintSingle ref={printSaleRef} tickitData={invoiceData} />
         )}
       </div>
-   </section>
+    </section>
   );
 };
 

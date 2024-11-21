@@ -263,7 +263,25 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
               )}
             />
           </InputWrapper>
-
+          {/* CONTACT NUMBER */}
+          <InputWrapper
+            labelFor="contact_number"
+            label={translate(
+              addUpdateUserForm.contactNo.label.bn,
+              addUpdateUserForm.contactNo.label.en
+            )}
+            error={errors?.contactNo?.message}
+          >
+            <Input
+              {...register("contactNo")}
+              id="contact_number"
+              type="tel"
+              placeholder={translate(
+                addUpdateUserForm.contactNo.placeholder.bn,
+                addUpdateUserForm.contactNo.placeholder.en
+              )}
+            />
+          </InputWrapper>
           {/* ACCOUNT PASSWORD */}
           <InputWrapper
             labelFor="password"
@@ -358,25 +376,7 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
               )}
             />
           </InputWrapper>
-          {/* CONTACT NUMBER */}
-          <InputWrapper
-            labelFor="contact_number"
-            label={translate(
-              addUpdateUserForm.contactNo.label.bn,
-              addUpdateUserForm.contactNo.label.en
-            )}
-            error={errors?.contactNo?.message}
-          >
-            <Input
-              {...register("contactNo")}
-              id="contact_number"
-              type="tel"
-              placeholder={translate(
-                addUpdateUserForm.contactNo.placeholder.bn,
-                addUpdateUserForm.contactNo.placeholder.en
-              )}
-            />
-          </InputWrapper>
+
           {/* ACTIVITY ROLE */}
 
           {/* DATE OF BIRTH */}
@@ -420,6 +420,7 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
                   captionLayout="dropdown-buttons"
                   selected={addUserFormState?.date || new Date()}
                   onSelect={(date) => {
+                    //@ts-ignore
                     setValue("dateOfBirth", date);
                     setError("dateOfBirth", { type: "custom", message: "" });
                     setAddUserFormState(

@@ -1,16 +1,19 @@
+import DeleteAlertDialog from "@/components/common/dialog/DeleteAlertDialog";
+import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
+import { DataTable, IQueryProps } from "@/components/common/table/DataTable";
 import PageWrapper from "@/components/common/wrapper/PageWrapper";
+import {
+  TableToolbar,
+  TableWrapper,
+} from "@/components/common/wrapper/TableWrapper";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { ChangeEvent, FC, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DataTable, IQueryProps } from "@/components/common/table/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,30 +22,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import DeleteAlertDialog from "@/components/common/dialog/DeleteAlertDialog";
-import {
-  TableToolbar,
-  TableWrapper,
-} from "@/components/common/wrapper/TableWrapper";
-import { LuDownload, LuPlus } from "react-icons/lu";
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
-import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
-import { Badge } from "@/components/ui/badge";
-import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import {
   useDeleteCounterMutation,
   useGetCountersQuery,
+  useUpdateCounterMutation,
 } from "@/store/api/contact/counterApi";
-import AddCounter from "./AddCounter";
-import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
-import { useToast } from "@/components/ui/use-toast";
-import { playSound } from "@/utils/helpers/playSound";
-import UpdateCounter from "./UpdateCounter";
-import formatter from "@/utils/helpers/formatter";
-import DetailsCounter from "./DetailsCounter";
 import { Counter } from "@/types/dashboard/vehicleeSchedule.ts/counter";
+import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
+import formatter from "@/utils/helpers/formatter";
+import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
+import { playSound } from "@/utils/helpers/playSound";
+import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
+import { LuDownload, LuPlus } from "react-icons/lu";
+import AddCounter from "./AddCounter";
+import DetailsCounter from "./DetailsCounter";
+import UpdateCounter from "./UpdateCounter";
 
 interface ICounterListProps {}
 export interface ICounterStateProps {
@@ -82,6 +83,7 @@ const CounterList: FC<ICounterListProps> = () => {
   );
 
   const [deleteCounter] = useDeleteCounterMutation({});
+  const [updateCounter] = useUpdateCounterMutation({});
 
   useEffect(() => {
     const customizeCountersData = countersData?.data?.map(
@@ -125,7 +127,35 @@ const CounterList: FC<ICounterListProps> = () => {
       playSound("remove");
     }
   };
+  const deactivateCounter = async (id: number, status: boolean) => {
+    try {
+      const result = await updateCounter({ id, data: { status: !status } });
 
+      if (result.data?.success) {
+        toast({
+          title: translate("হাল নাগাদ সফল!", "Counter Update Success!"),
+          description: translate(
+            "কাউন্টারের হাল নাগাদ করা হয়েছে।",
+            "Update Success."
+          ),
+        });
+        playSound("success");
+      } else {
+        throw new Error("Update failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: translate("ত্রুটি", "Error"),
+        description: translate(
+          "হাল নাগাদ হাল নাগাদ করতে ব্যর্থ।",
+          "Failed to deactivate driver."
+        ),
+        variant: "destructive",
+      });
+      playSound("warning");
+    }
+  };
   const columns: ColumnDef<unknown>[] = [
     { accessorKey: "index", header: translate("ইনডেক্স", "Index") },
     {
@@ -153,8 +183,10 @@ const CounterList: FC<ICounterListProps> = () => {
             size="sm"
             shape="pill"
             variant={user?.status ? "success" : "destructive"}
+            onClick={() => deactivateCounter(user.id, user?.status)} // Call the deactivateDriver function
+            className="cursor-pointer" // Add pointer cursor
           >
-            {user.dummyStatus}
+            {user?.status ? "Active" : "Inactive"}
           </Badge>
         );
       },

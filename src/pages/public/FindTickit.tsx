@@ -1,14 +1,17 @@
 import PageTransition from "@/components/common/effect/PageTransition";
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
+import { Loader } from "@/components/common/Loader";
 import { Heading } from "@/components/common/typography/Heading";
 import { Paragraph } from "@/components/common/typography/Paragraph";
 import PageWrapper from "@/components/common/wrapper/PageWrapper";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   useAddBookingPaymentMutation,
   useGetTickitInfoQuery,
 } from "@/store/api/bookingApi";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import { playSound } from "@/utils/helpers/playSound";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
@@ -16,10 +19,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useReactToPrint } from "react-to-print";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import TickitPrintClient from "../dashboard/printLabel/TicketPrintClient";
-import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
-import { Loader } from "@/components/common/Loader";
 
 interface IFindTicketPaymentProps {}
 
@@ -27,13 +27,11 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
   const { translate } = useCustomTranslator();
   const [ticketNumber, setTicketNumber] = useState("");
 
+  const { handleSubmit } = useForm<{ dueAmount: number }>();
   const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
     {}
   );
 
-  const {
-    handleSubmit,
-  } = useForm<{ dueAmount: number }>();
   const [saleData, setSaleData] = useState<any>();
   // Fetch ticket information based on ticket number
   const { data, isLoading, error } = useGetTickitInfoQuery(ticketNumber, {
@@ -46,7 +44,6 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
 
   const dueAmount = data?.data?.dueAmount;
   const ticketData = data?.data;
-
 
   // Handler for ticket number input
   const handleTicketNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,8 +77,6 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
     }
   }, [handlePrint, saleData]);
 
-
-
   // Handle form submission
   const onSubmit = async () => {
     try {
@@ -108,8 +103,8 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
     }
   };
 
-  if(singleCmsLoading){
-    return <Loader/>
+  if (singleCmsLoading) {
+    return <Loader />;
   }
 
   return (
@@ -195,14 +190,10 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
             {/* Input for Due Amount */}
             {ticketData && dueAmount > 0 && (
               <form onSubmit={handleSubmit(onSubmit)}>
-
                 {/* Submit Button to Make Payment */}
                 <Submit
                   loading={paymentLoading}
-                  submitTitle={translate(
-                    "পেমেন্ট সম্পূর্ণ করুন",
-                    "Complete Payment"
-                  )}
+                  submitTitle={translate("পেমেন্ট করুন", "Pay")}
                   errors={paymentLoadingError}
                   errorTitle={translate(
                     "পেমেন্ট সম্পূর্ণ করতে ত্রুটি হয়েছে",
@@ -215,7 +206,13 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
         </div>
       </PageWrapper>
       <div className="invisible hidden -left-full">
-        {saleData && <TickitPrintClient ref={printSaleRef} tickitData={saleData} logo={singleCms?.data}/>}
+        {saleData && (
+          <TickitPrintClient
+            ref={printSaleRef}
+            tickitData={saleData}
+            logo={singleCms?.data}
+          />
+        )}
       </div>
     </section>
   );

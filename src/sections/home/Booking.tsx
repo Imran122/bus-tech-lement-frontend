@@ -139,9 +139,14 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
         new Date(bookingState.returnDate),
         "yyyy-MM-dd"
       );
+      const formattedGoingDate = format(
+        new Date(bookingState.date),
+        "yyyy-MM-dd"
+      );
       localStorage.setItem("returnDate", formattedReturnDate);
+      localStorage.setItem("goingDate", formattedGoingDate);
     }
-  }, [tripType, bookingState.returnDate]);
+  }, [tripType, bookingState.date, bookingState.returnDate]);
   return (
     <div className="flex justify-center items-center">
       <PageTransition className=" w-full ">
@@ -327,6 +332,18 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                         }}
                         fromYear={1960}
                         toYear={new Date().getFullYear()}
+                        disabled={(date) => {
+                          // Disable dates before today
+                          const today = new Date();
+                          return (
+                            date <
+                            new Date(
+                              today.getFullYear(),
+                              today.getMonth(),
+                              today.getDate()
+                            )
+                          );
+                        }}
                       />
                     </PopoverContent>
                   </Popover>
@@ -381,6 +398,18 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                           }}
                           fromYear={1960}
                           toYear={new Date().getFullYear()}
+                          disabled={(date) => {
+                            // Disable dates before today
+                            const today = new Date();
+                            return (
+                              date <
+                              new Date(
+                                today.getFullYear(),
+                                today.getMonth(),
+                                today.getDate()
+                              )
+                            );
+                          }}
                         />
                       </PopoverContent>
                     </Popover>

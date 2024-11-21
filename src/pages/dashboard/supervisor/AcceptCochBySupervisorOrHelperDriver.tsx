@@ -1,8 +1,13 @@
 import PageTransition from "@/components/common/effect/PageTransition";
 import DetailsSkeleton from "@/components/common/skeleton/DetailsSkeleton";
 import { Button } from "@/components/ui/button";
-import { useGetSingleCoachConfigurationQuery } from "@/store/api/vehiclesSchedule/coachConfigurationApi";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  useGetSingleCoachConfigurationQuery,
+  useUpdateCoachConfigurationMutation,
+} from "@/store/api/vehiclesSchedule/coachConfigurationApi";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { useLocation } from "react-router-dom";
 
 const AcceptCochBySupervisorOrHelperDriver = () => {
@@ -15,7 +20,62 @@ const AcceptCochBySupervisorOrHelperDriver = () => {
   const supervisors = queryParams.get("supervisor");
   const drivers = queryParams.get("driver");
   const helpers = queryParams.get("helper");
+  const [updateCoachConfiguration] = useUpdateCoachConfigurationMutation();
 
+  const { toast } = useToast();
+  const { toastMessage } = useMessageGenerator();
+
+  const AcceptRequest = () => {
+    const handleAcceptRequest = async () => {
+      try {
+        // Construct the payload
+        const payload: any = { id, data: {} };
+
+        // Determine which status to update
+        if (supervisors) {
+          payload.data.supervisorStatus = "Accepted";
+        } else if (drivers) {
+          payload.data.driverStatus = "Accepted";
+        } else if (helpers) {
+          payload.data.helperStatus = "Accepted";
+        }
+
+
+        // Make the API call
+        const result = await updateCoachConfiguration(payload);
+
+        if (result?.data?.success) {
+          toast({
+            title: translate(
+              "কোচ অনুরোধ সফলভাবে গৃহীত!",
+              "Request accepted successfully!"
+            ),
+            description: toastMessage(
+              "update",
+              translate(
+                "কোচ অনুরোধ সফলভাবে গৃহীত!",
+                "Request accepted successfully!"
+              )
+            ),
+          });
+        } else {
+          throw new Error("Failed to update coach configuration.");
+        }
+      } catch (error) {
+        console.error("Error during accept request:", error);
+        toast({
+          title: translate("অনুমোদন ব্যর্থ", "Error accepting request"),
+          description: translate(
+            "দয়া করে আবার চেষ্টা করুন।",
+            "Please try again."
+          ),
+          variant: "destructive",
+        });
+      }
+    };
+
+    handleAcceptRequest();
+  };
   // Fetch data using coachConfigId
   const {
     data: coachDetails,
@@ -166,13 +226,12 @@ const AcceptCochBySupervisorOrHelperDriver = () => {
 
       <div className="mt-8 flex justify-center space-x-4">
         <Button
-          className="px-6 py-3 rounded-md font-semibold border border-green-500 hover:bg-green-500 hover:text-white"
+          onClick={AcceptRequest}
+          className="px-6 py-3 rounded-md font-semibold  border-green-500 hover:bg-green-500 hover:text-white"
         >
           {translate("গ্রহণ করুন", "Accept")}
         </Button>
-        <Button
-          className="px-6 py-3 rounded-md font-semibold border border-red-500 hover:bg-red-500 hover:text-white"
-        >
+        <Button className="px-6 py-3 rounded-md bg-red-500 font-semibold border border-red-500 hover:bg-red-500 hover:text-white">
           {translate("প্রত্যাখ্যান করুন", "Reject")}
         </Button>
       </div>
