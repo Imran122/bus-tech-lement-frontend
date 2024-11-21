@@ -37,7 +37,7 @@ import { playSound } from "@/utils/helpers/playSound";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
 import AddExpense from "./AddExpense";
@@ -84,7 +84,6 @@ const ExpenseList: FC<IExpenseListProps> = () => {
       sort: query?.sort,
     }) as any;
 
-    console.log("first", expensesData)
   // DELETE EXPENSE MUTATION
   const [deleteExpense] = useDeleteExpenseAccountMutation({}) as any;
 
@@ -146,20 +145,7 @@ const ExpenseList: FC<IExpenseListProps> = () => {
         );
       },
     },
-    {
-      accessorKey: "name",
-      header: ({ column }) => {
-        return (
-          <button
-            className="flex items-center"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Expense Name
-            <ArrowUpDown className="ml-1 size-3" />
-          </button>
-        );
-      },
-    },
+ 
     {
       accessorKey: "dummyCategory",
       header: "Category Name",

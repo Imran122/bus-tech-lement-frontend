@@ -142,10 +142,23 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
         "Fill out the details below to add a new expense to the system."
       )}
     >
+      <div className="flex justify-start mb-4">
+          <ul className=" border py-1.5 rounded-md px-2 mt-2 mx-1 w-1/2 ">
+            <li>
+              <label className="text-sm md:text-base">
+                Total Expense Amount
+              </label>
+
+              <b className="ml-2 text-sm md:text-base">
+                {totalAmount.toFixed(2) || fallback.amount}৳
+              </b>
+            </li>
+          </ul>
+        </div>
       <form onSubmit={handleSubmit(handleAddExpense)}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-y-1 gap-x-4 md:gap-x-6">
           {/* EXPENSE NAME */}
-          <InputWrapper
+          {/* <InputWrapper
             label={translate(
               extraExpenseForm?.name.label.bn,
               extraExpenseForm.name.label.en
@@ -162,7 +175,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
                 extraExpenseForm.name.placeholder.en
               )}
             />
-          </InputWrapper>
+          </InputWrapper> */}
 
           {/* EXPENSE CATEGORY */}
           <InputWrapper
@@ -289,11 +302,11 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
                   {addExpenseState.date ? (
                     format(addExpenseState.date, "PPP")
                   ) : (
-                    <span>Pick a date</span>
+                    <span className="text-sm">Pick a date</span>
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="z-50">
+              <PopoverContent align="end" >
                 <Calendar
                   mode="single"
                   captionLayout="dropdown-buttons"
@@ -364,7 +377,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
           </InputWrapper>
 
           {/* EXPENSE NOTE */}
-          {/* <InputWrapper
+          <InputWrapper
             label={translate(
               extraExpenseForm?.note.label.bn,
               extraExpenseForm.note.label.en
@@ -381,22 +394,10 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
                 extraExpenseForm.note.placeholder.en
               )}
             />
-          </InputWrapper> */}
+          </InputWrapper>
         </div>
 
-        <div className="flex justify-end mt-4">
-          <ul className=" border py-1.5 rounded-md px-2 mt-2 mx-1 w-1/2 ">
-            <li>
-              <label className="text-sm md:text-base">
-                Total Expense Amount
-              </label>
-
-              <b className="ml-2 text-sm md:text-base">
-                {totalAmount.toFixed(2) || fallback.amount}৳
-              </b>
-            </li>
-          </ul>
-        </div>
+        
 
         {/* PAYMENT METHOD */}
         <AddPaymentTable

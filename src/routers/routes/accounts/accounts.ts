@@ -3,6 +3,8 @@ import AccountsManagement from "@/pages/dashboard/accountsRole/accountsManagemen
 import CollectionList from "@/pages/dashboard/accountsRole/collectionManagement/CollectionList";
 import ExpenseList from "@/pages/dashboard/accountsRole/expenseManagement/addExpense/ExpenseList";
 import AccountsExpenseCategoryList from "@/pages/dashboard/accountsRole/expenseManagement/expenseCategorey/AccountsExpenseCategoryList";
+import ExpenseCategoryReport from "@/pages/dashboard/accountsRole/expenseManagement/expenseCategorey/ExpenseCategoryReport";
+import ExpenseSubCategoryReport from "@/pages/dashboard/accountsRole/expenseManagement/expenseCategorey/ExpenseSubCategoryReport";
 import AccountantExpenseSubCategoreyList from "@/pages/dashboard/accountsRole/expenseManagement/expenseSubCategorey/AccountantExpenseSubCategoreyList";
 import UserProfile from "@/pages/dashboard/contacts/user/UserProfile";
 import React, { ReactNode } from "react";
@@ -33,6 +35,14 @@ export const accountsAllLink: IRouteProps[] = [
   {
     path: "expense_account",
     element: React.createElement(ExpenseList),
+  },
+  {
+    path: "expense_category_report",
+    element: React.createElement(ExpenseCategoryReport),
+  },
+  {
+    path: "expense_sub_category_report",
+    element: React.createElement(ExpenseSubCategoryReport),
   },
   {
     path: "dashboard/report_details_account/:id",

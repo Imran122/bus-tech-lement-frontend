@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const AddEditExtraExpenseSchema = z.object({
-  name: z.string({ required_error: "Name is required" }).min(1, "Name is required"),
+  // name: z.string({ required_error: "Name is required" }).min(1, "Name is required"),
   expenseCategoryId: z
     .number({ required_error: "Expense category ID is required" })
     .int("Expense category ID must be an integer"),
@@ -13,7 +13,7 @@ export const AddEditExtraExpenseSchema = z.object({
     .min(0, "Total amount must be a positive number"),
   date: z.string({ required_error: "Date is required" }),
   file: z.string().optional(),
-  // note: z.string().optional(),
+  note: z.string().optional(),
   payments: z.array(
     z.object({
       accountId: z
