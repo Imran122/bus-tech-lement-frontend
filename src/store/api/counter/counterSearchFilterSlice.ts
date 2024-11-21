@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
+const date = new Date();
+const dateString = date.toISOString();
 interface ITickitBookingStateProps {
   calenderOpen: boolean;
   fromCounterId: number | null;
@@ -23,8 +24,8 @@ const initialState: ITickitBookingStateProps = {
   fromCounterId: null,
   destinationCounterId: null,
   schedule: "",
-  coachType: "",
-  date: null,
+  coachType: "AC",
+  date: dateString,
   bookingCoachesList: [],
 };
 

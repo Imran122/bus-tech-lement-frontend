@@ -15,7 +15,7 @@ export const addBookingSeatFromCounterSchema = z.object({
   paymentAmount: z
     .preprocess(
       (value) => parseFloat(value as string),
-      z.number().positive("Partial payment amount must be a positive number")
+      z.number().nonnegative("Partial payment amount must not be negative") // Allows 0 or positive numbers
     )
     .optional(),
   gender: z.enum(["Male", "Female"]).optional(),

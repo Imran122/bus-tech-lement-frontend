@@ -42,10 +42,11 @@ import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { useGetPartialInfoAllQuery } from "@/store/api/vehiclesSchedule/partialApi";
 import { playSound } from "@/utils/helpers/playSound";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { format } from "date-fns";
@@ -76,6 +77,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   onClose,
 }) => {
   const { translate } = useCustomTranslator();
+  const goingDate = localStorage.getItem("goingDate");
 
   const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
     useAddBookingMutation() as any;
@@ -107,10 +109,25 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       amount: 0,
     },
   });
+  const { data: partialInfoData } = useGetPartialInfoAllQuery({});
 
+  const paymentType = watch("paymentType");
   const partialAmount = watch("paymentAmount");
-  const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
+  //const amount = watch("amount");
 
+  const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
+  const minimumPartialPayment = useMemo(() => {
+    if (partialInfoData?.data?.partialPercentage) {
+      return (totalAmount * partialInfoData.data.partialPercentage) / 100;
+    }
+    return 0;
+  }, [totalAmount, partialInfoData]);
+
+  useEffect(() => {
+    if (paymentType === "PARTIAL") {
+      setValue("paymentAmount", minimumPartialPayment); // Set minimum partial payment
+    }
+  }, [paymentType, minimumPartialPayment, setValue]);
   const handleBookingSeat = async (seatData: any) => {
     const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
       (current: any) => current.seat === seatData.seat
@@ -225,24 +242,32 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     setBookingFormState,
   ]);
 
-  const paymentType = watch("paymentType");
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const {
+    data: userInfoData,
+    isLoading: userInfoLoading,
+    refetch,
+  } = useGetTickitInfoByPhoneQuery(phoneNumber, {
+    skip: !phoneNumber, // Ensure the API doesn't fetch unless the phone number is provided
+  }) as any;
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true); // Trigger the API call for fetching user info by phone
+
+    if (!phoneNumber) {
+      setErrorMessage("Please enter a valid phone number.");
+      return;
+    }
+
+    setSubmitted(true);
+    await refetch(); // Trigger API call manually
   };
 
-  const { data: userInfoData, isLoading: userInfoLoading } =
-    useGetTickitInfoByPhoneQuery(phoneNumber, {
-      skip: !submitted || !phoneNumber, // Only call API if submitted and phoneNumber is set
-    }) as any;
-
   useEffect(() => {
-    if (submitted) {
+    if (submitted && userInfoData) {
       if (userInfoData?.data) {
         // Populate all relevant form fields
         setValue("customerName", userInfoData.data.name || "");
@@ -255,13 +280,12 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
 
         // Clear any previous error message
         setErrorMessage("");
+        setSubmitted(false);
       } else {
         // Set error message if no data found
         setErrorMessage("No data found for this phone number.");
+        setSubmitted(false);
       }
-
-      // Reset `submitted` to allow for further searches by phone
-      setSubmitted(false);
     }
   }, [userInfoData, setValue, submitted]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
@@ -300,7 +324,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       const finalData = {
         ...cleanedData,
         bookingType: "SeatIssue",
-
+        returnDate: returnDate,
+        date: goingDate,
+        orderType: tripType,
         seats: bookingFormState.selectedSeats.map((seat: any) => ({
           seat: seat.seat,
           coachConfigId: seat.coachConfigId, // Use each seat's specific coachConfigId
@@ -308,10 +334,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
           date: seat.date, // Use each seat's specific date
         })),
       };
-
       const booking = await addBooking(finalData);
 
       if (booking.data?.success) {
+        // return;
         const payment = await addBookingPayment(booking?.data?.data?.id);
         if (payment.data?.success) {
           playSound("success");
@@ -814,52 +840,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
 
               {/* paymnet div */}
               <div className="mt-2 grid grid-cols-3">
-                {/* PAYMENT METHOD */}
-                <InputWrapper
-                  error={errors?.paymentMethod?.message}
-                  labelFor="paymentMethod"
-                  label={translate(
-                    addBookingSeatForm.paymentMethod.label.bn,
-                    addBookingSeatForm.paymentMethod.label.en
-                  )}
-                >
-                  <Select
-                    onValueChange={(value: string) => {
-                      setValue("paymentMethod", value);
-                      setError("paymentMethod", {
-                        type: "custom",
-                        message: "",
-                      });
-                    }}
-                  >
-                    <SelectTrigger id="paymentMethod" className="w-full">
-                      <SelectValue
-                        placeholder={translate(
-                          addBookingSeatForm.paymentMethod.placeholder.bn,
-                          addBookingSeatForm.paymentMethod.placeholder.en
-                        )}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {paymentMethodOptions?.map(
-                        (
-                          singleNationality: IPaymentMethodOptions,
-                          nationalityIndex: number
-                        ) => (
-                          <SelectItem
-                            key={nationalityIndex}
-                            value={singleNationality.key}
-                          >
-                            {translate(
-                              singleNationality.bn,
-                              singleNationality.en
-                            )}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                </InputWrapper>
                 {/* payment type */}
                 <InputWrapper
                   error={errors?.paymentType?.message}
@@ -915,16 +895,64 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       onChange={(e) =>
                         setValue("paymentAmount", parseFloat(e.target.value))
                       }
+                      value={minimumPartialPayment} // Display minimum partial payment
+                      disabled={true}
                     />
                   </InputWrapper>
                 )}
+                {/* PAYMENT METHOD */}
+                <InputWrapper
+                  error={errors?.paymentMethod?.message}
+                  labelFor="paymentMethod"
+                  label={translate(
+                    addBookingSeatForm.paymentMethod.label.bn,
+                    addBookingSeatForm.paymentMethod.label.en
+                  )}
+                >
+                  <Select
+                    onValueChange={(value: string) => {
+                      setValue("paymentMethod", value);
+                      setError("paymentMethod", {
+                        type: "custom",
+                        message: "",
+                      });
+                    }}
+                  >
+                    <SelectTrigger id="paymentMethod" className="w-full">
+                      <SelectValue
+                        placeholder={translate(
+                          addBookingSeatForm.paymentMethod.placeholder.bn,
+                          addBookingSeatForm.paymentMethod.placeholder.en
+                        )}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {paymentMethodOptions?.map(
+                        (
+                          singleNationality: IPaymentMethodOptions,
+                          nationalityIndex: number
+                        ) => (
+                          <SelectItem
+                            key={nationalityIndex}
+                            value={singleNationality.key}
+                          >
+                            {translate(
+                              singleNationality.bn,
+                              singleNationality.en
+                            )}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                </InputWrapper>
               </div>
               {paymentType === "PARTIAL" && (
                 <div className="flex justify-center text-center">
                   <Paragraph variant="destructive" size="sm">
                     {translate(
-                      "“যাত্রীকে অবশ্যই প্রস্থানের সময় কমপক্ষে 2 ঘন্টা আগে বকেয়া অর্থ প্রদান করতে হবে। অন্যথায় আপনার টিকিট বাতিল বলে বিবেচিত হবে।”",
-                      "passenger must pay the due amount at least 2 hours before the departure time.Otherwise your ticket will be considered cancelled"
+                      `যাত্রীকে অবশ্যই প্রস্থানের সময় কমপক্ষে ${partialInfoData.data.time} আগে বকেয়া অর্থ প্রদান করতে হবে। অন্যথায় আপনার টিকিট বাতিল বলে বিবেচিত হবে।`,
+                      `passenger must pay the due amount at least ${partialInfoData.data.time} before the departure time.Otherwise your ticket will be considered cancelled`
                     )}
                   </Paragraph>
                 </div>

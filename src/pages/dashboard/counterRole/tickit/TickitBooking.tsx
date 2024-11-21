@@ -25,12 +25,10 @@ const TickitBooking: FC<ITickitBookingProps> = () => {
     fromCounterId: null,
     destinationCounterId: null,
     schedule: "",
-    coachType: "",
-    date: null,
+    coachType: "AC",
+    date: new Date(),
     bookingCoachesList: [],
   });
-
-
   // Only execute the query if all fields are filled
   const shouldFetchData =
     bookingState.fromCounterId &&

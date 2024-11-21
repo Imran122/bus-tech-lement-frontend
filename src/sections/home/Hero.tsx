@@ -20,8 +20,8 @@ const Hero: FC<IHeroProps> = () => {
     fromCounterId: null,
     destinationCounterId: null,
     returnCalenderOpen: false,
-    coachType: "",
-    date: null,
+    coachType: "AC",
+    date: new Date(),
     returnDate: null,
     bookingCoachesList: [],
 

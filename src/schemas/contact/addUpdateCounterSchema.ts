@@ -15,7 +15,7 @@ export const addUpdateCounterSchema = z
     phone: z.string().optional(),
     mobile: phoneNumberBaseSchema.min(1, "Mobile is required"),
     fax: z.string().optional(),
-    email: z.string().min(1, "Email is required"),
+    email: z.string().optional(),
     primaryContactPersonName: z
       .string()
       .min(1, "Primary contact person name is required"),
