@@ -62,6 +62,12 @@ const dashboardRootLinks = {
       key: "cancel_request",
       href: "today_cancel_request",
     },
+    // {
+    //   icon: LuUserCog,
+    //   label: { bn: "ব্যয়", en: "Payment" },
+    //   key: "due_payment",
+    //   href: "due_payment",
+    // },
   ],
 };
 const contactsManagementLinks = {

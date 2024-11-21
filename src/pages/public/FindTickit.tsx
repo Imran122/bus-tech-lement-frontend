@@ -1,6 +1,7 @@
 import PageTransition from "@/components/common/effect/PageTransition";
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
+import { Loader } from "@/components/common/Loader";
 import { Heading } from "@/components/common/typography/Heading";
 import { Paragraph } from "@/components/common/typography/Paragraph";
 import PageWrapper from "@/components/common/wrapper/PageWrapper";
@@ -10,6 +11,7 @@ import {
   useAddBookingPaymentMutation,
   useGetTickitInfoQuery,
 } from "@/store/api/bookingApi";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import { playSound } from "@/utils/helpers/playSound";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
@@ -17,7 +19,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useReactToPrint } from "react-to-print";
 import { toast } from "sonner";
-import TickitPrint from "../dashboard/printLabel/TickitPrint";
+import TickitPrintClient from "../dashboard/printLabel/TicketPrintClient";
 
 interface IFindTicketPaymentProps {}
 
@@ -26,6 +28,10 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
   const [ticketNumber, setTicketNumber] = useState("");
 
   const { handleSubmit } = useForm<{ dueAmount: number }>();
+  const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
+    {}
+  );
+
   const [saleData, setSaleData] = useState<any>();
   // Fetch ticket information based on ticket number
   const { data, isLoading, error } = useGetTickitInfoQuery(ticketNumber, {
@@ -96,6 +102,10 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
       );
     }
   };
+
+  if (singleCmsLoading) {
+    return <Loader />;
+  }
 
   return (
     <section>
@@ -196,7 +206,13 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
         </div>
       </PageWrapper>
       <div className="invisible hidden -left-full">
-        {saleData && <TickitPrint ref={printSaleRef} tickitData={saleData} />}
+        {saleData && (
+          <TickitPrintClient
+            ref={printSaleRef}
+            tickitData={saleData}
+            logo={singleCms?.data}
+          />
+        )}
       </div>
     </section>
   );

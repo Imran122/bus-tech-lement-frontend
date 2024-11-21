@@ -55,5 +55,6 @@ export const apiSlice = createApi({
     "expense_accounts",
     "accounts-dashboard-home",
     "partial",
+    "duePayment",
   ],
 });

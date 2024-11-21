@@ -49,7 +49,7 @@ const FileInputArray: React.FC<FileInputArrayProps> = ({
           <img
             src={preview}
             alt="Preview"
-            className="w-auto h-[118px] object-cover border rounded-md"
+            className="w-52 h-[118px] object-contain border rounded-md"
           />
         ) : (
           <>

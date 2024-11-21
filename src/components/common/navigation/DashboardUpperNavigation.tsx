@@ -16,7 +16,7 @@ import {
 import { shareAuthentication } from "@/utils/helpers/shareAuthentication";
 import { useAppContext } from "@/utils/hooks/useAppContext";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { LuUserCircle } from "react-icons/lu";
 import { useDispatch } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
@@ -25,6 +25,8 @@ import { Label } from "../typography/Label";
 import DashboardSidebarSmallDevices from "./DashboardSidebarSmallDevices";
 import LocaleSwitcher from "./LocaleSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import AddFuelPayment from "@/pages/dashboard/admin/fuel/AddFuelPayment";
 interface IDashboardUpperNavigationProps {}
 
 const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
@@ -32,6 +34,7 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
   const { route } = useAppContext();
   const { translate } = useCustomTranslator();
   const { role, avatar } = shareAuthentication();
+  const [paymentOpen, setPaymentOpen] = useState<boolean>(false);
   const subNavigation = adminNavigationLinks?.find(
     (singleSubNavigation: INavigationLinks) => singleSubNavigation.key === route
   ) as any;
@@ -69,6 +72,33 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
                 </li>
               )
             )}
+          <li>
+            <Dialog
+              open={paymentOpen}
+              onOpenChange={(open) => setPaymentOpen(open)}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  className={`${
+                   paymentOpen &&
+                    "outline-none ring-2 focus border-destructive ring-destructive/80 ring-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 w-full"
+                  }`}
+                  variant="outline"
+                  size="sm"
+                >
+                  Payment
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[90%] overflow-y-auto md:max-w-[800px]">
+                {/* CUSTOMER DETAILS CONTAINER */}
+                <AddFuelPayment
+                  setPaymentOpen={(open:boolean) =>
+                    setPaymentOpen(open)
+                  }
+                />
+              </DialogContent>
+            </Dialog>
+          </li>
           <li>
             {" "}
             <button
