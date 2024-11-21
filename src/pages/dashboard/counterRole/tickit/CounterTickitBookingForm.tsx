@@ -506,7 +506,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
         if (booking.data?.success) {
           setUpdateLocal(true);
           // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
-          handlePrint();
+          if (bookingType !== "SeatBooking") {
+            handlePrint();
+          }
+
           // setClear(true);
           toast.success(
             translate(
@@ -1262,7 +1265,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
         {addBookingSuccess && (
           <TickitPrint ref={printSaleRef} tickitData={saleInfo} />
         )}
-        {saleData && (
+        {saleData && bookingType !== "SeatBooking" && (
           <TickitPrint ref={printSaleRef} tickitData={saleData?.saleInfo} />
         )}
       </div>

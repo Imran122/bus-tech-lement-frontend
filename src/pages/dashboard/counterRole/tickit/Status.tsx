@@ -49,8 +49,8 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
         result.push({
           counterId: item.order.counterId,
           counterName: item.order.counter.name,
-          orderBy: item.order.counter.userName,
-          phone: item.order.counter.phone,
+          orderBy: item.order.user.userName,
+          phone: item.order.user?.contactNo,
           bookedCount: 0,
           bookedSeat: [],
           soldCount: 1,
@@ -70,8 +70,8 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
         result.push({
           counterId: item.counter.id,
           counterName: item.counter.name,
-          orderBy: item.counter.userName,
-          phone: item.counter.phone,
+          orderBy: item.user?.userName,
+          phone: item.user?.contactNo,
           bookedCount: 1,
           bookedSeat: [item.seat],
           soldCount: 0,
@@ -80,6 +80,7 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
       }
     }
   });
+
 
   return (
     <div>

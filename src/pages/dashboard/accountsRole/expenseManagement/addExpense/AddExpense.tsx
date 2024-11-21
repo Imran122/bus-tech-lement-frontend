@@ -293,7 +293,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent align="end">
+              <PopoverContent align="end" className="z-50">
                 <Calendar
                   mode="single"
                   captionLayout="dropdown-buttons"

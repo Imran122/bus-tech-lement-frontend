@@ -45,7 +45,7 @@ const SeatStatus: FC<ISeatStatus> = ({ bookingCoach }) => {
       result.push({
         counterId: item.order.counterId,
         counterName: item.order.counter.name,
-        orderBy: item.order.counter.userName,
+        orderBy: item.order.user.userName,
         bookSeat: "",
         soldSeat: item.seat,
         fare: item.order.fare,
@@ -62,7 +62,7 @@ const SeatStatus: FC<ISeatStatus> = ({ bookingCoach }) => {
       result.push({
         counterId: item.counter.id,
         counterName: item.counter.name,
-        orderBy: item.counter.userName,
+        orderBy: item.user.userName,
         bookSeat: item.seat,
         soldSeat: "",
         fare: 0,
