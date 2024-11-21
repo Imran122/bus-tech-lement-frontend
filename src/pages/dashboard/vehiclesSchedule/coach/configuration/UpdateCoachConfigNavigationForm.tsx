@@ -371,7 +371,7 @@ const UpdateCoachConfigNavigationForm: React.FC = () => {
                     className="w-full"
                     disabled={isUpdating}
                   >
-                    Save
+                    SEND
                   </Button>
                 ) : (
                   <h2 className="text-sm text-green-500 font-semibold">

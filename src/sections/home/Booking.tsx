@@ -332,6 +332,18 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                         }}
                         fromYear={1960}
                         toYear={new Date().getFullYear()}
+                        disabled={(date) => {
+                          // Disable dates before today
+                          const today = new Date();
+                          return (
+                            date <
+                            new Date(
+                              today.getFullYear(),
+                              today.getMonth(),
+                              today.getDate()
+                            )
+                          );
+                        }}
                       />
                     </PopoverContent>
                   </Popover>
@@ -386,6 +398,18 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                           }}
                           fromYear={1960}
                           toYear={new Date().getFullYear()}
+                          disabled={(date) => {
+                            // Disable dates before today
+                            const today = new Date();
+                            return (
+                              date <
+                              new Date(
+                                today.getFullYear(),
+                                today.getMonth(),
+                                today.getDate()
+                              )
+                            );
+                          }}
                         />
                       </PopoverContent>
                     </Popover>

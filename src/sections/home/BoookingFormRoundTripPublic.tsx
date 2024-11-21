@@ -254,7 +254,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   } = useGetTickitInfoByPhoneQuery(phoneNumber, {
     skip: !phoneNumber, // Ensure the API doesn't fetch unless the phone number is provided
   }) as any;
-
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -841,52 +840,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
 
               {/* paymnet div */}
               <div className="mt-2 grid grid-cols-3">
-                {/* PAYMENT METHOD */}
-                <InputWrapper
-                  error={errors?.paymentMethod?.message}
-                  labelFor="paymentMethod"
-                  label={translate(
-                    addBookingSeatForm.paymentMethod.label.bn,
-                    addBookingSeatForm.paymentMethod.label.en
-                  )}
-                >
-                  <Select
-                    onValueChange={(value: string) => {
-                      setValue("paymentMethod", value);
-                      setError("paymentMethod", {
-                        type: "custom",
-                        message: "",
-                      });
-                    }}
-                  >
-                    <SelectTrigger id="paymentMethod" className="w-full">
-                      <SelectValue
-                        placeholder={translate(
-                          addBookingSeatForm.paymentMethod.placeholder.bn,
-                          addBookingSeatForm.paymentMethod.placeholder.en
-                        )}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {paymentMethodOptions?.map(
-                        (
-                          singleNationality: IPaymentMethodOptions,
-                          nationalityIndex: number
-                        ) => (
-                          <SelectItem
-                            key={nationalityIndex}
-                            value={singleNationality.key}
-                          >
-                            {translate(
-                              singleNationality.bn,
-                              singleNationality.en
-                            )}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                </InputWrapper>
                 {/* payment type */}
                 <InputWrapper
                   error={errors?.paymentType?.message}
@@ -947,13 +900,59 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                     />
                   </InputWrapper>
                 )}
+                {/* PAYMENT METHOD */}
+                <InputWrapper
+                  error={errors?.paymentMethod?.message}
+                  labelFor="paymentMethod"
+                  label={translate(
+                    addBookingSeatForm.paymentMethod.label.bn,
+                    addBookingSeatForm.paymentMethod.label.en
+                  )}
+                >
+                  <Select
+                    onValueChange={(value: string) => {
+                      setValue("paymentMethod", value);
+                      setError("paymentMethod", {
+                        type: "custom",
+                        message: "",
+                      });
+                    }}
+                  >
+                    <SelectTrigger id="paymentMethod" className="w-full">
+                      <SelectValue
+                        placeholder={translate(
+                          addBookingSeatForm.paymentMethod.placeholder.bn,
+                          addBookingSeatForm.paymentMethod.placeholder.en
+                        )}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {paymentMethodOptions?.map(
+                        (
+                          singleNationality: IPaymentMethodOptions,
+                          nationalityIndex: number
+                        ) => (
+                          <SelectItem
+                            key={nationalityIndex}
+                            value={singleNationality.key}
+                          >
+                            {translate(
+                              singleNationality.bn,
+                              singleNationality.en
+                            )}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                </InputWrapper>
               </div>
               {paymentType === "PARTIAL" && (
                 <div className="flex justify-center text-center">
                   <Paragraph variant="destructive" size="sm">
                     {translate(
-                      "“যাত্রীকে অবশ্যই প্রস্থানের সময় কমপক্ষে 2 ঘন্টা আগে বকেয়া অর্থ প্রদান করতে হবে। অন্যথায় আপনার টিকিট বাতিল বলে বিবেচিত হবে।”",
-                      "passenger must pay the due amount at least 2 hours before the departure time.Otherwise your ticket will be considered cancelled"
+                      `যাত্রীকে অবশ্যই প্রস্থানের সময় কমপক্ষে ${partialInfoData.data.time} আগে বকেয়া অর্থ প্রদান করতে হবে। অন্যথায় আপনার টিকিট বাতিল বলে বিবেচিত হবে।`,
+                      `passenger must pay the due amount at least ${partialInfoData.data.time} before the departure time.Otherwise your ticket will be considered cancelled`
                     )}
                   </Paragraph>
                 </div>
