@@ -6,6 +6,7 @@ import AccountsExpenseCategoryList from "@/pages/dashboard/accountsRole/expenseM
 import ExpenseCategoryReport from "@/pages/dashboard/accountsRole/expenseManagement/expenseCategorey/ExpenseCategoryReport";
 import ExpenseSubCategoryReport from "@/pages/dashboard/accountsRole/expenseManagement/expenseCategorey/ExpenseSubCategoryReport";
 import AccountantExpenseSubCategoreyList from "@/pages/dashboard/accountsRole/expenseManagement/expenseSubCategorey/AccountantExpenseSubCategoreyList";
+import ProfitandLoseReport from "@/pages/dashboard/accountsRole/ProfitandLossReport/ProfitandLoseReport";
 import UserProfile from "@/pages/dashboard/contacts/user/UserProfile";
 import React, { ReactNode } from "react";
 
@@ -43,6 +44,10 @@ export const accountsAllLink: IRouteProps[] = [
   {
     path: "expense_sub_category_report",
     element: React.createElement(ExpenseSubCategoryReport),
+  },
+  {
+    path: "profit_and_loss",
+    element: React.createElement(ProfitandLoseReport),
   },
   {
     path: "dashboard/report_details_account/:id",
