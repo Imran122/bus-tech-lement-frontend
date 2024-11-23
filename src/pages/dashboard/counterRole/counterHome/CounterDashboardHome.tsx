@@ -300,9 +300,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       },
     },
   ];
-    "salesTickitList?.data?.todaySalesHistory",
-    salesTickitList?.data?.todaySalesHistory
-  );
+
   if (loadingSalesTickit) {
     return <TableSkeleton columns={7} />;
   }
