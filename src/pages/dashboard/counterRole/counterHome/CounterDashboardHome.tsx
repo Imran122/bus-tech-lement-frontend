@@ -183,7 +183,15 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       accessorKey: "paymentMethod",
       header: translate("পেমেন্ট পদ্ধতি", "Payment Method"),
     },
-    { accessorKey: "status", header: translate("স্ট্যাটাস", "Status") },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        const color = status === "Success" ? "text-green-700" : "text-red-700";
+        return <span className={`${color} font-semibold`}>{status}</span>;
+      },
+    },
     {
       accessorKey: "amount",
       header: translate("ইউনিট মূল্য", "Unit Price"),
@@ -292,7 +300,9 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       },
     },
   ];
-
+    "salesTickitList?.data?.todaySalesHistory",
+    salesTickitList?.data?.todaySalesHistory
+  );
   if (loadingSalesTickit) {
     return <TableSkeleton columns={7} />;
   }

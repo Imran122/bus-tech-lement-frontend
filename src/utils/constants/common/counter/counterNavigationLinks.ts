@@ -35,6 +35,12 @@ const counterDashboardRootLinks = {
       key: "dashboard",
       href: "dashboard",
     },
+    {
+      icon: LuUserCog,
+      label: { bn: "কোচ ভিত্তিক রিপোর্ট", en: "Coach Wise Report" },
+      key: "coach-wise-report",
+      href: "coach-wise-report",
+    },
   ],
 };
 // CONTACTS LINKS
