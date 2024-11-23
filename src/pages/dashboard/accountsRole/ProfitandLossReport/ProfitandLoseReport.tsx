@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import InfoWrapper from "@/components/common/wrapper/InfoWrapper";
-import EmptyTableCell from "@/components/ui/emptyTableCell";
 import {
   Table,
   TableBody,
@@ -10,15 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fallback } from "@/utils/constants/common/fallback";
-import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/common/Loader";
-import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import ExpenseCategoryPrint from "@/pages/dashboard/printLabel/ExpenseCategoryPrint";
 import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
-import { useReactToPrint } from "react-to-print";
 import {
   Select,
   SelectContent,
@@ -35,8 +29,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
-import formatter from "@/utils/helpers/formatter";
 import { Calendar } from "@/components/ui/calendar";
 import { DateRange } from "react-day-picker";
 import { dateFormatter } from "@/utils/helpers/dateFormatter";
@@ -85,10 +77,10 @@ const ProfitandLoseReport = () => {
 
   const printSaleRef = useRef(null);
 
-  const handlePrint = useReactToPrint({
-    content: () => printSaleRef.current,
-    documentTitle: `${appConfiguration?.appName}_profit_and_loss_report`,
-  });
+  // const handlePrint = useReactToPrint({
+  //   content: () => printSaleRef.current,
+  //   documentTitle: `${appConfiguration?.appName}_profit_and_loss_report`,
+  // });
 
   // Filter data based on selected category
   const handleRegistrationNoChange = (value: string) => {
@@ -222,19 +214,19 @@ const ProfitandLoseReport = () => {
                 ))}
               </TableRow>
             </TableHeader>
-            <TableBody>
+            {/* <TableBody>
               {filteredData?.length > 0 ? (
                 filteredData?.map((row, rowIndex) => (
                   <TableRow key={rowIndex}>
                     {[
-                      //   row.tripNo,
-                      //   row.downDate,
-                      //   row.busNo,
-                      //   row.upDownTotalAmount?.toFixed(2),
-                      //   row.transportRoadExpenses?.toFixed(2),
-                      //   row.transportBalance?.toFixed(2),
-                      //   row.expressGp?.toFixed(2),
-                      //   row.tripWiseProfit?.toFixed(2),
+                        row.tripNo,
+                        row.downDate,
+                        row.busNo,
+                        row.upDownTotalAmount?.toFixed(2),
+                        row.transportRoadExpenses?.toFixed(2),
+                        row.transportBalance?.toFixed(2),
+                        row.expressGp?.toFixed(2),
+                        row.tripWiseProfit?.toFixed(2),
                     ].map((value, cellIndex) => (
                       <TableCell key={cellIndex} className="border-r">
                         {value ?? "N/A"}
@@ -257,7 +249,7 @@ const ProfitandLoseReport = () => {
                 <TableCell className="border-l">00.00৳</TableCell>
                 <TableCell className="border-l">00.00৳</TableCell>
               </TableRow>
-            </TableBody>
+            </TableBody> */}
           </Table>
         </div>
       </InfoWrapper>
