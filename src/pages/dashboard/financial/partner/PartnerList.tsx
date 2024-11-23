@@ -1,16 +1,18 @@
+import DeleteAlertDialog from "@/components/common/dialog/DeleteAlertDialog";
+import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
+import { DataTable, IQueryProps } from "@/components/common/table/DataTable";
 import PageWrapper from "@/components/common/wrapper/PageWrapper";
+import {
+  TableToolbar,
+  TableWrapper,
+} from "@/components/common/wrapper/TableWrapper";
 import { Button } from "@/components/ui/button";
-import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { ChangeEvent, FC, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DataTable, IQueryProps } from "@/components/common/table/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,29 +20,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import DeleteAlertDialog from "@/components/common/dialog/DeleteAlertDialog";
-import {
-  TableToolbar,
-  TableWrapper,
-} from "@/components/common/wrapper/TableWrapper";
-import { LuDownload, LuPlus } from "react-icons/lu";
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
-import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
-import { fallback } from "@/utils/constants/common/fallback";
-import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 import { useToast } from "@/components/ui/use-toast";
-import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
+import { cn } from "@/lib/utils";
 import {
   useDeletePartnerMutation,
   useGetPartnersQuery,
 } from "@/store/api/finance/partnerApi";
-import AddPartner from "./AddPartner";
-import { playSound } from "@/utils/helpers/playSound";
-import UpdatePartner from "./UpdatePartner";
+import { fallback } from "@/utils/constants/common/fallback";
+import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
 import formatter from "@/utils/helpers/formatter";
+import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
+import { playSound } from "@/utils/helpers/playSound";
+import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
+import { LuDownload, LuPlus } from "react-icons/lu";
+import AddPartner from "./AddPartner";
 import DetailsPartner from "./DetailsPartner";
+import UpdatePartner from "./UpdatePartner";
 
 interface IPartnerListProps {}
 export interface IPartnerStateProps {
@@ -225,7 +225,7 @@ const PartnerList: FC<IPartnerListProps> = () => {
                     search: e.target.value,
                   }))
                 }
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate(
                   searchInputLabelPlaceholder.partner.placeholder.bn,
                   searchInputLabelPlaceholder.partner.placeholder.en

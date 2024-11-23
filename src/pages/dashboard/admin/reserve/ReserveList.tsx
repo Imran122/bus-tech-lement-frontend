@@ -23,8 +23,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import { useDeleteReserveMutation, useGetReserveQuery} from "@/store/api/reserve/reserveApi";
+import {
+  useDeleteReserveMutation,
+  useGetReserveQuery,
+} from "@/store/api/reserve/reserveApi";
+import { Reserve } from "@/types/dashboard/vehicleeSchedule.ts/reserve";
 import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
+import formatter from "@/utils/helpers/formatter";
 import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
 import { playSound } from "@/utils/helpers/playSound";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
@@ -33,11 +38,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
-import UpdateReserve from "./UpdateReserve";
-import { Reserve } from "@/types/dashboard/vehicleeSchedule.ts/reserve";
 import AddResurb from "./AddResurb";
-import formatter from "@/utils/helpers/formatter";
 import ReserveDetails from "./ReserveDetails";
+import UpdateReserve from "./UpdateReserve";
 
 interface IReserveListProps {}
 export interface IReserveStateProps {
@@ -45,11 +48,11 @@ export interface IReserveStateProps {
   addReserveOpen: boolean;
   reserveList: Reserve[];
   calenderFromOpen: boolean;
-  calenderToOpen:boolean;
-  fromDate:Date| null;
-  toDate:Date | null;
-  fromDateTime:Date | null,
-  toDateTime:Date | null,
+  calenderToOpen: boolean;
+  fromDate: Date | null;
+  toDate: Date | null;
+  fromDateTime: Date | null;
+  toDateTime: Date | null;
 }
 
 const ReserveList: FC<IReserveListProps> = () => {
@@ -71,12 +74,12 @@ const ReserveList: FC<IReserveListProps> = () => {
     search: "",
     addReserveOpen: false,
     reserveList: [],
-    calenderFromOpen:false,
-    calenderToOpen:false,
-    fromDate:null,
-    toDate:null,
-    fromDateTime:null,
-    toDateTime:null,
+    calenderFromOpen: false,
+    calenderToOpen: false,
+    fromDate: null,
+    toDate: null,
+    fromDateTime: null,
+    toDateTime: null,
   });
 
   const { data: reserveData, isLoading: reserveLoading } = useGetReserveQuery({
@@ -90,18 +93,18 @@ const ReserveList: FC<IReserveListProps> = () => {
 
   useEffect(() => {
     const customizedReserveData = reserveData?.data?.map(
-      (reserve:Reserve, userIndex: number) => ({
+      (reserve: Reserve, userIndex: number) => ({
         ...reserve,
         index: generateDynamicIndexWithMeta(reserveData, userIndex),
-        fromDate:formatter({
-          type:"date",
-          dateTime:reserve?.toDate
+        fromDate: formatter({
+          type: "date",
+          dateTime: reserve?.toDate,
         }),
-        toDate:formatter({
-          type:"date",
-          dateTime:reserve?.toDate
+        toDate: formatter({
+          type: "date",
+          dateTime: reserve?.toDate,
         }),
-        route:reserve?.route?.routeName
+        route: reserve?.route?.routeName,
       })
     );
 
@@ -120,7 +123,10 @@ const ReserveList: FC<IReserveListProps> = () => {
 
     if (result.data?.success) {
       toast({
-        title: translate("রিজার্ভ মুছে ফেলার বার্তা", "Message for deleting reserve"),
+        title: translate(
+          "রিজার্ভ মুছে ফেলার বার্তা",
+          "Message for deleting reserve"
+        ),
         description: toastMessage("delete", translate("রিজার্ভ", "Reserve")),
       });
       playSound("remove");
@@ -129,21 +135,36 @@ const ReserveList: FC<IReserveListProps> = () => {
 
   const columns: ColumnDef<unknown>[] = [
     { accessorKey: "index", header: translate("ইনডেক্স", "Index") },
-    { accessorKey: "registrationNo", header: translate("রেজিস্ট্রেশন নম্বর", "Registration No") },
+    {
+      accessorKey: "registrationNo",
+      header: translate("রেজিস্ট্রেশন নম্বর", "Registration No"),
+    },
     // { accessorKey: "route", header: translate("রুট", "Route") },
     // { accessorKey: "noOfSeat", header: translate("আসন সংখ্যা", "Number of Seat") },
     // { accessorKey: "fromDate", header: translate("শুরুর তারিখ", "From Date") },
     // { accessorKey: "fromDateTime", header: translate("শুরুর সময়", "From Date Time") },
     // { accessorKey: "toDate", header: translate("শেষের তারিখ", "To Date") },
     // { accessorKey: "toDateTime", header: translate("শেষের সময়", "To Date Time") },
-    { accessorKey: "passengerName", header: translate("যাত্রীর নাম", "Passenger Name") },
-    { accessorKey: "contactNo", header: translate("যোগাযোগ নম্বর", "Contact No") },
+    {
+      accessorKey: "passengerName",
+      header: translate("যাত্রীর নাম", "Passenger Name"),
+    },
+    {
+      accessorKey: "contactNo",
+      header: translate("যোগাযোগ নম্বর", "Contact No"),
+    },
     // { accessorKey: "address", header: translate("ঠিকানা", "Address") },
     { accessorKey: "amount", header: translate("পরিমাণ", "Amount") },
-    { accessorKey: "paidAmount", header: translate("প্রদত্ত পরিমাণ", "Paid Amount") },
-    { accessorKey: "dueAmount", header: translate("বাকি পরিমাণ", "Due Amount") },
+    {
+      accessorKey: "paidAmount",
+      header: translate("প্রদত্ত পরিমাণ", "Paid Amount"),
+    },
+    {
+      accessorKey: "dueAmount",
+      header: translate("বাকি পরিমাণ", "Due Amount"),
+    },
     // { accessorKey: "remarks", header: translate("মন্তব্য", "Remarks") },
-    
+
     {
       header: translate("কার্যক্রম", "Action"),
       id: "actions",
@@ -174,7 +195,7 @@ const ReserveList: FC<IReserveListProps> = () => {
                   </Button>
                 </DialogTrigger>
                 <DialogContent size="lg">
-                  <UpdateReserve id={reserve?.id}/>
+                  <UpdateReserve id={reserve?.id} />
                 </DialogContent>
               </Dialog>
               {/* DETAILS RESERVE */}
@@ -192,7 +213,6 @@ const ReserveList: FC<IReserveListProps> = () => {
                   <ReserveDetails id={reserve?.id} />
                 </DialogContent>
               </Dialog>
-             
 
               {/* USER DELETE ALERT DIALOG */}
               <DeleteAlertDialog
@@ -229,7 +249,7 @@ const ReserveList: FC<IReserveListProps> = () => {
                     search: e.target.value,
                   }))
                 }
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate(
                   searchInputLabelPlaceholder.reserve.placeholder.bn,
                   searchInputLabelPlaceholder.reserve.placeholder.en
@@ -260,7 +280,10 @@ const ReserveList: FC<IReserveListProps> = () => {
                 </DialogTrigger>
                 <DialogContent size="lg">
                   <DialogTitle className="sr-only">empty</DialogTitle>
-                  <AddResurb setReserveState={setReserveState} reserveState={reserveState}/>
+                  <AddResurb
+                    setReserveState={setReserveState}
+                    reserveState={reserveState}
+                  />
                 </DialogContent>
               </Dialog>
             </li>
