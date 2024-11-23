@@ -187,7 +187,7 @@ const ScheduleList: FC<IScheduleListProps> = () => {
           <ul className="flex items-center gap-x-2">
             <li>
               <Input
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate(
                   searchInputLabelPlaceholder.schedule.placeholder.bn,
                   searchInputLabelPlaceholder.schedule.placeholder.en

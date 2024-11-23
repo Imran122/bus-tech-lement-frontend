@@ -145,7 +145,7 @@ const ExpenseCategoryList: FC = () => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setQuery((prev) => ({ ...prev, search: e.target.value }))
                 }
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
               />
             </li>
             <li>

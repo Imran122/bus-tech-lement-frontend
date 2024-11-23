@@ -314,7 +314,7 @@ const CoachConfigurationList: FC<ICoachConfigurationListProps> = () => {
                     })
                   )
                 }
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate(
                   searchInputLabelPlaceholder.coachConfiguration.placeholder.bn,
                   searchInputLabelPlaceholder.coachConfiguration.placeholder.en

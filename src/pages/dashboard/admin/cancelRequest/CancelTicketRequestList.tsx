@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useGetTodayCancelRequestListQuery } from "@/store/api/bookingApi";
 import { selectCounterSearchFilter } from "@/store/api/counter/counterSearchFilterSlice";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { ColumnDef } from "@tanstack/react-table";
@@ -22,12 +23,11 @@ import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useState } from "react";
 import { LuDownload } from "react-icons/lu";
 import { useSelector } from "react-redux";
-import { useGetTodayCancelRequestListQuery } from "@/store/api/bookingApi";
 // import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
-import CancelTicketRequestDetails from "./CancelTicketRequestDetails";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { SaleData } from "@/types/dashboard/vehicleeSchedule.ts/order";
 import AcceptRequest from "./AcceptRequest";
+import CancelTicketRequestDetails from "./CancelTicketRequestDetails";
 
 interface ISalesListProps {}
 export interface ICancelTicketRequestProps {
@@ -68,9 +68,6 @@ const CancelTicketRequestList: FC<ISalesListProps> = () => {
       page: query.page,
       size: query.size,
     });
-  console.log("todayCancelRequest", todayCancelRequest);
-
-
 
   const columns: ColumnDef<any>[] = [
     {
@@ -124,7 +121,7 @@ const CancelTicketRequestList: FC<ISalesListProps> = () => {
               <DropdownMenuLabel>
                 {translate("কার্যক্রমগুলো", "Actions")}
               </DropdownMenuLabel>
-              
+
               {/* ACCEEPT REQUEST DATA */}
               <Dialog>
                 <DialogTrigger asChild>
@@ -155,14 +152,12 @@ const CancelTicketRequestList: FC<ISalesListProps> = () => {
                   <CancelTicketRequestDetails id={cancel?.id} />
                 </DialogContent>
               </Dialog>
-             
             </DropdownMenuContent>
           </DropdownMenu>
         );
       },
     },
   ];
-  console.log("slice bookingState", bookingState);
   if (todayCancelRequestLoading) {
     return <TableSkeleton columns={7} />;
   }
@@ -189,7 +184,7 @@ const CancelTicketRequestList: FC<ISalesListProps> = () => {
                     search: e.target.value,
                   }))
                 }
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate("search", "search")}
               />
             </li>

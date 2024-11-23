@@ -174,7 +174,7 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
     <PageWrapper>
       {/* code for date select */}
       <div className="page-container">
-        <div className="flex space-x-4 mb-6">
+        <div className="flex lg:flex-row flex-col gap-3 mb-6">
           {/* Up Date Picker */}
           {/* Journey Date Picker */}
           <Popover
@@ -187,6 +187,7 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
               <Button
                 variant="outline"
                 className="w-48"
+                size="lg"
                 disabled={!!dateRange.upDate} // Disable if the journey date is already selected
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -227,6 +228,7 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
               <Button
                 variant="outline"
                 className="w-48"
+                size="lg"
                 disabled={!!dateRange.downDate} // Disable if the return date is already selected
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -259,6 +261,8 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
           {/* reset date button */}
           <Button
             variant="outline"
+            size="lg"
+            className="w-48"
             onClick={() => {
               localStorage.removeItem("upDate");
               localStorage.removeItem("downDate");
@@ -277,7 +281,7 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
       {coachDetailsLoading ? (
         <DetailsSkeleton />
       ) : (
-        <div className="grid grid-cols-4 gap-5 my-5">
+        <div className="grid lg:grid-cols-4 grid-cols-2 lg:gap-5 gap-2 my-5">
           <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <div className="p-6 flex flex-col justify-start items-start w-full">
               <h2>Opening Balance</h2>

@@ -26,7 +26,7 @@ const ReportTable: React.FC<ReportTableProps> = ({
   );
 
   return (
-    <div className={`w-full overflow-x-auto rounded-lg border ${bordered}`}>
+    <div className={`w-full  rounded-lg border ${bordered}`}>
       <table className="w-full table-auto border border-gray-300">
         <thead>
           <tr>

@@ -300,7 +300,7 @@ const DriverList: FC<IDriverListProps> = () => {
                     search: e.target.value,
                   }))
                 }
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate(
                   searchInputLabelPlaceholder.driver.placeholder.bn,
                   searchInputLabelPlaceholder.driver.placeholder.en

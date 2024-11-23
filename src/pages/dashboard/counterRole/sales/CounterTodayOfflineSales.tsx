@@ -6,6 +6,7 @@ import {
   TableWrapper,
 } from "@/components/common/wrapper/TableWrapper";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +25,6 @@ import { ChangeEvent, FC, useState } from "react";
 import { LuDownload } from "react-icons/lu";
 import CounterOrderDetailsModal from "./CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "./UpdateCounterOrderModal";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface ISalesListProps {}
 export interface ISalesDataStateProps {
@@ -72,8 +72,6 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
     }));
   };
 
-
-
   const closeUpdateModal = () => {
     setSalesTickitState((prev) => ({
       ...prev,
@@ -81,7 +79,6 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
       selectedOrderId: null,
     }));
   };
-
 
   const columns: ColumnDef<any>[] = [
     {
@@ -123,18 +120,19 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
       id: "actions",
       cell: ({ row }) => {
         const offlineSales = row.original as any;
-        return (<DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="flex flex-col gap-1">
-            <DropdownMenuLabel>
-              {translate("কার্যক্রম", "Action")}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <Dialog>
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="flex flex-col gap-1">
+              <DropdownMenuLabel>
+                {translate("কার্যক্রম", "Action")}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <Dialog>
                 <DialogTrigger asChild>
                   <Button
                     variant="outline"
@@ -148,16 +146,17 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
                   <CounterOrderDetailsModal id={offlineSales?.id} />
                 </DialogContent>
               </Dialog>
-            <Button
-              onClick={() => handleUpdateClick(row.original.id)}
-              variant="outline"
-              size="xs"
-              className="w-full flex justify-start"
-            >
-              {translate("পেমেন্ট করুন", "Pay")}
-            </Button>
-          </DropdownMenuContent>
-        </DropdownMenu>)
+              <Button
+                onClick={() => handleUpdateClick(row.original.id)}
+                variant="outline"
+                size="xs"
+                className="w-full flex justify-start"
+              >
+                {translate("পেমেন্ট করুন", "Pay")}
+              </Button>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
       },
     },
   ];
@@ -185,7 +184,7 @@ const CounterTodayOfflineSales: FC<ISalesListProps> = () => {
                     search: e.target.value,
                   }))
                 }
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate("search", "search")}
               />
             </li>

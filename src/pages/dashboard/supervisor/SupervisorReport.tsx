@@ -206,7 +206,7 @@ const SupervisorReport: React.FC = () => {
         </h2>
       </div>
 
-      <div className="flex space-x-4 mb-6">
+      <div className="flex lg:flex-row flex-col lg:gap-2 gap-4 mb-6">
         <Popover
           open={dateRange.upCalendarOpen}
           onOpenChange={(open) =>
@@ -214,7 +214,7 @@ const SupervisorReport: React.FC = () => {
           }
         >
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-48">
+            <Button size="lg" variant="outline" className="w-48 ">
               <CalendarIcon className="mr-2 h-4 w-4" />
               {dateRange.upDate
                 ? format(dateRange.upDate, "PPP")
@@ -241,7 +241,7 @@ const SupervisorReport: React.FC = () => {
           }
         >
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-48">
+            <Button size="lg" variant="outline" className="w-48">
               <CalendarIcon className="mr-2 h-4 w-4" />
               {dateRange.downDate
                 ? format(dateRange.downDate, "PPP")
@@ -260,12 +260,17 @@ const SupervisorReport: React.FC = () => {
             />
           </PopoverContent>
         </Popover>
-        <Button variant="primary" onClick={resetDates}>
+        <Button
+          size="lg"
+          className="lg:w-2/12 md:w-3/12 w-6/12"
+          variant="primary"
+          onClick={resetDates}
+        >
           Reset
         </Button>
       </div>
 
-      <div className="flex">
+      <div className="flex w-full lg:overflow-visible md:overflow-x-scroll overflow-x-scroll">
         {/* Up Way Income Table */}
         <ReportTable
           mainHeaders={["Up Income"]}
@@ -306,7 +311,7 @@ const SupervisorReport: React.FC = () => {
         />
       </div>
 
-      <div className="w-7/12 flex justify-end items-end">
+      <div className="lg:w-7/12 flex justify-end items-end">
         <div className="w-full pt-10">
           <PageTransition className="border-2 rounded-md border-primary/50 bg-primary/5 backdrop-blur-[2px] p-4 duration-300">
             <table className="w-full border-collapse border-primary/50 bg-primary/5 backdrop-blur-[2px] text-left text-sm">
