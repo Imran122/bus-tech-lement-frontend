@@ -65,7 +65,7 @@ const PublicNavigation = () => {
   return (
     <nav
       className={`w-full  bg-gradient-to-tr from-primary/5 to-tertiary/5 duration-1000 py-1.5 fixed left-0 top-0  z-40 transition-all ${
-        scrollY > 0 && "backdrop-blur-md"
+        scrollY > 0 && "bg-white"
       }`}
     >
       <PageTransition>

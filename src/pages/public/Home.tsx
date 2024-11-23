@@ -16,7 +16,7 @@ const Home: FC<IHomeProps> = () => {
   const allRoutes = routesData?.data?.map((route: any) => route.routeName) ?? [];
 
   return (
-    <PageWrapper className="-mt-6">
+    <PageWrapper className="-mt-2">
       {allRoutes.length > 0 ? (
         // Render only one InfiniteTexts with combined routes
         <InfiniteTexts speed="slow" items={allRoutes} />
