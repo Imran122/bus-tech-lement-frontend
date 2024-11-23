@@ -121,6 +121,24 @@ const accountantExpenseManagementLinks = {
       key: "expense_account",
       href: "expense_account",
     },
+    {
+      icon: LuBus,
+      label: { bn: "ব্যয় বিভাগ প্রতিবেদন", en: "Expense Category Report" },
+      key: "expense_category_report",
+      href: "expense_category_report",
+    },
+    {
+      icon: LuBus,
+      label: { bn: "ব্যয় উপবিভাগ প্রতিবেদন", en: "Expense Sub Category Report" },
+      key: "expense_sub_category_report",
+      href: "expense_sub_category_report",
+    },    
+    {
+      icon: LuBus,
+      label: { bn: "লাভ ও ক্ষতির প্রতিবেদন", en: "Profit And Loss" },
+      key: "profit_and_loss",
+      href: "profit_and_loss",
+    }      
   ],
 };
 //new
