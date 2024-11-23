@@ -16,13 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useGetTodayCancelRequestListQuery } from "@/store/api/bookingApi";
-import { selectCounterSearchFilter } from "@/store/api/counter/counterSearchFilterSlice";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useState } from "react";
 import { LuDownload } from "react-icons/lu";
-import { useSelector } from "react-redux";
 // import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { SaleData } from "@/types/dashboard/vehicleeSchedule.ts/order";
@@ -48,7 +46,7 @@ const CancelTicketRequestList: FC<ISalesListProps> = () => {
     size: 10,
     meta: { page: 0, size: 10, total: 100, totalPage: 10 },
   });
-  const bookingState = useSelector(selectCounterSearchFilter);
+  //const bookingState = useSelector(selectCounterSearchFilter);
 
   const [cancelTicketRequest, setCancelTicketRequest] =
     useState<ICancelTicketRequestProps>({

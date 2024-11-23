@@ -619,6 +619,8 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
                 <Calendar
+                  style={{ pointerEvents: "auto" }}
+                  className="cursor-pointer"
                   initialFocus
                   mode="range"
                   defaultMonth={date?.from}

@@ -307,7 +307,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
   return (
     <section>
       <PageWrapper>
-        <div className="grid grid-cols-5 gap-5 my-5">
+        <div className="grid lg:grid-cols-5 grid-cols-2 gap-5 my-5">
           <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <div className="p-6 flex flex-col justify-start items-start w-full">
               <h2>Todays Sales</h2>

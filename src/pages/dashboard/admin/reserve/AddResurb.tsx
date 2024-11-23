@@ -53,6 +53,7 @@ const AddResurb: FC<IAddReserveProps> = ({ setReserveState, reserveState }) => {
   const [fromDateTime, setFromDateTime] = useState<Date | undefined>(
     new Date()
   );
+
   const [toDateTime, setToDateTime] = useState<Date | undefined>(new Date());
   const [addReserve, { isLoading: addReserveLoading, error: addReserveError }] =
     useAddReserveMutation({}) as any;
@@ -361,6 +362,8 @@ const AddResurb: FC<IAddReserveProps> = ({ setReserveState, reserveState }) => {
                 </PopoverTrigger>
                 <PopoverContent align="end">
                   <Calendar
+                    style={{ pointerEvents: "auto" }}
+                    className="cursor-pointer"
                     mode="single"
                     selected={reserveState?.fromDate || new Date()}
                     onSelect={(date) => {
@@ -449,20 +452,22 @@ const AddResurb: FC<IAddReserveProps> = ({ setReserveState, reserveState }) => {
                 <PopoverContent align="end">
                   <Calendar
                     mode="single"
-                    // captionLayout="dropdown-buttons"
-                    selected={reserveState?.toDate || new Date()}
+                    selected={reserveState?.fromDate || new Date()}
                     onSelect={(date) => {
-                      const formattedDate = date ? date.toISOString() : "";
-                      setValue("toDate", formattedDate);
-                      setError("toDate", { type: "custom", message: "" });
-                      setReserveState((prevState: IReserveStateProps) => ({
-                        ...prevState,
-                        calenderToOpen: false,
-                        toDate: date || null,
-                      }));
+                      if (date) {
+                        const formattedDate = date.toISOString();
+                        setValue("fromDate", formattedDate);
+                        setError("fromDate", { type: "custom", message: "" });
+                        setReserveState((prevState: IReserveStateProps) => ({
+                          ...prevState,
+                          calenderFromOpen: false,
+                          fromDate: date, // Update to a valid date object
+                        }));
+                      }
                     }}
                     fromYear={1960}
                     toYear={new Date().getFullYear()}
+                    disabled={() => false} // Disable no dates
                   />
                 </PopoverContent>
               </Popover>

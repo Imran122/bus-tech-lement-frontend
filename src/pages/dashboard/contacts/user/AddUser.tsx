@@ -416,9 +416,15 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
               </PopoverTrigger>
               <PopoverContent align="end">
                 <Calendar
+                  key={
+                    addUserFormState.date?.toISOString() ||
+                    "default-calendar-key"
+                  } // Force re-render with unique key
+                  style={{ pointerEvents: "auto" }}
+                  className="cursor-pointer"
                   mode="single"
                   captionLayout="dropdown-buttons"
-                  selected={addUserFormState?.date || new Date()}
+                  selected={addUserFormState?.date || undefined}
                   onSelect={(date) => {
                     //@ts-ignore
                     setValue("dateOfBirth", date);
