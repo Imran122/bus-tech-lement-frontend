@@ -106,7 +106,7 @@ const CounterDashboardUpperNavigation: FC<
             )}
         </ul>
 
-        <ul className="pt-9 mt-10">
+        <ul className="pt-9 lg:mt-2 mt-10">
           <li>
             <TickitSearchDashboard
               bookingState={bookingState}

@@ -42,7 +42,6 @@ export default function CounterWiseReport() {
   // Fetch report data for the selected coach
   const { data: reportsData, isLoading: reportLoading } =
     useGetSupervisorCoachDetailsQuery(selectedCoachId || 0);
-
   useEffect(() => {
     if (todaysCoachInfo?.data) {
       setLocalData(todaysCoachInfo.data);
@@ -61,55 +60,56 @@ export default function CounterWiseReport() {
   if (isTodaysCoachLoading || reportLoading) {
     return <DetailsSkeleton />;
   }
-
   return (
     <FormWrapper
       heading="Counter-Wise Report"
       subHeading="View counter-wise details for the selected coach."
     >
-      {/* Date Selector */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Select Date</label>
-        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full text-left">
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {selectedDate
-                ? format(selectedDate, "yyyy-MM-dd")
-                : "Select a date"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent align="start">
-            <Calendar
-              mode="single"
-              selected={selectedDate || new Date()}
-              onSelect={(date) => {
-                setSelectedDate(date ?? null); // Handle undefined by setting to null
-                setCalendarOpen(false);
-              }}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
+      <div className="flex gap-5">
+        {/* Date Selector */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2">Select Date</label>
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-full text-left">
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate
+                  ? format(selectedDate, "yyyy-MM-dd")
+                  : "Select a date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate || new Date()}
+                onSelect={(date) => {
+                  setSelectedDate(date ?? null); // Handle undefined by setting to null
+                  setCalendarOpen(false);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
 
-      {/* Coach Selector */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Select Coach</label>
-        <Select
-          value={selectedCoachId?.toString() || undefined}
-          onValueChange={(value) => setSelectedCoachId(parseInt(value))}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a Coach" />
-          </SelectTrigger>
-          <SelectContent>
-            {localData.map((coach: any) => (
-              <SelectItem key={coach.id} value={coach.id.toString()}>
-                {coach.coachNo}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Coach Selector */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2">Select Coach</label>
+          <Select
+            value={selectedCoachId?.toString() || undefined}
+            onValueChange={(value) => setSelectedCoachId(parseInt(value))}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a Coach" />
+            </SelectTrigger>
+            <SelectContent>
+              {localData.map((coach: any) => (
+                <SelectItem key={coach.id} value={coach.id.toString()}>
+                  {coach.coachNo}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Table Display */}
@@ -126,7 +126,7 @@ export default function CounterWiseReport() {
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr className="text-center">
                 <td className="border px-4 py-2">
                   {reportsData?.data?.coachInfo?.coachNo || "N/A"}
                 </td>
@@ -156,13 +156,13 @@ export default function CounterWiseReport() {
                   <th className="border px-4 py-2">Passenger Name</th>
                   <th className="border px-4 py-2">Phone</th>
                   <th className="border px-4 py-2">Seats Booked</th>
-                  <th className="border px-4 py-2">Sold By Counter</th>
+                  <th className="border px-4 py-2">Sold By</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredCounterData.orderDetails.map(
                   (order: any, index: number) => (
-                    <tr key={index}>
+                    <tr key={index} className="text-center">
                       <td className="border px-4 py-2">
                         {order.customerName || "N/A"}
                       </td>
@@ -175,7 +175,7 @@ export default function CounterWiseReport() {
                           .join(", ")}
                       </td>
                       <td className="border px-4 py-2">
-                        {filteredCounterData.counterName}
+                        {order.user?.userName}
                       </td>
                     </tr>
                   )
