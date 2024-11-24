@@ -50,12 +50,20 @@ const AddContentManagement = () => {
   const [footerLogoBanglaFile, setFooterLogoBanglaFile] = useState<File | null>(
     null
   );
+  const [offerSliderOne, setOfferSliderOne] = useState<File | null>(null);
+  const [offerSliderTwo, setOfferSliderTwo] = useState<File | null>(null);
+  const [offerSliderThree, setOfferSliderThree] = useState<File | null>(null);
 
   const [editStates, setEditStates] = useState<Record<string, boolean>>({
     companyLogo: false,
     companyLogoBangla: false,
     footerLogo: false,
     footerLogoBangla: false,
+    offerSliderOne: false,
+    offerSliderTwo: false,
+    offerSliderThree: false,
+    homePageDescription: false,
+    homePageDescriptionBangla: false,
   });
   const [uploadPhoto, { isLoading: uploadPhotoLoading }] =
     useUploadPhotoMutation({});
@@ -99,6 +107,9 @@ const AddContentManagement = () => {
       let companyLogoBangla = "";
       let footerLogo = "";
       let footerLogoBangla = "";
+      let offeredImageOne = "";
+      let offeredImageTwo = "";
+      let offeredImageThree = "";
 
       if (companyLogoFile) {
         try {
@@ -144,12 +155,45 @@ const AddContentManagement = () => {
           console.error("Error uploading file:", error);
         }
       }
+      if (offerSliderOne) {
+        try {
+          const uploadResponse = await uploadPhoto(offerSliderOne).unwrap();
+          if (uploadResponse && "data" in uploadResponse) {
+            offeredImageOne = uploadResponse?.data;
+          }
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
+      }
+      if (offerSliderTwo) {
+        try {
+          const uploadResponse = await uploadPhoto(offerSliderTwo).unwrap();
+          if (uploadResponse && "data" in uploadResponse) {
+            offeredImageTwo = uploadResponse?.data;
+          }
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
+      }
+      if (offerSliderThree) {
+        try {
+          const uploadResponse = await uploadPhoto(offerSliderThree).unwrap();
+          if (uploadResponse && "data" in uploadResponse) {
+            offeredImageThree = uploadResponse?.data;
+          }
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
+      }
       const updatedData = {
         ...data,
         companyLogo,
         companyLogoBangla,
         footerLogo,
         footerLogoBangla,
+        offeredImageOne,
+        offeredImageTwo,
+        offeredImageThree,
       };
       const updateData = removeFalsyProperties(updatedData, [
         "companyLogo",
@@ -169,6 +213,11 @@ const AddContentManagement = () => {
         "instagram",
         "twitter",
         "linkedin",
+        "offeredImageOne",
+        "offeredImageTwo",
+        "offeredImageThree",
+        "homePageDescription",
+        "homePageDescriptionBangla",
       ]) as AddUpdateCompanyProps;
 
       // After processing all images, proceed with CMS update
@@ -226,6 +275,7 @@ const AddContentManagement = () => {
         "সিস্টেমে সিএমএস সম্পাদনা করতে নিচের বিস্তারিত পরিবর্তন করুন।",
         "Modify the details below to edit the CMS in the system."
       )}
+      className=""
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-4 gap-x-4 gap-y-2">
@@ -260,9 +310,11 @@ const AddContentManagement = () => {
                   size="sm"
                   type="button"
                 >
-                  {editStates.companyLogo
-                    ? <X className="h-6 w-6 text-red-600" /> 
-                    : <FilePenLine className="h-6 w-6 text-green-600" />}
+                  {editStates.companyLogo ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <FilePenLine className="h-6 w-6 text-green-600" />
+                  )}
                 </Button>
 
                 {/* Conditionally render the Submit button when the edit state is active */}
@@ -271,7 +323,7 @@ const AddContentManagement = () => {
                     className="mt-0 pt-0"
                     loading={isLoading || uploadPhotoLoading}
                     errors={error}
-                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />} 
+                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
                     errorTitle={translate(
                       "সিএমএস আপডেট করতে ত্রুটি",
                       "Error updating CMS"
@@ -314,9 +366,11 @@ const AddContentManagement = () => {
                   size="sm"
                   type="button"
                 >
-                  {editStates.companyLogoBangla
-                    ? <X className="h-6 w-6 text-red-600" /> 
-                    : <FilePenLine className="h-6 w-6 text-green-600" />}
+                  {editStates.companyLogoBangla ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <FilePenLine className="h-6 w-6 text-green-600" />
+                  )}
                 </Button>
                 {editStates.companyLogoBangla && (
                   <Submit
@@ -366,9 +420,11 @@ const AddContentManagement = () => {
                   size="sm"
                   type="button"
                 >
-                  {editStates.footerLogo
-                    ? <X className="h-6 w-6 text-red-600" /> 
-                    : <FilePenLine className="h-6 w-6 text-green-600" />}
+                  {editStates.footerLogo ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <FilePenLine className="h-6 w-6 text-green-600" />
+                  )}
                 </Button>
                 {editStates.footerLogo && (
                   <Submit
@@ -418,11 +474,171 @@ const AddContentManagement = () => {
                   size="sm"
                   type="button"
                 >
-                  {editStates.footerLogoBangla
-                    ? <X className="h-6 w-6 text-red-600" /> 
-                    : <FilePenLine className="h-6 w-6 text-green-600" />}
+                  {editStates.footerLogoBangla ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <FilePenLine className="h-6 w-6 text-green-600" />
+                  )}
                 </Button>
                 {editStates.footerLogoBangla && (
+                  <Submit
+                    className="mt-0 pt-0"
+                    loading={isLoading || uploadPhotoLoading}
+                    errors={error}
+                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    errorTitle={translate(
+                      "সিএমএস আপডেট করতে ত্রুটি",
+                      "Error updating CMS"
+                    )}
+                  />
+                )}
+              </div>
+            </div>
+          </InputWrapper>
+          {/* slider image one */}
+          <InputWrapper
+            labelFor="offeredImage1"
+            label={translate("অফারের ছবি ১", "Offered Image 1")}
+          >
+            <div className="flex flex-col items-center gap-2">
+              <FileInputArray
+                className={"w-[232px]"}
+                id="offeredImage1"
+                label={translate(
+                  "অফারের ছবি ১ নির্বাচন করুন(বাংলা)",
+                  "Select Offered Image 1"
+                )}
+                value={singleCms?.data?.offeredImageOne || ""}
+                setFile={setOfferSliderOne}
+                onChange={(file) => {
+                  if (file) {
+                    const previewUrl = URL.createObjectURL(file);
+                    setValue("offeredImageOne", previewUrl);
+                  } else {
+                    setValue("offeredImageOne", "");
+                  }
+                }}
+                disabled={!editStates.offerSliderOne}
+              />
+              <div className="flex gap-3 items-center">
+                <Button
+                  onClick={() => toggleEditState("offerSliderOne")}
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                >
+                  {editStates.offerSliderOne ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <FilePenLine className="h-6 w-6 text-green-600" />
+                  )}
+                </Button>
+                {editStates.offerSliderOne && (
+                  <Submit
+                    className="mt-0 pt-0"
+                    loading={isLoading || uploadPhotoLoading}
+                    errors={error}
+                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    errorTitle={translate(
+                      "সিএমএস আপডেট করতে ত্রুটি",
+                      "Error updating CMS"
+                    )}
+                  />
+                )}
+              </div>
+            </div>
+          </InputWrapper>
+
+          <InputWrapper
+            labelFor="offeredImage2"
+            label={translate("অফারের ছবি ২", "Offered Image 2")}
+          >
+            <div className="flex flex-col items-center gap-2">
+              <FileInputArray
+                className={"w-[232px]"}
+                id="offeredImage2"
+                label={translate(
+                  "অফারের ছবি ২ নির্বাচন করুন(বাংলা)",
+                  "Select Offered Image 2"
+                )}
+                value={singleCms?.data?.offeredImageTwo || ""}
+                setFile={setOfferSliderTwo}
+                onChange={(file) => {
+                  if (file) {
+                    const previewUrl = URL.createObjectURL(file);
+                    setValue("offeredImageTwo", previewUrl);
+                  } else {
+                    setValue("offeredImageTwo", "");
+                  }
+                }}
+                disabled={!editStates.offerSliderTwo}
+              />
+              <div className="flex gap-3 items-center">
+                <Button
+                  onClick={() => toggleEditState("offerSliderTwo")}
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                >
+                  {editStates.offerSliderTwo ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <FilePenLine className="h-6 w-6 text-green-600" />
+                  )}
+                </Button>
+                {editStates.offerSliderTwo && (
+                  <Submit
+                    className="mt-0 pt-0"
+                    loading={isLoading || uploadPhotoLoading}
+                    errors={error}
+                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    errorTitle={translate(
+                      "সিএমএস আপডেট করতে ত্রুটি",
+                      "Error updating CMS"
+                    )}
+                  />
+                )}
+              </div>
+            </div>
+          </InputWrapper>
+          <InputWrapper
+            labelFor="offeredImage3"
+            label={translate("অফারের ছবি ৩", "Offered Image 3")}
+          >
+            <div className="flex flex-col items-center gap-2">
+              <FileInputArray
+                className={"w-[232px]"}
+                id="offeredImage3"
+                label={translate(
+                  "অফারের ছবি ৩ নির্বাচন করুন(বাংলা)",
+                  "Select Offered Image 3"
+                )}
+                value={singleCms?.data?.offeredImageThree || ""}
+                setFile={setOfferSliderThree}
+                onChange={(file) => {
+                  if (file) {
+                    const previewUrl = URL.createObjectURL(file);
+                    setValue("offeredImageThree", previewUrl);
+                  } else {
+                    setValue("offeredImageThree", "");
+                  }
+                }}
+                disabled={!editStates.offerSliderThree}
+              />
+              <div className="flex gap-3 items-center">
+                <Button
+                  onClick={() => toggleEditState("offerSliderThree")}
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                >
+                  {editStates.offerSliderThree ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <FilePenLine className="h-6 w-6 text-green-600" />
+                  )}
+                </Button>
+                {editStates.offerSliderThree && (
                   <Submit
                     className="mt-0 pt-0"
                     loading={isLoading || uploadPhotoLoading}
@@ -465,9 +681,11 @@ const AddContentManagement = () => {
                     size="sm"
                     type="button"
                   >
-                    {editOpen[key]
-                      ? <X className="h-6 w-6 text-red-600" /> 
-                      : <FilePenLine className="h-6 w-6 text-green-600" />}
+                    {editOpen[key] ? (
+                      <X className="h-6 w-6 text-red-600" />
+                    ) : (
+                      <FilePenLine className="h-6 w-6 text-green-600" />
+                    )}
                   </Button>
                   {editOpen[key] && (
                     <Submit
@@ -485,6 +703,114 @@ const AddContentManagement = () => {
               </div>
             </InputWrapper>
           ))}
+        </div>
+
+
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+          <InputWrapper
+            key="homePageDescription"
+            error={(errors as any)?.homePageDescription?.message}
+            labelFor="homePageDescription"
+            label={translate(
+              "হোমপেজের বর্ণনা",
+              "Homepage Description"
+            )}
+            className="relative mt-10"
+          >
+            <div className="flex flex-col items-center gap-3">
+              <textarea
+                id="homePageDescription"
+                {...register(
+                  "homePageDescription" as keyof AddUpdateCompanyProps
+                )}
+                placeholder={translate(
+                  "হোমপেজের বর্ণনা লিখুন",
+                  "Enter homepage description"
+                )}
+                className="border p-2 rounded w-full resize-none"
+                rows={4} // Adjust rows as needed for multiline input
+                disabled={!editStates.homePageDescription}
+              />
+              <div className="flex items-center gap-3 absolute top-19 right-1">
+                <Button
+                  onClick={() => toggleEditState("homePageDescription")}
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                >
+                  {editStates.homePageDescription ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <FilePenLine className="h-6 w-6 text-green-600" />
+                  )}
+                </Button>
+                {editStates.homePageDescription && (
+                  <Submit
+                    className="mt-0 pt-0"
+                    loading={isLoading || uploadPhotoLoading}
+                    errors={error}
+                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    errorTitle={translate(
+                      "সিএমএস আপডেট করতে ত্রুটি",
+                      "Error updating CMS"
+                    )}
+                  />
+                )}
+              </div>
+            </div>
+          </InputWrapper>
+          <InputWrapper
+            key="homePageDescriptionBangla"
+            error={(errors as any)?.homePageDescriptionBangla?.message}
+            labelFor="homePageDescriptionBangla"
+            label={translate(
+              "হোমপেজের বর্ণনা (বাংলা)",
+              "Homepage Description (Bangla)"
+            )}
+            className="relative mt-10"
+          >
+            <div className="flex flex-col items-center gap-3">
+              <textarea
+                id="homePageDescriptionBangla"
+                {...register(
+                  "homePageDescriptionBangla" as keyof AddUpdateCompanyProps
+                )}
+                placeholder={translate(
+                  "হোমপেজের বর্ণনা বাংলায় লিখুন",
+                  "Enter homepage description in Bangla"
+                )}
+                className="border p-2 rounded w-full resize-none"
+                rows={4} // Adjust rows as needed for multiline input
+                disabled={!editStates.homePageDescriptionBangla}
+              />
+              <div className="flex items-center gap-3 absolute top-19 right-1">
+                <Button
+                  onClick={() => toggleEditState("homePageDescriptionBangla")}
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                >
+                  {editStates.homePageDescriptionBangla ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <FilePenLine className="h-6 w-6 text-green-600" />
+                  )}
+                </Button>
+                {editStates.homePageDescriptionBangla && (
+                  <Submit
+                    className="mt-0 pt-0"
+                    loading={isLoading || uploadPhotoLoading}
+                    errors={error}
+                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    errorTitle={translate(
+                      "সিএমএস আপডেট করতে ত্রুটি",
+                      "Error updating CMS"
+                    )}
+                  />
+                )}
+              </div>
+            </div>
+          </InputWrapper>
         </div>
       </form>
     </FormWrapper>

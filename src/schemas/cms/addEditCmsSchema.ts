@@ -7,6 +7,7 @@ export const addUpdateCompanySchema = z.object({
   companyLogoBangla: z.string().optional(),
   footerLogo: z.string().optional(),
   footerLogoBangla: z.string().optional(),
+  email: z.string().optional(),
   address: z.string().optional(),
   addressBangla: z.string().optional(),
   city: z.string().optional(),
@@ -18,6 +19,11 @@ export const addUpdateCompanySchema = z.object({
   instagram: z.string().optional(),
   twitter: z.string().optional(),
   linkedin: z.string().optional(),
+  offeredImageOne: z.string().optional(), // Added
+  offeredImageTwo: z.string().optional(),
+  offeredImageThree: z.string().optional(), 
+  homePageDescription: z.string().optional(), // Added
+  homePageDescriptionBangla: z.string().optional(),
 });
 
 export type AddUpdateCompanyProps = z.infer<typeof addUpdateCompanySchema>;
