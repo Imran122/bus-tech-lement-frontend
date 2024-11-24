@@ -49,6 +49,7 @@ const accountsDashboardApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["accounts-dashboard"], // Adjust tags as needed
     }),
+
     getAccountDashboardHomeData: builder.query({
       query: () => ({
         url: "/user/get-supervisor-report",
@@ -71,6 +72,21 @@ const accountsDashboardApi = apiSlice.injectEndpoints({
       }),
       //invalidatesTags: ["accounts-dashboard"], // Adjust tags as needed
     }),
+    getAccountDashboardCounterReportData: builder.query({
+      query: () => ({
+        url: "/user/get-counter-report-submit",
+        method: "GET",
+      }),
+      providesTags: ["accounts-dashboard-home"],
+    }),
+    authorizeCounterReport: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/user/authorize-counter-report/${id}`, // URL using collectionId
+        method: "POST",
+        body, // This should contain the body as per your Joi validation
+      }),
+      invalidatesTags: ["accounts-dashboard-home"], // Adjust tags as needed
+    }),
   }),
 });
 
@@ -83,4 +99,6 @@ export const {
   useGetAccountDashboardHomeDataQuery,
   useGetAccountReportDetailsByIdQuery,
   useAuthorizeReportFromAccountMutation,
+  useGetAccountDashboardCounterReportDataQuery,
+  useAuthorizeCounterReportMutation,
 } = accountsDashboardApi;
