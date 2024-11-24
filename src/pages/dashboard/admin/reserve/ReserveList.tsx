@@ -36,11 +36,17 @@ import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
 import AddResurb from "./AddReserve";
 import ReserveDetails from "./ReserveDetails";
 import UpdateReserve from "./UpdateReserve";
+import { useReactToPrint } from "react-to-print";
+import ReservePrint from "../../printLabel/ReservePrint";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { Loader } from "@/components/common/Loader";
+import PdfReserve from "../../pdf/PdfReserve";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 
 interface IReserveListProps {}
 export interface IReserveStateProps {
@@ -53,6 +59,7 @@ export interface IReserveStateProps {
   toDate: Date | null;
   fromDateTime: Date | null;
   toDateTime: Date | null;
+  isPrinting: boolean;
 }
 
 const ReserveList: FC<IReserveListProps> = () => {
@@ -80,7 +87,12 @@ const ReserveList: FC<IReserveListProps> = () => {
     toDate: null,
     fromDateTime: null,
     toDateTime: null,
+    isPrinting: false,
   });
+  const printSaleRef = useRef(null);
+
+  // STORE PROMISE RESOLVE REFERENCE
+  const promiseResolveRef = useRef<any>(null);
 
   const { data: reserveData, isLoading: reserveLoading } = useGetReserveQuery({
     search: reserveState.search,
@@ -88,6 +100,9 @@ const ReserveList: FC<IReserveListProps> = () => {
     page: query.page,
     size: query.size,
   });
+  const { data: singleCms } = useGetSingleCMSQuery({});
+
+  const [reserveSingleData, setReserveSingleData] = useState();
 
   const [deleteReserve] = useDeleteReserveMutation({});
 
@@ -133,6 +148,31 @@ const ReserveList: FC<IReserveListProps> = () => {
     }
   };
 
+  // UPDATE THE COMPONENT VIA REFERENCE
+  useEffect(() => {
+    if (reserveState.isPrinting && promiseResolveRef.current) {
+      promiseResolveRef.current();
+    }
+  }, [reserveState.isPrinting]);
+
+  const handlePrint = useReactToPrint({
+    content: () => printSaleRef.current,
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        promiseResolveRef.current = resolve;
+        setReserveState((prevState) => ({
+          ...prevState,
+          isPrinting: true,
+        }));
+      });
+    },
+    onAfterPrint: () => {
+      // RESET THE PROMISE RESOLVE SO WE CAN PRINT AGAIN
+      promiseResolveRef.current = null;
+      setReserveState((prevState) => ({ ...prevState, isPrinting: false }));
+    },
+  });
+
   const columns: ColumnDef<unknown>[] = [
     { accessorKey: "index", header: translate("ইনডেক্স", "Index") },
     {
@@ -170,11 +210,15 @@ const ReserveList: FC<IReserveListProps> = () => {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const reserve = row.original as Reserve;
+        const reserve = row.original as any;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button
+                onMouseEnter={() => setReserveSingleData(reserve)}
+                variant="ghost"
+                className="h-8 w-8 p-0"
+              >
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -214,6 +258,51 @@ const ReserveList: FC<IReserveListProps> = () => {
                 </DialogContent>
               </Dialog>
 
+              <Button
+                onClick={() => handlePrint()}
+                variant="outline"
+                size="xs"
+                className="w-full flex justify-start"
+              >
+                {translate("প্রিন্ট করুন", "Print Reserve")}
+              </Button>
+              {/* <ul className="flex space-x-3">
+                <li>
+                  <PDFDownloadLink
+                    document={
+                      <PdfReserve reserveInfo={reserveSingleData} logo={singleCms}/>
+                    }
+                    fileName="expense_sub_category_report.pdf"
+                  >
+                    {
+                      //@ts-ignore
+                      (params) => {
+                        const { loading } = params;
+                        return loading ? (
+                          <Button
+                            disabled
+                            className="transition-all duration-150"
+                            variant="destructive"
+                            size="xs"
+                          >
+                            <Loader /> Pdf
+                          </Button>
+                        ) : (
+                          <Button variant="destructive" size="xs">
+                            Pdf
+                          </Button>
+                        );
+                      }
+                    }
+                  </PDFDownloadLink>
+                </li>
+                <li>
+                  <Button onClick={handlePrint} variant="destructive" size="xs">
+                    Print
+                  </Button>
+                </li>
+              </ul> */}
+
               {/* USER DELETE ALERT DIALOG */}
               <DeleteAlertDialog
                 position="start"
@@ -231,94 +320,104 @@ const ReserveList: FC<IReserveListProps> = () => {
     return <TableSkeleton columns={6} />;
   }
   return (
-    <PageWrapper>
-      <TableWrapper
-        subHeading={translate(
-          "রিজার্ভ তালিকা এবং সকল তথ্য উপাত্ত",
-          "Reserve list and all ralevnet information & data"
-        )}
-        heading={translate("রিজার্ভ", "Reserve")}
-      >
-        <TableToolbar alignment="end">
-          <ul className="flex items-center gap-x-2">
-            <li>
-              <Input
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setReserveState((prevState: IReserveStateProps) => ({
-                    ...prevState,
-                    search: e.target.value,
-                  }))
-                }
-                className="lg:w-[300px] md:w-[250px] w-[200px]"
-                placeholder={translate(
-                  searchInputLabelPlaceholder.reserve.placeholder.bn,
-                  searchInputLabelPlaceholder.reserve.placeholder.en
-                )}
-              />
-            </li>
-            <li>
-              <Dialog
-                open={reserveState.addReserveOpen}
-                onOpenChange={(open: boolean) =>
-                  setReserveState((prevState: IReserveStateProps) => ({
-                    ...prevState,
-                    addReserveOpen: open,
-                  }))
-                }
-              >
-                <DialogTrigger asChild>
-                  <Button
-                    className="group relative"
-                    variant="outline"
-                    size="icon"
-                  >
-                    <LuPlus />
-                    <span className="custom-tooltip-top">
-                      {translate("রিজার্ভ যুক্ত করুন", "Add Reserve")}
-                    </span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent size="lg">
-                  <DialogTitle className="sr-only">empty</DialogTitle>
-                  <AddResurb
-                    setReserveState={setReserveState}
-                    reserveState={reserveState}
-                  />
-                </DialogContent>
-              </Dialog>
-            </li>
-            <li>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <LuDownload className="size-4 mr-1" />
-                    {translate("এক্সপোর্ট", " Export")}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className={cn("w-[100px] space-y-2")}
-                  align="end"
+    <section>
+      <PageWrapper>
+        <TableWrapper
+          subHeading={translate(
+            "রিজার্ভ তালিকা এবং সকল তথ্য উপাত্ত",
+            "Reserve list and all ralevnet information & data"
+          )}
+          heading={translate("রিজার্ভ", "Reserve")}
+        >
+          <TableToolbar alignment="end">
+            <ul className="flex items-center gap-x-2">
+              <li>
+                <Input
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setReserveState((prevState: IReserveStateProps) => ({
+                      ...prevState,
+                      search: e.target.value,
+                    }))
+                  }
+                  className="lg:w-[300px] md:w-[250px] w-[200px]"
+                  placeholder={translate(
+                    searchInputLabelPlaceholder.reserve.placeholder.bn,
+                    searchInputLabelPlaceholder.reserve.placeholder.en
+                  )}
+                />
+              </li>
+              <li>
+                <Dialog
+                  open={reserveState.addReserveOpen}
+                  onOpenChange={(open: boolean) =>
+                    setReserveState((prevState: IReserveStateProps) => ({
+                      ...prevState,
+                      addReserveOpen: open,
+                    }))
+                  }
                 >
-                  <DropdownMenuItem>
-                    {translate("পিডিএফ", "Pdf")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    {translate("এক্সেল", "Excel")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </li>
-          </ul>
-        </TableToolbar>
-        <DataTable
-          query={query}
-          setQuery={setQuery}
-          pagination
-          columns={columns}
-          data={reserveState.reserveList}
-        />
-      </TableWrapper>
-    </PageWrapper>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="group relative"
+                      variant="outline"
+                      size="icon"
+                    >
+                      <LuPlus />
+                      <span className="custom-tooltip-top">
+                        {translate("রিজার্ভ যুক্ত করুন", "Add Reserve")}
+                      </span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent size="lg">
+                    <DialogTitle className="sr-only">empty</DialogTitle>
+                    <AddResurb
+                      setReserveState={setReserveState}
+                      reserveState={reserveState}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </li>
+              <li>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <LuDownload className="size-4 mr-1" />
+                      {translate("এক্সপোর্ট", " Export")}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className={cn("w-[100px] space-y-2")}
+                    align="end"
+                  >
+                    <DropdownMenuItem>
+                      {translate("পিডিএফ", "Pdf")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      {translate("এক্সেল", "Excel")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </li>
+            </ul>
+          </TableToolbar>
+          <DataTable
+            query={query}
+            setQuery={setQuery}
+            pagination
+            columns={columns}
+            data={reserveState.reserveList}
+          />
+        </TableWrapper>
+      </PageWrapper>
+      <div className="invisible hidden -left-full">
+        {reserveData && (
+          <ReservePrint
+            ref={printSaleRef}
+            reserSingleData={reserveSingleData}
+          />
+        )}
+      </div>
+    </section>
   );
 };
 

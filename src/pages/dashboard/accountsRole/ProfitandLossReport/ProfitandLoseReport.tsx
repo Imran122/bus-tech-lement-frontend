@@ -1,14 +1,5 @@
 import { useRef, useState } from "react";
-import InfoWrapper from "@/components/common/wrapper/InfoWrapper";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { skipToken } from "@reduxjs/toolkit/query/react";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/common/Loader";
 import ExpenseCategoryPrint from "@/pages/dashboard/printLabel/ExpenseCategoryPrint";
@@ -32,6 +23,11 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { DateRange } from "react-day-picker";
 import { dateFormatter } from "@/utils/helpers/dateFormatter";
+import { appConfiguration } from "@/utils/constants/common/appConfiguration";
+import { useReactToPrint } from "react-to-print";
+import { useGetTripReportQuery } from "@/store/api/adminReport/adminReportApi";
+import { format } from "date-fns";
+import { Heading } from "@/components/common/typography/Heading";
 
 const categoryList = [
   { name: "Breakfast", amount: 150, note: "Includes coffee and bagels" },
@@ -43,22 +39,33 @@ const categoryList = [
 
 const ProfitandLoseReport = () => {
   const [filteredData, setFilteredData] = useState(categoryList);
+  const [selectedRegistrationNo, setSelectedRegistrationNo] = useState<
+    string | undefined
+  >();
   const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: new Date(),
+    from: undefined,
+    to: undefined,
   });
-  //   const { data: profitAndLossData, isLoading: profitLossLoading } =
-  //   useGetProfitLossReportsQuery({
-  //     from:
-  //       date?.from instanceof Date
-  //         ? format(date.from, "yyyy-MM-dd")
-  //         : undefined,
-  //     to: date?.to instanceof Date ? format(date.to, "yyyy-MM-dd") : undefined,
-  //   });
-  // GROSS PROFIT CALCULATION
-  //  const grossProfit =
-  //  parseFloat(profitAndLossData?.data?.totalSell ?? 0) -
-  //  parseFloat(profitAndLossData?.data?.totalPurchase ?? 0);
+
+  const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
+    {}
+  );
+  const { data: vehiclesData, isLoading: vehiclesLoading } =
+    useGetVehiclesQuery({});
+
+  const { data: profitAndLossData, isLoading: profitLossLoading } =
+    useGetTripReportQuery(
+      selectedRegistrationNo &&
+        date?.from instanceof Date &&
+        date?.to instanceof Date
+        ? {
+            registrationNo: selectedRegistrationNo,
+            fromDate: format(date.from, "yyyy-MM-dd"),
+            toDate: format(date.to, "yyyy-MM-dd"),
+          }
+        : skipToken 
+    );
+
 
   const fromDate = date?.from ? dateFormatter(date?.from) : null;
   const toDate = date?.to ? dateFormatter(date?.to) : null;
@@ -69,25 +76,20 @@ const ProfitandLoseReport = () => {
       : `${fromDate} to ${toDate}`
     : fromDate;
 
-  const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
-    {}
-  );
-  const { data: vehiclesData, isLoading: vehiclesLoading } =
-    useGetVehiclesQuery({});
-
   const printSaleRef = useRef(null);
 
-  // const handlePrint = useReactToPrint({
-  //   content: () => printSaleRef.current,
-  //   documentTitle: `${appConfiguration?.appName}_profit_and_loss_report`,
-  // });
+  const handlePrint = useReactToPrint({
+    content: () => printSaleRef.current,
+    documentTitle: `${appConfiguration?.appName}_profit_and_loss_report`,
+  });
 
   // Filter data based on selected category
   const handleRegistrationNoChange = (value: string) => {
-    setFilteredData(categoryList.filter((item) => item.name === value));
+    setSelectedRegistrationNo(value); // Update state for backend query
+    setFilteredData(categoryList.filter((item) => item.name === value)); // Filter table data
   };
 
-  if (singleCmsLoading || vehiclesLoading) {
+  if (singleCmsLoading || vehiclesLoading || profitLossLoading) {
     return <Loader />;
   }
 
@@ -186,91 +188,160 @@ const ProfitandLoseReport = () => {
         </div>
       </div>
 
-      <InfoWrapper
-        heading={`Profit / Loss details for the month of ${
+      <section className="mt-10">
+        <Heading size={"h6"}>{`Profit / Loss details for the month of ${
           date?.from && date?.to ? dateRange : ""
-        }`}
-      >
-        <div className="-mx-2 border rounded-md overflow-hidden">
-          <Table className="overflow-hidden">
-            <TableCaption className="mt-0 border-t-[0.5px]">
-              A list of your profit and loss reports
-            </TableCaption>
-            <TableHeader className="bg-muted">
-              <TableRow>
+        }`}</Heading>
+        <div className="border rounded-md overflow-hidden">
+          <table className="table-auto w-full border-collapse border border-gray-200">
+            {/* Table Header */}
+            <thead className="bg-gray-100">
+              <tr>
                 {[
                   "Trip No",
                   "Down Date",
                   "Bus No",
                   "Up-Down Total Amount",
-                  "Iconic Transport road expenses",
+                  "Iconic Transport Road Expenses",
                   "Iconic Transport Balance",
                   "Iconic Express GP",
-                  "Trip wise profit",
+                  "Trip Wise Profit",
                 ].map((header) => (
-                  <TableHead key={header} className="border-r">
+                  <th
+                    key={header}
+                    className="border border-gray-300 px-4 py-2 text-center text-sm font-semibold"
+                  >
                     {header}
-                  </TableHead>
+                  </th>
                 ))}
-              </TableRow>
-            </TableHeader>
-            {/* <TableBody>
-              {filteredData?.length > 0 ? (
-                filteredData?.map((row, rowIndex) => (
-                  <TableRow key={rowIndex}>
+              </tr>
+            </thead>
+
+            {/* Table Body */}
+            <tbody>
+              {profitAndLossData?.data?.length > 0 ? (
+                profitAndLossData.data.map((row: any, rowIndex: any) => (
+                  <tr
+                    key={row.id || rowIndex}
+                    className="hover:bg-gray-50 text-center"
+                  >
                     {[
-                        row.tripNo,
-                        row.downDate,
-                        row.busNo,
-                        row.upDownTotalAmount?.toFixed(2),
-                        row.transportRoadExpenses?.toFixed(2),
-                        row.transportBalance?.toFixed(2),
-                        row.expressGp?.toFixed(2),
-                        row.tripWiseProfit?.toFixed(2),
+                      row.id, // Trip No
+                      row.downDate ?? "N/A", // Down Date
+                      row.registrationNo ?? "N/A", // Bus No
+                      (row.totalIncome - row.totalExpense)?.toFixed(2) ??
+                        "0.00",
+                      row.totalExpense?.toFixed(2) ?? "0.00",
+                      row.cashOnHand?.toFixed(2) ?? "0.00",
+                      row.gp?.toFixed(2) ?? "0.00",
+                      (row.cashOnHand - row.gp)?.toFixed(2) ?? "0.00",
                     ].map((value, cellIndex) => (
-                      <TableCell key={cellIndex} className="border-r">
-                        {value ?? "N/A"}
-                      </TableCell>
+                      <td
+                        key={cellIndex}
+                        className="border border-gray-300 px-4 py-2 h-12 w-32 text-sm"
+                      >
+                        {value}
+                      </td>
                     ))}
-                  </TableRow>
+                  </tr>
                 ))
               ) : (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center">
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="text-center text-gray-500 py-4 border border-gray-300"
+                  >
                     No data available
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               )}
-              <TableRow className="font-semibold">
-                <EmptyTableCell item={3} className="custom-table" />
-                <TableCell className="border-l">00.00৳</TableCell>
-                <TableCell className="border-l">00.00৳</TableCell>
-                <TableCell className="border-l">00.00৳</TableCell>
-                <TableCell className="border-l">00.00৳</TableCell>
-                <TableCell className="border-l">00.00৳</TableCell>
-              </TableRow>
-            </TableBody> */}
-          </Table>
+
+              {/* Footer Row (Totals) */}
+              <tr className="font-semibold bg-gray-100 text-center">
+                <td className="border border-gray-300 px-4 py-2">Totals</td>
+                {[...Array(2)].map((_, i) => (
+                  <td key={i} className="border border-gray-300 px-4 py-2"></td>
+                ))}
+                <td className="border border-gray-300 px-4 py-2">
+                  {profitAndLossData?.data
+                    ?.reduce(
+                      (acc: any, row: any) =>
+                        acc + (row.totalIncome - row.totalExpense || 0),
+                      0
+                    )
+                    .toFixed(2) ?? "0.00"}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {profitAndLossData?.data
+                    ?.reduce(
+                      (acc: any, row: any) => acc + (row.totalExpense || 0),
+                      0
+                    )
+                    .toFixed(2) ?? "0.00"}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {profitAndLossData?.data
+                    ?.reduce(
+                      (acc: any, row: any) => acc + (row.cashOnHand || 0),
+                      0
+                    )
+                    .toFixed(2) ?? "0.00"}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {profitAndLossData?.data
+                    ?.reduce((acc: any, row: any) => acc + (row.gp || 0), 0)
+                    .toFixed(2) ?? "0.00"}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {profitAndLossData?.data
+                    ?.reduce(
+                      (acc: any, row: any) =>
+                        acc + (row.cashOnHand - row.gp || 0),
+                      0
+                    )
+                    .toFixed(2) ?? "0.00"}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </InfoWrapper>
-      <div className="border rounded-md overflow-hidden mb-10">
-        <Table className="overflow-hidden">
-          <TableBody className="border">
+      </section>
+
+      <section className="border rounded-md overflow-hidden my-10">
+        <table className="table-auto w-full border-collapse border border-gray-200">
+          <tbody>
             {[
-              "Actual Profit",
-              "Compensation from Iconic Express",
-              "Total Monthly Profit",
-              "Bus Owner received for Repair & Maintenance",
-              "Owner Balance",
-            ].map((rowLabel, rowIndex) => (
-              <TableRow key={rowIndex}>
-                <TableCell className="border-l">{rowLabel}</TableCell>
-                <TableCell className="border-l">00.00৳</TableCell>
-              </TableRow>
+              {
+                label: "Actual Profit",
+                value:
+                  profitAndLossData?.data
+                    ?.reduce(
+                      (acc: any, row: any) =>
+                        acc + (row.cashOnHand - row.gp || 0),
+                      0
+                    )
+                    .toFixed(2) ?? "0.00",
+              },
+              { label: "Compensation from Iconic Express", value: "00.00৳" },
+              { label: "Total Monthly Profit", value: "00.00৳" },
+              {
+                label: "Bus Owner received for Repair & Maintenance",
+                value: "00.00৳",
+              },
+              { label: "Owner Balance", value: "00.00৳" },
+            ].map((row, index) => (
+              <tr key={index} className="hover:bg-gray-50">
+                <td className="border border-gray-300 px-4 py-2 font-medium">
+                  {row.label}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {row.value}
+                </td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
-      </div>
+          </tbody>
+        </table>
+      </section>
 
       <div className="invisible hidden -left-full">
         {filteredData.length > 0 && (
