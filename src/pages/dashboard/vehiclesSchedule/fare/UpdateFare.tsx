@@ -103,6 +103,7 @@ const UpdateFare: FC<IUpdateFareProps> = ({ setFareState, id }) => {
       setFareState((prevState: IFareStateProps) => ({
         ...prevState,
         addFareOpen: false,
+        faresList: [...prevState.faresList, result.data],
       }));
     }
   };

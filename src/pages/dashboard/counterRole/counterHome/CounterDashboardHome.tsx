@@ -104,7 +104,6 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       selectedOrderId: orderId,
     }));
   };
-
   // UPDATE THE COMPONENT VIA REFERENCE
   useEffect(() => {
     if (salesTickitState.isPrinting && promiseResolveRef.current) {
@@ -164,7 +163,10 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       header: translate("ইনডেক্স", "Index"),
       cell: (info) => (query.page - 1) * query.size + info.row.index + 1,
     },
-    { accessorKey: "id", header: translate("সেল আইডি", "Sale ID") },
+    {
+      accessorKey: "coachConfig.coachNo",
+      header: translate("কোচ নং", "Coach No"),
+    },
     {
       accessorKey: "customerName",
       header: translate("গ্রাহকের নাম", "Customer Name"),

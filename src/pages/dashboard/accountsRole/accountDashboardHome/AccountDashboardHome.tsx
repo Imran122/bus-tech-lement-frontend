@@ -102,15 +102,15 @@ export default function AccountDashboardHome() {
   }
 
   // Handle empty data
-  if (!accountReportData?.data || accountReportData?.data.length === 0) {
-    return (
-      <PageWrapper>
-        <h2 className="font-bold text-center mt-10 text-xl">
-          {translate("কোনো প্রতিবেদন পাওয়া যায়নি", "No Reports Found")}
-        </h2>
-      </PageWrapper>
-    );
-  }
+  // if (!accountReportData?.data || accountReportData?.data.length === 0) {
+  //   return (
+  //     <PageWrapper>
+  //       <h2 className="font-bold text-center mt-10 text-xl">
+  //         {translate("কোনো প্রতিবেদন পাওয়া যায়নি", "No Reports Found")}
+  //       </h2>
+  //     </PageWrapper>
+  //   );
+  // }
 
   return (
     <PageWrapper>
