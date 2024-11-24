@@ -45,9 +45,6 @@ export default function CounterReportsList() {
       page: query.page,
       size: query.size,
     });
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
 
   const closeModal = () => {
     setIsModalOpen(false);
