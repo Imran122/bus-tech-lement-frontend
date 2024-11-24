@@ -38,7 +38,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
-import AddResurb from "./AddResurb";
+import AddResurb from "./AddReserve";
 import ReserveDetails from "./ReserveDetails";
 import UpdateReserve from "./UpdateReserve";
 
