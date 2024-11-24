@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { skipToken } from "@reduxjs/toolkit/query/react";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/common/Loader";
-import ExpenseCategoryPrint from "@/pages/dashboard/printLabel/ExpenseCategoryPrint";
 import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 import {
   Select,
@@ -28,17 +27,11 @@ import { useReactToPrint } from "react-to-print";
 import { useGetTripReportQuery } from "@/store/api/adminReport/adminReportApi";
 import { format } from "date-fns";
 import { Heading } from "@/components/common/typography/Heading";
-
-const categoryList = [
-  { name: "Breakfast", amount: 150, note: "Includes coffee and bagels" },
-  { name: "Lunch", amount: 250, note: "Combo meal with drink" },
-  { name: "Breakfast", amount: 300, note: "Includes dessert and appetizer" },
-  { name: "Lunch", amount: 100, note: "Afternoon tea with biscuits" },
-  { name: "Desserts", amount: 120, note: "Cakes and ice cream" },
-];
+import ProfitandLossPrint from "../../printLabel/ProfitandLossPrint";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PdfProfitandLoss from "../../pdf/PdfProfitandLoss";
 
 const ProfitandLoseReport = () => {
-  const [filteredData, setFilteredData] = useState(categoryList);
   const [selectedRegistrationNo, setSelectedRegistrationNo] = useState<
     string | undefined
   >();
@@ -84,8 +77,7 @@ const ProfitandLoseReport = () => {
 
   // Filter data based on selected category
   const handleRegistrationNoChange = (value: string) => {
-    setSelectedRegistrationNo(value); // Update state for backend query
-    setFilteredData(categoryList.filter((item) => item.name === value)); // Filter table data
+    setSelectedRegistrationNo(value);
   };
 
   if (singleCmsLoading || vehiclesLoading || profitLossLoading) {
@@ -98,11 +90,12 @@ const ProfitandLoseReport = () => {
         Iconic Transport
       </Paragraph>
 
-      <div className="flex justify-between items-center">
-        <ul className="flex space-x-3">
-          {/* <li>
+      <ul className="flex space-x-3">
+        <li>
           <PDFDownloadLink
-              document={<PdfExpenseCategoryReport result={categoryList} />}
+              document={<PdfProfitandLoss  dateRange={dateRange}
+              profitData={profitAndLossData?.data}
+              logo={singleCms?.data} />}
               fileName="expense_category_report.pdf"
             >
               {
@@ -126,14 +119,14 @@ const ProfitandLoseReport = () => {
                 }
               }
             </PDFDownloadLink>
-          </li> */}
-          <li>
-            <Button onClick={handlePrint} variant="destructive" size="xs">
-              Print
-            </Button>
           </li>
-        </ul>
-
+        <li>
+          <Button onClick={handlePrint} variant="destructive" size="xs">
+            Print
+          </Button>
+        </li>
+      </ul>
+      <div className="flex justify-between items-center">
         <div className="flex space-x-4">
           <Select onValueChange={handleRegistrationNoChange}>
             <SelectTrigger className="w-full">
@@ -168,7 +161,7 @@ const ProfitandLoseReport = () => {
                       dateFormatter(date.from)
                     )
                   ) : (
-                    <span className="text-sm">Pick a date</span>
+                    <span className="text-sm">Pick a Date Range</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -191,7 +184,7 @@ const ProfitandLoseReport = () => {
         <Heading size={"h6"}>{`Profit / Loss details for the month of ${
           date?.from && date?.to ? dateRange : ""
         }`}</Heading>
-        <div className="border rounded-md overflow-hidden">
+        <div className="border overflow-hidden">
           <table className="table-auto w-full border-collapse border border-gray-200">
             {/* Table Header */}
             <thead className="bg-gray-100">
@@ -306,7 +299,7 @@ const ProfitandLoseReport = () => {
         </div>
       </section>
 
-      <section className="border rounded-md overflow-hidden my-10">
+      <section className="border overflow-hidden my-10">
         <table className="table-auto w-full border-collapse border border-gray-200">
           <tbody>
             {[
@@ -320,15 +313,15 @@ const ProfitandLoseReport = () => {
                       0
                     )
                     .toFixed(2) ?? "0.00"
-                }৳`,
+                }`,
               },
-              { label: "Compensation from Iconic Express", value: "00.00৳" },
-              { label: "Total Monthly Profit", value: "00.00৳" },
+              { label: "Compensation from Iconic Express", value: "00.00" },
+              { label: "Total Monthly Profit", value: "00.00" },
               {
                 label: "Bus Owner received for Repair & Maintenance",
-                value: "00.00৳",
+                value: "00.00",
               },
-              { label: "Owner Balance", value: "00.00৳" },
+              { label: "Owner Balance", value: "00.00" },
             ].map((row, index) => (
               <tr key={index} className="hover:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2 font-medium">
@@ -344,10 +337,11 @@ const ProfitandLoseReport = () => {
       </section>
 
       <div className="invisible hidden -left-full">
-        {filteredData.length > 0 && (
-          <ExpenseCategoryPrint
+        {profitAndLossData?.data?.length > 0 && (
+          <ProfitandLossPrint
             ref={printSaleRef}
-            categoryData={filteredData}
+            dateRange={dateRange}
+            profitData={profitAndLossData?.data}
             logo={singleCms?.data}
           />
         )}
