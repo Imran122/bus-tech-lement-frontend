@@ -1,8 +1,8 @@
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
-import { TimePicker } from "@/components/common/form/TimePicker";
 import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
 import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
+import { Paragraph } from "@/components/common/typography/Paragraph";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -73,7 +73,7 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
     new Date()
   );
   const [toDateTime, setToDateTime] = useState<Date | undefined>(new Date());
-
+  const [dueAmount, setDueAmount] = useState<number>(0);
   const { data: routesData, isLoading: routesLoading } = useGetRoutesQuery(
     {}
   ) as any;
@@ -127,33 +127,41 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
       setValue("fromDate", reserveData.data.fromDate || "");
       setValue("toDate", reserveData.data.toDate || "");
 
-      setUpdateReserveFormState((prevState: IUpdateReserveFormStateProps) => ({
-        ...prevState,
-        fromDate: reserveData.data.fromDate
-          ? new Date(reserveData.data.fromDate)
-          : null,
-        toDate: reserveData.data.toDate
-          ? new Date(reserveData.data.toDate)
-          : null,
-      }));
-      if (fromDateTime && toDateTime) {
-        setValue(
-          "fromDateTime",
-          fromDateTime.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        );
-        setValue(
-          "toDateTime",
-          toDateTime.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        );
-      }
+      // setUpdateReserveFormState((prevState: IUpdateReserveFormStateProps) => ({
+      //   ...prevState,
+      //   fromDate: reserveData.data.fromDate
+      //     ? new Date(reserveData.data.fromDate)
+      //     : null,
+      //   toDate: reserveData.data.toDate
+      //     ? new Date(reserveData.data.toDate)
+      //     : null,
+      // }));
+      // if (fromDateTime && toDateTime) {
+      //   setValue(
+      //     "fromDateTime",
+      //     fromDateTime.toLocaleTimeString([], {
+      //       hour: "2-digit",
+      //       minute: "2-digit",
+      //     })
+      //   );
+      //   setValue(
+      //     "toDateTime",
+      //     toDateTime.toLocaleTimeString([], {
+      //       hour: "2-digit",
+      //       minute: "2-digit",
+      //     })
+      //   );
+      // }
     }
   }, [fromDateTime, reserveData, setValue, toDateTime]);
+  const totalAmount = watch("amount");
+  const paidAmount = watch("paidAmount");
+
+  useEffect(() => {
+    if (totalAmount && paidAmount) {
+      setDueAmount(totalAmount - paidAmount);
+    }
+  }, [paidAmount, totalAmount]);
 
   const onSubmit = async (data: ReservationDataProps) => {
     const withoutRemarks = {
@@ -192,6 +200,83 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-x-4 gap-y-2">
+        <div>
+            <Paragraph size={"md"}>
+              <span className="text-base font-bold pr-2">Total Amount:</span>
+              {totalAmount || 0}
+            </Paragraph>
+          </div>
+
+          <div>
+            <Paragraph size={"md"}>
+              <span className="text-base font-bold pr-2">Paid Amount:</span>
+              {paidAmount || 0}
+            </Paragraph>
+          </div>
+          <div>
+            <Paragraph size={"md"}>
+              <span className="text-base font-bold pr-2">Due Amount:</span>
+              {dueAmount}
+            </Paragraph>
+          </div>
+            {/* PASSANGER NAME */}
+            <InputWrapper
+            labelFor="passengerName"
+            error={errors.passengerName?.message}
+            label={translate(
+              addUpdateResurbForm?.passengerName.label.bn,
+              addUpdateResurbForm.passengerName.label.en
+            )}
+          >
+            <Input
+              defaultValue={reserveData?.data?.passengerName}
+              id="passengerName"
+              type="text"
+              {...register("passengerName")}
+              placeholder={translate(
+                addUpdateResurbForm.passengerName.placeholder.bn,
+                addUpdateResurbForm.passengerName.placeholder.en
+              )}
+            />
+          </InputWrapper>
+          {/* CONTACT NUMBER */}
+          <InputWrapper
+            error={errors?.contactNo?.message}
+            labelFor="contact_number"
+            label={translate(
+              addUpdateResurbForm?.contactNo.label.bn,
+              addUpdateResurbForm.contactNo.label.en
+            )}
+          >
+            <Input
+              defaultValue={reserveData?.contactNo || ""}
+              {...register("contactNo")}
+              id="contact_number"
+              type="tel"
+              placeholder={translate(
+                addUpdateResurbForm.contactNo.placeholder.bn,
+                addUpdateResurbForm.contactNo.placeholder.en
+              )}
+            />
+          </InputWrapper>
+          {/* Address Field */}
+          <InputWrapper
+            label={translate(
+              addUpdateResurbForm.address.label.bn,
+              addUpdateResurbForm.address.label.en
+            )}
+            labelFor="address"
+            error={errors.address?.message}
+          >
+            <Input
+              defaultValue={reserveData?.address || ""}
+              {...register("address")}
+              placeholder={translate(
+                addUpdateResurbForm.address.placeholder.bn,
+                addUpdateResurbForm.address.placeholder.en
+              )}
+            />
+          </InputWrapper>
           {/* Registration NUMBER */}
           <InputWrapper
             error={errors.registrationNo?.message}
@@ -315,151 +400,8 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
               </SelectContent>
             </Select>
           </InputWrapper>
-
-          {/* PASSANGER NAME */}
-          <InputWrapper
-            labelFor="passengerName"
-            error={errors.passengerName?.message}
-            label={translate(
-              addUpdateResurbForm?.passengerName.label.bn,
-              addUpdateResurbForm.passengerName.label.en
-            )}
-          >
-            <Input
-              defaultValue={reserveData?.data?.passengerName}
-              id="passengerName"
-              type="text"
-              {...register("passengerName")}
-              placeholder={translate(
-                addUpdateResurbForm.passengerName.placeholder.bn,
-                addUpdateResurbForm.passengerName.placeholder.en
-              )}
-            />
-          </InputWrapper>
-          {/* CONTACT NUMBER */}
-          <InputWrapper
-            error={errors?.contactNo?.message}
-            labelFor="contact_number"
-            label={translate(
-              addUpdateResurbForm?.contactNo.label.bn,
-              addUpdateResurbForm.contactNo.label.en
-            )}
-          >
-            <Input
-              defaultValue={reserveData?.contactNo || ""}
-              {...register("contactNo")}
-              id="contact_number"
-              type="tel"
-              placeholder={translate(
-                addUpdateResurbForm.contactNo.placeholder.bn,
-                addUpdateResurbForm.contactNo.placeholder.en
-              )}
-            />
-          </InputWrapper>
-          {/* Address Field */}
-          <InputWrapper
-            label={translate(
-              addUpdateResurbForm.address.label.bn,
-              addUpdateResurbForm.address.label.en
-            )}
-            labelFor="address"
-            error={errors.address?.message}
-          >
-            <Input
-              defaultValue={reserveData?.address || ""}
-              {...register("address")}
-              placeholder={translate(
-                addUpdateResurbForm.address.placeholder.bn,
-                addUpdateResurbForm.address.placeholder.en
-              )}
-            />
-          </InputWrapper>
-
-          {/* Amount */}
-          <InputWrapper
-            error={errors?.amount?.message}
-            label={translate(
-              addUpdateResurbForm.amount.label.bn,
-              addUpdateResurbForm.amount.label.en
-            )}
-            labelFor="amount"
-          >
-            <Input
-              defaultValue={reserveData?.data?.amount || ""}
-              id="amount"
-              type="number"
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const inputValue = +e.target.value;
-                setValue("amount", inputValue);
-                if (inputValue) {
-                  setError("amount", { type: "custom", message: "" });
-                } else {
-                  setError("amount", {
-                    type: "custom",
-                    message: "Amount is required",
-                  });
-                }
-              }}
-              placeholder={translate(
-                addUpdateResurbForm.amount.placeholder.bn,
-                addUpdateResurbForm.amount.placeholder.en
-              )}
-            />
-          </InputWrapper>
-
-          {/* Paid Amount */}
-          <InputWrapper
-            error={errors?.paidAmount?.message}
-            label={translate(
-              addUpdateResurbForm.paidAmount.label.bn,
-              addUpdateResurbForm.paidAmount.label.en
-            )}
-            labelFor="paidAmount"
-          >
-            <Input
-              defaultValue={reserveData?.data?.paidAmount || ""}
-              id="paidAmount"
-              type="number"
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const inputValue = +e.target.value;
-                setValue("paidAmount", inputValue);
-                if (inputValue) {
-                  setError("paidAmount", { type: "custom", message: "" });
-                } else {
-                  setError("paidAmount", {
-                    type: "custom",
-                    message: "Paid amount is required",
-                  });
-                }
-              }}
-              placeholder={translate(
-                addUpdateResurbForm.paidAmount.placeholder.bn,
-                addUpdateResurbForm.paidAmount.placeholder.en
-              )}
-            />
-          </InputWrapper>
-
-          {/* REMARKS */}
-          <InputWrapper
-            label={translate(
-              addUpdateResurbForm.remarks.label.bn,
-              addUpdateResurbForm.remarks.label.en
-            )}
-            labelFor="remarks"
-            error={errors.remarks?.message}
-          >
-            <Input
-              defaultValue={reserveData?.data?.remarks || ""}
-              {...register("remarks")}
-              placeholder={translate(
-                addUpdateResurbForm.remarks.placeholder.bn,
-                addUpdateResurbForm.remarks.placeholder.en
-              )}
-            />
-          </InputWrapper>
-
-          {/* FROM DATE */}
-          <InputWrapper
+    {/* FROM DATE */}
+    <InputWrapper
             label={translate(
               addUpdateResurbForm?.fromDate.label.bn,
               addUpdateResurbForm.fromDate.label.en
@@ -583,9 +525,95 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
               </PopoverContent>
             </Popover>
           </InputWrapper>
+        
+          {/* REMARKS */}
+          <InputWrapper
+            label={translate(
+              addUpdateResurbForm.remarks.label.bn,
+              addUpdateResurbForm.remarks.label.en
+            )}
+            labelFor="remarks"
+            error={errors.remarks?.message}
+          >
+            <Input
+              defaultValue={reserveData?.data?.remarks || ""}
+              {...register("remarks")}
+              placeholder={translate(
+                addUpdateResurbForm.remarks.placeholder.bn,
+                addUpdateResurbForm.remarks.placeholder.en
+              )}
+            />
+          </InputWrapper>
+
+          {/* Amount */}
+          <InputWrapper
+            error={errors?.amount?.message}
+            label={translate(
+              addUpdateResurbForm.amount.label.bn,
+              addUpdateResurbForm.amount.label.en
+            )}
+            labelFor="amount"
+          >
+            <Input
+              defaultValue={reserveData?.data?.amount || ""}
+              id="amount"
+              type="number"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                const inputValue = +e.target.value;
+                setValue("amount", inputValue);
+                if (inputValue) {
+                  setError("amount", { type: "custom", message: "" });
+                } else {
+                  setError("amount", {
+                    type: "custom",
+                    message: "Amount is required",
+                  });
+                }
+              }}
+              placeholder={translate(
+                addUpdateResurbForm.amount.placeholder.bn,
+                addUpdateResurbForm.amount.placeholder.en
+              )}
+            />
+          </InputWrapper>
+
+          {/* Paid Amount */}
+          <InputWrapper
+            error={errors?.paidAmount?.message}
+            label={translate(
+              addUpdateResurbForm.paidAmount.label.bn,
+              addUpdateResurbForm.paidAmount.label.en
+            )}
+            labelFor="paidAmount"
+          >
+            <Input
+              defaultValue={reserveData?.data?.paidAmount || ""}
+              id="paidAmount"
+              type="number"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                const inputValue = +e.target.value;
+                setValue("paidAmount", inputValue);
+                if (inputValue) {
+                  setError("paidAmount", { type: "custom", message: "" });
+                } else {
+                  setError("paidAmount", {
+                    type: "custom",
+                    message: "Paid amount is required",
+                  });
+                }
+              }}
+              placeholder={translate(
+                addUpdateResurbForm.paidAmount.placeholder.bn,
+                addUpdateResurbForm.paidAmount.placeholder.en
+              )}
+            />
+          </InputWrapper>
+
+
+      
 
           {/*  FROM DATE TIME */}
-          <InputWrapper
+          {/* <InputWrapper
             error={errors?.fromDateTime?.message}
             labelFor="time"
             label={translate(
@@ -604,9 +632,9 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
                 })
               }
             </div>
-          </InputWrapper>
+          </InputWrapper> */}
           {/*  TO DATE TIME */}
-          <InputWrapper
+          {/* <InputWrapper
             error={errors?.toDateTime?.message}
             labelFor="time"
             label={translate(
@@ -631,7 +659,7 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
                 })
               }
             </div>
-          </InputWrapper>
+          </InputWrapper> */}
         </div>
         <Submit
           loading={updateReserveLoading}

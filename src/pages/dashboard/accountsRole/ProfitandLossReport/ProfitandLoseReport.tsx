@@ -63,9 +63,8 @@ const ProfitandLoseReport = () => {
             fromDate: format(date.from, "yyyy-MM-dd"),
             toDate: format(date.to, "yyyy-MM-dd"),
           }
-        : skipToken 
+        : skipToken
     );
-
 
   const fromDate = date?.from ? dateFormatter(date?.from) : null;
   const toDate = date?.to ? dateFormatter(date?.to) : null;
@@ -100,8 +99,8 @@ const ProfitandLoseReport = () => {
       </Paragraph>
 
       <div className="flex justify-between items-center">
-        {/* <ul className="flex space-x-3">
-          <li>
+        <ul className="flex space-x-3">
+          {/* <li>
           <PDFDownloadLink
               document={<PdfExpenseCategoryReport result={categoryList} />}
               fileName="expense_category_report.pdf"
@@ -127,18 +126,18 @@ const ProfitandLoseReport = () => {
                 }
               }
             </PDFDownloadLink>
-          </li>
+          </li> */}
           <li>
             <Button onClick={handlePrint} variant="destructive" size="xs">
               Print
             </Button>
           </li>
-        </ul> */}
+        </ul>
 
         <div className="flex space-x-4">
           <Select onValueChange={handleRegistrationNoChange}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a bus no" />
+              <SelectValue placeholder="Select a Bus No" />
             </SelectTrigger>
             <SelectContent>
               {vehiclesData?.data?.map((option: any) => (
@@ -313,14 +312,15 @@ const ProfitandLoseReport = () => {
             {[
               {
                 label: "Actual Profit",
-                value:
+                value: `${
                   profitAndLossData?.data
                     ?.reduce(
                       (acc: any, row: any) =>
                         acc + (row.cashOnHand - row.gp || 0),
                       0
                     )
-                    .toFixed(2) ?? "0.00",
+                    .toFixed(2) ?? "0.00"
+                }৳`,
               },
               { label: "Compensation from Iconic Express", value: "00.00৳" },
               { label: "Total Monthly Profit", value: "00.00৳" },

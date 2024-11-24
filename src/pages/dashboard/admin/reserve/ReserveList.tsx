@@ -43,10 +43,6 @@ import ReserveDetails from "./ReserveDetails";
 import UpdateReserve from "./UpdateReserve";
 import { useReactToPrint } from "react-to-print";
 import ReservePrint from "../../printLabel/ReservePrint";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { Loader } from "@/components/common/Loader";
-import PdfReserve from "../../pdf/PdfReserve";
-import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 
 interface IReserveListProps {}
 export interface IReserveStateProps {
@@ -100,7 +96,7 @@ const ReserveList: FC<IReserveListProps> = () => {
     page: query.page,
     size: query.size,
   });
-  const { data: singleCms } = useGetSingleCMSQuery({});
+  // const { data: singleCms } = useGetSingleCMSQuery({});
 
   const [reserveSingleData, setReserveSingleData] = useState();
 
