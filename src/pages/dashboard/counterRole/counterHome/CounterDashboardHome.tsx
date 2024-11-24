@@ -104,7 +104,6 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       selectedOrderId: orderId,
     }));
   };
-
   // UPDATE THE COMPONENT VIA REFERENCE
   useEffect(() => {
     if (salesTickitState.isPrinting && promiseResolveRef.current) {
@@ -164,7 +163,10 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       header: translate("ইনডেক্স", "Index"),
       cell: (info) => (query.page - 1) * query.size + info.row.index + 1,
     },
-    { accessorKey: "id", header: translate("সেল আইডি", "Sale ID") },
+    {
+      accessorKey: "coachConfig.coachNo",
+      header: translate("কোচ নং", "Coach No"),
+    },
     {
       accessorKey: "customerName",
       header: translate("গ্রাহকের নাম", "Customer Name"),
@@ -307,7 +309,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
   return (
     <section>
       <PageWrapper>
-        <div className="grid grid-cols-5 gap-5 my-5">
+        <div className="grid lg:grid-cols-5 grid-cols-2 gap-5 my-5">
           <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <div className="p-6 flex flex-col justify-start items-start w-full">
               <h2>Todays Sales</h2>

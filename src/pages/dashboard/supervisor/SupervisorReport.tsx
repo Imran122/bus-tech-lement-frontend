@@ -154,7 +154,7 @@ const SupervisorReport: React.FC = () => {
     (coachDetailsData?.data?.totalUpOpeningBalance || 0) +
     (coachDetailsData?.data?.totalDownOpeningBalance || 0) -
     (coachDetailsData?.data?.totalExpense || 0);
-
+  const totalIncome = upDownTotal + totalOtherIncome;
   const handleSubmit = async () => {
     const mainData = {
       supervisorId: user?.id,
@@ -163,6 +163,9 @@ const SupervisorReport: React.FC = () => {
       upWayDate: coachDetailsData?.data?.upDate,
       downWayDate: coachDetailsData?.data?.downDate,
       cashOnHand: cashOnHand,
+      tripNo: coachDetailsData?.data?.upWayTripNo,
+      totalIncome: totalIncome,
+      totalExpense: coachDetailsData?.data?.totalExpense,
     };
 
     try {

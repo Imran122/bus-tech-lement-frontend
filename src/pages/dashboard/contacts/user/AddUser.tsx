@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
 import {
   AddUserDataProps,
   addUserSchema,
@@ -44,7 +43,6 @@ import {
 import addUpdateUserForm from "@/utils/constants/form/addUpdateUserForm";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, LucideEye, LucideEyeOff } from "lucide-react";
@@ -67,7 +65,7 @@ interface IAddUserFormStateProps {
 const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
   const { toast } = useToast();
   const { translate } = useCustomTranslator();
-  const { toastMessage } = useMessageGenerator();
+  //const { toastMessage } = useMessageGenerator();
   const [addUserFormState, setAddUserFormState] =
     useState<IAddUserFormStateProps>({
       photo: "",
@@ -121,11 +119,11 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
     const result = await addUser(updateData);
     if (result?.data?.success) {
       toast({
-        title: translate(
-          "ব্যবহারকারী যোগ করার বার্তা",
-          "Message for adding user"
+        title: translate("ব্যবহারকারী যোগ করা হয়েছে", "User Added"),
+        description: translate(
+          "ব্যবহারকারী সফলভাবে যোগ করা হয়েছে।",
+          "User added successfully."
         ),
-        description: toastMessage("add", translate("ব্যবহারকারী", "user")),
       });
 
       setUserState((prevState: IUserStateProps) => ({
@@ -134,6 +132,7 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
       }));
     }
   };
+
   //
   if (roleLoading || counterLoading) {
     <FormSkeleton columns={7} />;
@@ -381,55 +380,45 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
 
           {/* DATE OF BIRTH */}
           <InputWrapper
-            labelFor="date_of_birth"
-            label={translate(
-              addUpdateUserForm.dateOfBirth.label.bn,
-              addUpdateUserForm.dateOfBirth.label.en
-            )}
+            labelFor="dateOfBirth"
+            label="Date of Birth"
+            error={errors?.dateOfBirth?.message}
           >
             <Popover
               open={addUserFormState.calendarOpen}
               onOpenChange={(open) =>
-                setAddUserFormState((prevState: IAddUserFormStateProps) => ({
+                setAddUserFormState((prevState) => ({
                   ...prevState,
                   calendarOpen: open,
                 }))
               }
             >
-              <PopoverTrigger id="date_of_birth" asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "justify-start text-left font-normal text-sm h-9",
-                    !addUserFormState.date && "text-muted-foreground"
-                  )}
-                >
+              <PopoverTrigger id="dateOfBirth" asChild>
+                <Button variant="outline" className="text-left">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {addUserFormState.date ? (
-                    format(addUserFormState.date, "PPP")
-                  ) : (
-                    <span>
-                      {translate("একটি তারিখ নির্বাচন করুন", "Pick a date")}
-                    </span>
-                  )}
+                  {addUserFormState.date
+                    ? format(addUserFormState.date, "PPP")
+                    : "Pick a date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="end">
                 <Calendar
+                  style={{ pointerEvents: "auto" }}
                   mode="single"
-                  captionLayout="dropdown-buttons"
-                  selected={addUserFormState?.date || new Date()}
+                  selected={addUserFormState.date || undefined}
                   onSelect={(date) => {
-                    //@ts-ignore
-                    setValue("dateOfBirth", date);
-                    setError("dateOfBirth", { type: "custom", message: "" });
-                    setAddUserFormState(
-                      (prevState: IAddUserFormStateProps) => ({
+                    if (date) {
+                      const formattedDate = date.toISOString().split("T")[0]; // Format to "YYYY-MM-DD"
+
+                      setAddUserFormState((prevState) => ({
                         ...prevState,
+                        date, // Keep the Date object in state for further use (e.g., UI display)
                         calendarOpen: false,
-                        date: date || null,
-                      })
-                    );
+                      }));
+
+                      setValue("dateOfBirth", formattedDate); // Pass the formatted string to the form
+                      setError("dateOfBirth", { type: "custom", message: "" }); // Clear validation errors
+                    }
                   }}
                   fromYear={1960}
                   toYear={new Date().getFullYear()}

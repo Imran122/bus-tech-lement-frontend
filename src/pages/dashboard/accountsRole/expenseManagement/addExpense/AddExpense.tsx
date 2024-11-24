@@ -1,4 +1,8 @@
+import { InputWrapper } from "@/components/common/form/InputWrapper";
+import Submit from "@/components/common/form/Submit";
+import { Loader } from "@/components/common/Loader";
 import AddPaymentTable from "@/components/common/payment/AddPaymentTable";
+import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
@@ -16,30 +20,26 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import {
+  AddEditExtraExpenseSchema,
+  AddEditExtraExpenseSchemaDataProps,
+} from "@/schemas/extraExpense/addEditExtraExpense";
+import { useGetExpenseCategoreyAccountListQuery } from "@/store/api/accounts/expenseDashboardApi";
+import { useGetExpenseSubCategoreyAccountListQuery } from "@/store/api/accounts/expenseSubCategory";
+import { useAddExpenseAccountMutation } from "@/store/api/extraExpense/extraExpenseApi";
+import { useUploadPhotoMutation } from "@/store/api/fileApi";
 import { fallback } from "@/utils/constants/common/fallback";
+import { extraExpenseForm } from "@/utils/constants/form/addEditExtraExpenseForm";
+import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
+import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { LuCheck, LuLoader2 } from "react-icons/lu";
 import { IExpenseStateProps } from "./ExpenseList";
-import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
-import { useAddExpenseAccountMutation } from "@/store/api/extraExpense/extraExpenseApi";
-import { useGetExpenseCategoreyAccountListQuery } from "@/store/api/accounts/expenseDashboardApi";
-import { useGetExpenseSubCategoreyAccountListQuery } from "@/store/api/accounts/expenseSubCategory";
-import {
-  AddEditExtraExpenseSchema,
-  AddEditExtraExpenseSchemaDataProps,
-} from "@/schemas/extraExpense/addEditExtraExpense";
-import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
-import FormWrapper from "@/components/common/wrapper/FormWrapper";
-import Submit from "@/components/common/form/Submit";
-import { InputWrapper } from "@/components/common/form/InputWrapper";
-import { extraExpenseForm } from "@/utils/constants/form/addEditExtraExpenseForm";
-import { Loader } from "@/components/common/Loader";
-import { useUploadPhotoMutation } from "@/store/api/fileApi";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 interface IAddExpenseProps {
   setExpenseState: (
@@ -116,10 +116,11 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
   };
 
   const totalAmount = paymentTable.reduce(
-    (total: any, item: { paymentAmount: any; }) => total + (item.paymentAmount || 0), 
+    (total: any, item: { paymentAmount: any }) =>
+      total + (item.paymentAmount || 0),
     0
   );
- 
+
   useEffect(() => {
     // Set the totalAmount in the form
     setValue("totalAmount", totalAmount);
@@ -143,18 +144,16 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
       )}
     >
       <div className="flex justify-start mb-4">
-          <ul className=" border py-1.5 rounded-md px-2 mt-2 mx-1 w-1/2 ">
-            <li>
-              <label className="text-sm md:text-base">
-                Total Expense Amount
-              </label>
+        <ul className=" border py-1.5 rounded-md px-2 mt-2 mx-1 w-1/2 ">
+          <li>
+            <label className="text-sm md:text-base">Total Expense Amount</label>
 
-              <b className="ml-2 text-sm md:text-base">
-                {totalAmount.toFixed(2) || fallback.amount}৳
-              </b>
-            </li>
-          </ul>
-        </div>
+            <b className="ml-2 text-sm md:text-base">
+              {totalAmount.toFixed(2) || fallback.amount}৳
+            </b>
+          </li>
+        </ul>
+      </div>
       <form onSubmit={handleSubmit(handleAddExpense)}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-y-1 gap-x-4 md:gap-x-6">
           {/* EXPENSE NAME */}
@@ -306,11 +305,13 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent align="end" >
+              <PopoverContent align="end">
                 <Calendar
+                  style={{ pointerEvents: "auto" }}
+                  className="cursor-pointer"
                   mode="single"
                   captionLayout="dropdown-buttons"
-                  selected={addExpenseState.date || new Date()}
+                  selected={addExpenseState.date || undefined}
                   onSelect={(date) => {
                     const selectedDate = date ?? new Date();
 
@@ -330,7 +331,6 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
                 />
-                ;
               </PopoverContent>
             </Popover>
           </InputWrapper>
@@ -396,8 +396,6 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
             />
           </InputWrapper>
         </div>
-
-        
 
         {/* PAYMENT METHOD */}
         <AddPaymentTable

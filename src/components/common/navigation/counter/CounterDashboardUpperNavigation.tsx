@@ -74,7 +74,7 @@ const CounterDashboardUpperNavigation: FC<
   };
 
   return (
-    <header className="sticky !h-14 !bg-muted/30 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
+    <header className="sticky lg:!h-14 !h-28 !bg-muted/30 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
       {/* DASHBOARD SIDEBAR FOR SMALL DEVICES */}
       <CounterDashboardSidebarSmallDevices />
       {/* NAVIGATION LINKS */}
@@ -106,7 +106,7 @@ const CounterDashboardUpperNavigation: FC<
             )}
         </ul>
 
-        <ul className="pt-9">
+        <ul className="pt-9 lg:mt-2 mt-10">
           <li>
             <TickitSearchDashboard
               bookingState={bookingState}

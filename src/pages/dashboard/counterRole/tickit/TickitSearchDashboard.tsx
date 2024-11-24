@@ -96,7 +96,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
       <div className="w-full">
         <div className="mb-6">
           <div className="rounded-xl">
-            <ul className="flex gap-5 flex-wrap items-center justify-start">
+            <ul className="lg:flex md:grid grid-cols-2 gap-5 flex-wrap items-center justify-start">
               {/* STARTING POINT */}
               <li>
                 <Select
