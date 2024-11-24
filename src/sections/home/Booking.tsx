@@ -174,7 +174,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                   </div>
                 </RadioGroup>
               </PageTransition>
-              <ul className="grid grid-cols-2 gap-5">
+              <ul className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                 {/* START   ING POINT */}
                 <li>
                   <Select
@@ -301,7 +301,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       <Button
                         variant="outline"
                         className={cn(
-                          "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
+                          "justify-start text-left font-normal w-full text-muted-foreground hover:bg-background text-sm h-9",
                           !bookingState.date && "text-muted-foreground"
                         )}
                       >
@@ -365,7 +365,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                         <Button
                           variant="outline"
                           className={cn(
-                            "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
+                            "justify-start text-left font-normal w-full text-muted-foreground hover:bg-background text-sm h-9",
                             !bookingState.returnDate && "text-muted-foreground"
                           )}
                         >

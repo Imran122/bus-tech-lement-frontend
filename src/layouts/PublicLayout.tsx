@@ -1,4 +1,5 @@
 import PublicNavigation from "@/components/common/navigation/PublicNavigation";
+import FooterComponent from "@/components/shared/FooterComponent";
 import { cn } from "@/lib/utils";
 import { useFontShifter } from "@/utils/hooks/useFontShifter";
 import { FC } from "react";
@@ -15,7 +16,9 @@ const PublicLayout: FC<IPublicLayoutProps> = () => {
         <Outlet />
       </section>
 
-      <div>footer</div>
+      <div>
+        <FooterComponent />
+      </div>
     </main>
   );
 };

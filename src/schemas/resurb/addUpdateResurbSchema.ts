@@ -12,9 +12,9 @@ export const addUpdateResurbSchema = z.object({
     .min(1, "Number of seats must be at least 1"),
 
   fromDate: z.string().min(1, "From date is required"),
-  fromDateTime: z.string().min(1, "From date-time is required"),
+  // fromDateTime: z.string().min(1, "From date-time is required"),
   toDate: z.string().min(1, "To date is required"),
-  toDateTime: z.string().min(1, "To date-time is required"),
+  // toDateTime: z.string().min(1, "To date-time is required"),
 
   passengerName: z.string().min(1, "Passenger name is required"),
   contactNo: z.string().min(1, "Contact number is required"),

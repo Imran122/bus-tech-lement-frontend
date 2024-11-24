@@ -140,11 +140,11 @@ export const addUpdateResurbForm: IReservationFormProps = {
   },
   remarks: {
     label: {
-      en: "Remarks",
+      en: "Note",
       bn: "মন্তব্য",
     },
     placeholder: {
-      en: "Enter remarks",
+      en: "Enter Note",
       bn: "মন্তব্য লিখুন",
     },
   },
