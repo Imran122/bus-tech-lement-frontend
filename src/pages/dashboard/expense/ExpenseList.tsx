@@ -160,7 +160,7 @@ const ExpenseList: FC<IExpenseListProps> = () => {
           <ul className="flex items-center gap-x-2">
             <li>
               <Input
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate(
                   searchInputLabelPlaceholder.driver.placeholder.bn,
                   searchInputLabelPlaceholder.driver.placeholder.en

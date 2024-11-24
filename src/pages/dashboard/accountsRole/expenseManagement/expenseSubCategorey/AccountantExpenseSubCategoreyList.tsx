@@ -180,7 +180,7 @@ const AccountantExpenseSubCategoreyList: FC = () => {
                 search: e.target.value,
               }))
             }
-            className="w-[300px]"
+            className="lg:w-[300px] md:w-[250px] w-[200px]"
             placeholder={translate("অনুসন্ধান", "Search")}
           />
           <Button

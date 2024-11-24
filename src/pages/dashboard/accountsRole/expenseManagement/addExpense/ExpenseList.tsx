@@ -30,6 +30,7 @@ import {
 } from "@/store/api/extraExpense/extraExpenseApi";
 import { IExtraExpense } from "@/types/dashboard/extraExpense/extraExpense";
 
+import { cn } from "@/lib/utils";
 import { fallback } from "@/utils/constants/common/fallback";
 import { searchInputLabelPlaceholder } from "@/utils/constants/form/searchInputLabePlaceholder";
 import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicIndexWithMeta";
@@ -41,7 +42,6 @@ import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
 import AddExpense from "./AddExpense";
-import { cn } from "@/lib/utils";
 import ExtraExpenseDetails from "./ExtraExpenseDetails";
 
 interface IExpenseListProps {}
@@ -93,8 +93,10 @@ const ExpenseList: FC<IExpenseListProps> = () => {
         (singleExpense: any, expenseIndex: number) => ({
           ...singleExpense,
           index: generateDynamicIndexWithMeta(expensesData.data, expenseIndex),
-          dummyCategory: singleExpense?.expenseCategoryAccount?.name ||fallback.notFound,
-          dummySubCategory: singleExpense?.expenseSubCategoryAccount?.name ||fallback.notFound,
+          dummyCategory:
+            singleExpense?.expenseCategoryAccount?.name || fallback.notFound,
+          dummySubCategory:
+            singleExpense?.expenseSubCategoryAccount?.name || fallback.notFound,
           dummyDate: singleExpense?.date,
           dummyTotalAmount:
             (singleExpense?.totalAmount?.toFixed(2) || fallback.amount) + "৳",
@@ -116,7 +118,10 @@ const ExpenseList: FC<IExpenseListProps> = () => {
 
     if (result?.data?.success) {
       toast({
-        title: translate("ব্যয় মুছে ফেলার বার্তা", "Message for deleting expense"),
+        title: translate(
+          "ব্যয় মুছে ফেলার বার্তা",
+          "Message for deleting expense"
+        ),
         description: toastMessage("delete", translate("ব্যয়", "expense")),
       });
       playSound("remove");
@@ -145,7 +150,7 @@ const ExpenseList: FC<IExpenseListProps> = () => {
         );
       },
     },
- 
+
     {
       accessorKey: "dummyCategory",
       header: "Category Name",
@@ -257,7 +262,7 @@ const ExpenseList: FC<IExpenseListProps> = () => {
                     search: e.target.value,
                   }))
                 }
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate(
                   searchInputLabelPlaceholder.expenseAccount.placeholder.bn,
                   searchInputLabelPlaceholder.expenseAccount.placeholder.en

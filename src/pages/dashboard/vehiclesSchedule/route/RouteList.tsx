@@ -206,7 +206,7 @@ const RouteList: FC<IRouteListProps> = () => {
                     search: searchValue,
                   }));
                 }}
-                className="w-[300px]"
+                className="lg:w-[300px] md:w-[250px] w-[200px]"
                 placeholder={translate(
                   searchInputLabelPlaceholder.route.placeholder.bn,
                   searchInputLabelPlaceholder.route.placeholder.en
