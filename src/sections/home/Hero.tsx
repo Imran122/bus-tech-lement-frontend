@@ -11,8 +11,6 @@ import Booking, { IBookingStateProps } from "./Booking";
 import SearchResult from "./SearchResult";
 import OfferSlider from "./OfferSlider";
 import ClientNote from "./ClientNote";
-import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
-import { Paragraph } from "@/components/common/typography/Paragraph";
 
 interface IHeroProps {}
 
@@ -33,9 +31,9 @@ const Hero: FC<IHeroProps> = () => {
     roundTripReturnBookingCoachesList: [],
   });
 
-  const { data: singleCms } = useGetSingleCMSQuery(
-    {}
-  );
+  // const { data: singleCms } = useGetSingleCMSQuery(
+  //   {}
+  // );
 
   // if (singleCmsLoading) {
   //   return <Loader />;
@@ -76,7 +74,7 @@ const Hero: FC<IHeroProps> = () => {
             {translate("যাত্রা করুন", "with Confidence")}
           </Heading>
 
-          <div className="w-72 h-20 border-2 border-secondary rounded-lg bg-gray-300 flex flex-col justify-center items-start p-3">
+          {/* <div className="w-72 h-20 border-2 border-secondary rounded-lg bg-gray-300 flex flex-col justify-center items-start p-3">
             <Paragraph size="sm">
               <span className="font-bold text-secondary">For call:</span>{" "}
               {singleCms?.data?.supportNumber1},{" "}
@@ -86,7 +84,7 @@ const Hero: FC<IHeroProps> = () => {
               <span className="font-bold text-secondary">Email: </span>{" "}
               {singleCms?.data?.email}
             </Paragraph>
-          </div>
+          </div> */}
         </div>
         {/* Container for left and right sides */}
         <div className="w-full flex flex-col lg:flex-row justify-center items-start gap-6">
@@ -99,8 +97,8 @@ const Hero: FC<IHeroProps> = () => {
           </div>
 
           {/* Right side: Thumbnail */}
-          <div className=" w-full flex justify-center lg:justify-end ">
-            <HeroTiltCard className="lg:w-[500px] w-11/12 lg:h-[450px] h-[300px] border-8 border-secondary/10 overflow-visible rounded-3xl">
+          <div className=" w-full flex justify-center lg:justify-end pt-0 lg:pt-10">
+            <HeroTiltCard className="lg:w-[500px] w-11/12 lg:h-[300px] h-[300px] border-8 border-secondary/10 overflow-visible rounded-3xl">
               <PageTransition>
                 <img
                   className="w-[450px]"
@@ -126,7 +124,7 @@ const Hero: FC<IHeroProps> = () => {
           />
         </div>
       </SectionWrapper>
-      <div className="max-w-[1300px]  mx-auto">
+      <div className="max-w-[1300px]  mx-auto px-5">
         <div className="w-11/12 lg:w-full">
           <OfferSlider />
         </div>
