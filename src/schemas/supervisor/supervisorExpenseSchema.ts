@@ -31,19 +31,22 @@ const supervisorExpenseSchema = z
     file: z.string().nonempty("File is required"),
   })
   .refine(
-    (data) =>
-      data.expenseType !== "Fuel" || // Skip validation for non-Fuel types
-      (data.fuelCompanyId !== undefined &&
-        data.fuelWeight !== undefined &&
-        data.fuelPrice !== undefined),
+    (data) => {
+      if (data.expenseType === "Fuel") {
+        return (
+          data.fuelCompanyId !== undefined &&
+          data.fuelWeight !== undefined &&
+          data.fuelPrice !== undefined
+        );
+      }
+      return true; // Skip validation for non-Fuel types
+    },
     {
-      message: "Fuel expense requires fuel company id, fuel weight, fuel price",
-      path: ["fuelCompanyId"], // Point to one field for the error
+      message:
+        "Fuel expense requires fuel company ID, fuel weight, and fuel price",
+      path: ["fuelCompanyId"], // Attach validation error to this field
     }
   );
 
-// Export the schema
 export { supervisorExpenseSchema };
-
-// Export the inferred type
 export type SupervisorExpenseData = z.infer<typeof supervisorExpenseSchema>;
