@@ -68,7 +68,7 @@ const PublicNavigationMobile = () => {
   return (
     <>
       <div
-        className={`w-full bg-gradient-to-tr from-primary/5 to-tertiary/5 duration-1000 py-1.5 fixed left-0 top-0  z-50 transition-all ${
+        className={`w-full bg-gradient-to-tr from-primary/5 to-tertiary/5 duration-1000 py-1.5 fixed left-0 top-8  z-50 transition-all ${
           scrollY > 0 && "bg-white"
         }`}
       >
@@ -229,9 +229,9 @@ const PublicNavigationMobile = () => {
                 </ul>
               </nav>
             </div>
-            <button onClick={toggleMenu} className="absolute top-5 right-5">
+            {/* <button onClick={toggleMenu} className="absolute top-5 right-5">
               <RxCross2 className="text-secondary text-2xl" />
-            </button>
+            </button> */}
           </div>
         </SidebarSlide>
       </div>
@@ -239,7 +239,7 @@ const PublicNavigationMobile = () => {
       <div
         className={`${
           isMenuOpen
-            ? "fixed inset-0 bg-black/50 backdrop-blur-md z-20"
+            ? "fixed inset-0 bg-black/50 backdrop-blur-md z-10"
             : "hidden"
         }`}
         onClick={() => setIsMenuOpen(false)}

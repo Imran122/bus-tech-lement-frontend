@@ -97,8 +97,8 @@ const Hero: FC<IHeroProps> = () => {
           </div>
 
           {/* Right side: Thumbnail */}
-          <div className=" w-full flex justify-center lg:justify-end ">
-            <HeroTiltCard className="lg:w-[500px] w-11/12 lg:h-[400px] h-[300px] border-8 border-secondary/10 overflow-visible rounded-3xl">
+          <div className=" w-full flex justify-center lg:justify-end pt-0 lg:pt-10">
+            <HeroTiltCard className="lg:w-[500px] w-11/12 lg:h-[300px] h-[300px] border-8 border-secondary/10 overflow-visible rounded-3xl">
               <PageTransition>
                 <img
                   className="w-[450px]"
@@ -124,7 +124,7 @@ const Hero: FC<IHeroProps> = () => {
           />
         </div>
       </SectionWrapper>
-      <div className="max-w-[1300px]  mx-auto">
+      <div className="max-w-[1300px]  mx-auto px-5">
         <div className="w-11/12 lg:w-full">
           <OfferSlider />
         </div>

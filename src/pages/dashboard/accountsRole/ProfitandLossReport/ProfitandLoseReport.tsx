@@ -30,6 +30,7 @@ import { Heading } from "@/components/common/typography/Heading";
 import ProfitandLossPrint from "../../printLabel/ProfitandLossPrint";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfProfitandLoss from "../../pdf/PdfProfitandLoss";
+import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 
 const ProfitandLoseReport = () => {
   const [selectedRegistrationNo, setSelectedRegistrationNo] = useState<
@@ -81,7 +82,7 @@ const ProfitandLoseReport = () => {
   };
 
   if (singleCmsLoading || vehiclesLoading || profitLossLoading) {
-    return <Loader />;
+    return <TableSkeleton columns={5} />;
   }
 
   return (

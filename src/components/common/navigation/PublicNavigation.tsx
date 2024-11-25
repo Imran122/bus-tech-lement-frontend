@@ -63,12 +63,12 @@ const PublicNavigation = () => {
     window.location.reload();
   };
 
-  return (
-    <section>
+  return ( 
+    <section className={`w-full fixed left-0 top-8 z-40 bg-gradient-to-tr from-primary/5 to-tertiary/5 duration-1000 ${
+      scrollY > 0 && "bg-white"
+    }`}>
       <nav
-        className={`w-full mt-8 hidden lg:block bg-gradient-to-tr from-primary/5 to-tertiary/5 duration-1000 py-1.5 fixed left-0 top-0  z-40 transition-all ${
-          scrollY > 0 && "bg-white"
-        }`}
+        className={`max-w-7xl mx-auto hidden lg:block  py-1.5 transition-all `}
       >
         <PageTransition>
           <SectionWrapper
