@@ -45,21 +45,14 @@ import { useForm } from "react-hook-form";
 
 import SeatLayoutSelector from "@/components/common/busSeatLayout/SeatLayoutSelector";
 
-import { TimePicker } from "@/components/common/form/TimePicker";
 import { Label } from "@/components/common/typography/Label";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Tooltip,
@@ -71,11 +64,11 @@ import {
   addBookingSeatFromCounterProps,
   addBookingSeatFromCounterSchema,
 } from "@/schemas/counter/addBookingSeatFromCounter";
+import { useGetPartialInfoAllQuery } from "@/store/api/vehiclesSchedule/partialApi";
 import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { LuRefreshCw } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -125,7 +118,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   const [saleData, setSaleData] = useState<any>();
   const [updateLocal, setUpdateLocal] = useState<boolean>(false);
 
-  const [popoverOpen, setPopoverOpen] = useState(false);
+  //const [popoverOpen, setPopoverOpen] = useState(false);
   const [bookingFormState, setBookingFormState] =
     useState<ICounterBookingFormStateProps>({
       selectedSeats: [],
@@ -138,6 +131,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     useRemoveBookingSeatMutation({}) as any;
   const [unBookSeatFromCounterBooking] =
     useUnBookSeatFromCounterBookingMutation({}) as any;
+  const { data: partialData } = useGetPartialInfoAllQuery({});
   const [
     addBooking,
     {
@@ -541,9 +535,9 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       <PageTransition>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* seat issue or seat booking part counter */}
-          <PageTransition className="flex py-5 flex-row gap-6 items-center justify-center h-full w-full">
+          <PageTransition className="flex py-5 lg:flex-row flex-col gap-6 items-center justify-center h-full w-full">
             <RadioGroup
-              className="flex gap-4 mt-8"
+              className="flex lg:flex-row flex-row gap-4 mt-8"
               value={bookingType}
               onValueChange={setBookingType} // Update bookingType state on change
             >
@@ -557,62 +551,12 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
               </div>
             </RadioGroup>
             {bookingType === "SeatBooking" && (
-              <div className="flex items-center justify-center gap-4">
-                <Popover
-                  open={popoverOpen}
-                  onOpenChange={(open) => setPopoverOpen(open)}
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      onClick={() => setPopoverOpen(true)}
-                      className={cn(
-                        "bg-background mt-8 justify-start text-left font-normal text-sm h-9",
-                        !expirationDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {expirationDate
-                        ? format(expirationDate, "PPP")
-                        : translate(
-                            "মেয়াদ উত্তীর্ণ তারিখ নির্বাচন",
-                            "Expire Booking Date"
-                          )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent align="end" className="bg-background">
-                    <Calendar
-                      mode="single"
-                      selected={expirationDate || undefined}
-                      onSelect={(date: any) => {
-                        if (date) {
-                          setExpirationDate(date); // Update the expiration date
-                          setPopoverOpen(false); // Close the popover after date selection
-                        }
-                      }}
-                      fromYear={1960}
-                      toYear={new Date().getFullYear()}
-                    />
-                  </PopoverContent>
-                </Popover>
-                {/* Expiration Time Input */}
-                {/* //@ts-ignore */}
-                <InputWrapper
-                  //@ts-ignore
-                  error={errors?.time?.message}
-                  //@ts-ignore
-                  labelFor="time"
-                  label={translate(" ", " ")}
-                >
-                  {" "}
-                  {/* //@ts-ignore */}
-                  <TimePicker
-                    //@ts-ignore
-                    date={expirationTime}
-                    //@ts-ignore
-                    setDate={setExpirationTime}
-                  />
-                </InputWrapper>
+              <div className="flex items-center justify-center gap-4 lg:mt-9">
+                <h2 className="text-red-500 text-lg">
+                  This coach's booking seat expire Date{" "}
+                  {bookingCoach.departureDate} before departure time of{" "}
+                  {partialData?.data?.counterBookingTime}
+                </h2>
               </div>
             )}
           </PageTransition>
@@ -703,9 +647,9 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
           </div>
 
           {/* seat issue or seat booking part counter */}
-          <div className="flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
+          <div className="lg:flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
             {/* COUCH SEAT PLAN CONTAINER */}
-            <PageTransition className="w-4/12 flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+            <PageTransition className="lg:w-4/12 flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
               <SeatLayoutSelector
                 checkingSeat={checkingSeat}
                 bookingCoach={bookingCoach}
@@ -719,7 +663,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
             </PageTransition>
 
             {/* CUSTOMER & PAYMENT INFORMATION */}
-            <PageTransition className="flex flex-col justify-between h-full w-8/12">
+            <PageTransition className="flex flex-col justify-between h-full lg:w-8/12">
               <div>
                 <Heading size="h4">
                   {translate(

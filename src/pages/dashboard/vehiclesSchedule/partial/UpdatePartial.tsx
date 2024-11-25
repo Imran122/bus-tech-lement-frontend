@@ -10,6 +10,7 @@ interface UpdatePartialProps {
     id: number | null;
     partialPercentage: number | string;
     time: string;
+    counterBookingTime: string;
   };
 }
 
@@ -25,6 +26,7 @@ const UpdatePartial: React.FC<UpdatePartialProps> = ({ partialData }) => {
     defaultValues: {
       partialPercentage: "",
       time: "",
+      counterBookingTime: "",
     },
   });
 
@@ -34,6 +36,7 @@ const UpdatePartial: React.FC<UpdatePartialProps> = ({ partialData }) => {
       reset({
         partialPercentage: String(partialData.partialPercentage || ""), // Convert to string
         time: partialData.time || "",
+        counterBookingTime: partialData.counterBookingTime || "",
       });
     }
   }, [partialData, reset]);
@@ -92,6 +95,16 @@ const UpdatePartial: React.FC<UpdatePartialProps> = ({ partialData }) => {
         <div>
           <label className="block text-sm font-medium mb-1">Time</label>
           <Input {...register("time")} placeholder="Enter Time" required />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Counter Booking Time
+          </label>
+          <Input
+            {...register("counterBookingTime")}
+            placeholder="Enter Time"
+            required
+          />
         </div>
 
         {/* Submit Button */}

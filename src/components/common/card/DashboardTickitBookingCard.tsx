@@ -33,8 +33,8 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
   return (
     <AccordionItem value={index?.toString()}>
       <CardWrapper rounded="md" variant="muted" className="p-4 ">
-        <div className="flex justify-between w-full">
-          <ul className="w-3/12">
+        <div className="flex lg:flex-row flex-col justify-between w-full">
+          <ul className="lg:w-3/12">
             <li className="flex gap-3">
               <Badge shape="pill">
                 {coachData?.coachType == "AC"
@@ -108,8 +108,8 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
               </span>
             </li>
           </ul>
-          <ul className="flex gap-x-4 justify-center">
-            <li className="flex flex-col items-center justify-center">
+          <ul className="flex gap-x-4 justify-center mt-3 px-2">
+            <li className="flex flex-col items-center justify-center text-center">
               <Badge shape="pill" size="sm" variant="tertiary">
                 {translate("অতিরিক্ত কোনো চার্জ নেই", "No Additional Charge")}
               </Badge>

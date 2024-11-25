@@ -98,7 +98,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
   const expenseCategoryId = watch("expenseCategoryId");
   //const date = watch("date");
 
-  const formValues = watch();
+  //const formValues = watch();
   useEffect(() => {
     if (expenseType === "Fuel") {
       reset({

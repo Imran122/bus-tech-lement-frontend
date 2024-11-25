@@ -52,7 +52,6 @@ const PartialInfoList: FC<IPartialInfoProps> = () => {
       page: query.page,
       size: query.size,
     });
-
   useEffect(() => {
     if (partialInfoData?.data) {
       const partialArray = [partialInfoData.data]; // Convert response object to an array
@@ -79,6 +78,10 @@ const PartialInfoList: FC<IPartialInfoProps> = () => {
       header: translate("পারশিয়াল শতাংশ", "Partial Percentage"),
     },
     { accessorKey: "time", header: translate("সময়", "Time") },
+    {
+      accessorKey: "counterBookingTime",
+      header: translate("কাউন্টার বুকিং টাইম", "Counter Booking Time"),
+    },
     {
       header: translate("কার্যক্রম", "Action"),
       id: "actions",
@@ -114,6 +117,7 @@ const PartialInfoList: FC<IPartialInfoProps> = () => {
                       id: partial.id,
                       partialPercentage: partial.partialPercentage,
                       time: partial.time,
+                      counterBookingTime: partial.counterBookingTime,
                     }}
                   />
                 </DialogContent>
