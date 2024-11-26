@@ -215,7 +215,7 @@ const UserRoleList: FC<IRoleListProps> = () => {
         )}
         heading={translate("ভূমিকা তালিকা", "Role List")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

@@ -252,7 +252,7 @@ const ExpenseList: FC<IExpenseListProps> = () => {
         )}
         heading={translate("খরচ অ্যাকাউন্ট", "Expense Account")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

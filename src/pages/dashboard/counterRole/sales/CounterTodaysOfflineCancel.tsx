@@ -178,7 +178,7 @@ const CounterTodaysOfflineCancel: FC<ISalesListProps> = () => {
           "Today's Offline Cancel Sales"
         )}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

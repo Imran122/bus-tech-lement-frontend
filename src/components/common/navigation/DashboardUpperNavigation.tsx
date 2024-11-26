@@ -21,6 +21,7 @@ import { FC, useState } from "react";
 import { LuUserCircle } from "react-icons/lu";
 import { useDispatch } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import logocompany from "../../../assets/longeng.png";
 import DashboardSidebarSmallDevices from "./DashboardSidebarSmallDevices";
 import LocaleSwitcher from "./LocaleSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -53,13 +54,13 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
     return null;
   }
   return (
-    <header className="sticky !h-14 !bg-muted/30 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
-      {/* DASHBOARD SIDEBAR FOR SMALL DEVICES */}
-      <DashboardSidebarSmallDevices />
+    <header className="sticky !h-14 md:!bg-muted/30 !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
       {/* NAVIGATION LINKS */}
-
+      <div className="md:hidden block">
+        <img src={logocompany} />
+      </div>
       <nav className="justify-between w-full flex">
-        <ul className="hidden lg:flex gap-x-2 items-center">
+        <ul className="hidden lg:flex gap-x-2 items-center ">
           {subNavigation?.subLinks?.map((subLink, index) => (
             <li key={index}>
               {
@@ -140,6 +141,8 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
           </li>
         </ul>
       </nav>
+      {/* DASHBOARD SIDEBAR FOR SMALL DEVICES */}
+      <DashboardSidebarSmallDevices />
       <ModalSystem activeModal={activeModal} setActiveModal={setActiveModal} />
     </header>
   );

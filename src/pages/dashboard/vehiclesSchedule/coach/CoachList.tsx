@@ -275,7 +275,7 @@ const CoachList: FC<ICoachListProps> = () => {
         )}
         heading={translate("কোচ", "Coach")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input
