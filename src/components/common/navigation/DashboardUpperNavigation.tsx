@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { openModal } from "@/store/api/user/coachConfigModalSlice";
+import ModalSystem from "@/utils/constants/common/commonModal/ModalSystem";
 import {
   adminNavigationLinks,
   INavigationLinks,
@@ -20,13 +21,9 @@ import { FC, useState } from "react";
 import { LuUserCircle } from "react-icons/lu";
 import { useDispatch } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import PageTransition from "../effect/PageTransition";
-import { Label } from "../typography/Label";
 import DashboardSidebarSmallDevices from "./DashboardSidebarSmallDevices";
 import LocaleSwitcher from "./LocaleSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import AddFuelPayment from "@/pages/dashboard/admin/fuel/AddFuelPayment";
 interface IDashboardUpperNavigationProps {}
 
 const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
@@ -34,13 +31,27 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
   const { route } = useAppContext();
   const { translate } = useCustomTranslator();
   const { role, avatar } = shareAuthentication();
-  const [paymentOpen, setPaymentOpen] = useState<boolean>(false);
-  const subNavigation = adminNavigationLinks?.find(
-    (singleSubNavigation: INavigationLinks) => singleSubNavigation.key === route
-  ) as any;
+  //const [paymentOpen, setPaymentOpen] = useState<boolean>(false);
+
   //modal work
   const dispatch = useDispatch();
+  const [activeModal, setActiveModal] = useState<string | null>(null);
 
+  // Find the sub-navigation links
+  const subNavigation = adminNavigationLinks.find(
+    (singleSubNavigation) => singleSubNavigation.key === route
+  );
+
+  const handleLinkClick = (subLink: INavigationLinks) => {
+    if (subLink.action === "openModal") {
+      dispatch(openModal());
+    } else if (subLink.modalComponent) {
+      setActiveModal(subLink.modalComponent);
+    }
+  };
+  if (!subNavigation?.subLinks?.length) {
+    return null;
+  }
   return (
     <header className="sticky !h-14 !bg-muted/30 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
       {/* DASHBOARD SIDEBAR FOR SMALL DEVICES */}
@@ -49,65 +60,38 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
 
       <nav className="justify-between w-full flex">
         <ul className="hidden lg:flex gap-x-2 items-center">
-          {subNavigation?.subLinks?.length > 0 &&
-            subNavigation?.subLinks?.map(
-              (singleNav: INavigationLinks, navIndex: number) => (
-                <li key={navIndex}>
-                  <PageTransition>
-                    <NavLink
-                      to={"/" + role + "/" + singleNav.href}
-                      className={({ isActive, isPending }) =>
-                        isPending
-                          ? "pending"
-                          : isActive
-                          ? "active_link"
-                          : "inactive_link"
-                      }
-                    >
-                      <Label className="cursor-pointer" size="sm">
-                        {translate(singleNav.label.bn, singleNav.label.en)}
-                      </Label>
-                    </NavLink>
-                  </PageTransition>
-                </li>
-              )
-            )}
-          <li>
-            <Dialog
-              open={paymentOpen}
-              onOpenChange={(open) => setPaymentOpen(open)}
-            >
-              <DialogTrigger asChild>
-                <Button
-                  className={`${
-                   paymentOpen &&
-                    "outline-none ring-2 focus border-destructive ring-destructive/80 ring-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 w-full"
-                  }`}
-                  variant="outline"
-                  size="sm"
-                >
-                  Payment
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-h-[90%] overflow-y-auto md:max-w-[800px]">
-                {/* CUSTOMER DETAILS CONTAINER */}
-                <AddFuelPayment
-                  setPaymentOpen={(open:boolean) =>
-                    setPaymentOpen(open)
-                  }
-                />
-              </DialogContent>
-            </Dialog>
-          </li>
-          <li>
-            {" "}
-            <button
-              onClick={() => dispatch(openModal())}
-              className="btn btn-primary"
-            >
-              Update Coach Configs
-            </button>
-          </li>
+          {subNavigation?.subLinks?.map((subLink, index) => (
+            <li key={index}>
+              {
+                //@ts-ignore
+                subLink.action ? (
+                  <button
+                    onClick={() => handleLinkClick(subLink)}
+                    className="btn btn-primary"
+                  >
+                    {translate(subLink.label.bn, subLink.label.en)}
+                  </button>
+                ) : //@ts-ignore
+                subLink.modalComponent ? (
+                  <button
+                    onClick={() => handleLinkClick(subLink)}
+                    className="btn btn-link"
+                  >
+                    {translate(subLink.label.bn, subLink.label.en)}
+                  </button>
+                ) : (
+                  <NavLink
+                    to={"/" + role + "/" + subLink.href}
+                    className={({ isActive }) =>
+                      isActive ? "active_link" : "inactive_link"
+                    }
+                  >
+                    {translate(subLink.label.bn, subLink.label.en)}
+                  </NavLink>
+                )
+              }
+            </li>
+          ))}
         </ul>
 
         <ul className="flex gap-x-2 items-center">
@@ -156,6 +140,7 @@ const DashboardUpperNavigation: FC<IDashboardUpperNavigationProps> = () => {
           </li>
         </ul>
       </nav>
+      <ModalSystem activeModal={activeModal} setActiveModal={setActiveModal} />
     </header>
   );
 };

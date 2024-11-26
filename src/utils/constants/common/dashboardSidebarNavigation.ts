@@ -38,8 +38,10 @@ export interface INavigationLinks {
     en: string;
   };
   key: string;
-  href: string;
-  subLinks?: INavigationLinks[];
+  href?: string; // Optional, some links might not have href
+  subLinks?: INavigationLinks[]; // Nested sublinks
+  action?: string; // Custom action identifier, e.g., "openModal"
+  modalComponent?: string; // Modal component identifier
 }
 
 // CONTACTS LINKS
@@ -181,6 +183,12 @@ const vehicleAndScheduleManagementLinks = {
       key: "partial_info",
       href: "partial_info",
     },
+    {
+      icon: LuUserCheck,
+      label: { bn: "কোচ আপডেট করুন", en: "Update Coach Configs" },
+      key: "update_coach_configs",
+      action: "openModal", // Custom action identifier
+    },
   ],
 };
 
@@ -272,14 +280,20 @@ const FulelManagementLinks = {
       key: "fuel-management",
       href: "fuel-management",
     },
+    // {
+    //   icon: LuBriefcase,
+    //   label: {
+    //     bn: "জ্বালানী বিক্রয় সারাংশ",
+    //     en: "Fule Sales Summary",
+    //   },
+    //   key: "fuel-sales-summary",
+    //   href: "fuel-sales-summary",
+    // },
     {
       icon: LuBriefcase,
-      label: {
-        bn: "জ্বালানী বিক্রয় সারাংশ",
-        en: "Fule Sales Summary",
-      },
-      key: "fuel-sales-summary",
-      href: "fuel-sales-summary",
+      label: { bn: "পেমেন্ট", en: "Payment" },
+      key: "fuel_payment",
+      modalComponent: "AddFuelPayment", // Modal component identifier
     },
   ],
 };
