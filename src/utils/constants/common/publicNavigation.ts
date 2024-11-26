@@ -1,4 +1,12 @@
-import { LuGitFork, LuListOrdered, LuTarget, LuUsers } from "react-icons/lu";
+import {
+  LuHome,
+  LuGitFork,
+  LuListOrdered,
+  LuTarget,
+  LuUsers,
+} from "react-icons/lu";
+import { TbUsersGroup } from "react-icons/tb";
+import { RiContactsLine, RiFindReplaceLine } from "react-icons/ri";
 export interface INavigationLinks {
   icon?: string;
   label: {
@@ -50,50 +58,33 @@ export const publicNavigationLinks: Record<
 > = {
   bn: [
     {
-      icon: LuTarget,
+      icon: LuHome,
       label: "হোম",
       key: "/",
       href: "/",
     },
-    {
-      icon: LuTarget,
-      label: "সেবা",
-      key: "/services",
-      href: "/seervices",
-    },
 
     {
-      icon: LuTarget,
+      icon: TbUsersGroup,
       label: "আমাদের সম্পর্কে",
       key: "/about_us",
       href: "/about_us",
     },
+    // {
+    //   icon: LuTarget,
+    //   label: "গমনপথ",
+    //   key: "/route",
+    //   href: "/route",
+    // },
+
     {
-      icon: LuTarget,
-      label: "গমনপথ",
-      key: "/route",
-      href: "/route",
-    },
-    {
-      icon: LuTarget,
-      label: "বিজ্ঞপ্তি",
-      key: "/notice",
-      href: "/notice",
-    },
-    {
-      icon: LuTarget,
-      label: "ব্লগ",
-      key: "/blog",
-      href: "/blog",
-    },
-    {
-      icon: LuTarget,
+      icon: RiContactsLine,
       label: "যোগাযোগ",
       key: "/contact",
       href: "/contact",
     },
     {
-      icon: LuTarget,
+      icon: RiFindReplaceLine,
       label: "টিকিট খুঁজুন",
       key: "/search_tickit",
       href: "/search_tickit",
@@ -101,50 +92,27 @@ export const publicNavigationLinks: Record<
   ],
   en: [
     {
-      icon: LuTarget,
+      icon: LuHome,
       label: "Home",
       key: "/",
       href: "/",
     },
-    {
-      icon: LuTarget,
-      label: "services",
-      key: "/services",
-      href: "/services",
-    },
 
     {
-      icon: LuTarget,
+      icon: TbUsersGroup,
       label: "About us",
       key: "/about_us",
       href: "/about_us",
     },
+
     {
-      icon: LuTarget,
-      label: "Route",
-      key: "/route",
-      href: "/route",
-    },
-    {
-      icon: LuTarget,
-      label: "Notice",
-      key: "/notice",
-      href: "/notice",
-    },
-    {
-      icon: LuTarget,
-      label: "Blog",
-      key: "/blog",
-      href: "/blog",
-    },
-    {
-      icon: LuTarget,
+      icon: RiContactsLine,
       label: "Contact",
       key: "/contact",
       href: "/contact",
     },
     {
-      icon: LuTarget,
+      icon: RiFindReplaceLine,
       label: "Find Tickit",
       key: "/search_tickit",
       href: "/search_tickit",

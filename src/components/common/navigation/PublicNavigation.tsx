@@ -77,13 +77,13 @@ const PublicNavigation = () => {
               useFontShifter()
             )}
           >
-            <div>
+            <Link to={"/"}>
               {language === "en" ? (
                 <img className="h-[60px]" src={logo} alt="logo" />
               ) : (
                 <img className="h-[60px]" src={logobangla} alt="logo" />
               )}
-            </div>
+            </Link>
             <div className="flex items-center gap-x-2">
               {publicLinks.map((singleLink: any) => (
                 <NavLink
