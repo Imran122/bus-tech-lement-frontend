@@ -32,7 +32,7 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
   return (
     <AccordionItem value={index?.toString()}>
       <CardWrapper rounded="md" variant="muted" className="p-4 ">
-        <div className="flex justify-between w-full">
+        <div className="flex md:flex-row flex-col gap-3 md:justify-between md:items-center items-start w-full">
           <ul className="w-3/12">
             <li className="flex gap-3">
               <Badge shape="pill">
