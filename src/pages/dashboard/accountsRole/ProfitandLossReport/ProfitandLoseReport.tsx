@@ -91,7 +91,7 @@ const ProfitandLoseReport = () => {
         Iconic Transport
       </Paragraph>
 
-      <ul className="flex space-x-3">
+      <ul className="flex my-3 space-x-3">
         <li>
           <PDFDownloadLink
               document={<PdfProfitandLoss  dateRange={dateRange}
@@ -128,7 +128,8 @@ const ProfitandLoseReport = () => {
         </li>
       </ul>
       <div className="flex justify-between items-center">
-        <div className="flex space-x-4">
+        <div className="flex flex-col">
+          <label className="text-xs lg:text-sm py-2 lg:py-0 font-semibold" htmlFor="">Select Bus No</label>
           <Select onValueChange={handleRegistrationNoChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a Bus No" />
@@ -150,16 +151,16 @@ const ProfitandLoseReport = () => {
                   id="date"
                   variant={"outline"}
                   className={cn(
-                    "w-[300px] font-normal text-sm",
+                    "w-[180px] lg:w-[250px] font-normal text-sm",
                     !date && "text-muted-foreground"
                   )}
                 >
                   {/* <CalendarIcon className="mr-2 h-4 w-4" /> */}
                   {date?.from ? (
                     date.to ? (
-                      `${dateFormatter(date.from)} - ${dateFormatter(date.to)}`
+                      `${format(date.from, "dd-MM-yyyy")} - ${format(date.to, "dd-MM-yyyy")}`
                     ) : (
-                      dateFormatter(date.from)
+                      format(date.from, "dd-MM-yyyy")
                     )
                   ) : (
                     <span className="text-sm">Pick a Date Range</span>
@@ -182,10 +183,10 @@ const ProfitandLoseReport = () => {
       </div>
 
       <section className="mt-10">
-        <Heading size={"h6"}>{`Profit / Loss details for the month of ${
+        <Heading className="text-xs md:text-xl" size={"h6"}>{`Profit / Loss details for the month of ${
           date?.from && date?.to ? dateRange : ""
         }`}</Heading>
-        <div className="border overflow-hidden">
+        <div className="border overflow-hidden overflow-x-auto">
           <table className="table-auto w-full border-collapse border border-gray-200">
             {/* Table Header */}
             <thead className="bg-gray-100">
@@ -300,7 +301,7 @@ const ProfitandLoseReport = () => {
         </div>
       </section>
 
-      <section className="border overflow-hidden my-10">
+      <section className="border overflow-hidden overflow-x-auto my-10">
         <table className="table-auto w-full border-collapse border border-gray-200">
           <tbody>
             {[

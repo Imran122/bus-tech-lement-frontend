@@ -17,7 +17,7 @@ const InputWrapper = React.forwardRef<
   >
     {label && (
       <label
-        className="text-sm max-w-none truncate inline-block leading-8"
+        className="text-xs sm:text-sm font-semibold max-w-none truncate inline-block leading-8"
         htmlFor={labelFor || ""}
       >
         {label.trim() === "#" ? (

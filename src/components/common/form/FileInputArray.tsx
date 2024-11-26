@@ -41,7 +41,7 @@ const FileInputArray: React.FC<FileInputArrayProps> = ({
     <div className="">
       <label
         htmlFor={id}
-        className={cn(`w-72 h-36 flex flex-col items-center p-3 ${
+        className={cn(`w-full flex flex-col items-center p-3 ${
           disabled ? "bg-gray-200" : "bg-white"
         } text-blue rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer`, className)}
       >
@@ -49,7 +49,7 @@ const FileInputArray: React.FC<FileInputArrayProps> = ({
           <img
             src={preview}
             alt="Preview"
-            className="w-52 h-[118px] object-contain border rounded-md"
+            className="w-full  object-contain border rounded-md"
           />
         ) : (
           <>
