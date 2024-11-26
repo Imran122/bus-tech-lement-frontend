@@ -150,7 +150,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   return (
     <div className="flex justify-center items-center">
       <PageTransition className=" w-full ">
-        <div className="mt-2 mb-24">
+        <div className="mt-2 mb-10">
           <div id="booking" className="rounded-lg ">
             <Heading className=" text-start  pb-6" size="h4">
               {translate("আপনার যাত্রা শুরু করুন", "Start Your Journey")}
@@ -185,8 +185,9 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                         fromCounterId: +value,
                       }));
                     }}
+                    
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="uppercase">
                       <SelectValue
                         placeholder={translate(
                           "শুরু করার কাউন্টার",
@@ -226,7 +227,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       }));
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="uppercase">
                       <SelectValue
                         placeholder={translate(
                           "গন্তব্য কাউন্টার",
@@ -270,16 +271,16 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       }));
                     }}
                   >
-                    <SelectTrigger id="coachType" className="w-full">
+                    <SelectTrigger id="coachType" className="w-full uppercase">
                       <SelectValue
                         placeholder={translate("কোচের ধরণ", "Coach Type")}
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="AC">
+                      <SelectItem value="AC" className="uppercase">
                         {translate("শীতাতপ নিয়ন্ত্রিত", "Air Condition")}
                       </SelectItem>
-                      <SelectItem value="NON AC">
+                      <SelectItem value="NON AC" className="uppercase">
                         {translate(
                           "শীতাতপ নিয়ন্ত্রিত বিহীন",
                           "Without Air Condition"

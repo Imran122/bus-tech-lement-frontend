@@ -124,11 +124,11 @@ const Hero: FC<IHeroProps> = () => {
           />
         </div>
       </SectionWrapper>
-      <div className="max-w-[1300px]  mx-auto px-5">
-        <div className="w-11/12 lg:w-full">
+      <div className="mx-auto px-5">
+        <div className="w-full mx-auto">
           <OfferSlider />
         </div>
-        <div className="mt-16 w-11/12 lg:w-full mx-auto">
+        <div className="mt-16 w-full mx-auto">
           <ClientNote />
         </div>
       </div>

@@ -127,7 +127,7 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
     <section className="min-h-screen">
       <PageWrapper>
         <div className="flex flex-col justify-center items-center">
-          <PageTransition className="p-5 w-8/12 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+          <PageTransition className="p-5 w-full lg:w-8/12 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <Heading size="h4" className="text-center">
               {translate("টিকিট খুঁজুন", "Find Ticket")}
             </Heading>

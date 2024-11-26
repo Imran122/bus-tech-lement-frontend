@@ -24,21 +24,21 @@ export default function OfferSlider() {
         <img
           src={singleCms?.data?.offeredImageOne}
           alt={`Slider one`}
-          className="w-full h-80 object-cover rounded-lg mx-auto"
+          className="w-full h-48 lg:h-80 object-cover rounded-lg mx-auto"
         />
       </SwiperSlide>
       <SwiperSlide>
         <img
           src={singleCms?.data?.offeredImageTwo}
           alt={`Slider two`}
-          className="w-full h-80 object-cover rounded-lg mx-auto"
+          className="w-full h-48 lg:h-80 object-cover rounded-lg mx-auto"
         />
       </SwiperSlide>
       <SwiperSlide>
         <img
           src={singleCms?.data?.offeredImageThree}
           alt={`Slider three`}
-          className="w-full h-80 object-cover rounded-lg mx-auto"
+          className="w-full h-48 lg:h-80 object-conver rounded-lg mx-auto"
         />
       </SwiperSlide>
     </Swiper>
