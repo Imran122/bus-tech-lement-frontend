@@ -188,7 +188,7 @@ const PublicNavigationMobile = () => {
           >
             <div className="shadow-sm hover:text-primary-100 min-h-screen mt-4 pl-5">
               <nav>
-                <ul className=" items-center gap-5 pl-4">
+                <ul className="flex flex-col gap-5 pl-4 pt-5">
                   {publicLinks.map((singleLink: any) => (
                     <NavLink
                       to={singleLink.href}
@@ -196,7 +196,7 @@ const PublicNavigationMobile = () => {
                       className={({ isActive }) =>
                         isActive
                           ? "text-foreground"
-                          : "hover:bg-primary/15 rounded-full"
+                          : " rounded-full"
                       }
                       onClick={() => setSelected(singleLink?.key)}
                     >
