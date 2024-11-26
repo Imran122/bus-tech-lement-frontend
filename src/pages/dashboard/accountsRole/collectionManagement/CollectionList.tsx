@@ -203,7 +203,7 @@ const CollectionList: FC<ICollectionManagementDashboardProps> = () => {
         )}
         heading={translate("সংগ্রহ ব্যবস্থাপনা", "Collection Management")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

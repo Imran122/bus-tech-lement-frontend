@@ -324,8 +324,8 @@ const UserList: FC<IUserListProps> = () => {
         )}
         heading={translate("ব্যবহারকারী", "User")}
       >
-        <TableToolbar alignment="end">
-          <ul className="flex items-center gap-x-2">
+        <TableToolbar alignment="responsive">
+          <ul className="flex  gap-x-2">
             <li>
               <Input
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>

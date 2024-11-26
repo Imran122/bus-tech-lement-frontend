@@ -138,7 +138,7 @@ const SupervisorExpenseList: FC = () => {
   return (
     <PageWrapper>
       <TableWrapper heading={translate("খরচের তালিকা", "Expense List")}>
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

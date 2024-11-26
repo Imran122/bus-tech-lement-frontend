@@ -119,7 +119,7 @@ export default function CounterReportsList() {
         )}
         heading={translate("আজকের তথ্য উপাত্ত", "Today's Report")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <DropdownMenu>

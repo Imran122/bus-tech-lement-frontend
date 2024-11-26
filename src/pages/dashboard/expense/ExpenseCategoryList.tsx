@@ -157,7 +157,7 @@ const ExpenseCategoryList: FC<IExpenseCategoryListProps> = () => {
         )}
         heading={translate("খরচের ক্যাটাগরি", "Expense category")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

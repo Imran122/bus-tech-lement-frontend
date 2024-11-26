@@ -27,7 +27,7 @@ import {
   useGetUserWiseSaleAdminReportQuery,
 } from "@/store/api/adminReport/adminReportApi";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import {format} from "date-fns/format";
+import { format } from "date-fns/format";
 import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { LuDownload } from "react-icons/lu";
@@ -162,7 +162,7 @@ const UserWiseSalesReportAdmin: FC<IUserWiseSalesReportAdminProps> = () => {
               <SelectValue placeholder="Select a user" />
             </SelectTrigger>
             <SelectContent>
-              {userList?.data?.map((user:any) => (
+              {userList?.data?.map((user: any) => (
                 <SelectItem key={user.id} value={user.id.toString()}>
                   {user.userName}
                 </SelectItem>
@@ -239,7 +239,7 @@ const UserWiseSalesReportAdmin: FC<IUserWiseSalesReportAdminProps> = () => {
         )}
         heading={translate("সেলস রিপোর্ট", "Sales Report")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <Button variant="outline" size="sm">
             <LuDownload className="size-4 mr-1" />
             {translate("এক্সপোর্ট", "Export")}
@@ -247,9 +247,9 @@ const UserWiseSalesReportAdmin: FC<IUserWiseSalesReportAdminProps> = () => {
         </TableToolbar>
 
         <DataTable
-        //@ts-ignore
-        query={query}
-        //@ts-ignore
+          //@ts-ignore
+          query={query}
+          //@ts-ignore
           setQuery={setQuery}
           pagination
           columns={columns}

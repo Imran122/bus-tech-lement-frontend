@@ -379,7 +379,7 @@ const UpdateCoachConfigurationList: FC<
           "Update Coach Configuration"
         )}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

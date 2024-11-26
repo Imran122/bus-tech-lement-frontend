@@ -38,11 +38,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
+import { useReactToPrint } from "react-to-print";
+import ReservePrint from "../../printLabel/ReservePrint";
 import AddResurb from "./AddReserve";
 import ReserveDetails from "./ReserveDetails";
 import UpdateReserve from "./UpdateReserve";
-import { useReactToPrint } from "react-to-print";
-import ReservePrint from "../../printLabel/ReservePrint";
 
 interface IReserveListProps {}
 export interface IReserveStateProps {
@@ -325,7 +325,7 @@ const ReserveList: FC<IReserveListProps> = () => {
           )}
           heading={translate("রিজার্ভ", "Reserve")}
         >
-          <TableToolbar alignment="end">
+          <TableToolbar alignment="responsive">
             <ul className="flex items-center gap-x-2">
               <li>
                 <Input

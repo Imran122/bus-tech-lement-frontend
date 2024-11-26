@@ -172,7 +172,7 @@ const AccountantExpenseSubCategoreyList: FC = () => {
         )}
         heading={translate("ব্যয় উপবিভাগ", "Expense Subcategories")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <Input
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setSubExpenseState((prev) => ({
