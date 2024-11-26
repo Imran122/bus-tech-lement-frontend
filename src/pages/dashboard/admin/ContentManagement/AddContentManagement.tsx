@@ -278,14 +278,15 @@ const AddContentManagement = () => {
       className=""
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-4 gap-x-4 gap-y-2">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-2 text-center lg:text-start font-semibold">
           <InputWrapper
             labelFor="companyLogo"
             label={translate("কোম্পানির লোগো", "Company Logo")}
+            className=""
           >
             <div className="flex flex-col items-center gap-2">
               <FileInputArray
-                className={"w-[232px]"}
+                className={"w-[150px] lg:w-[232px]"}
                 id="companyLogo"
                 label={translate(
                   "কোম্পানির লোগো নির্বাচন করুন",
@@ -341,7 +342,7 @@ const AddContentManagement = () => {
           >
             <div className="flex flex-col items-center gap-2">
               <FileInputArray
-                className={"w-[232px]"}
+                className={"w-[150px] lg:w-[232px]"}
                 id="companyLogoBangla"
                 label={translate(
                   "কোম্পানির লোগো নির্বাচন করুন(বাংলা)",
@@ -395,7 +396,7 @@ const AddContentManagement = () => {
           >
             <div className="flex flex-col items-center gap-2">
               <FileInputArray
-                className={"w-[232px]"}
+                className={"w-[150px] lg:w-[232px]"}
                 id="footerLogo"
                 label={translate(
                   "ফুটার লোগো নির্বাচন করুন",
@@ -449,7 +450,7 @@ const AddContentManagement = () => {
           >
             <div className="flex flex-col items-center gap-2">
               <FileInputArray
-                className={"w-[232px]"}
+                className={"w-[150px] lg:w-[232px]"}
                 id="footerLogoBangla"
                 label={translate(
                   "ফুটার লোগো নির্বাচন করুন(বাংলা)",
@@ -502,7 +503,7 @@ const AddContentManagement = () => {
           >
             <div className="flex flex-col items-center gap-2">
               <FileInputArray
-                className={"w-[232px]"}
+                className={"w-[150px] lg:w-[232px]"}
                 id="offeredImage1"
                 label={translate(
                   "অফারের ছবি ১ নির্বাচন করুন(বাংলা)",
@@ -555,7 +556,7 @@ const AddContentManagement = () => {
           >
             <div className="flex flex-col items-center gap-2">
               <FileInputArray
-                className={"w-[232px]"}
+                className={"w-[150px] lg:w-[232px]"}
                 id="offeredImage2"
                 label={translate(
                   "অফারের ছবি ২ নির্বাচন করুন(বাংলা)",
@@ -607,7 +608,7 @@ const AddContentManagement = () => {
           >
             <div className="flex flex-col items-center gap-2">
               <FileInputArray
-                className={"w-[232px]"}
+                className={"w-[150px] lg:w-[232px]"}
                 id="offeredImage3"
                 label={translate(
                   "অফারের ছবি ৩ নির্বাচন করুন(বাংলা)",
@@ -655,7 +656,7 @@ const AddContentManagement = () => {
           </InputWrapper>
         </div>
 
-        <div className="grid grid-cols-3 gap-x-4 gap-y-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
           {/* Dynamically render fields */}
           {Object.entries(cmsForm).map(([key, { label, placeholder }]) => (
             <InputWrapper
@@ -663,7 +664,7 @@ const AddContentManagement = () => {
               error={(errors as any)[key]?.message}
               labelFor={key}
               label={translate(label.bn, label.en)}
-              className="relative mt-10"
+              className="relative lg:mt-10"
             >
               <div className="flex flex-col items-center gap-3">
                 <input
@@ -706,7 +707,7 @@ const AddContentManagement = () => {
         </div>
 
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
           <InputWrapper
             key="homePageDescription"
             error={(errors as any)?.homePageDescription?.message}

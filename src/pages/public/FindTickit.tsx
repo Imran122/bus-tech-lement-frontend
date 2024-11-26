@@ -185,7 +185,7 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
                   <Heading size="h4" className="pb-5">
                     {translate("টিকিটের তথ্য", "Ticket Information")}
                   </Heading>
-                  <ul className="grid grid-cols-2 mx-auto items-center">
+                  <ul className="grid grid-cols-1 lg:grid-cols-2 gap-3 mx-auto items-center">
                     <li>
                       <strong>{translate("টিকিট নম্বর", "Ticket No")}:</strong>{" "}
                       {ticketData.ticketNo}

@@ -16,6 +16,7 @@ import { RxCross2 } from "react-icons/rx";
 import { Button } from "@/components/ui/button";
 import { MdOutlineLogout } from "react-icons/md";
 import { FiLogIn } from "react-icons/fi";
+import { RxDashboard } from "react-icons/rx";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -59,7 +60,7 @@ const PublicNavigationMobile = () => {
   return (
     <>
       <div
-        className={`w-full bg-gradient-to-tr from-primary/5 to-tertiary/5 duration-1000 py-1.5 fixed left-0 top-8  z-40 transition-all ${
+        className={`w-full  bg-gradient-to-tr from-primary/5 to-tertiary/5 duration-1000 py-1.5 fixed left-0 top-8  z-40 transition-all ${
           scrollY > 0 && "bg-white"
         }`}
       >
@@ -114,7 +115,7 @@ const PublicNavigationMobile = () => {
                         <span
                           onClick={() => setIsMenuOpen(false)}
                           className={cn(
-                            "relative z-10 leading-5 px-3 py-1.5 flex text-[18px] justify-start items-center",
+                            "relative z-10 leading-5 px-3 py-1.5 flex text-[16px] justify-start items-center",
                             selected === singleLink?.key && "text-primary"
                           )}
                         >
@@ -133,24 +134,25 @@ const PublicNavigationMobile = () => {
                   ))}
                   <li>
                     {email ? (
-                      <div className="flex items-center gap-2 w-5/6">
-                        <>
+                      <div className="w-5/6">
+                        <div className="border py-1.5  rounded-sm w-full">
                           <Link
                             onClick={()=>setIsMenuOpen(false)}
                             to={role + "/profile"}
-                            className="border py-[3px] px-1 rounded-sm"
+                            className="flex items-center gap-2 px-5"
                           >
+                            <RxDashboard className="text-sm"/>
                             {translate("ড্যাশবোর্ড", "Dashboard")}
                           </Link>
-                        </>
+                        </div>
 
                         <AlertDialog>
                           <AlertDialogTrigger
                             className={cn(
-                              "w-full flex bg-destructive text-destructive-foreground hover:bg-destructive/90 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-destructive focus:text-bg-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                              "w-full mt-5 flex bg-destructive text-destructive-foreground hover:bg-destructive/90 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-destructive focus:text-bg-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
                             )}
                           >
-                            <span className="ml-0.5 flex items-center gap-1">
+                            <span className="ml-0.5 flex items-center gap-1 px-3">
                               <MdOutlineLogout className="text-xl" />
                               {translate("লগআউট", "Logout")}
                             </span>

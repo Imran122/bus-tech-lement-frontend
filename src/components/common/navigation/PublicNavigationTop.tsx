@@ -3,6 +3,7 @@ import { FiInstagram } from "react-icons/fi";
 import { FiTwitter } from "react-icons/fi";
 import { CiLinkedin } from "react-icons/ci";
 import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
+import { Paragraph } from "../typography/Paragraph";
 
 const PublicNavigationTop = () => {
   const { data: singleCms } = useGetSingleCMSQuery({});
@@ -10,18 +11,15 @@ const PublicNavigationTop = () => {
   return (
     <header className="sticky z-40 top-0 bg-secondary">
       <section className="max-w-7xl mx-auto px-5 lg:px-0 flex items-center justify-between py-1">
-        <h1 className="w-3/12 text-sm font-semibold hidden text-white lg:block">
+        <Paragraph className="w-3/12 text-sm font-semibold hidden text-white lg:block">
           <a href="">Email: {singleCms?.data?.email}</a>
-        </h1>
+        </Paragraph>
 
         <div className="nav font-semibold text-lg text-white">
           <ul className="flex items-center">
             <li className="text-sm font-semibold">Support:</li>
             <li className=" text-sm font-semibold mx-2">
-              <a href="#">{singleCms?.data?.supportNumber1},</a>
-            </li>
-            <li className=" text-sm font-semibold">
-              <a href="#">{singleCms?.data?.supportNumber2}</a>
+              <a href="#">{singleCms?.data?.supportNumber1}</a>
             </li>
           </ul>
         </div>
