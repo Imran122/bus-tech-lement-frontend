@@ -174,7 +174,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                   </div>
                 </RadioGroup>
               </PageTransition>
-              <ul className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <ul className="grid grid-cols-2 gap-5">
                 {/* START   ING POINT */}
                 <li>
                   <Select
@@ -202,6 +202,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                             <SelectItem
                               key={counterIndex}
                               value={singleCounter?.id?.toString()}
+                              className="uppercase"
                             >
                               {singleCounter?.name}
                             </SelectItem>
@@ -245,6 +246,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                             <SelectItem
                               key={counterIndex}
                               value={singleCounter?.id?.toString()}
+                              className="uppercase"
                             >
                               {singleCounter?.name}
                             </SelectItem>
@@ -301,18 +303,18 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       <Button
                         variant="outline"
                         className={cn(
-                          "justify-start text-left font-normal w-full text-muted-foreground hover:bg-background text-sm h-9",
+                          "justify-start text-left font-normal w-full px-3 text-muted-foreground hover:bg-background text-sm h-9",
                           !bookingState.date && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {bookingState.date ? (
-                          format(bookingState.date, "PPP")
+                          format(bookingState.date, "dd/MM/yyyy")
                         ) : (
                           <span>
                             {translate(
-                              "বুকিংয়ের তারিখ নির্বাচন করুন",
-                              "Pick The Booking Date"
+                              "বুকিংয়ের তারিখ",
+                              "Booking Date"
                             )}
                           </span>
                         )}
@@ -365,18 +367,18 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                         <Button
                           variant="outline"
                           className={cn(
-                            "justify-start text-left font-normal w-full text-muted-foreground hover:bg-background text-sm h-9",
+                            "justify-start px-3 text-left font-normal w-full text-muted-foreground hover:bg-background text-sm h-9",
                             !bookingState.returnDate && "text-muted-foreground"
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {bookingState.returnDate ? (
-                            format(bookingState.returnDate, "PPP")
+                            format(bookingState.returnDate, "dd/MM/yyyy")
                           ) : (
                             <span>
                               {translate(
-                                "ফেরার তারিখ নির্বাচন করুন",
-                                "Pick Return Booking Date"
+                                "ফেরার তারিখ",
+                                "Return Date"
                               )}
                             </span>
                           )}
