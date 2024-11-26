@@ -1,7 +1,7 @@
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { useFontShifter } from "@/utils/hooks/useFontShifter";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 const badgeVariants = cva(
   "inline-flex items-center justify-center border select-none backdrop-blur-sm  tracking-wider transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
@@ -18,6 +18,7 @@ const badgeVariants = cva(
         rounded: "rounded-lg",
         square: "rounded-none",
         pill: "rounded-full",
+        responsivepill: "md:rounded-full rounded-md",
       },
       variant: {
         default:
