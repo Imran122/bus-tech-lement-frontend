@@ -85,7 +85,7 @@ const Login = () => {
     <PageWrapper>
       <SectionWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Card className="w-[450px]">
+          <Card className="w-[450px] mx-auto">
             <CardHeader>
               <CardTitle className="text-2xl">
                 {translate("লগইন", "Login")}
