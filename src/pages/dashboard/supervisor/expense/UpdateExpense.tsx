@@ -118,11 +118,10 @@ const UpdateExpense: FC<IUpdateExpenseProps> = ({ id, setOpen }) => {
       setValue("amount", totalCost || 0);
     }
   }, [fuelWeight, fuelPrice, expenseType, setValue]);
-  const formValues = watch();
+  //const formValues = watch();
   const [uploadPhoto, { isLoading: uploadPhotoLoading }] =
     useUploadPhotoMutation();
   const onSubmit = async (data: SupervisorExpenseData) => {
-
     try {
       // Create a copy of the data to avoid modifying the original form values
       const cleanedData = { ...data };
@@ -149,7 +148,6 @@ const UpdateExpense: FC<IUpdateExpenseProps> = ({ id, setOpen }) => {
         date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
         file: updatedFileUrl, // Ensure updated file URL is included
       };
-
 
       // Submit the updated payload to the backend
       await updateExpense({ id, data: updatedPayload }).unwrap();
