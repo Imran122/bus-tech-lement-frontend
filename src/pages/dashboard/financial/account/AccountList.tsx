@@ -211,7 +211,7 @@ const AccountList: FC<IAccountListProps> = () => {
         )}
         heading={translate("অ্যাকাউন্ট", "Account")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

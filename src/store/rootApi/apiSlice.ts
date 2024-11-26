@@ -56,5 +56,6 @@ export const apiSlice = createApi({
     "accounts-dashboard-home",
     "partial",
     "duePayment",
+    "tripReport"
   ],
 });

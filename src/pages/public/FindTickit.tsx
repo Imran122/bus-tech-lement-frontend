@@ -26,17 +26,18 @@ interface IFindTicketPaymentProps {}
 const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
   const { translate } = useCustomTranslator();
   const [ticketNumber, setTicketNumber] = useState("");
-
   const { handleSubmit } = useForm<{ dueAmount: number }>();
   const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
     {}
   );
-
+  const [searchTicketNumber, setSearchTicketNumber] = useState("");
+  const [searching, setSearching] = useState<boolean>(false);
   const [saleData, setSaleData] = useState<any>();
-  // Fetch ticket information based on ticket number
-  const { data, isLoading, error } = useGetTickitInfoQuery(ticketNumber, {
-    skip: !ticketNumber,
+
+  const { data, isLoading, error } = useGetTickitInfoQuery(searchTicketNumber, {
+    skip: !searchTicketNumber,
   });
+
   const [
     addBookingPayment,
     { isLoading: paymentLoading, error: paymentLoadingError },
@@ -49,6 +50,21 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
   const handleTicketNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTicketNumber(e.target.value);
   };
+
+  // Handle search button click
+  const handleSearchClick = () => {
+    if (ticketNumber.trim()) {
+      setSearchTicketNumber(ticketNumber);
+      setSearching(true);
+    }
+  };
+
+  // Reset the searching state after data or error is received
+  useEffect(() => {
+    if (data || error) {
+      setSearching(false);
+    }
+  }, [data, error]);
 
   // STORE PROMISE RESOLVE REFERENCE
   const promiseResolveRef = useRef<any>(null);
@@ -108,11 +124,11 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
   }
 
   return (
-    <section>
+    <section className="min-h-screen">
       <PageWrapper>
         <div className="flex flex-col justify-center items-center">
-          <PageTransition className="p-5 w-8/12 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-            <Heading size="h3">
+          <PageTransition className="p-5 w-full lg:w-8/12 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+            <Heading size="h4" className="text-center">
               {translate("টিকিট খুঁজুন", "Find Ticket")}
             </Heading>
 
@@ -120,72 +136,97 @@ const FindTicketPayment: FC<IFindTicketPaymentProps> = () => {
             <InputWrapper
               labelFor="ticketNumber"
               label={translate("টিকিট নম্বর লিখুন", "Enter Ticket Number")}
+              className="w-full lg:w-1/2 mx-auto"
             >
-              <Input
-                id="ticketNumber"
-                type="text"
-                placeholder={translate(
-                  "এখানে টিকিট নম্বর লিখুন",
-                  "Enter ticket number here"
-                )}
-                value={ticketNumber}
-                onChange={handleTicketNumberChange}
-              />
+              <div className="flex items-center gap-5">
+                <Input
+                  id="ticketNumber"
+                  type="text"
+                  placeholder={translate(
+                    "এখানে টিকিট নম্বর লিখুন",
+                    "Enter ticket number here"
+                  )}
+                  value={ticketNumber}
+                  onChange={handleTicketNumberChange}
+                />
+
+                <Button
+                  size={"default"}
+                  variant={"primary"}
+                  onClick={handleSearchClick}
+                  disabled={searching || !ticketNumber}
+                >
+                  {searching
+                    ? translate("অনুসন্ধান হচ্ছে...", "Searching...")
+                    : translate("অনুসন্ধান", "Search")}
+                </Button>
+              </div>
             </InputWrapper>
 
-            {/* Loading and Error Handling */}
-            {isLoading && (
-              <Paragraph>{translate("লোড হচ্ছে...", "Loading...")}</Paragraph>
-            )}
-            {error && (
-              <Paragraph>
-                {translate("ত্রুটি ঘটেছে", "Error fetching data.")}
-              </Paragraph>
-            )}
+            <div className="flex flex-col justify-center py-5">
+              {/* Loading and Error Handling */}
+              {isLoading && (
+                <Paragraph className="text-center">
+                  {translate("লোড হচ্ছে...", "Loading...")}
+                </Paragraph>
+              )}
+              {error && (
+                <Paragraph className="text-center">
+                  {translate(
+                    "ত্রুটি ঘটেছে, অনুগ্রহ করে একটি সঠিক টিকিট নম্বর বা ফোন নম্বর দিন।",
+                    "Error fetching data. Please give valid ticket No or Phone number"
+                  )}
+                </Paragraph>
+              )}
 
-            {/* Display Ticket Data */}
-            {ticketData && (
-              <div className="p-4 mt-4 rounded shadow">
-                {dueAmount === 0 && (
-                  <div className="flex justify-end">
-                    <Button onClick={invoicePrintHandler}>Print Ticket</Button>
-                  </div>
-                )}
-                <Heading size="h4">
-                  {translate("টিকিটের তথ্য", "Ticket Information")}
-                </Heading>
-                <ul className="grid grid-cols-2">
-                  <li>
-                    <strong>{translate("টিকিট নম্বর", "Ticket No")}:</strong>{" "}
-                    {ticketData.ticketNo}
-                  </li>
-                  <li>
-                    <strong>
-                      {translate("যাত্রীর নাম", "Customer Name")}:
-                    </strong>{" "}
-                    {ticketData.customerName}
-                  </li>
-                  <li>
-                    <strong>{translate("ফোন নম্বর", "Phone")}:</strong>{" "}
-                    {ticketData.phone}
-                  </li>
-                  <li>
-                    <strong>{translate("ইমেইল", "Email")}:</strong>{" "}
-                    {ticketData.email}
-                  </li>
-                  <li>
-                    <strong>{translate("বকেয়া পরিমাণ", "Due Amount")}:</strong>{" "}
-                    {dueAmount}
-                  </li>
-                  <li>
-                    <strong>{translate("সিট", "Seat")}:</strong>{" "}
-                    {ticketData.orderSeat
-                      .map((seat: any) => seat.seat)
-                      .join(", ")}
-                  </li>
-                </ul>
-              </div>
-            )}
+              {/* Display Ticket Data */}
+              {ticketData && (
+                <div className="px-4 pb-5 rounded shadow">
+                  <Heading size="h4" className="pb-5">
+                    {translate("টিকিটের তথ্য", "Ticket Information")}
+                  </Heading>
+                  <ul className="grid grid-cols-2 mx-auto items-center">
+                    <li>
+                      <strong>{translate("টিকিট নম্বর", "Ticket No")}:</strong>{" "}
+                      {ticketData.ticketNo}
+                    </li>
+                    <li>
+                      <strong>
+                        {translate("যাত্রীর নাম", "Customer Name")}:
+                      </strong>{" "}
+                      {ticketData.customerName}
+                    </li>
+                    <li>
+                      <strong>{translate("ফোন নম্বর", "Phone")}:</strong>{" "}
+                      {ticketData.phone}
+                    </li>
+                    <li>
+                      <strong>{translate("ইমেইল", "Email")}:</strong>{" "}
+                      {ticketData.email}
+                    </li>
+                    <li>
+                      <strong>
+                        {translate("বকেয়া পরিমাণ", "Due Amount")}:
+                      </strong>{" "}
+                      {dueAmount}
+                    </li>
+                    <li>
+                      <strong>{translate("সিট", "Seat")}:</strong>{" "}
+                      {ticketData.orderSeat
+                        .map((seat: any) => seat.seat)
+                        .join(", ")}
+                    </li>
+                  </ul>
+                  {dueAmount === 0 && (
+                    <div className="flex justify-end mt-10">
+                      <Button onClick={invoicePrintHandler}>
+                        Print Ticket
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Input for Due Amount */}
             {ticketData && dueAmount > 0 && (

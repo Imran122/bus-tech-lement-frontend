@@ -16,6 +16,13 @@ const adminReportApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["admin_report"],
     }),
+    getTripReport:builder.query({
+     query:({registrationNo, fromDate, toDate})=>({
+      url:`/admin/trip-report?registrationNo=${registrationNo}&fromDate=${fromDate}&toDate=${toDate}`,
+      method: 'GET',
+     }),
+     providesTags:["tripReport"]
+    }),
     getUserList: builder.query({
       query: ({ size, page }) => ({
         url: `/user/get-user-all?size=${size}&page=${page}`,
@@ -30,4 +37,5 @@ export const {
   useGetTodaysSaleAdminReportQuery,
   useGetUserWiseSaleAdminReportQuery,
   useGetUserListQuery,
+  useGetTripReportQuery
 } = adminReportApi;

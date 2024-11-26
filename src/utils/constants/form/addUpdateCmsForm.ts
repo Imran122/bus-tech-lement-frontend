@@ -23,6 +23,7 @@ interface ICMSFormProps {
   instagram: ILabelPlaceholder;
   twitter: ILabelPlaceholder;
   linkedin: ILabelPlaceholder;
+  email: ILabelPlaceholder;
 }
 
 export const cmsForm: ICMSFormProps = {
@@ -62,6 +63,10 @@ export const cmsForm: ICMSFormProps = {
   supportNumber2: {
     label: { en: "Support Number 2", bn: "সাপোর্ট নম্বর ২" },
     placeholder: { en: "Enter second support number", bn: "দ্বিতীয় সাপোর্ট নম্বর লিখুন" },
+  },
+  email: {
+    label: { en: "Email", bn: "ইমেইল" },
+    placeholder: { en: "Enter email address", bn: "ইমেইল ঠিকানা লিখুন" },
   },
   facebook: {
     label: { en: "Facebook", bn: "ফেসবুক" },

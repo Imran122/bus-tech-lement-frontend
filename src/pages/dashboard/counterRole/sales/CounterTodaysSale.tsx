@@ -175,7 +175,7 @@ const CounterTodaysSale: FC<ISalesListProps> = () => {
         )}
         heading={translate("আজকের অনলাইন সেলস", "Today's Online Sales")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

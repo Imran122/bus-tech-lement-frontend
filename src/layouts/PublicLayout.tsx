@@ -1,4 +1,6 @@
 import PublicNavigation from "@/components/common/navigation/PublicNavigation";
+import PublicNavigationTop from "@/components/common/navigation/PublicNavigationTop";
+import FooterComponent from "@/components/shared/FooterComponent";
 import { cn } from "@/lib/utils";
 import { useFontShifter } from "@/utils/hooks/useFontShifter";
 import { FC } from "react";
@@ -9,13 +11,16 @@ interface IPublicLayoutProps {}
 const PublicLayout: FC<IPublicLayoutProps> = () => {
   return (
     <main className={cn("bg-background text-foreground ", useFontShifter())}>
+      <PublicNavigationTop/>
       <PublicNavigation />
 
       <section className="my-20">
         <Outlet />
       </section>
 
-      <div>footer</div>
+      <div>
+        <FooterComponent />
+      </div>
     </main>
   );
 };

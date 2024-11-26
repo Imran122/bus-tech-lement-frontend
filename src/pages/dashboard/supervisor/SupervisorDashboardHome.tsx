@@ -346,7 +346,7 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
         subHeading={translate("কোচ তথ্য উপাত্ত", "Coach Information Data")}
         heading={translate("কোচ তালিকা", "Today's Coach List")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <DropdownMenu>

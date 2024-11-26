@@ -18,6 +18,7 @@ export const supervisorExpenseApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["SupervisorExpense"],
     }),
+
     updateSupervisorExpense: builder.mutation({
       query: ({ id, data }) => ({
         url: `/expense/update-expense/${id}`,
@@ -50,6 +51,13 @@ export const supervisorExpenseApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    createCounterReportSubmit: builder.mutation({
+      query: (data) => ({
+        url: "/user/create-counter-report-submit",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -63,4 +71,5 @@ export const {
   useGetSupervisorCoachDetailsQuery,
   useGetSupervisorUpDownDetailsQuery,
   useSubmitSupervisorExpenseReportMutation,
+  useCreateCounterReportSubmitMutation,
 } = supervisorExpenseApi;

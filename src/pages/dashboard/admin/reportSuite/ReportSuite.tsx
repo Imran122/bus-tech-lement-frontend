@@ -85,7 +85,7 @@ const ReportSuite: FC<IReportSuite> = () => {
   return (
     <PageWrapper>
       {/* sales information */}
-      <div className="grid grid-cols-5 gap-5 my-5">
+      <div className="grid lg:grid-cols-5 grid-cols-2 gap-5 my-5">
         <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
           <div className="p-6 flex flex-col justify-start items-start w-full">
             <h2>Todays Sales</h2>
@@ -150,7 +150,7 @@ const ReportSuite: FC<IReportSuite> = () => {
         )}
         heading={translate("আজকের সেলস", "Today's Sales")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <DropdownMenu>

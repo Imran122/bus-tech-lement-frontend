@@ -215,7 +215,7 @@ const PartnerList: FC<IPartnerListProps> = () => {
         )}
         heading={translate("অংশীদার", "Partner")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

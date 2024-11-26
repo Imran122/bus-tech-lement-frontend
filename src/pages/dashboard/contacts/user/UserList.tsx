@@ -59,6 +59,7 @@ export interface IUserStateProps {
 const UserList: FC<IUserListProps> = () => {
   const { toast } = useToast();
   const { translate } = useCustomTranslator();
+
   const { toastMessage } = useMessageGenerator();
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
@@ -107,7 +108,18 @@ const UserList: FC<IUserListProps> = () => {
       meta: usersData?.meta,
     }));
   }, [usersData]);
-
+  useEffect(() => {
+    if (usersData?.data) {
+      setUserState((prev) => ({
+        ...prev,
+        usersList: usersData.data.map((user: any, index: any) => ({
+          ...user,
+          index: query.page * query.size + index + 1,
+        })),
+      }));
+      setQuery((prev) => ({ ...prev, meta: usersData.meta }));
+    }
+  }, [usersData]);
   const userDeleteHandler = async (id: number) => {
     const result = await deleteUser(id);
 
@@ -203,14 +215,14 @@ const UserList: FC<IUserListProps> = () => {
             size="sm"
             shape="pill"
             variant={
-              user?.role?.toLowerCase() === "admin"
+              user?.role?.name?.toLowerCase() === "admin"
                 ? "tertiary"
-                : user?.role?.toLowerCase() === "supervisor"
+                : user?.role?.name?.toLowerCase() === "supervisor"
                 ? "primary"
                 : "warning"
             }
           >
-            {user?.role}
+            {user?.role?.name}
           </Badge>
         );
       },
@@ -226,7 +238,7 @@ const UserList: FC<IUserListProps> = () => {
             onClick={() => handleToggleStatus(user.id, user?.active)}
             variant={user?.active ? "success" : "destructive"}
           >
-            {user.dummyActive}
+            {user?.active ? "Active" : "Deactive"}
           </Badge>
         );
       },
@@ -312,8 +324,8 @@ const UserList: FC<IUserListProps> = () => {
         )}
         heading={translate("ব্যবহারকারী", "User")}
       >
-        <TableToolbar alignment="end">
-          <ul className="flex items-center gap-x-2">
+        <TableToolbar alignment="responsive">
+          <ul className="flex  gap-x-2">
             <li>
               <Input
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>

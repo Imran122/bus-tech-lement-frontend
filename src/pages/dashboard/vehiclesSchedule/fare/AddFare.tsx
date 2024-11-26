@@ -92,6 +92,7 @@ const AddFare: FC<IAddFareProps> = ({ setFareState }) => {
       setFareState((prevState: IFareStateProps) => ({
         ...prevState,
         addFareOpen: false,
+        faresList: [...prevState.faresList, result.data],
       }));
     }
   };
@@ -230,6 +231,8 @@ const AddFare: FC<IAddFareProps> = ({ setFareState }) => {
               </PopoverTrigger>
               <PopoverContent align="end">
                 <Calendar
+                  style={{ pointerEvents: "auto" }}
+                  className="cursor-pointer"
                   mode="single"
                   selected={addFareFormState?.fromDate || new Date()}
                   onSelect={(date) => {
@@ -292,6 +295,8 @@ const AddFare: FC<IAddFareProps> = ({ setFareState }) => {
               </PopoverTrigger>
               <PopoverContent align="end">
                 <Calendar
+                  style={{ pointerEvents: "auto" }}
+                  className="cursor-pointer"
                   mode="single"
                   selected={addFareFormState?.toDate || new Date()}
                   onSelect={(date) => {

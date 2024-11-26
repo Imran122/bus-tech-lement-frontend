@@ -175,6 +175,10 @@ const UpdateCoachConfigurationList: FC<
     { accessorKey: "index", header: translate("ইনডেক্স", "Index") },
 
     {
+      accessorKey: "tripNo",
+      header: translate("ট্রিপ নম্বর", "Trip No"),
+    },
+    {
       accessorKey: "coachNo",
       header: translate("কোচ নম্বর", "Coach No"),
     },
@@ -375,7 +379,7 @@ const UpdateCoachConfigurationList: FC<
           "Update Coach Configuration"
         )}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

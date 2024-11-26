@@ -452,8 +452,8 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   return (
     <PageTransition>
       {/* find tickit */}
-      <div className="flex">
-        <div className="w-[35%] flex gap-4 justify-end items-end px-6">
+      <div className="flex justify-center items-center">
+        <div className="md:w-[35%] w-1/2 flex gap-4 md:justify-end md:items-end px-6">
           <h2 className="text-primary text-2xl  font-semibold">Reset Seat</h2>
           <TooltipProvider>
             <Tooltip>
@@ -475,11 +475,11 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <div className="w-[65%]  ">
+        <div className="md:w-[65%] w-1/2 ">
           <PageTransition>
             <form
               onSubmit={handleFormSubmit}
-              className="ml-4 flex justify-start items-center"
+              className="ml-4 flex md:justify-start md:items-center"
             >
               <InputWrapper
                 className="w-4/12"
@@ -522,7 +522,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
 
       {/*end find tickit */}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
+        <div className="flex md:flex-row flex-col items-start my-0 h-full mt-6 px-4 gap-x-12 ">
           {/* COUCH SEAT PLAN CONTAINER */}
           <PageTransition className="w-4/12 flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <SeatLayoutSelector

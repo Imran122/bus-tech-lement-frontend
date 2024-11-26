@@ -150,7 +150,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   return (
     <div className="flex justify-center items-center">
       <PageTransition className=" w-full ">
-        <div className="mt-2 mb-24">
+        <div className="mt-2 mb-10">
           <div id="booking" className="rounded-lg ">
             <Heading className=" text-start  pb-6" size="h4">
               {translate("আপনার যাত্রা শুরু করুন", "Start Your Journey")}
@@ -185,8 +185,9 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                         fromCounterId: +value,
                       }));
                     }}
+                    
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="uppercase">
                       <SelectValue
                         placeholder={translate(
                           "শুরু করার কাউন্টার",
@@ -202,6 +203,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                             <SelectItem
                               key={counterIndex}
                               value={singleCounter?.id?.toString()}
+                              className="uppercase"
                             >
                               {singleCounter?.name}
                             </SelectItem>
@@ -225,7 +227,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       }));
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="uppercase">
                       <SelectValue
                         placeholder={translate(
                           "গন্তব্য কাউন্টার",
@@ -245,6 +247,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                             <SelectItem
                               key={counterIndex}
                               value={singleCounter?.id?.toString()}
+                              className="uppercase"
                             >
                               {singleCounter?.name}
                             </SelectItem>
@@ -268,16 +271,16 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       }));
                     }}
                   >
-                    <SelectTrigger id="coachType" className="w-full">
+                    <SelectTrigger id="coachType" className="w-full uppercase">
                       <SelectValue
                         placeholder={translate("কোচের ধরণ", "Coach Type")}
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="AC">
+                      <SelectItem value="AC" className="uppercase">
                         {translate("শীতাতপ নিয়ন্ত্রিত", "Air Condition")}
                       </SelectItem>
-                      <SelectItem value="NON AC">
+                      <SelectItem value="NON AC" className="uppercase">
                         {translate(
                           "শীতাতপ নিয়ন্ত্রিত বিহীন",
                           "Without Air Condition"
@@ -301,18 +304,18 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       <Button
                         variant="outline"
                         className={cn(
-                          "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
+                          "justify-start text-left font-normal w-full px-3 text-muted-foreground hover:bg-background text-sm h-9",
                           !bookingState.date && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {bookingState.date ? (
-                          format(bookingState.date, "PPP")
+                          format(bookingState.date, "dd/MM/yyyy")
                         ) : (
                           <span>
                             {translate(
-                              "বুকিংয়ের তারিখ নির্বাচন করুন",
-                              "Pick The Booking Date"
+                              "বুকিংয়ের তারিখ",
+                              "Booking Date"
                             )}
                           </span>
                         )}
@@ -365,18 +368,18 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                         <Button
                           variant="outline"
                           className={cn(
-                            "justify-start text-left font-normal w-[240.16px] text-muted-foreground hover:bg-background text-sm h-9",
+                            "justify-start px-3 text-left font-normal w-full text-muted-foreground hover:bg-background text-sm h-9",
                             !bookingState.returnDate && "text-muted-foreground"
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {bookingState.returnDate ? (
-                            format(bookingState.returnDate, "PPP")
+                            format(bookingState.returnDate, "dd/MM/yyyy")
                           ) : (
                             <span>
                               {translate(
-                                "ফেরার তারিখ নির্বাচন করুন",
-                                "Pick Return Booking Date"
+                                "ফেরার তারিখ",
+                                "Return Date"
                               )}
                             </span>
                           )}

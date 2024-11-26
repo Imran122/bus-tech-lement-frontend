@@ -260,6 +260,8 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
             </PopoverTrigger>
             <PopoverContent align="end">
               <Calendar
+                style={{ pointerEvents: "auto" }}
+                className="cursor-pointer"
                 mode="single"
                 selected={selectedDates.deliveryDate || new Date()}
                 onSelect={(date) =>
@@ -293,6 +295,8 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
             </PopoverTrigger>
             <PopoverContent align="end">
               <Calendar
+                style={{ pointerEvents: "auto" }}
+                className="cursor-pointer"
                 mode="single"
                 selected={selectedDates.orderDate || new Date()}
                 onSelect={(date) =>

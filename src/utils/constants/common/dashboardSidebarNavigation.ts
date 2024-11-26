@@ -1,3 +1,4 @@
+import { WatchIcon } from "lucide-react";
 import { IconType } from "react-icons/lib";
 import {
   LuAlignStartVertical,
@@ -38,8 +39,10 @@ export interface INavigationLinks {
     en: string;
   };
   key: string;
-  href: string;
-  subLinks?: INavigationLinks[];
+  href?: string; // Optional, some links might not have href
+  subLinks?: INavigationLinks[]; // Nested sublinks
+  action?: string; // Custom action identifier, e.g., "openModal"
+  modalComponent?: string; // Modal component identifier
 }
 
 // CONTACTS LINKS
@@ -116,14 +119,14 @@ const contactsManagementLinks = {
 };
 
 // VEHICLES & SCHEDULE MANAGEMENT
-const vehicleAndScheduleManagementLinks = {
+const vehicleManagementsLinks = {
   icon: LuCar,
   label: {
-    bn: "যানবাহন এবং সময়সূচী",
-    en: "Vehicle and Schedule",
+    bn: "যানবাহন ব্যবস্থাপনা",
+    en: "Vehicle Management",
   },
-  key: "vehicle_schedule",
-  href: "vehicle_schedule",
+  key: "station_list",
+  href: "station_list",
   subLinks: [
     {
       icon: LuMerge,
@@ -137,7 +140,6 @@ const vehicleAndScheduleManagementLinks = {
       key: "fare_list",
       href: "fare_list",
     },
-
     {
       icon: LuMerge,
       label: { bn: "রুট তালিকা", en: "Route List" },
@@ -156,6 +158,17 @@ const vehicleAndScheduleManagementLinks = {
       key: "vehicle_list",
       href: "vehicle_list",
     },
+  ],
+};
+const scheduleManagementLinks = {
+  icon: WatchIcon,
+  label: {
+    bn: "সময়সূচী ব্যবস্থাপনা",
+    en: "Schedule Management",
+  },
+  key: "coach_list",
+  href: "coach_list",
+  subLinks: [
     {
       icon: LuUserCheck,
       label: { bn: "কোচ তালিকা", en: "Coach List" },
@@ -180,6 +193,12 @@ const vehicleAndScheduleManagementLinks = {
       label: { bn: "আংশিক তথ্য", en: "Partial Info" },
       key: "partial_info",
       href: "partial_info",
+    },
+    {
+      icon: LuUserCheck,
+      label: { bn: "কোচ আপডেট করুন", en: "Update Coach Configs" },
+      key: "update_coach_configs",
+      action: "openModal", // Custom action identifier
     },
   ],
 };
@@ -272,14 +291,20 @@ const FulelManagementLinks = {
       key: "fuel-management",
       href: "fuel-management",
     },
+    // {
+    //   icon: LuBriefcase,
+    //   label: {
+    //     bn: "জ্বালানী বিক্রয় সারাংশ",
+    //     en: "Fule Sales Summary",
+    //   },
+    //   key: "fuel-sales-summary",
+    //   href: "fuel-sales-summary",
+    // },
     {
       icon: LuBriefcase,
-      label: {
-        bn: "জ্বালানী বিক্রয় সারাংশ",
-        en: "Fule Sales Summary",
-      },
-      key: "fuel-sales-summary",
-      href: "fuel-sales-summary",
+      label: { bn: "পেমেন্ট", en: "Payment" },
+      key: "fuel_payment",
+      modalComponent: "AddFuelPayment", // Modal component identifier
     },
   ],
 };
@@ -359,7 +384,8 @@ export const adminNavigationLinks = [
   { ...dashboardRootLinks },
   { ...contactsManagementLinks },
   // VEHICLES & SCHEDULE MANAGEMENT
-  { ...vehicleAndScheduleManagementLinks },
+  { ...vehicleManagementsLinks },
+  { ...scheduleManagementLinks },
 
   // FINANCE MANAGEMENT LINKS
   { ...financialManagementLinks },

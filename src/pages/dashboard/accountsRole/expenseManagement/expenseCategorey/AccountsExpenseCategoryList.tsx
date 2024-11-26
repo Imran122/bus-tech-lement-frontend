@@ -144,7 +144,7 @@ const AccountsExpenseCategoryList: FC = () => {
         )}
         heading={translate("ব্যয় বিভাগ", "Expense Category")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <Input
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setExpenseState((prev) => ({

@@ -47,7 +47,8 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
   const { translate } = useCustomTranslator();
   //const { toastMessage } = useMessageGenerator();
   //@ts-ignore
-  const [uploadPhoto, { uploadPhotoLoading }] = useUploadPhotoMutation();
+  const [uploadPhoto, { isLoading: uploadPhotoLoading }] =
+    useUploadPhotoMutation();
   const [createSupervisorExpense, { isLoading, error: isExpenceErrorCreate }] =
     useCreateSupervisorExpenseMutation();
   const { data: expenseCategoriesData, isLoading: loadingCategories } =
@@ -64,21 +65,91 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
   const [selectedCoach, setSelectedCoach] = useState<CoachConfig | null>(null);
   const { data: coachConfigs, isLoading: coachConfigLoading } =
     useGetTodaysCoachConfigListQuery("supervisor");
+
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<SupervisorExpenseData>({
     resolver: zodResolver(supervisorExpenseSchema),
+    defaultValues: {
+      expenseType: "Others", // Default to a non-Fuel type
+      fuelCompanyId: undefined,
+      fuelWeight: undefined,
+      fuelPrice: undefined,
+      coachConfigId: undefined,
+      expenseCategoryId: undefined,
+      routeDirection: undefined,
+      paidAmount: 0, // Default to 0
+      amount: 0, // Default to 0
+      date: "",
+      file: "", // Default to an empty string
+    },
   });
+  const coachConfigId = watch("coachConfigId");
+  const routeDirection = watch("routeDirection");
   const expenseType = watch("expenseType");
   const amount = watch("amount");
   const fuelWeight = watch("fuelWeight");
   const fuelPrice = watch("fuelPrice");
+  const expenseCategoryId = watch("expenseCategoryId");
   //const date = watch("date");
+
   //const formValues = watch();
+  useEffect(() => {
+    if (expenseType === "Fuel") {
+      reset({
+        expenseType: "Fuel",
+        fuelCompanyId: undefined,
+        fuelWeight: undefined,
+        fuelPrice: undefined,
+        coachConfigId: undefined,
+        expenseCategoryId: undefined,
+        routeDirection: undefined,
+        paidAmount: 0,
+        amount: 0,
+        date: "",
+        file: "",
+      });
+      setFile(null);
+    } else if (expenseType === "Others") {
+      reset({
+        expenseType: "Others",
+        coachConfigId: undefined,
+        expenseCategoryId: undefined,
+        routeDirection: undefined,
+        paidAmount: 0,
+        amount: 0,
+        date: "",
+        file: "",
+      });
+      setFile(null);
+    }
+  }, [expenseType, reset]);
+  useEffect(() => {
+    // Watch for changes in coachConfigId
+    if (coachConfigId) {
+      const selectedConfig = coachConfigs?.data?.find(
+        (config: CoachConfig) => config.id === coachConfigId
+      );
+
+      if (selectedConfig) {
+        // Update selectedCoach state and set date
+        setSelectedCoach(selectedConfig);
+        setValue(
+          "date",
+          format(new Date(selectedConfig.departureDate), "yyyy-MM-dd")
+        );
+      }
+    } else {
+      // Clear date if no coachConfigId is selected
+      setSelectedCoach(null);
+      setValue("date", "");
+    }
+  }, [coachConfigId, coachConfigs, setValue]);
   useEffect(() => {
     if (expenseType === "Fuel") {
       const weight = parseFloat(fuelWeight?.toString() || "0"); // Handle undefined
@@ -105,14 +176,6 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
       setValue("file", e.target.files[0].name); // Sync with form
-    }
-  };
-  const handleCoachChange = (coachId: number) => {
-    const coach = coachConfigs?.data.find(
-      (config: CoachConfig) => config.id === coachId
-    );
-    if (coach) {
-      setSelectedCoach(coach);
     }
   };
 
@@ -189,7 +252,10 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
               label={translate("কোচ কনফিগ", "Coach Config")}
             >
               <Select
-                onValueChange={(value) => handleCoachChange(parseInt(value))}
+                value={coachConfigId ? coachConfigId.toString() : ""}
+                onValueChange={(value: any) =>
+                  setValue("coachConfigId", Number(value))
+                }
               >
                 <SelectTrigger className="w-full">
                   <SelectValue
@@ -311,6 +377,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
                 onValueChange={(value: any) =>
                   setValue("expenseCategoryId", Number(value))
                 }
+                value={expenseCategoryId ? expenseCategoryId.toString() : ""}
               >
                 <SelectTrigger>
                   <SelectValue
@@ -342,7 +409,10 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
               error={errors.routeDirection?.message}
               label={translate("রুট নির্বাচন করুন", "Select Route")}
             >
-              <Select onValueChange={handleRouteDirectionChange}>
+              <Select
+                value={routeDirection || ""}
+                onValueChange={handleRouteDirectionChange}
+              >
                 <SelectTrigger>
                   <SelectValue
                     placeholder={translate("রুট নির্বাচন করুন", "Select Route")}
@@ -431,7 +501,7 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
             </InputWrapper>
           </div>
           <Submit
-            loading={isLoading || uploadPhotoLoading}
+            loading={uploadPhotoLoading || isLoading}
             errors={isExpenceErrorCreate}
             submitTitle={translate(" যুক্ত করুন", "Add Expense")}
             errorTitle={translate(" যোগ করতে ত্রুটি", "Add Expense Error")}

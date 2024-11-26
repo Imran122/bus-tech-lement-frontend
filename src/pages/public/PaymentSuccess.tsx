@@ -1,15 +1,15 @@
-import { FC, useEffect, useRef, useState } from "react";
-import { FaCheckCircle } from "react-icons/fa";
-import { useParams } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import DetailsSkeleton from "@/components/common/skeleton/DetailsSkeleton";
 import PageWrapper from "@/components/common/wrapper/PageWrapper";
 import { Button } from "@/components/ui/button";
 import { useGetPaymentDetailsWithHooksQuery } from "@/store/api/bookingApi";
-import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
-import { appConfiguration } from "@/utils/constants/common/appConfiguration";
-import TickitPrintClient from "../dashboard/printLabel/TicketPrintClient";
 import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
+import { appConfiguration } from "@/utils/constants/common/appConfiguration";
+import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
+import { FC, useEffect, useRef, useState } from "react";
+import { FaCheckCircle } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
+import TickitPrintClient from "../dashboard/printLabel/TicketPrintClient";
 
 interface IPaymentSuccessProps {}
 
@@ -19,13 +19,11 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
     useGetPaymentDetailsWithHooksQuery(transactionDetails);
   const [saleData, setSaleData] = useState<any>();
 
-  const { data: singleCms } = useGetSingleCMSQuery(
-    {}
-  );
+  const { data: singleCms } = useGetSingleCMSQuery({});
 
-  const handlePrint = () => {
-    window.print();
-  };
+  // const handlePrint = () => {
+  //   window.print();
+  // };
   const promiseResolveRef = useRef<any>(null);
   const printSaleRef = useRef(null);
   const handlePrintInvoice = useReactToPrint({
@@ -46,14 +44,13 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
       console.error("Failed to fetch sale data from local storage.");
     }
   };
-  
-  
+
   useEffect(() => {
     if (saleData && Object.keys(saleData).length > 0) {
       handlePrintInvoice();
     }
   }, [handlePrintInvoice, saleData]);
-  
+
   if (isLoading) {
     return <DetailsSkeleton />;
   }
@@ -159,16 +156,20 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
                 ""
               )}
               {/* Print Button */}
-              <Button onClick={handlePrint} className="mt-6">
+              {/* <Button onClick={handlePrint} className="mt-6">
                 Print Receipt
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
       </PageWrapper>
       <div className="invisible hidden -left-full">
         {saleData?.bookingInfo && (
-          <TickitPrintClient ref={printSaleRef} tickitData={saleData?.bookingInfo} logo={singleCms?.data}/>
+          <TickitPrintClient
+            ref={printSaleRef}
+            tickitData={saleData?.bookingInfo}
+            logo={singleCms?.data}
+          />
         )}
       </div>
     </section>
