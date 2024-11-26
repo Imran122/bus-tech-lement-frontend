@@ -161,7 +161,7 @@ const FinanceList: FC<IFinanceListProps> = () => {
         )}
         heading={translate("ফাইন্যান্স", "Finance")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

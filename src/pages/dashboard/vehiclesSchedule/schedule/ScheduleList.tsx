@@ -183,7 +183,7 @@ const ScheduleList: FC<IScheduleListProps> = () => {
         )}
         heading={translate("সময়সূচী", "Schedule")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

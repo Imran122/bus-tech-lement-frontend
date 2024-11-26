@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { useFontShifter } from "@/utils/hooks/useFontShifter";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 const headingVariants = cva(
   "font-semibold leading-tight transition-colors py-2 w-full",
@@ -42,6 +42,7 @@ const headingVariants = cva(
         h4: "text-[24px] font-[600] leading-[110%] tracking-wide text-opacity-90",
         h5: "text-[20px] font-[500] leading-[110%] text-opacity-90",
         h6: "text-[20px] font-[500] leading-[110%] text-opacity-90",
+        responsiveH3H4: "text-[40px] md:text-[40px] text-[24px] font-[700]",
       },
       position: {
         default: "text-start",

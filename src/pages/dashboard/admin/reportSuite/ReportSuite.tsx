@@ -150,7 +150,7 @@ const ReportSuite: FC<IReportSuite> = () => {
         )}
         heading={translate("আজকের সেলস", "Today's Sales")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <DropdownMenu>

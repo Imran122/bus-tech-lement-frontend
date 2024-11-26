@@ -15,6 +15,7 @@ import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { FC } from "react";
 import { LuUserCircle } from "react-icons/lu";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import logocompany from "../../../../assets/longeng.png";
 
 import { ITickitBookingStateProps } from "@/pages/dashboard/counterRole/tickit/TickitBooking";
 import TickitSearchDashboard from "@/pages/dashboard/counterRole/tickit/TickitSearchDashboard";
@@ -74,11 +75,11 @@ const CounterDashboardUpperNavigation: FC<
   };
 
   return (
-    <header className="sticky lg:!h-14 !h-28 !bg-muted/30 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
-      {/* DASHBOARD SIDEBAR FOR SMALL DEVICES */}
-      <CounterDashboardSidebarSmallDevices />
+    <header className="sticky lg:!h-14 !h-28 md:!bg-muted/30 !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
       {/* NAVIGATION LINKS */}
-
+      <div className="md:hidden block">
+        <img src={logocompany} />
+      </div>
       <nav className="justify-between w-full items-center flex">
         <ul className="hidden lg:flex gap-x-2 items-center">
           {subNavigation?.subLinks?.length > 0 &&
@@ -161,6 +162,8 @@ const CounterDashboardUpperNavigation: FC<
           </li>
         </ul>
       </nav>
+      {/* DASHBOARD SIDEBAR FOR SMALL DEVICES */}
+      <CounterDashboardSidebarSmallDevices />
     </header>
   );
 };

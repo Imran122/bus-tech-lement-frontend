@@ -203,7 +203,7 @@ const SupervisorManagement: FC<ISupervisorCollectionListProps> = () => {
   return (
     <PageWrapper>
       <TableWrapper heading={translate("সংগ্রহ", "Collection")}>
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input

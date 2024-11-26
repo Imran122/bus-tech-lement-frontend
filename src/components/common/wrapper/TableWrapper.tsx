@@ -1,11 +1,11 @@
-import * as React from "react";
+import { cn } from "@/lib/utils";
+import { useFontShifter } from "@/utils/hooks/useFontShifter";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import SectionWrapper from "./SectionWrapper";
+import * as React from "react";
 import { Heading } from "../typography/Heading";
 import { Paragraph } from "../typography/Paragraph";
-import { useFontShifter } from "@/utils/hooks/useFontShifter";
-import { cn } from "@/lib/utils";
+import SectionWrapper from "./SectionWrapper";
 
 const toolbarVariants = cva("flex w-full space-x-4 my-2", {
   variants: {
@@ -13,6 +13,7 @@ const toolbarVariants = cva("flex w-full space-x-4 my-2", {
       start: "justify-start",
       center: "justify-center",
       end: "justify-end",
+      responsive: "md:justify-end justify-start",
     },
   },
   defaultVariants: {
@@ -24,7 +25,7 @@ export interface TableToolbarProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof toolbarVariants> {
   asChild?: boolean;
-  alignment?: "start" | "center" | "end";
+  alignment?: "start" | "center" | "end" | "responsive";
 }
 
 const TableToolbar = React.forwardRef<HTMLDivElement, TableToolbarProps>(
@@ -60,7 +61,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({
 }) => {
   return (
     <SectionWrapper className="w-full my-8">
-      <Heading position="start" size="h3">
+      <Heading position="start" size="responsiveH3H4">
         {heading}
       </Heading>
       {subHeading && <Paragraph size="sm">{subHeading}</Paragraph>}
@@ -70,4 +71,4 @@ const TableWrapper: React.FC<TableWrapperProps> = ({
   );
 };
 
-export { TableWrapper, TableToolbar };
+export { TableToolbar, TableWrapper };

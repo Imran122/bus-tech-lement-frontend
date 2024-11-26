@@ -242,7 +242,7 @@ const PermissionTypeList: FC<IPermissionListProps> = () => {
         )}
         heading={translate("অনুমতি ধরন", "Permission Type")}
       >
-        <TableToolbar alignment="end">
+        <TableToolbar alignment="responsive">
           <ul className="flex items-center gap-x-2">
             <li>
               <Input
