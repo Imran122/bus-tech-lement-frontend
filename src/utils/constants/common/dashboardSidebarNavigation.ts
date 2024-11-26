@@ -1,3 +1,4 @@
+import { WatchIcon } from "lucide-react";
 import { IconType } from "react-icons/lib";
 import {
   LuAlignStartVertical,
@@ -118,14 +119,14 @@ const contactsManagementLinks = {
 };
 
 // VEHICLES & SCHEDULE MANAGEMENT
-const vehicleAndScheduleManagementLinks = {
+const vehicleManagementsLinks = {
   icon: LuCar,
   label: {
-    bn: "যানবাহন এবং সময়সূচী",
-    en: "Vehicle and Schedule",
+    bn: "যানবাহন ব্যবস্থাপনা",
+    en: "Vehicle Management",
   },
-  key: "vehicle_schedule",
-  href: "vehicle_schedule",
+  key: "station_list",
+  href: "station_list",
   subLinks: [
     {
       icon: LuMerge,
@@ -139,7 +140,6 @@ const vehicleAndScheduleManagementLinks = {
       key: "fare_list",
       href: "fare_list",
     },
-
     {
       icon: LuMerge,
       label: { bn: "রুট তালিকা", en: "Route List" },
@@ -158,6 +158,17 @@ const vehicleAndScheduleManagementLinks = {
       key: "vehicle_list",
       href: "vehicle_list",
     },
+  ],
+};
+const scheduleManagementLinks = {
+  icon: WatchIcon,
+  label: {
+    bn: "সময়সূচী ব্যবস্থাপনা",
+    en: "Schedule Management",
+  },
+  key: "coach_list",
+  href: "coach_list",
+  subLinks: [
     {
       icon: LuUserCheck,
       label: { bn: "কোচ তালিকা", en: "Coach List" },
@@ -373,7 +384,8 @@ export const adminNavigationLinks = [
   { ...dashboardRootLinks },
   { ...contactsManagementLinks },
   // VEHICLES & SCHEDULE MANAGEMENT
-  { ...vehicleAndScheduleManagementLinks },
+  { ...vehicleManagementsLinks },
+  { ...scheduleManagementLinks },
 
   // FINANCE MANAGEMENT LINKS
   { ...financialManagementLinks },
