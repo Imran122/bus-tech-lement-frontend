@@ -17,7 +17,7 @@ const PublicNavigationTop = () => {
 
         <div className="nav font-semibold text-lg text-white">
           <ul className="flex items-center">
-            <li className="text-sm font-semibold">Support:</li>
+            <li className="text-sm font-semibold">Call:</li>
             <li className=" text-sm font-semibold mx-2">
               <a href="#">{singleCms?.data?.supportNumber1}</a>
             </li>
