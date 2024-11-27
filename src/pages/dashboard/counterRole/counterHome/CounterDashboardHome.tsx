@@ -33,6 +33,7 @@ import { useSelector } from "react-redux";
 import CounterOrderDetailsModal from "../sales/CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "../sales/UpdateCounterOrderModal";
 
+import DashboardRoundTripTickitBookingCard from "@/components/common/card/DashboardRoundTripTickitBookingCard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +45,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { PiKeyReturnBold } from "react-icons/pi";
 import { useReactToPrint } from "react-to-print";
 import TicketPrintSingle from "../../printLabel/TicketPrintSingle";
 
@@ -383,6 +385,47 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
           )}
         </div>
 
+        {/* roundtrip design work card */}
+        {bookingState.orderType === "Round_Trip" &&
+          bookingState.roundTripGobookingCoachesList.length > 0 && (
+            <Accordion className="w-full" type="single" collapsible>
+              {bookingState?.roundTripGobookingCoachesList.map(
+                (singleCoachData: any, coachDataIndex: number) => (
+                  <DashboardRoundTripTickitBookingCard
+                    key={coachDataIndex}
+                    coachData={singleCoachData}
+                    index={coachDataIndex}
+                  />
+                )
+              )}
+            </Accordion>
+          )}
+        {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
+          <div className="my-10 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-green-500/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+            <h2 className="font-bold text-green-400 text-2xl">
+              Select Return Ticket
+            </h2>
+            <span className="py-3">
+              <PiKeyReturnBold size={24} />
+            </span>
+          </div>
+        )}
+
+        {/* roundtrip design work card back */}
+        {bookingState.orderType === "Round_Trip" &&
+          bookingState.roundTripReturnBookingCoachesList.length > 0 && (
+            <Accordion className="w-full" type="single" collapsible>
+              {bookingState?.roundTripReturnBookingCoachesList.map(
+                (singleCoachData: any, coachDataIndex: number) => (
+                  <DashboardRoundTripTickitBookingCard
+                    key={coachDataIndex}
+                    coachData={singleCoachData}
+                    index={coachDataIndex}
+                  />
+                )
+              )}
+            </Accordion>
+          )}
         <TableWrapper
           subHeading={translate(
             "আজকের সেলস তথ্য উপাত্ত",
