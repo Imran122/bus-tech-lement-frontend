@@ -74,33 +74,33 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
             </li>
           </ul>
           <ul className="grid grid-cols-3 gap-x-4 gap-y-2">
-            <li className="flex flex-col p-4 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
-              <span className="font-semibold text-lg tracking-tighter">
+            <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+              <span className="font-semibold md:text-lg text-sm tracking-tighter">
                 {translate("যাত্রা শুরু সময়", "Departure Time")}
               </span>
-              <span className="text-lg tracking-tight text-red-400 px-2 rounded-md mt-1">
+              <span className="md:text-lg text-sm tracking-tight text-red-400 px-2 rounded-md mt-1">
                 {translate(
                   convertTimeToBengali(coachData?.schedule || ""),
                   coachData?.schedule
                 )}
               </span>
             </li>
-            <li className="flex flex-col p-4 rounded-md justify-center items-center border-2 border-warning/50 border-dashed bg-warning/5 backdrop-blur-[2px]">
-              <span className="font-semibold text-lg tracking-tighter ">
+            <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-warning/50 border-dashed bg-warning/5 backdrop-blur-[2px]">
+              <span className="font-semibold md:text-lg text-sm tracking-tighter ">
                 {translate("পৌঁছানোর সময়", "Arrival time")}
               </span>
-              <span className="text-lg tracking-tight text-red-400 px-2 rounded-md mt-1">
+              <span className="md:text-lg text-sm tracking-tight text-red-400 px-2 rounded-md mt-1">
                 {translate(
                   convertTimeToBengali(coachData?.schedule),
                   coachData?.schedule
                 )}
               </span>
             </li>
-            <li className="flex flex-col p-4 rounded-md justify-center items-center border-2 border-success/50 border-dashed bg-success/5 backdrop-blur-[2px]">
-              <span className="font-semibold text-lg tracking-tighter">
+            <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-success/50 border-dashed bg-success/5 backdrop-blur-[2px]">
+              <span className="font-semibold md:text-lg text-sm tracking-tighter">
                 {translate("খালি আসন", "Available Seat")}
               </span>
-              <span className="text-lg tracking-tight text-red-400 px-2 rounded-md mt-1">
+              <span className="md:text-lg text-sm tracking-tight text-red-400 px-2 rounded-md mt-1">
                 {translate(
                   convertToBnDigit(coachData?.seatAvailable?.toString()),
                   coachData?.seatAvailable?.toString()
@@ -113,7 +113,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
               <Badge shape="pill" size="sm" variant="tertiary">
                 {translate("অতিরিক্ত কোনো চার্জ নেই", "No Additional Charge")}
               </Badge>
-              <span className="font-anek font-light text-base line-through mt-1">
+              <span className="font-anek font-light md:text-base text-sm line-through mt-1">
                 {translate(
                   convertToBnDigit(
                     formatter({
@@ -127,7 +127,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
                   })
                 )}
               </span>
-              <span className="font-anek font-semibold text-xl">
+              <span className="font-anek font-semibold md:text-xl text-lg">
                 {translate(
                   convertToBnDigit(
                     formatter({
@@ -142,7 +142,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
                 )}
               </span>
             </li>
-            <li className="ml-6 px-3">
+            <li className="ml-6 md:px-3">
               <AccordionTrigger className="hover:no-underline border backdrop-blur-sm py-1 px-2 rounded-md">
                 <span
                   onClick={() => setSelectedBookingCoach(coachData.id)}
