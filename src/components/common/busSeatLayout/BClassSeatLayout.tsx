@@ -155,7 +155,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
             <h2 className="text-center pb-1">
               {bookingCoach.coachClass === "B_Class" && "Business"} Class
             </h2>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-2">
+            <ul className="grid lg:grid-cols-2 gap-x-4 gap-y-2">
               <li className="flex items-center gap-x-2">
                 <span className="block size-4 bg-red-700 rounded-md"></span>
                 <span>{translate("বিক্রয়কৃত (পুরুষ)", "Sold (Male)")}</span>

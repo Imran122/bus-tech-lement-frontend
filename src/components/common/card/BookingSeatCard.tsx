@@ -32,10 +32,10 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
   return (
     <AccordionItem value={index?.toString()}>
       <CardWrapper rounded="md" variant="muted" className="p-4 ">
-        <div className="flex md:flex-row flex-col gap-3 md:justify-between md:items-center items-start w-full">
-          <ul className="w-3/12">
-            <li className="flex gap-3">
-              <Badge shape="pill">
+        <div className="lg:flex grid grid-cols-4 md:flex-row flex-col gap-3 md:justify-between md:items-center items-start w-full">
+          <ul className="lg:w-3/12 flex lg:flex-col md:flex-row gap-3 md:col-span-4 col-span-4">
+            <li className="flex md:gap-3 gap-1">
+              <Badge shape="responsivepill">
                 {coachData?.coachType == "AC"
                   ? translate("শীতাতপ নিয়ন্ত্রিত", "Air Condition")
                   : translate(
@@ -43,7 +43,7 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
                       "Without Air Condition"
                     )}
               </Badge>
-              <Badge shape="pill">
+              <Badge shape="responsivepill">
                 {coachData?.coachClass === "B_Class"
                   ? "Business Class"
                   : coachData?.coachClass === "S_Class"
@@ -53,54 +53,54 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
                   : "Economy Class"}
               </Badge>
             </li>
-            <li className="text-lg tracking-tight font-semibold mt-1">
+            <li className="md:text-lg text-sm tracking-tight md:font-semibold font-normal mt-1">
               <span className="">{translate("কোচ নম্বরঃ ", "Couch No: ")}</span>
-              <span className="font-[500] uppercase">
+              <span className="md:font-[500] font-normal uppercase">
                 {coachData?.coachNo ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>
             </li>
 
-            <li className="text-lg tracking-tight">
-              <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
+            <li className="md:text-lg text-sm tracking-tight">
+              <span className="md:font-[500] font-normal uppercase text-red-400  rounded-lg  py-[2px]">
                 {coachData?.fromCounter?.name ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>{" "}
               {`=>`}{" "}
-              <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
+              <span className="md:font-[500] font-normal uppercase text-red-400  rounded-lg  py-[2px]">
                 {coachData?.destinationCounter?.name ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>
             </li>
           </ul>
-          <ul className="grid grid-cols-3 gap-x-4">
-            <li className="flex flex-col p-4 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
-              <span className="font-semibold text-lg tracking-tighter">
+          <ul className="md:col-span-2 col-span-4 grid grid-cols-3 lg:gap-x-4 gap-x-2">
+            <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+              <span className="font-semibold lg:text-lg text-sm tracking-tighter">
                 {translate("যাত্রা শুরু সময়", "Departure Time")}
               </span>
-              <span className="text-lg tracking-tight text-red-400 px-2 rounded-md mt-1">
+              <span className="lg:text-lg text-sm tracking-tight text-red-400 px-2 rounded-md mt-1">
                 {translate(
                   convertTimeToBengali(coachData?.schedule),
                   coachData?.schedule
                 )}
               </span>
             </li>
-            <li className="flex flex-col p-4 rounded-md justify-center items-center border-2 border-warning/50 border-dashed bg-warning/5 backdrop-blur-[2px]">
-              <span className="font-semibold text-lg tracking-tighter">
+            <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-warning/50 border-dashed bg-warning/5 backdrop-blur-[2px]">
+              <span className="font-semibold lg:text-lg text-sm tracking-tighter">
                 {translate("পৌঁছানোর সময়", "Arrival time")}
               </span>
-              <span className="text-lg tracking-tight text-red-400 px-2 rounded-md mt-1">
+              <span className="lg:text-lg text-sm tracking-tight text-red-400 px-2 rounded-md mt-1">
                 {translate(
                   convertTimeToBengali(coachData?.schedule),
                   coachData?.schedule
                 )}
               </span>
             </li>
-            <li className="flex flex-col p-4 rounded-md justify-center items-center border-2 border-success/50 border-dashed bg-success/5 backdrop-blur-[2px]">
-              <span className="font-semibold text-lg tracking-tighter">
+            <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-success/50 border-dashed bg-success/5 backdrop-blur-[2px]">
+              <span className="font-semibold lg:text-lg text-sm tracking-tighter">
                 {translate("খালি আসন", "Available Seat")}
               </span>
-              <span className="text-lg tracking-tight text-red-400 px-2 rounded-md mt-1">
+              <span className="lg:text-lg text-sm tracking-tight text-red-400 px-2 rounded-md mt-1">
                 {translate(
                   convertToBnDigit(totalAvaliableSetas?.toString()),
                   totalAvaliableSetas.toString()
@@ -108,13 +108,13 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
               </span>
             </li>
           </ul>
-          <ul className="flex gap-x-4 justify-center">
-            <li className="flex flex-col items-center justify-center">
+          <ul className="md:col-span-2 col-span-4 flex gap-x-4 justify-center">
+            <li className="flex flex-col items-center justify-center text-center">
               <Badge shape="pill" size="sm" variant="tertiary">
                 {translate("অতিরিক্ত কোনো চার্জ নেই", "No Additional Charge")}
               </Badge>
               {coachData.discount > 0 && (
-                <span className="font-anek font-light text-base line-through mt-1">
+                <span className="font-anek font-light lg:text-base text-sm line-through mt-1">
                   {translate(
                     convertToBnDigit(
                       formatter({
@@ -130,7 +130,7 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
                 </span>
               )}
 
-              <span className="font-anek font-semibold text-xl">
+              <span className="font-anek lg:font-semibold font-normal text-xl">
                 {translate(
                   convertToBnDigit(
                     formatter({
@@ -145,7 +145,7 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
                 )}
               </span>
             </li>
-            <li className="ml-6 px-3">
+            <li className="ml-6 lg:px-3">
               <AccordionTrigger className="hover:no-underline border backdrop-blur-sm py-1 px-2 rounded-md">
                 <span
                   onClick={() => setSelectedBookingCoach(coachData.id)}

@@ -93,10 +93,10 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
 
   return (
     <div className="flex pb-2 justify-center items-center text-white">
-      <div className="w-full">
-        <div className="mb-6">
-          <div className="rounded-xl">
-            <ul className="lg:flex md:grid grid-cols-2 gap-5 flex-wrap items-center justify-start">
+      <div className="w-auto">
+        <div className="mb-9">
+          <div className="rounded-xl ">
+            <ul className="grid lg:grid-cols-5 md:grid-cols-2 lg:gap-5 gap-2 items-center justify-start">
               {/* STARTING POINT */}
               <li>
                 <Select

@@ -157,20 +157,20 @@ export const VanishList: FC<IVanishListProps> = ({
           items={listItems}
           onRemove={handleBookingSeat}
           renderContent={(t) => (
-            <ul className="flex items-center gap-x-16 w-full">
-              <li className="w-8 flex justify-center items-center rounded-md">
+            <ul className="flex items-center md:gap-x-16 gap-x-5 w-full">
+              <li className="md:w-8 flex justify-center items-center rounded-md">
                 {t.index}
               </li>
-              <li className="text-base">
+              <li className="md:text-base text-sm flex md:flex-row flex-col">
                 {translate("আসন নম্বরঃ ", "Seat No: ")} {t.seat}
                 {t.date === storedReturnDate && (
-                  <span className="ml-2 text-red-500">
+                  <span className="md:ml-2 ml-1 text-red-500 md:text-base text-xs">
                     {translate("রিটার্ন টিকেট", "Return Ticket")}
                   </span>
                 )}
               </li>
-              <li className="flex gap-x-2 items-center font-anek text-base">
-                <span className="font-semibold line-through">
+              <li className="flex gap-x-2 items-center font-anek md:text-base text-sm">
+                <span className="md:font-semibold font-medium line-through">
                   {translate(
                     convertToBnDigit(
                       formatter({ type: "amount", amount: t.currentAmount })
