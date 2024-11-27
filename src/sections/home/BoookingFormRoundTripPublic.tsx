@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { InputWrapper } from "@/components/common/form/InputWrapper";
-import { Heading } from "@/components/common/typography/Heading";
-import { GridWrapper } from "@/components/common/wrapper/GridWrapper";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -390,7 +388,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                   )}
                 />
               </InputWrapper>
-              <Button type="submit" className="mt-7 ml-2">
+              <Button type="submit" className="lg:mt-7 md:mt-4 mt-7 ml-2">
                 <span>
                   {userInfoLoading && (
                     <svg
@@ -416,14 +414,14 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
             {/* CUSTOMER & PAYMENT INFORMATION */}
             <PageTransition className="flex flex-col justify-between h-full w-full">
               <div>
-                <Heading size="h4">
+                <h2 className="lg:text-2xl text-lg font-semibold">
                   {translate(
                     "গ্রাহকের ব্যক্তিগত তথ্য",
                     "Client Personal Information"
                   )}
-                </Heading>
+                </h2>
 
-                <GridWrapper>
+                <div className="md:grid lg:grid-cols-3 md:grid-cols-2">
                   {/* NAME */}
                   <InputWrapper
                     className={cn(
@@ -500,11 +498,12 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       </SelectContent>
                     </Select>
                   </InputWrapper>
-                  <Heading size="h4">
-                    {translate("যাত্রার বিবরণ:", "Journey Details:")}
-                  </Heading>
-                  <div className="col-span-3">
-                    <GridWrapper>
+
+                  <div className="lg:col-span-3 col-span-2 py-2">
+                    <h2 className="lg:text-2xl text-lg font-semibold">
+                      {translate("যাত্রার বিবরণ:", "Journey Details:")}
+                    </h2>
+                    <div className="grid lg:grid-cols-3 md:grid-cols-2">
                       {/* BOARDING POINT */}
                       <InputWrapper
                         error={errors?.boardingPoint?.message}
@@ -718,7 +717,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                           )}
                         />
                       </InputWrapper>
-                    </GridWrapper>
+                    </div>
                   </div>
 
                   {/* EMAIL */}
@@ -807,13 +806,13 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       </SelectContent>
                     </Select>
                   </InputWrapper>
-                </GridWrapper>
+                </div>
               </div>
 
               <div className="my-2">
-                <Heading size="h4">
+                <h2 className="lg:text-2xl text-lg font-semibold">
                   {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
-                </Heading>
+                </h2>
                 <div>
                   {bookingFormState.selectedSeats?.length > 0 ? (
                     <VanishList
@@ -833,13 +832,13 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                 </div>
               </div>
               <div className="mt-4">
-                <Heading className="" size="h4">
+                <h2 className="lg:text-2xl text-lg font-semibold">
                   {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
-                </Heading>
+                </h2>
               </div>
 
               {/* paymnet div */}
-              <div className="mt-2 grid grid-cols-3">
+              <div className="lg:mt-6 mt-3 md:grid lg:grid-cols-3 grid-cols-2">
                 {/* payment type */}
                 <InputWrapper
                   error={errors?.paymentType?.message}
@@ -958,10 +957,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                 </div>
               )}
               <div className="mt-3">
-                <ul className="flex justify-between">
-                  <li className="text-lg tracking-tight">
+                <ul className="md:flex grid grid-cols-2 justify-between">
+                  <li className="lg:text-lg text-sm tracking-tight">
                     <label>{translate("মোট আসনঃ ", "Total Seats: ")}</label>
-                    <b className="font-[500]">
+                    <b className="lg:font-[500] font-normal">
                       {translate(
                         convertToBnDigit(totalSeats?.toString()),
                         totalSeats?.toString()
@@ -969,9 +968,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                     </b>
                   </li>
 
-                  <li className="text-lg tracking-tight">
+                  <li className="lg:text-lg text-sm tracking-tight">
                     <label>{translate("প্রদত্ত বিল: ", "Paid Amount: ")}</label>
-                    <b className="font-[500] font-anek">
+                    <b className="lg:font-[500] font-normal font-anek">
                       {translate(
                         convertToBnDigit(
                           formatter({
@@ -986,9 +985,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       )}
                     </b>
                   </li>
-                  <li className="text-lg tracking-tight">
+                  <li className="lg:text-lg text-sm tracking-tight">
                     <label>{translate("বকেয়া বিল:", "Due Amount: ")}</label>
-                    <b className="font-[500] font-anek">
+                    <b className="lg:font-[500] font-normal font-anek">
                       {translate(
                         convertToBnDigit(
                           formatter({
@@ -1003,9 +1002,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       )}
                     </b>
                   </li>
-                  <li className="text-lg tracking-tight">
+                  <li className="lg:text-lg text-sm tracking-tight">
                     <label>{translate("মোট বিল: ", "Total Amount: ")}</label>
-                    <b className="font-[500] font-anek">
+                    <b className="lg:font-[500] font-normal font-anek">
                       {translate(
                         convertToBnDigit(
                           formatter({

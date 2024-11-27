@@ -67,6 +67,7 @@ const SeatLayoutSelector: FC<ISeatLayoutSelectorProps> = ({
         bookingFormState={bookingFormState}
         addBookingSeatLoading={addBookingSeatLoading}
         removeBookingSeatLoading={removeBookingSeatLoading}
+        coachId={coachId}
       />
     );
   } else if (coachClass === "S_Class") {
