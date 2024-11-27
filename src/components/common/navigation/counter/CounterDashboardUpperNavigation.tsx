@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { shareAuthentication } from "@/utils/helpers/shareAuthentication";
 import { useAppContext } from "@/utils/hooks/useAppContext";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { LuUserCircle } from "react-icons/lu";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import logocompany from "../../../../assets/longeng.png";
@@ -52,6 +52,7 @@ const CounterDashboardUpperNavigation: FC<
       singleSubNavigation.key === route
   ) as any;
   const dispatch = useDispatch();
+  const [showSearchDashboard, setShowSearchDashboard] = useState(false);
 
   const bookingState = useSelector(selectCounterSearchFilter);
 
@@ -107,13 +108,36 @@ const CounterDashboardUpperNavigation: FC<
             )}
         </ul>
 
-        <ul className="pt-9 lg:mt-2 mt-10">
+        <ul className="hidden lg:block md:block pt-9 lg:mt-2 mt-10">
           <li>
             <TickitSearchDashboard
               bookingState={bookingState}
               setBookingState={setBookingState}
             />
           </li>
+        </ul>
+
+        {/* For mobile: Button to toggle the component */}
+        <ul className="block md:hidden relative">
+          <li className="inline-flex items-center">
+            {/* Button to toggle the component */}
+            <button
+              onClick={() => setShowSearchDashboard(!showSearchDashboard)}
+              className="px-4 py-2 bg-primary text-white rounded-md"
+            >
+              {showSearchDashboard ? "Hide" : "Search"}
+            </button>
+          </li>
+
+          {/* Dropdown content opens under the button */}
+          {showSearchDashboard && (
+            <div className="absolute top-full left-0 mt-2 w-full">
+              <TickitSearchDashboard
+                bookingState={bookingState}
+                setBookingState={setBookingState}
+              />
+            </div>
+          )}
         </ul>
 
         <ul className="flex gap-x-2 items-center">

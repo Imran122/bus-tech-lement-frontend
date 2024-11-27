@@ -182,7 +182,6 @@ const UserList: FC<IUserListProps> = () => {
       header: translate("অবতার", "Avatar"),
       cell: ({ row }) => {
         const user = row.original as User;
-
         return (
           <div className="size-8 rounded-md overflow-hidden">
             <PhotoViewer
@@ -195,7 +194,7 @@ const UserList: FC<IUserListProps> = () => {
       },
     },
     {
-      accessorKey: "name",
+      accessorKey: "userName",
       header: translate("পুরো নাম", "Full Name"),
     },
 

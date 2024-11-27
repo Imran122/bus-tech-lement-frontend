@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { InputWrapper } from "@/components/common/form/InputWrapper";
-import { Heading } from "@/components/common/typography/Heading";
-import { GridWrapper } from "@/components/common/wrapper/GridWrapper";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
@@ -452,9 +450,11 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   return (
     <PageTransition>
       {/* find tickit */}
-      <div className="flex justify-center items-center">
-        <div className="md:w-[35%] w-1/2 flex gap-4 md:justify-end md:items-end px-6">
-          <h2 className="text-primary text-2xl  font-semibold">Reset Seat</h2>
+      <div className="md:flex  lg:justify-center justify-between lg:items-center items-center">
+        <div className="lg:mt-0 md:mt-2 lg:w-[35%] md:w-4/12  flex gap-4 md:justify-end md:items-end px-6">
+          <h2 className="text-primary lg:text-2xl text-lg  lg:font-semibold font-medium">
+            Reset Seat
+          </h2>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -475,14 +475,14 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <div className="md:w-[65%] w-1/2 ">
+        <div className="lg:w-[65%] w-full ">
           <PageTransition>
             <form
               onSubmit={handleFormSubmit}
               className="ml-4 flex md:justify-start md:items-center"
             >
               <InputWrapper
-                className="w-4/12"
+                className="lg:w-4/12"
                 labelFor="FinfTickit"
                 error=" "
                 label={translate(
@@ -501,7 +501,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                   )}
                 />
               </InputWrapper>
-              <Button type="submit" className="mt-7 ml-2">
+              <Button type="submit" className="lg:mt-7 md:mt-5 mt-9 ml-2">
                 <span>
                   {userInfoLoading && (
                     <svg
@@ -524,7 +524,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex md:flex-row flex-col items-start my-0 h-full mt-6 px-4 gap-x-12 ">
           {/* COUCH SEAT PLAN CONTAINER */}
-          <PageTransition className="w-4/12 flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+          <PageTransition className="lg:w-4/12 flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <SeatLayoutSelector
               checkingSeat={checkingSeat}
               bookingCoach={bookingCoach}
@@ -539,16 +539,16 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
           </PageTransition>
 
           {/* CUSTOMER & PAYMENT INFORMATION */}
-          <PageTransition className="flex flex-col justify-between h-full w-8/12">
+          <PageTransition className="flex flex-col justify-between h-full lg:w-8/12">
             <div>
-              <Heading size="h4">
+              <h2 className="lg:text-2xl text-lg font-semibold">
                 {translate(
                   "গ্রাহকের ব্যক্তিগত তথ্য",
                   "Client Personal Information"
                 )}
-              </Heading>
+              </h2>
 
-              <GridWrapper>
+              <div className="md:grid lg:grid-cols-3 md:grid-cols-2">
                 {/* NAME */}
                 <InputWrapper
                   labelFor="customerName"
@@ -621,11 +621,12 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                     </SelectContent>
                   </Select>
                 </InputWrapper>
-                <Heading size="h4">
-                  {translate("যাত্রার বিবরণ:", "Journey Details:")}
-                </Heading>
-                <div className="col-span-3">
-                  <GridWrapper>
+
+                <div className="lg:col-span-3 col-span-2 py-2">
+                  <h2 className="lg:text-2xl text-lg font-semibold">
+                    {translate("যাত্রার বিবরণ:", "Journey Details:")}
+                  </h2>
+                  <div className="grid lg:grid-cols-3 md:grid-cols-2">
                     {/* BOARDING POINT */}
                     <InputWrapper
                       error={errors?.boardingPoint?.message}
@@ -741,7 +742,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                         )}
                       />
                     </InputWrapper>
-                  </GridWrapper>
+                  </div>
                 </div>
 
                 {/* EMAIL */}
@@ -826,13 +827,13 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                     </SelectContent>
                   </Select>
                 </InputWrapper>
-              </GridWrapper>
+              </div>
             </div>
 
-            <div className="my-12">
-              <Heading size="h4">
+            <div className="lg:my-12 my-6">
+              <h2 className="lg:text-2xl text-lg font-semibold">
                 {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
-              </Heading>
+              </h2>
               <div>
                 {bookingFormState.selectedSeats?.length > 0 ? (
                   <VanishList
@@ -851,14 +852,14 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                 )}
               </div>
             </div>
-            <div className="mt-6">
-              <Heading className="" size="h4">
+            <div className="lg:mt-6 mt-3">
+              <h2 className="lg:text-2xl text-lg font-semibold">
                 {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
-              </Heading>
+              </h2>
             </div>
 
             {/* paymnet div */}
-            <div className="mt-6 grid grid-cols-3">
+            <div className="lg:mt-6 mt-3 md:grid lg:grid-cols-3 grid-cols-2">
               {/* payment type */}
               <InputWrapper
                 error={errors?.paymentType?.message}
@@ -978,9 +979,9 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
             )}
             <div className="mt-6">
               <ul className="flex justify-between">
-                <li className="text-lg tracking-tight">
+                <li className="lg:text-lg text-sm tracking-tight">
                   <label>{translate("মোট আসনঃ ", "Total Seats: ")}</label>
-                  <b className="font-[500]">
+                  <b className="lg:font-[500] font-normal">
                     {translate(
                       convertToBnDigit(totalSeats?.toString()),
                       totalSeats?.toString()
@@ -988,9 +989,9 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                   </b>
                 </li>
 
-                <li className="text-lg tracking-tight">
+                <li className="lg:text-lg text-sm tracking-tight">
                   <label>{translate("প্রদত্ত বিল: ", "Paid Amount: ")}</label>
-                  <b className="font-[500] font-anek">
+                  <b className="lg:font-[500] font-normal font-anek">
                     {translate(
                       convertToBnDigit(
                         formatter({
@@ -1005,9 +1006,9 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                     )}
                   </b>
                 </li>
-                <li className="text-lg tracking-tight">
+                <li className="lg:text-lg text-sm tracking-tight">
                   <label>{translate("বকেয়া বিল:", "Due Amount: ")}</label>
-                  <b className="font-[500] font-anek">
+                  <b className="lg:font-[500] font-normal font-anek">
                     {translate(
                       convertToBnDigit(
                         formatter({
@@ -1022,9 +1023,9 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                     )}
                   </b>
                 </li>
-                <li className="text-lg tracking-tight">
+                <li className="lg:text-lg text-sm tracking-tight">
                   <label>{translate("মোট বিল: ", "Total Amount: ")}</label>
-                  <b className="font-[500] font-anek">
+                  <b className="lg:font-[500] font-normal font-anek">
                     {translate(
                       convertToBnDigit(
                         formatter({
