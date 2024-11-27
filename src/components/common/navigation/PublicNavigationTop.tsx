@@ -9,7 +9,7 @@ const PublicNavigationTop = () => {
   const { data: singleCms } = useGetSingleCMSQuery({});
 
   return (
-    <header className="sticky z-40 top-0 bg-secondary">
+    <header className="sticky z-40 top-0 bg-secondary dark:bg-[#1f2128]">
       <section className="max-w-7xl mx-auto px-5 lg:px-0 flex items-center justify-between py-1">
         <Paragraph className="w-3/12 text-sm font-semibold hidden text-white lg:block">
           <a href="">Email: {singleCms?.data?.email}</a>
@@ -28,7 +28,7 @@ const PublicNavigationTop = () => {
           <ul className="flex gap-3 items-center">
             <li className="p-">
               <a href={singleCms?.data?.facebook}>
-                <LiaFacebook className="text-2xl" />
+                <LiaFacebook className="text-[26px]" />
               </a>
             </li>
             <li className="">

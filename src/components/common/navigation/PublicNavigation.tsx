@@ -65,7 +65,7 @@ const PublicNavigation = () => {
 
   return ( 
     <section className={`w-full fixed left-0 top-8 z-40 bg-gradient-to-tr from-primary/5 to-tertiary/5 duration-1000 ${
-      scrollY > 0 && "bg-white"
+      scrollY > 0 && "bg-white dark:bg-[#1f2128]"
     }`}>
       <nav
         className={`max-w-7xl mx-auto hidden lg:block  py-1.5 transition-all `}

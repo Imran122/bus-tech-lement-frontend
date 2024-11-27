@@ -41,14 +41,14 @@ const Hero: FC<IHeroProps> = () => {
 
   return (
     <section>
-      <SectionWrapper className="px-4 mt-10 lg:mt-16 mb-0 mx-auto">
+      <SectionWrapper className="px-4 mt-5 mb-0 mx-auto">
         {/* Left side: Heading and Booking Form */}
         <div className="w-full flex flex-col-reverse lg:flex-row items-center justify-center px-2">
           <Heading
             className={cn(
               locale !== "bn" && "font-lora font-semibold",
               "text-center pb-10 text-[clamp(1.5rem,4vw,2.5rem)]",
-              "sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl"
+              "text-lg md:text-xl lg:text-2xl xl:text-3xl"
             )}
             size="h2"
           >
@@ -97,8 +97,8 @@ const Hero: FC<IHeroProps> = () => {
           </div>
 
           {/* Right side: Thumbnail */}
-          <div className=" w-full flex justify-center lg:justify-end pt-0 lg:pt-10">
-            <HeroTiltCard className="lg:w-[500px] w-11/12 lg:h-[300px] h-[300px] border-8 border-secondary/10 overflow-visible rounded-3xl">
+          <div className=" w-full flex justify-center lg:justify-end pt-0 lg:pt-[68px]">
+            <HeroTiltCard className="lg:w-[500px] w-11/12 lg:h-[260px] h-[300px] border-8 border-secondary/10 overflow-visible rounded-xl">
               <PageTransition>
                 <img
                   className="w-[450px]"
@@ -117,7 +117,7 @@ const Hero: FC<IHeroProps> = () => {
         </div>
 
         {/* search result */}
-        <div className="w-full py-10">
+        <div className="w-full py-5">
           <SearchResult
             bookingState={bookingState}
             setBookingState={setBookingState}
@@ -128,7 +128,7 @@ const Hero: FC<IHeroProps> = () => {
         <div className="w-full mx-auto">
           <OfferSlider />
         </div>
-        <div className="mt-16 w-full mx-auto">
+        <div className="mt-10 w-full mx-auto">
           <ClientNote />
         </div>
       </div>

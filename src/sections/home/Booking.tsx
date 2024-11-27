@@ -150,13 +150,13 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   return (
     <div className="flex justify-center items-center">
       <PageTransition className=" w-full ">
-        <div className="mt-2 mb-10">
+        <div className="mt-2">
           <div id="booking" className="rounded-lg ">
-            <Heading className=" text-start  pb-6" size="h4">
+            <Heading className="text-start text-base lg:text-[24px] pb-6">
               {translate("আপনার যাত্রা শুরু করুন", "Start Your Journey")}
             </Heading>
             {/* COACH FILTERS */}
-            <div className="rounded-xl p-7  bg-gradient-to-tr from-primary to-tertiary text-primary-foreground">
+            <div className="rounded-xl p-3 lg:p-7  bg-gradient-to-tr from-primary to-tertiary text-primary-foreground">
               {/* seelct trip type */}
               <PageTransition className="flex py-5 flex-col gap-3 items-center justify-center h-full w-full">
                 <RadioGroup
@@ -175,7 +175,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                 </RadioGroup>
               </PageTransition>
               <ul className="grid grid-cols-2 gap-5">
-                {/* START   ING POINT */}
+                {/* STARTING POINT */}
                 <li>
                   <Select
                     value={bookingState?.fromCounterId?.toString() || ""}
@@ -187,7 +187,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                     }}
                     
                   >
-                    <SelectTrigger className="uppercase">
+                    <SelectTrigger className="uppercase text-xs lg:text-sm px-2 lg:px-3">
                       <SelectValue
                         placeholder={translate(
                           "শুরু করার কাউন্টার",
@@ -227,7 +227,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       }));
                     }}
                   >
-                    <SelectTrigger className="uppercase">
+                    <SelectTrigger className="uppercase text-xs lg:text-sm px-2 lg:px-3">
                       <SelectValue
                         placeholder={translate(
                           "গন্তব্য কাউন্টার",
@@ -271,7 +271,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       }));
                     }}
                   >
-                    <SelectTrigger id="coachType" className="w-full uppercase">
+                    <SelectTrigger id="coachType" className="w-full uppercase text-xs lg:text-sm px-2 lg:px-3">
                       <SelectValue
                         placeholder={translate("কোচের ধরণ", "Coach Type")}
                       />

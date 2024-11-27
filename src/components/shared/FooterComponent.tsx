@@ -4,7 +4,7 @@ import { Paragraph } from "../common/typography/Paragraph";
 const FooterComponent: FC = () => {
   return (
     <div>
-      <section className="bg-white">
+      <section className="bg-white dark:bg-[#1f2128] dark:border-t dark:border-secondary">
         <div className="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
            <div className="">
             <Paragraph size={"lg"} className="text-center font-bold text-secondary">We Accept:</Paragraph>
