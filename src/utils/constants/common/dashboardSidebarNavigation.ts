@@ -376,6 +376,12 @@ const settingsLinks = {
       key: "slider_list",
       href: "slider_list",
     },
+    {
+      icon: LuUser,
+      label: { bn: "আমাদের সম্পর্কে", en: "About Us" },
+      key: "aboutus_list",
+      href: "aboutus_list",
+    },    
   ],
 };
 
