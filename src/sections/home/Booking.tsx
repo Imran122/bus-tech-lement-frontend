@@ -175,7 +175,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                 </RadioGroup>
               </PageTransition>
               <ul className="grid grid-cols-2 gap-5">
-                {/* START   ING POINT */}
+                {/* STARTING POINT */}
                 <li>
                   <Select
                     value={bookingState?.fromCounterId?.toString() || ""}
@@ -187,7 +187,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                     }}
                     
                   >
-                    <SelectTrigger className="uppercase">
+                    <SelectTrigger className="uppercase text-xs lg:text-sm px-1 sm:px-2 lg:px-3">
                       <SelectValue
                         placeholder={translate(
                           "শুরু করার কাউন্টার",
@@ -227,7 +227,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       }));
                     }}
                   >
-                    <SelectTrigger className="uppercase">
+                    <SelectTrigger className="uppercase text-xs lg:text-sm px-1 sm:px-2 lg:px-3">
                       <SelectValue
                         placeholder={translate(
                           "গন্তব্য কাউন্টার",
@@ -271,7 +271,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       }));
                     }}
                   >
-                    <SelectTrigger id="coachType" className="w-full uppercase">
+                    <SelectTrigger id="coachType" className="w-full uppercase text-xs lg:text-sm px-1 sm:px-2 lg:px-3">
                       <SelectValue
                         placeholder={translate("কোচের ধরণ", "Coach Type")}
                       />

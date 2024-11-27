@@ -47,6 +47,7 @@ const ExpenseSubCategoryReport = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [filteredData, setFilteredData] = useState(categoryList);
 
+
   const totalAmount = filteredData.reduce(
     (acc, category) => acc + category.amount,
     0

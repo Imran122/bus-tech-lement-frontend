@@ -61,7 +61,7 @@ const PublicNavigationMobile = () => {
     <>
       <div
         className={`w-full  bg-gradient-to-tr from-primary/5 to-tertiary/5 duration-1000 py-1.5 fixed left-0 top-8  z-40 transition-all ${
-          scrollY > 0 && "bg-white"
+          scrollY > 0 && "bg-white dark:bg-[#1f2128]"
         }`}
       >
         <div className="flex justify-between items-center px-5">
@@ -84,7 +84,7 @@ const PublicNavigationMobile = () => {
             <>
               {" "}
               <button onClick={toggleMenu}>
-                <RxHamburgerMenu className="text-secondary text-2xl" />
+                <RxHamburgerMenu className="text-secondary text-2xl dark:text-[#f5f5f5]" />
               </button>
             </>
           </div>
@@ -92,7 +92,7 @@ const PublicNavigationMobile = () => {
         <SidebarSlide isMenuOpen={isMenuOpen}>
           <div
             key="menu"
-            className={`pb-10 bg-gray-100 overflow-y-auto
+            className={`pb-10 bg-gray-100 dark:bg-[#1f2128] overflow-y-auto
              `}
           >
             <div className="shadow-sm hover:text-primary-100 min-h-screen mt-4 pl-5">
@@ -200,7 +200,7 @@ const PublicNavigationMobile = () => {
               </nav>
             </div>
             <button onClick={toggleMenu} className="absolute top-3 right-3">
-              <RxCross2 className="text-secondary text-2xl" />
+              <RxCross2 className="text-secondary dark:text-[#f5f5f5] text-2xl" />
             </button>
           </div>
         </SidebarSlide>

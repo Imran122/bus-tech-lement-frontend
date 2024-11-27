@@ -23,6 +23,13 @@ const adminReportApi = apiSlice.injectEndpoints({
      }),
      providesTags:["tripReport"]
     }),
+    getExpenseSubCategoryReport:builder.query({
+     query:({registrationNo, fromDate, toDate})=>({
+      url:`/admin/expense-accounts/get-expense-report?registrationNo=${registrationNo}&fromDate=${fromDate}&toDate=${toDate}`,
+      method: 'GET',
+     }),
+     providesTags:["tripReport"]
+    }),
     getUserList: builder.query({
       query: ({ size, page }) => ({
         url: `/user/get-user-all?size=${size}&page=${page}`,
