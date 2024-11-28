@@ -563,7 +563,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
             >
               Proceed
             </button>
-            <div className="py-3 flex gap-4 items-end px-6 border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+            <div className="lg:py-3 py-[7px] flex gap-4 items-end lg:px-6 px-2 border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
               <h2 className="text-primary text-2xl  font-semibold">
                 Reset Seat
               </h2>

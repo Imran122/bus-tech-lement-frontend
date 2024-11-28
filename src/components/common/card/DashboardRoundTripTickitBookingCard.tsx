@@ -154,14 +154,14 @@ const DashboardRoundTripTickitBookingCard: FC<IBookingTickitCardProps> = ({
                   : "Suite Class"}
               </Badge>
             </li>
-            <li className="text-lg tracking-tight font-semibold mt-1">
+            <li className="lg:text-lg text-sm tracking-tight font-semibold mt-1">
               <span className="">{translate("কোচ নম্বরঃ ", "Couch No: ")}</span>
-              <span className="font-[500] uppercase">
+              <span className="lg:font-[500] md:font-medium uppercase">
                 {coachData?.coachNo ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>
             </li>
-            <li className="text-lg tracking-tight">
+            <li className="lg:text-lg text-sm tracking-tight">
               <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
                 {coachData?.fromCounter?.name ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
@@ -173,7 +173,7 @@ const DashboardRoundTripTickitBookingCard: FC<IBookingTickitCardProps> = ({
               </span>
             </li>
           </ul>
-          <ul className="grid grid-cols-3 gap-x-4 gap-y-2">
+          <ul className="grid grid-cols-3 gap-x-4 gap-y-2 mt-1">
             <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
               <span className="font-semibold md:text-lg text-sm tracking-tighter">
                 {translate("যাত্রা শুরু সময়", "Departure Time")}
