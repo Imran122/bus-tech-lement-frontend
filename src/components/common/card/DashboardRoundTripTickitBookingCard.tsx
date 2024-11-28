@@ -4,14 +4,20 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import CounterTickitBookingForm from "@/pages/dashboard/counterRole/tickit/CounterTickitBookingForm";
 import { ITickitBookingStateProps } from "@/pages/dashboard/counterRole/tickit/TickitBooking";
+import {
+  useAddBookingSeatMutation,
+  useCheckingSeatMutation,
+  useRemoveBookingSeatMutation,
+} from "@/store/api/bookingApi";
 import { fallback } from "@/utils/constants/common/fallback";
 import { convertTimeToBengali } from "@/utils/helpers/convertTimeToBengali";
 import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
+import { dynamicSeatAllocation } from "@/utils/helpers/dynamicSeatAllocation";
 import formatter from "@/utils/helpers/formatter";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { FC, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
+import SeatLayoutSelector from "../busSeatLayout/SeatLayoutSelector";
 import PageTransition from "../effect/PageTransition";
 import CardWrapper from "../wrapper/CardWrapper";
 
@@ -20,16 +26,110 @@ interface IBookingTickitCardProps {
   coachData: any;
   setBookingState?: (bookingState: ITickitBookingStateProps) => void;
   index: number;
+  setBookingCoachSingle: any;
+  bookingCoachSingle: any;
+  setGoViaRoute: any;
+  setReturnViaRoute: any;
+  bookingFormState: any;
+  setBookingFormState: any;
 }
 
 const DashboardRoundTripTickitBookingCard: FC<IBookingTickitCardProps> = ({
   coachData,
   index,
+  setBookingCoachSingle,
+  bookingCoachSingle,
+  setGoViaRoute,
+  setReturnViaRoute,
+  bookingFormState,
+  setBookingFormState,
 }) => {
+  const [checkingSeat] = useCheckingSeatMutation();
   const { translate } = useCustomTranslator();
+
+  const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
+    useRemoveBookingSeatMutation({}) as any;
+
+  const [addBookingSeat] = useAddBookingSeatMutation();
+  // Effect to set goViaRoute and returnViaRoute based on coachData.route.viaRoute
+  useEffect(() => {
+    if (coachData?.route) {
+      const viaRoutes = coachData.route.viaRoute?.map(
+        (routePoint: any) => routePoint.station.name
+      );
+      if (viaRoutes) {
+        setGoViaRoute(viaRoutes);
+        setReturnViaRoute(viaRoutes.reverse());
+      }
+    }
+  }, [coachData?.route]); // Reduce dependencies to minimize re-renders
   //@ts-ignore
   const [selectedBookingCoach, setSelectedBookingCoach] = useState<any>({});
+  const seatsAllocation = useMemo(() => {
+    switch (coachData?.coachClass) {
+      case "E_Class":
+        return dynamicSeatAllocation(coachData?.coachClass);
+      case "B_Class":
+        return dynamicSeatAllocation(coachData?.coachClass);
+      case "Sleeper":
+        return dynamicSeatAllocation(coachData?.coachClass);
+      case "S_Class":
+        return dynamicSeatAllocation(coachData?.coachClass);
+      default:
+        return { left: [], right: [], lastRow: [], middle: [] };
+    }
+  }, [coachData?.coachClass]);
 
+  const handleBookingSeat = async (seatData: any) => {
+    const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
+      (current: any) => current.seat === seatData.seat
+    );
+
+    if (isSeatAlreadySelected) {
+      // Remove the seat if it's already selected
+      const result = await removeBookingSeat({
+        coachConfigId: coachData?.id,
+        date: coachData?.departureDate,
+        schedule: coachData?.schedule,
+        seat: seatData.seat,
+      });
+
+      if (result?.data?.success) {
+        setBookingFormState((prevState: any) => ({
+          ...prevState,
+          selectedSeats: prevState.selectedSeats.filter(
+            (seat: any) => seat.seat !== seatData.seat
+          ),
+        }));
+      }
+    } else {
+      // Add the seat if it's not already selected
+      const result = await addBookingSeat({
+        coachConfigId: coachData?.id,
+        date: coachData?.departureDate,
+        schedule: coachData?.schedule,
+        seat: seatData.seat,
+      });
+
+      if (result?.data?.data?.available) {
+        setBookingFormState((prevState: any) => ({
+          ...prevState,
+          selectedSeats: [
+            ...prevState.selectedSeats,
+            {
+              seat: seatData.seat,
+              coachConfigId: coachData.id, // Store coachConfigId here
+              date: coachData.departureDate, // Store date here
+              schedule: coachData.schedule, // Store schedule here
+              currentAmount: coachData?.fare?.amount,
+              previousAmount: coachData?.discount,
+            },
+          ],
+        }));
+        setBookingCoachSingle(coachData); // Set only when booking successfully
+      }
+    }
+  };
   return (
     <AccordionItem value={index?.toString()}>
       <CardWrapper rounded="md" variant="muted" className="p-4 ">
@@ -158,7 +258,21 @@ const DashboardRoundTripTickitBookingCard: FC<IBookingTickitCardProps> = ({
 
       <AccordionContent>
         <PageTransition>
-          <CounterTickitBookingForm bookingCoach={coachData} />
+          <div className="flex items-center justify-center flex-col gap-4">
+            <div className="w-full max-w-lg flex items-center justify-center border-2 rounded-md border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300 p-4">
+              <SeatLayoutSelector
+                checkingSeat={checkingSeat}
+                bookingCoach={coachData}
+                coachClass={coachData.coachClass}
+                //@ts-ignore
+                seatsAllocation={seatsAllocation}
+                handleBookingSeat={handleBookingSeat}
+                bookingFormState={bookingFormState}
+                removeBookingSeatLoading={removeBookingSeatLoading}
+                coachId={coachData.id}
+              />
+            </div>
+          </div>
         </PageTransition>
       </AccordionContent>
     </AccordionItem>
