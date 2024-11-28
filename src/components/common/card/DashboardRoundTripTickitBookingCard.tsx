@@ -38,7 +38,7 @@ const DashboardRoundTripTickitBookingCard: FC<IBookingTickitCardProps> = ({
   coachData,
   index,
   setBookingCoachSingle,
-  bookingCoachSingle,
+
   setGoViaRoute,
   setReturnViaRoute,
   bookingFormState,

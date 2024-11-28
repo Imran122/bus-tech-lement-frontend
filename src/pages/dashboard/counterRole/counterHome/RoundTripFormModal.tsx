@@ -501,7 +501,7 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
     setSaleData(data);
     handlePrint();
   };
-  const formValues = watch();
+  //const formValues = watch();
   return (
     <section className=" w-full">
       <PageTransition>
