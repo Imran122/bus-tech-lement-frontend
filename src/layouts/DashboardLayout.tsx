@@ -31,7 +31,9 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
             >
               &times;
             </button>
-            <UpdateCoachConfigNavigationForm />
+            <div className="px-10 py-6 h-[80vh] overflow-y-auto">
+              <UpdateCoachConfigNavigationForm />
+            </div>{" "}
           </div>
         </div>
       )}
