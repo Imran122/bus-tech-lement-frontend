@@ -242,7 +242,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  //const [submitted, setSubmitted] = useState(false);
 
   const {
     data: userInfoData,
@@ -265,7 +265,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       return;
     }
 
-    setSubmitted(true);
+    //setSubmitted(true);
     await refetch(); // Trigger API call manually
   };
 
@@ -282,11 +282,11 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
 
       // Clear any previous error message
       setErrorMessage("");
-      setSubmitted(false);
+      // setSubmitted(false);
     } else {
       // Set error message if no data found
       setErrorMessage("No data found for this phone number.");
-      setSubmitted(false);
+      //setSubmitted(false);
     }
   }, [userInfoData, setValue]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {

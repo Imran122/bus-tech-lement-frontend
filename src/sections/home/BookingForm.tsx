@@ -282,7 +282,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     translate,
   ]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  //const [submitted, setSubmitted] = useState(false);
   const [removeBookingSeat, { isLoading: removeBookingSeatLoading }] =
     useRemoveBookingSeatMutation({}) as any;
 
@@ -307,7 +307,6 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       return;
     }
 
-    setSubmitted(true);
     await refetch(); // Trigger API call manually
   };
   useEffect(() => {
@@ -323,10 +322,9 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
 
       // Clear any previous error message
       setErrorMessage("");
-      setSubmitted(false);
     } else {
       // Set error message if no data found
-      setSubmitted(false);
+
       setErrorMessage("No data found for this phone number.");
     }
 
