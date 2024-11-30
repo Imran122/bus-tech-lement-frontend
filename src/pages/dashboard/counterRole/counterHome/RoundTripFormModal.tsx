@@ -429,15 +429,45 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
   };
   //on submit
   const onSubmit = async (data: addBookingSeatFromCounterProps) => {
-    const cleanedData = removeFalsyProperties(data, [
-      "customerName",
-      "nid",
-      "email",
-      "nationality",
-      "address",
-    ]);
-
     try {
+      const cleanedData = removeFalsyProperties(data, [
+        "customerName",
+        "nid",
+        "email",
+        "nationality",
+        "address",
+      ]);
+
+      // Build the payload
+      const finalData = {
+        ...cleanedData,
+        bookingType: bookingType, // "SeatIssue" or "SeatBooking"
+        orderType: "Round_Trip", // Assuming Round Trip, modify as needed
+        noOfSeat: bookingFormState.selectedSeats.length,
+        amount: totalAmount, // Total amount calculated earlier
+        date: bookingCoach.departureDate,
+        returnDate: bookingCoach.returnDate || undefined, // Optional return date
+        expiryBookingDate:
+          bookingType === "SeatBooking" && expirationDate
+            ? format(expirationDate, "yyyy-MM-dd")
+            : undefined,
+        expiryBookingTime:
+          bookingType === "SeatBooking" && expirationTime
+            ? expirationTime.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : undefined,
+        seats: bookingFormState.selectedSeats.map((seat: any) => ({
+          seat: seat.seat,
+          coachConfigId: seat.coachConfigId, // Include coachConfigId
+          schedule: seat.schedule, // Include schedule
+          date: seat.date, // Include date
+        })),
+      };
+
+
+      // Check seat availability
       const check = await checkingSeat({
         coachConfigId: bookingCoach.id,
         schedule: bookingCoach.schedule,
@@ -446,53 +476,35 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
       });
 
       if (check?.data?.data?.available) {
-        const finalData = {
-          ...cleanedData,
-          bookingType: bookingType,
-          seats: bookingFormState.selectedSeats.map((seat: any) => ({
-            seat: seat.seat,
-            coachConfigId: bookingCoach.id,
-            schedule: bookingCoach.schedule,
-            date: bookingCoach.departureDate,
-          })),
-          ...(bookingType === "SeatBooking" && {
-            expiryBookingDate: expirationDate
-              ? format(expirationDate, "yyyy-MM-dd")
-              : undefined,
-            expiryBookingTime: expirationTime
-              ? expirationTime.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              : undefined,
-          }),
-        };
-        //
+        // Proceed with booking
         const booking = await addBooking(finalData);
 
         if (booking.data?.success) {
-          setUpdateLocal(true);
-          // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
+          toast.success(
+            `Booking successful for ${booking.data?.data?.customerName}!`
+          );
+
+          setBookingFormState({
+            selectedSeats: [],
+            targetedSeat: null,
+            redirectLink: null,
+            customerName: null,
+            redirectConfirm: false,
+          });
+
           if (bookingType !== "SeatBooking") {
-            handlePrint();
+            handlePrint(); // Print if it's not a booking
           }
           onClose();
-          // setClear(true);
-          toast.success(
-            translate(
-              `প্রিয় ${booking.data?.data?.customerName}, আপনার সিট সফলভাবে বুক করা হয়েছে! আমাদের সেবা ব্যবহার করার জন্য ধন্যবাদ।`,
-              `Dear ${booking.data?.data?.customerName}, your seat has been successfully booked! Thank you for choosing our service.`
-            )
-          );
         } else {
           toast.error("Booking failed. Please try again.");
         }
       } else {
-        toast.warning("Selected seat is no longer available.");
+        toast.warning("Some selected seats are no longer available.");
       }
     } catch (error) {
+      console.error("Error during booking submission:", error);
       toast.error("An error occurred during booking submission.");
-      console.error("Error:", error);
     }
   };
   const invoiceReprintHandler = () => {

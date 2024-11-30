@@ -81,53 +81,61 @@ const DashboardRoundTripTickitBookingCard: FC<IBookingTickitCardProps> = ({
   }, [coachData?.coachClass]);
 
   const handleBookingSeat = async (seatData: any) => {
-    const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
-      (current: any) => current.seat === seatData.seat
-    );
+    try {
+      const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
+        (current: any) => current.seat === seatData.seat
+      );
 
-    if (isSeatAlreadySelected) {
-      // Remove the seat if it's already selected
-      const result = await removeBookingSeat({
-        coachConfigId: coachData?.id,
-        date: coachData?.departureDate,
-        schedule: coachData?.schedule,
-        seat: seatData.seat,
-      });
+      if (isSeatAlreadySelected) {
+        // Remove the seat if it's already selected
+        const result = await removeBookingSeat({
+          coachConfigId: coachData?.id,
+          date: coachData?.departureDate,
+          schedule: coachData?.schedule,
+          seat: seatData.seat,
+        });
 
-      if (result?.data?.success) {
-        setBookingFormState((prevState: any) => ({
-          ...prevState,
-          selectedSeats: prevState.selectedSeats.filter(
-            (seat: any) => seat.seat !== seatData.seat
-          ),
-        }));
+        if (result?.data?.success) {
+          setBookingFormState((prevState: any) => ({
+            ...prevState,
+            selectedSeats: prevState.selectedSeats.filter(
+              (seat: any) => seat.seat !== seatData.seat
+            ),
+          }));
+        } else {
+          console.error("Failed to remove seat:", result?.error);
+        }
+      } else {
+        // Add the seat if it's not already selected
+        const result = await addBookingSeat({
+          coachConfigId: coachData?.id,
+          date: coachData?.departureDate,
+          schedule: coachData?.schedule,
+          seat: seatData.seat,
+        });
+
+        if (result?.data?.data?.available) {
+          setBookingFormState((prevState: any) => ({
+            ...prevState,
+            selectedSeats: [
+              ...prevState.selectedSeats,
+              {
+                seat: seatData.seat,
+                coachConfigId: coachData.id,
+                date: coachData.departureDate,
+                schedule: coachData.schedule,
+                currentAmount: coachData?.fare?.amount,
+                previousAmount: coachData?.discount,
+              },
+            ],
+          }));
+          setBookingCoachSingle(coachData); // Set only when booking successfully
+        } else {
+          console.error("Seat is not available or failed to book:", result);
+        }
       }
-    } else {
-      // Add the seat if it's not already selected
-      const result = await addBookingSeat({
-        coachConfigId: coachData?.id,
-        date: coachData?.departureDate,
-        schedule: coachData?.schedule,
-        seat: seatData.seat,
-      });
-
-      if (result?.data?.data?.available) {
-        setBookingFormState((prevState: any) => ({
-          ...prevState,
-          selectedSeats: [
-            ...prevState.selectedSeats,
-            {
-              seat: seatData.seat,
-              coachConfigId: coachData.id, // Store coachConfigId here
-              date: coachData.departureDate, // Store date here
-              schedule: coachData.schedule, // Store schedule here
-              currentAmount: coachData?.fare?.amount,
-              previousAmount: coachData?.discount,
-            },
-          ],
-        }));
-        setBookingCoachSingle(coachData); // Set only when booking successfully
-      }
+    } catch (error) {
+      console.error("Error handling booking seat:", error);
     }
   };
   return (
