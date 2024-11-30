@@ -41,7 +41,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { Label } from "@/components/common/typography/Label";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -49,7 +48,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Tooltip,
   TooltipContent,
@@ -60,11 +58,9 @@ import {
   addBookingSeatFromCounterProps,
   addBookingSeatFromCounterSchema,
 } from "@/schemas/counter/addBookingSeatFromCounter";
-import { useGetPartialInfoAllQuery } from "@/store/api/vehiclesSchedule/partialApi";
 import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
-import { format } from "date-fns";
 import { LuRefreshCw } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -91,10 +87,10 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
   setBookingFormState,
 }) => {
   const [bookingType, setBookingType] = useState("SeatIssue");
-  const [expirationDate, setExpirationDate] = useState<Date | undefined>(
-    undefined
-  );
-  const [expirationTime, setExpirationTime] = useState<Date>(new Date());
+  // const [expirationDate, setExpirationDate] = useState<Date | undefined>(
+  //   undefined
+  // );
+  //const [expirationTime, setExpirationTime] = useState<Date>(new Date());
   const { translate } = useCustomTranslator();
   const user = useSelector((state: any) => state.user);
   const [status, setStatus] = useState(false);
@@ -120,7 +116,7 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
   const [removeBookingSeat] = useRemoveBookingSeatMutation({}) as any;
   const [unBookSeatFromCounterBooking] =
     useUnBookSeatFromCounterBookingMutation({}) as any;
-  const { data: partialData } = useGetPartialInfoAllQuery({});
+  //const { data: partialData } = useGetPartialInfoAllQuery({});
   const [
     addBooking,
     {
@@ -170,7 +166,7 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
       // RESET THE PROMISE RESOLVE SO WE CAN PRINT AGAIN
       promiseResolveRef.current = null;
       setIsPrinting(false);
-      // setClear(false);
+      onClose();
       setSaleData({});
     },
   });
@@ -251,8 +247,8 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
         redirectConfirm: false,
       });
       setBookingType("SeatIssue");
-      setExpirationDate(undefined);
-      setExpirationTime(new Date());
+      //setExpirationDate(undefined);
+      //setExpirationTime(new Date());
     }
   }, [isSubmitSuccessful, reset, bookingCoach?.departureDate]);
   const handleBookingSeat = async (seatData: any) => {
@@ -438,35 +434,6 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
         "address",
       ]);
 
-      // Build the payload
-      const finalData = {
-        ...cleanedData,
-        bookingType: bookingType, // "SeatIssue" or "SeatBooking"
-        orderType: "Round_Trip", // Assuming Round Trip, modify as needed
-        noOfSeat: bookingFormState.selectedSeats.length,
-        amount: totalAmount, // Total amount calculated earlier
-        date: bookingCoach.departureDate,
-        returnDate: bookingCoach.returnDate || undefined, // Optional return date
-        expiryBookingDate:
-          bookingType === "SeatBooking" && expirationDate
-            ? format(expirationDate, "yyyy-MM-dd")
-            : undefined,
-        expiryBookingTime:
-          bookingType === "SeatBooking" && expirationTime
-            ? expirationTime.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : undefined,
-        seats: bookingFormState.selectedSeats.map((seat: any) => ({
-          seat: seat.seat,
-          coachConfigId: seat.coachConfigId, // Include coachConfigId
-          schedule: seat.schedule, // Include schedule
-          date: seat.date, // Include date
-        })),
-      };
-
-
       // Check seat availability
       const check = await checkingSeat({
         coachConfigId: bookingCoach.id,
@@ -475,14 +442,29 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
         seats: cleanedData?.seats,
       });
 
+      // Build the payload
+      const finalData = {
+        ...cleanedData,
+        bookingType: "SeatIssue", // "SeatIssue" or "SeatBooking"
+        orderType: "Round_Trip", // Assuming Round Trip, modify as needed
+        noOfSeat: bookingFormState.selectedSeats.length,
+        amount: totalAmount, // Total amount calculated earlier
+        date: bookingCoach.departureDate,
+        returnDate: bookingCoach.returnDate || undefined, // Optional return date
+
+        seats: bookingFormState.selectedSeats.map((seat: any) => ({
+          seat: seat.seat,
+          coachConfigId: seat.coachConfigId, // Include coachConfigId
+          schedule: seat.schedule, // Include schedule
+          date: seat.date, // Include date
+        })),
+      };
       if (check?.data?.data?.available) {
         // Proceed with booking
         const booking = await addBooking(finalData);
 
         if (booking.data?.success) {
-          toast.success(
-            `Booking successful for ${booking.data?.data?.customerName}!`
-          );
+          toast.success(`seat Booking successful`);
 
           setBookingFormState({
             selectedSeats: [],
@@ -492,10 +474,9 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
             redirectConfirm: false,
           });
 
-          if (bookingType !== "SeatBooking") {
+          if (bookingType === "SeatIssue") {
             handlePrint(); // Print if it's not a booking
           }
-          onClose();
         } else {
           toast.error("Booking failed. Please try again.");
         }
@@ -518,12 +499,12 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
     <section className=" w-full">
       <PageTransition>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* seat issue or seat booking part counter */}
+          {/* seat issue or seat booking part counter 
           <PageTransition className="flex py-5 lg:flex-row flex-col gap-6 items-center justify-center h-full w-full">
             <RadioGroup
               className="flex lg:flex-row flex-row gap-4 mt-8"
               value={bookingType}
-              onValueChange={setBookingType} // Update bookingType state on change
+              onValueChange={setBookingType} 
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="SeatIssue" id="r2" />
@@ -544,7 +525,7 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
               </div>
             )}
           </PageTransition>
-
+          */}
           <div className="flex items-center gap-5 mx-3">
             {/* STATUS BUTTON */}
             <Dialog
@@ -1256,7 +1237,7 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
                   className="py-0 my-0"
                 />
 
-                <div className="mt-">
+                {/* <div className="mt-">
                   <Button
                     onClick={() => invoiceReprintHandler()}
                     type="button"
@@ -1265,7 +1246,7 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
                   >
                     Reprint
                   </Button>
-                </div>
+                </div> */}
               </div>
             </PageTransition>
           </div>
@@ -1275,7 +1256,7 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
         {addBookingSuccess && (
           <TickitPrint ref={printSaleRef} tickitData={saleInfo} />
         )}
-        {saleData && bookingType !== "SeatBooking" && (
+        {saleData && bookingType === "SeatIssue" && (
           <TickitPrint ref={printSaleRef} tickitData={saleData?.saleInfo} />
         )}
       </div>
