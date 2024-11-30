@@ -22,7 +22,7 @@ const CounterDashboardLayout: FC<ICounterDashboardLayoutProps> = () => {
         <section
           className={cn(
             "flex flex-col sm:gap-4 transition-all",
-            sidebarOpen ? "sm:pl-[280px]" : "lg:pl-14"
+            sidebarOpen ? "lg:pl-[280px]" : "lg:pl-14"
           )}
         >
           {/* DASHBOARD UPPER NAVIGATION */}

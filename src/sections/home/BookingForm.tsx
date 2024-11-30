@@ -291,8 +291,13 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     isLoading: userInfoLoading,
     refetch,
   } = useGetTickitInfoByPhoneQuery(phoneNumber, {
-    skip: !phoneNumber, // Ensure the API doesn't fetch unless the phone number is provided
+    skip: phoneNumber.length !== 11, // Skip unless phone number is 11 digits
   }) as any;
+  useEffect(() => {
+    if (phoneNumber.length === 11) {
+      refetch(); // Trigger API call if phone number is 11 digits
+    }
+  }, [phoneNumber, refetch]);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -306,29 +311,27 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     await refetch(); // Trigger API call manually
   };
   useEffect(() => {
-    if (submitted && userInfoData) {
-      if (userInfoData?.data) {
-        // Populate all relevant form fields
-        setValue("customerName", userInfoData.data.name || "");
-        setValue("phone", userInfoData.data.phone || "");
-        setValue("gender", userInfoData.data.gender || "");
-        setValue("email", userInfoData.data.email || "");
-        setValue("address", userInfoData.data.address || "");
-        setValue("nationality", userInfoData.data.nationality || "");
-        setValue("nid", userInfoData.data.nid || "");
+    if (userInfoData?.data) {
+      // Populate all relevant form fields
+      setValue("customerName", userInfoData.data.name || "");
+      setValue("phone", userInfoData.data.phone || "");
+      setValue("gender", userInfoData.data.gender || "");
+      setValue("email", userInfoData.data.email || "");
+      setValue("address", userInfoData.data.address || "");
+      setValue("nationality", userInfoData.data.nationality || "");
+      setValue("nid", userInfoData.data.nid || "");
 
-        // Clear any previous error message
-        setErrorMessage("");
-        setSubmitted(false);
-      } else {
-        // Set error message if no data found
-        setSubmitted(false);
-        setErrorMessage("No data found for this phone number.");
-      }
-
-      // Reset `submitted` to allow for further searches by phone
+      // Clear any previous error message
+      setErrorMessage("");
+      setSubmitted(false);
+    } else {
+      // Set error message if no data found
+      setSubmitted(false);
+      setErrorMessage("No data found for this phone number.");
     }
-  }, [userInfoData, setValue, submitted]);
+
+    // Reset `submitted` to allow for further searches by phone
+  }, [userInfoData, setValue]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
     const cleanedData = removeFalsyProperties(data, [
       "nid",
@@ -493,6 +496,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                 <Input
                   type="text"
                   name="phoneNumber"
+                  value={phoneNumber}
                   onChange={(e: any) => setPhoneNumber(e.target.value)}
                   id="phoneNumber"
                   placeholder={translate(
@@ -581,6 +585,8 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                     {...register("phone")}
                     type="tel"
                     id="phone"
+                    onChange={(e: any) => setPhoneNumber(e.target.value)}
+                    value={phoneNumber}
                     placeholder={translate(
                       addBookingSeatForm.phone.placeholder.bn,
                       addBookingSeatForm.phone.placeholder.en
