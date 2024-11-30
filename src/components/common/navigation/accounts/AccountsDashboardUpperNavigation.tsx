@@ -46,7 +46,7 @@ const AccountsDashboardUpperNavigation: FC<
         <img src={logocompany} />
       </div>
       <nav className="justify-between w-full flex">
-        <ul className="hidden lg:flex gap-x-2 items-center">
+        <ul className="hidden md:flex gap-x-2 items-center">
           {subNavigation?.subLinks?.length > 0 &&
             subNavigation?.subLinks?.map(
               (singleNav: IAccountsNavigationLinks, navIndex: number) => (
