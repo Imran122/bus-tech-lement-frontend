@@ -61,8 +61,8 @@ const CounterDashboardUpperNavigation: FC = () => {
   };
 
   return (
-    <header className="sticky lg:!h-14 md:!h-36 !h-20 md:!bg-muted/30 !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all duration-300">
-      <div className="md:hidden block">
+    <header className="sticky lg:!h-14 !h-20 md:!bg-muted/30 !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all duration-300">
+      <div className="lg:hidden block">
         <img src={logocompany} />
       </div>
       <nav className="justify-between w-full items-center flex">
@@ -70,7 +70,7 @@ const CounterDashboardUpperNavigation: FC = () => {
           {/* Your navigation links */}
         </ul>
 
-        <ul className="hidden lg:block md:block">
+        <ul className="hidden lg:block">
           <li className="mt-2">
             <TickitSearchDashboard
               bookingState={bookingState}
@@ -79,13 +79,13 @@ const CounterDashboardUpperNavigation: FC = () => {
           </li>
         </ul>
 
-        <ul className="block md:hidden relative">
+        <ul className="block lg:hidden relative">
           <li className="inline-flex items-center">
             <button
               onClick={() => setShowSearchDashboard(!showSearchDashboard)}
-              className="px-6 py-2 bg-primary text-white rounded-md"
+              className="md:px-6 px-4 md:text-base text-xm py-2 bg-primary text-white rounded-md"
             >
-              {showSearchDashboard ? "Hide" : "Search"}
+              {showSearchDashboard ? "Hide" : "Tickit"}
             </button>
           </li>
 
