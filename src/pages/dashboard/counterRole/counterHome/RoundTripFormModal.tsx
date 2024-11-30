@@ -488,12 +488,12 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
       toast.error("An error occurred during booking submission.");
     }
   };
-  const invoiceReprintHandler = () => {
-    // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
-    const data = shareWithLocal("get", `${appConfiguration.appCode}`);
-    setSaleData(data);
-    handlePrint();
-  };
+  // const invoiceReprintHandler = () => {
+  //   // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
+  //   const data = shareWithLocal("get", `${appConfiguration.appCode}`);
+  //   setSaleData(data);
+  //   handlePrint();
+  // };
   //const formValues = watch();
   return (
     <section className=" w-full">
