@@ -20,10 +20,6 @@ import { AlertCircle } from "lucide-react";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface ApiError {
-  message: string;
-}
-
 const OtpCode: FC = () => {
   const { translate } = useCustomTranslator();
   const { locale } = useLocaleContext();
@@ -56,7 +52,7 @@ const OtpCode: FC = () => {
         navigate("/new-password");
       }
     } catch (err) {
-      const apiError = err as ApiError;
+      //const apiError = err as ApiError;
       setError(
         //@ts-ignore
         err?.data?.message ||
