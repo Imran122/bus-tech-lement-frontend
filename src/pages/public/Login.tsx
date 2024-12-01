@@ -33,7 +33,7 @@ import { AlertCircle, LucideEye, LucideEyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { toast } = useToast();
@@ -152,7 +152,8 @@ const Login = () => {
               </InputWrapper>
 
               {/* SUBMIT & ERROR MESSAGE */}
-              <div className="flex justify-end">
+              <div className="flex justify-between items-center text-primary ">
+                <Link to="/forget-password">Forgot Your Password?</Link>
                 <Button className="my-6" disabled={loginLoading} type="submit">
                   {loginLoading && <Loader size="sm" variant="destructive" />}
                   {translate("লগইন", "Login")}

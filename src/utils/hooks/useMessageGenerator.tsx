@@ -14,6 +14,7 @@ type MessageType =
   | "send"
   | "receive"
   | "archive"
+  | "changePassword"
   | "transfer";
 
 const useMessageGenerator = () => {
@@ -98,6 +99,11 @@ const useMessageGenerator = () => {
         return translate(
           `${baseMessage} স্থানান্তর করা হয়েছে। ${checkListMessage} স্থানান্তর সফল হয়েছে।`,
           `${baseMessage} transferred. ${checkListMessage} transfer was successful.`
+        );
+      case "changePassword":
+        return translate(
+          `আপনার পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।`,
+          `Your password has been successfully changed`
         );
       default:
         return translate(
