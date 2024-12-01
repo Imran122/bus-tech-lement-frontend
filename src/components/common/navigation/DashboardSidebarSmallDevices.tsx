@@ -60,7 +60,7 @@ const DashboardSidebarSmallDevices: FC<
                 {/* Main Navigation */}
                 <Button
                   variant="outline"
-                  size="default"
+                  size="menu"
                   className="justify-between items-center"
                   onClick={() => toggleMenu(singleLink.key)}
                 >

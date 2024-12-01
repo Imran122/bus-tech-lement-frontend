@@ -81,7 +81,7 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
               </p>
               <p>
                 <span className="font-semibold">Bank Transaction ID:</span>{" "}
-                {data.data.bankTransId}
+                {data?.data?.bankTransId}
               </p>
               <p>
                 <span className="font-semibold">Card Type:</span>{" "}
