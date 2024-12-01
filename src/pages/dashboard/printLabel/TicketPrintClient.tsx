@@ -76,7 +76,6 @@ const TickitPrintClient = React.forwardRef<
   const seatNo = tickitInfo?.data?.orderSeat?.filter(
     (s: any) => s.date === tickitInfo?.data?.date
   );
-
   return (
     <section
       ref={ref}

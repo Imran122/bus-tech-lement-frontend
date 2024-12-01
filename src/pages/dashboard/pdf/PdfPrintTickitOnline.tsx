@@ -7,15 +7,23 @@ import {
   View,
 } from "@react-pdf/renderer";
 import QRCode from "react-qr-code";
-import bus from "../../../assets/buspng.png";
 
 const styles = StyleSheet.create({
   page: {
-    width: 900,
+    width: 970,
     height: 1100,
     position: "relative",
     backgroundColor: "#ffffff",
-    padding: 130,
+    padding: 60,
+  },
+  container: {
+    borderWidth: 3,
+    borderColor: "#000000",
+    borderStyle: "solid",
+    padding: 40, // Increase padding for more space
+    paddingLeft: 50, // Extra padding on the left
+    paddingRight: 50, // Extra padding on the right
+    marginBottom: 30,
   },
   backgroundImage: {
     position: "absolute",
@@ -33,8 +41,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   logo: {
-    width: 60,
-    height: 40,
+    width: 75,
+    height: 50,
     marginBottom: 5,
   },
   heading: {
@@ -51,42 +59,46 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    justifyContent: "flex-start", // Corrected from "left" to "flex-start"
     paddingRight: 10,
     marginBottom: 5,
   },
   col: {
     flexDirection: "column", // Corrected from "col" to "column"
 
-    marginBottom: 5,
+    columnGap: 15,
   },
   text: {
     fontSize: 14,
-    marginBottom: 3,
+    marginBottom: 5,
   },
   boldText: {
     fontWeight: "bold",
   },
   qrCode: {
-    flexDirection: "column",
+    marginTop: 20,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 10,
+    width: 150,
+    height: 150,
   },
   footer: {
     fontSize: 10,
     textAlign: "center",
     marginTop: 10,
-    color: "#BE02D3",
+    color: "#ffff",
+    backgroundColor: "#BE02D3",
+    paddingVertical: 5,
   },
 });
 
 const PdfPrintTickitOnline = ({
   tickitData,
   logo,
+  qrData,
 }: {
   tickitData: any;
   logo: any;
+  qrData: any;
 }) => {
   const calculateReportingTime = (schedule: string | undefined): string => {
     if (!schedule || typeof schedule !== "string") {
@@ -110,122 +122,109 @@ const PdfPrintTickitOnline = ({
     return `${reportingHours}:${reportingMinutes} ${reportingPeriod}`;
   };
 
-  const qrData = JSON.stringify({
-    phone: tickitData?.data?.phone || "N/A",
-    ticketNo: tickitData?.data?.ticketNo || "404NOTFOUND",
-    seats: tickitData?.data?.orderSeat
-      ?.map((seat: any) => seat?.seat)
-      .join(", "),
-    customerName: tickitData?.data?.customerName,
-    address: tickitData?.data?.address,
-    boardingPoint: tickitData?.data?.boardingPoint,
-    droppingPoint: tickitData?.data?.droppingPoint,
-    departureDate: tickitData?.data?.orderSeat?.[0]?.coachConfig?.departureDate,
-    schedule: tickitData?.data?.orderSeat?.[0]?.coachConfig?.schedule,
-  });
-
   const seatNo = tickitData?.data?.orderSeat?.filter(
     (s: any) => s.date === tickitData?.data?.date
   );
-
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         {/* Background Image */}
-        <Image src={bus} style={styles.backgroundImage} />
+        <View style={styles.container}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Image src={logo?.companyLogoBangla} style={styles.logo} />
+            <Text style={styles.heading}>Online Ticket</Text>
+            <Text style={styles.subHeading}>Hotline: 01945518927</Text>
+          </View>
 
-        {/* Header */}
-        <View style={styles.header}>
-          <Image src={logo?.companyLogoBangla} style={styles.logo} />
-          <Text style={styles.heading}>Online Ticket</Text>
-          <Text style={styles.subHeading}>Hotline: 01945518927</Text>
-        </View>
+          {/* Content */}
+          <View style={styles.section}>
+            <View style={styles.col}>
+              <Text style={styles.text}>
+                <Text style={styles.boldText}>Ticket No:</Text>{" "}
+                {tickitData?.data?.ticketNo}
+              </Text>
+              <Text style={styles.text}>
+                <Text style={styles.boldText}>Coach No:</Text>{" "}
+                {seatNo?.[0]?.coachConfig?.coachNo}
+              </Text>
+            </View>
+            <View style={styles.col}>
+              <Text style={styles.text}>
+                <Text style={styles.boldText}>Name:</Text>{" "}
+                {tickitData?.data?.customerName}
+              </Text>
+              <Text style={styles.text}>
+                <Text style={styles.boldText}>Mobile:</Text>{" "}
+                {tickitData?.data?.phone}
+              </Text>
+            </View>
+            <View style={styles.col}>
+              <Text style={styles.text}>
+                <Text style={styles.boldText}>Boarding Point:</Text>{" "}
+                {tickitData?.data?.boardingPoint}
+              </Text>
+              <Text style={styles.text}>
+                <Text style={styles.boldText}>Dropping Point:</Text>{" "}
+                {tickitData?.data?.droppingPoint}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={[styles.text, { marginRight: 40 }]}>
+                <Text style={styles.boldText}>Journey Date:</Text>{" "}
+                {seatNo?.[0]?.coachConfig?.departureDate
+                  ? new Date(
+                      seatNo?.[0]?.coachConfig?.departureDate
+                    ).toLocaleDateString()
+                  : "N/A"}
+              </Text>
+              <Text style={styles.text}>
+                <Text style={styles.boldText}>Issue Date:</Text>{" "}
+                {tickitData?.data?.createdAt
+                  ? new Date(tickitData.data.createdAt).toLocaleDateString()
+                  : "N/A"}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={[styles.text, { marginRight: 40 }]}>
+                <Text style={styles.boldText}>Reporting Time:</Text>{" "}
+                {calculateReportingTime(seatNo?.[0]?.coachConfig?.schedule)}
+              </Text>
+              <Text style={styles.text}>
+                <Text style={styles.boldText}>Departure Time:</Text>{" "}
+                {seatNo?.[0]?.coachConfig?.schedule}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={[styles.text, { marginRight: 40 }]}>
+                <Text style={styles.boldText}>Seat Fare (Tk):</Text>{" "}
+                {seatNo?.[0]?.unitPrice}
+              </Text>
+              <Text style={styles.text}>
+                <Text style={styles.boldText}>Total Fare (Tk):</Text>{" "}
+                {tickitData?.data?.paymentAmount}
+              </Text>
+            </View>
+          </View>
+          <View>
+            <Text style={styles.text}>
+              <Text style={styles.boldText}>Seat No:</Text>{" "}
+              {seatNo?.map((seat: any) => seat?.seat).join(", ") || "N/A"}
+            </Text>
+          </View>
 
-        {/* Content */}
-        <View style={styles.section}>
-          <View style={styles.col}>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Ticket No:</Text>{" "}
-              {tickitData?.data?.ticketNo}
-            </Text>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Coach No:</Text>{" "}
-              {seatNo?.[0]?.coachConfig?.coachNo}
-            </Text>
+          {/* QR Code */}
+
+          <View style={styles.qrCode}>
+            <QRCode value={qrData} size={80} />{" "}
           </View>
-          <View style={styles.col}>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Name:</Text>{" "}
-              {tickitData?.data?.customerName}
-            </Text>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Mobile:</Text>{" "}
-              {tickitData?.data?.phone}
-            </Text>
-          </View>
-          <View style={styles.col}>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Boarding Point:</Text>{" "}
-              {tickitData?.data?.boardingPoint}
-            </Text>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Dropping Point:</Text>{" "}
-              {tickitData?.data?.droppingPoint}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Journey Date:</Text>{" "}
-              {seatNo?.[0]?.coachConfig?.departureDate
-                ? new Date(
-                    seatNo?.[0]?.coachConfig?.departureDate
-                  ).toLocaleDateString()
-                : "N/A"}
-            </Text>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Issue Date:</Text>{" "}
-              {tickitData?.data?.createdAt
-                ? new Date(tickitData.data.createdAt).toLocaleDateString()
-                : "N/A"}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Reporting Time:</Text>{" "}
-              {calculateReportingTime(seatNo?.[0]?.coachConfig?.schedule)}
-            </Text>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Departure Time:</Text>{" "}
-              {seatNo?.[0]?.coachConfig?.schedule}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Seat Fare (Tk):</Text>{" "}
-              {seatNo?.[0]?.unitPrice}
-            </Text>
-            <Text style={styles.text}>
-              <Text style={styles.boldText}>Total Fare (Tk):</Text>{" "}
-              {tickitData?.data?.paymentAmount}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.text}>
-            <Text style={styles.boldText}>Seat No:</Text>{" "}
-            {seatNo?.map((seat: any) => seat?.seat).join(", ") || "N/A"}
+
+          {/* Footer */}
+          <Text style={styles.footer}>
+            Please keep your luggage under your own responsibility. Thank you.
+            For Online Ticket:https://iconic-beta.netlify.app/{" "}
           </Text>
         </View>
-
-        {/* QR Code */}
-        <View style={styles.qrCode}>
-          <QRCode value={qrData} size={80} />
-        </View>
-
-        {/* Footer */}
-        <Text style={styles.footer}>
-          Please keep your luggage under your own responsibility. Thank you.
-        </Text>
       </Page>
     </Document>
   );

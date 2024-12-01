@@ -48,7 +48,21 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
   useEffect(() => {
     fetchSaleData();
   }, []);
-
+  const qrData = JSON.stringify({
+    phone: saleData?.bookingInfo?.data?.phone || "N/A",
+    ticketNo: saleData?.bookingInfo?.data?.ticketNo || "404NOTFOUND",
+    seats: saleData?.bookingInfo?.data?.orderSeat
+      ?.map((seat: any) => seat?.seat)
+      .join(", "),
+    customerName: saleData?.bookingInfo?.data?.customerName,
+    address: saleData?.bookingInfo?.data?.address,
+    boardingPoint: saleData?.bookingInfo?.data?.boardingPoint,
+    droppingPoint: saleData?.bookingInfo?.data?.droppingPoint,
+    departureDate:
+      saleData?.bookingInfo?.data?.orderSeat?.[0]?.coachConfig?.departureDate,
+    schedule:
+      saleData?.bookingInfo?.data?.orderSeat?.[0]?.coachConfig?.schedule,
+  });
   if (isLoading) {
     return <DetailsSkeleton />;
   }
@@ -158,6 +172,7 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
                       <PdfPrintTickitOnline
                         tickitData={saleData?.bookingInfo}
                         logo={singleCms?.data}
+                        qrData={qrData}
                       />
                     }
                     fileName="tickit.pdf"
