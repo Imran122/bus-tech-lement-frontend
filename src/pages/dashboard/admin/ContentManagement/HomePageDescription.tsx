@@ -38,49 +38,7 @@ const HomePageDescription: React.FC<Props> = ({
   const [homePageDescription, setHomePageDescription] = useState<string>("");
   const [homePageDescriptionBangla, setHomePageDescriptionBangla] =
     useState<string>("");
-  const editorConfiguration = {
-    toolbar: [
-      "heading",
-      "|",
-      "bold",
-      "italic",
-      "underline",
-      "strikethrough",
-      "|",
-      "fontColor",
-      "fontBackgroundColor",
-      "|",
-      "link",
-      "bulletedList",
-      "numberedList",
-      "blockQuote",
-      "|",
-      "undo",
-      "redo",
-    ],
-    fontColor: {
-      colors: [
-        { color: "hsl(0, 75%, 60%)", label: "Red" },
-        { color: "hsl(30, 75%, 60%)", label: "Orange" },
-        { color: "hsl(60, 75%, 60%)", label: "Yellow" },
-        { color: "hsl(120, 75%, 60%)", label: "Green" },
-        { color: "hsl(180, 75%, 60%)", label: "Cyan" },
-        { color: "hsl(240, 75%, 60%)", label: "Blue" },
-        { color: "hsl(270, 75%, 60%)", label: "Purple" },
-      ],
-    },
-    fontBackgroundColor: {
-      colors: [
-        { color: "hsl(0, 75%, 90%)", label: "Light Red" },
-        { color: "hsl(30, 75%, 90%)", label: "Light Orange" },
-        { color: "hsl(60, 75%, 90%)", label: "Light Yellow" },
-        { color: "hsl(120, 75%, 90%)", label: "Light Green" },
-        { color: "hsl(180, 75%, 90%)", label: "Light Cyan" },
-        { color: "hsl(240, 75%, 90%)", label: "Light Blue" },
-        { color: "hsl(270, 75%, 90%)", label: "Light Purple" },
-      ],
-    },
-  };
+
   // Populate initial values if provided
   useEffect(() => {
     const initialEnglish = getValues("homePageDescription") || "";
@@ -101,8 +59,8 @@ const HomePageDescription: React.FC<Props> = ({
       >
         <div className="flex flex-col items-center gap-3">
           <CKEditor
+            //@ts-ignore
             editor={ClassicEditor}
-            config={editorConfiguration}
             data={homePageDescription}
             onChange={(_, editor) => {
               const data = editor.getData();
@@ -159,8 +117,8 @@ const HomePageDescription: React.FC<Props> = ({
       >
         <div className="flex flex-col items-center gap-3">
           <CKEditor
+            //@ts-ignore
             editor={ClassicEditor}
-            config={editorConfiguration}
             data={homePageDescriptionBangla}
             onChange={(_, editor) => {
               const data = editor.getData();
