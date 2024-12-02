@@ -1,0 +1,35 @@
+/* Define the animation for circular motion */
+@keyframes circularMotion {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.main {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border: 6px solid #d948ec; /* Primary border color */
+  border-radius: 50%;
+}
+
+.circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: circularMotion 4s linear infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bus-image {
+  position: absolute;
+  bottom: 20px; /* Adjust this based on bus size */
+  transform: translateY(50%);
+  width: 80px; /* Adjust the size of the bus */
+  height: auto;
+}
