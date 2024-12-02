@@ -69,7 +69,7 @@ const UpdatePassword: FC<IUpdatePasswordProps> = () => {
       )}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-3 gap-x-4 gap-y-2">
+        <div className="grid lg:grid-cols-3 gap-x-4 gap-y-2">
           {/* OLD PASSWORD */}
           <InputWrapper
             labelFor="oldPassword"

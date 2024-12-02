@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { InputWrapper } from "@/components/common/form/InputWrapper";
+import { Heading } from "@/components/common/typography/Heading";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -15,83 +16,160 @@ import {
 } from "@/utils/constants/common/nationalitiesOptions";
 import { addBookingSeatForm } from "@/utils/constants/form/addBookingForm";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
+import { useReactToPrint } from "react-to-print";
 
 import PageTransition from "@/components/common/effect/PageTransition";
 import Submit from "@/components/common/form/Submit";
 import { VanishList } from "@/components/common/form/VanishList";
 import { Paragraph } from "@/components/common/typography/Paragraph";
 import {
-  AddBookingSeatDataProps,
-  addBookingSeatSchema,
-} from "@/schemas/booking/addBookingSeatSchema";
-import {
   useAddBookingMutation,
-  useAddBookingPaymentMutation,
   useAddBookingSeatMutation,
   useCheckingSeatMutation,
-  useGetTickitInfoByPhoneQuery,
   useRemoveBookingSeatMutation,
+  useUnBookSeatFromCounterBookingMutation,
 } from "@/store/api/bookingApi";
 import {
-  IPaymentMethodOptions,
-  paymentMethodOptions,
+  counterPaymentMethodOptions,
+  ICounterPaymentMethodOptions,
 } from "@/utils/constants/common/paymentMethodOptions";
+
 import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { useGetPartialInfoAllQuery } from "@/store/api/vehiclesSchedule/partialApi";
-import { playSound } from "@/utils/helpers/playSound";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  addBookingSeatFromCounterProps,
+  addBookingSeatFromCounterSchema,
+} from "@/schemas/counter/addBookingSeatFromCounter";
+import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
-import { format } from "date-fns";
+import { shareWithLocal } from "@/utils/helpers/shareWithLocal";
+import { LuRefreshCw } from "react-icons/lu";
+import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import TickitPrint from "../../printLabel/TickitPrint";
+import SeatStatus from "../tickit/SeatStatus";
+import Status from "../tickit/Status";
+import TripSheet from "../tickit/TripSheet";
 
-interface IBookingFormProps {
+interface ICounterBookingFormProps {
   bookingCoach: any;
-  bookingFormState: any;
+  onClose: any;
   goViaRoute: any;
   returnViaRoute: any;
+  bookingFormState: any;
   setBookingFormState: any;
-  onClose: any;
-}
-export interface IBookingFormStateProps {
-  targetedSeat: number | null;
-  selectedSeats: any[];
-  redirectLink: string | null;
-  customerName: string | null;
-  redirectConfirm: boolean;
 }
 
-const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
-  bookingFormState,
+const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
+  bookingCoach,
+  onClose,
   goViaRoute,
   returnViaRoute,
-  bookingCoach,
+  bookingFormState,
   setBookingFormState,
-  onClose,
 }) => {
+  const [bookingType, setBookingType] = useState("SeatIssue");
+  // const [expirationDate, setExpirationDate] = useState<Date | undefined>(
+  //   undefined
+  // );
+  //const [expirationTime, setExpirationTime] = useState<Date>(new Date());
   const { translate } = useCustomTranslator();
-  const goingDate = localStorage.getItem("goingDate");
-  const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
-    useAddBookingMutation() as any;
+  const user = useSelector((state: any) => state.user);
+  const [status, setStatus] = useState(false);
+  const [statusBookingCoach, setStatusBookingCoach] = useState({
+    CounterBookedSeat: [],
+    orderSeat: [],
+  });
+  const [tripSheet, setTripSheet] = useState(false);
+
+  const [seatStatus, setSeatStatus] = useState(false);
+  const [seatStatusBooking, setSeatStatusBooking] = useState({
+    CounterBookedSeat: [],
+    orderSeat: [],
+  });
+
+  // REFERENCE FOR PRINT SELECTED COMPONENT
+  const printSaleRef = useRef(null);
+  const [isPrinting, setIsPrinting] = useState(false);
+  // const [clear, setClear] = useState(false);
+  const [saleData, setSaleData] = useState<any>();
+  const [updateLocal, setUpdateLocal] = useState<boolean>(false);
+
+  const [removeBookingSeat] = useRemoveBookingSeatMutation({}) as any;
+  const [unBookSeatFromCounterBooking] =
+    useUnBookSeatFromCounterBookingMutation({}) as any;
+  //const { data: partialData } = useGetPartialInfoAllQuery({});
   const [
-    addBookingPayment,
-    { isLoading: addBookingPaymentLoading, error: addBookingPaymentError },
-  ] = useAddBookingPaymentMutation() as any;
-  const [addBookingSeat] = useAddBookingSeatMutation() as any;
-  const [removeBookingSeat] = useRemoveBookingSeatMutation() as any;
+    addBooking,
+    {
+      data: saleInfo,
+      isLoading: addBookingLoading,
+      isSuccess: addBookingSuccess,
+      error: addBookingError,
+    },
+  ] = useAddBookingMutation();
   const [
     checkingSeat,
     { isLoading: checkingSeatLoading, error: checkingSeatError },
-  ] = useCheckingSeatMutation() as any;
+  ] = useCheckingSeatMutation();
+  const [addBookingSeat] = useAddBookingSeatMutation();
 
   const totalAmount =
     totalCalculator(bookingFormState?.selectedSeats, "currentAmount") || 0;
   const totalSeats = bookingFormState?.selectedSeats?.length || 0;
+
+  // STORE PROMISE RESOLVE REFERENCE
+  const promiseResolveRef = useRef<any>(null);
+
+  // UPDATE THE COMPONENT VIA REFERENCE
+  useEffect(() => {
+    if (isPrinting && promiseResolveRef.current) {
+      promiseResolveRef.current();
+    }
+
+    if (saleInfo && updateLocal) {
+      shareWithLocal("set", `${appConfiguration.appCode}`, {
+        saleInfo,
+      });
+      setUpdateLocal(false);
+    }
+  }, [isPrinting, saleInfo, updateLocal]);
+
+  const handlePrint = useReactToPrint({
+    content: () => printSaleRef.current,
+    documentTitle: `${appConfiguration?.appName}_${saleInfo?.data?.ticketNo}`,
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        promiseResolveRef.current = resolve;
+        setIsPrinting(true);
+      });
+    },
+    onAfterPrint: () => {
+      // RESET THE PROMISE RESOLVE SO WE CAN PRINT AGAIN
+      promiseResolveRef.current = null;
+      setIsPrinting(false);
+      onClose();
+      setSaleData({});
+    },
+  });
 
   const {
     register,
@@ -99,38 +177,87 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     setError,
     watch,
     handleSubmit,
-    formState: { errors },
-  } = useForm<AddBookingSeatDataProps>({
-    resolver: zodResolver(addBookingSeatSchema),
+    reset,
+    formState: { isSubmitSuccessful, errors },
+  } = useForm<addBookingSeatFromCounterProps>({
+    resolver: zodResolver(addBookingSeatFromCounterSchema),
     defaultValues: {
+      counterId: undefined,
+      customerName: "",
+      paymentType: "", // For dropdowns, empty string is a good default for unselected state
+      paymentAmount: undefined,
+      gender: "Male", // Use undefined instead of empty string for optional enum fields
+      phone: "",
+      email: "",
+      address: "",
+      nid: "",
+      nationality: undefined, // Dropdown reset value
+      paymentMethod: undefined, // Dropdown reset value
+      boardingPoint: undefined, // Dropdown reset value
+      droppingPoint: undefined,
+      returnDroppingPoint: undefined, // Dropdown reset value
+      returnBoardingPoint: undefined, // Dropdown reset value
+      noOfSeat: 0,
       amount: 0,
+      date: bookingCoach?.departureDate || "", // Pre-fill if available
+      seats: [],
     },
   });
-  const { data: partialInfoData } = useGetPartialInfoAllQuery({});
-
-  const paymentType = watch("paymentType");
-  const partialAmount = watch("paymentAmount");
-  //const amount = watch("amount");
-
-  const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
-  const minimumPartialPayment = useMemo(() => {
-    if (partialInfoData?.data?.partialPercentage) {
-      return (totalAmount * partialInfoData.data.partialPercentage) / 100;
-    }
-    return 0;
-  }, [totalAmount, partialInfoData]);
 
   useEffect(() => {
-    if (paymentType === "PARTIAL") {
-      setValue("paymentAmount", minimumPartialPayment); // Set minimum partial payment
+    if (bookingCoach) {
+      setStatusBookingCoach({
+        CounterBookedSeat: bookingCoach?.CounterBookedSeat,
+        orderSeat: bookingCoach?.orderSeat,
+      });
     }
-  }, [paymentType, minimumPartialPayment, setValue]);
+
+    setSeatStatusBooking({
+      CounterBookedSeat: bookingCoach?.CounterBookedSeat,
+      orderSeat: bookingCoach?.orderSeat,
+    });
+  }, [bookingCoach]);
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset({
+        counterId: undefined,
+        customerName: "",
+        paymentType: "",
+        paymentAmount: undefined,
+        gender: "Male", // Reset to undefined for optional enum
+        phone: "",
+        email: "",
+        address: "",
+        nid: "",
+        nationality: undefined, // Dropdown reset to undefined
+        paymentMethod: undefined, // Dropdown reset to undefined
+        boardingPoint: undefined, // Dropdown reset to undefined
+        droppingPoint: undefined, // Dropdown reset to undefined
+        noOfSeat: 0,
+        amount: 0,
+        date: bookingCoach?.departureDate || "",
+        seats: [],
+      });
+      setBookingFormState({
+        targetedSeat: null,
+        selectedSeats: [],
+        redirectLink: null,
+        customerName: null,
+        redirectConfirm: false,
+      });
+      setBookingType("SeatIssue");
+      //setExpirationDate(undefined);
+      //setExpirationTime(new Date());
+    }
+  }, [isSubmitSuccessful, reset, bookingCoach?.departureDate]);
   const handleBookingSeat = async (seatData: any) => {
     const isSeatAlreadySelected = bookingFormState.selectedSeats.some(
       (current: any) => current.seat === seatData.seat
     );
 
     if (isSeatAlreadySelected) {
+      // Remove the seat
       const result = await removeBookingSeat({
         coachConfigId: bookingCoach?.id,
         date: bookingCoach?.departureDate,
@@ -147,6 +274,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
         }));
       }
     } else {
+      // Add the seat
       const result = await addBookingSeat({
         coachConfigId: bookingCoach?.id,
         date: bookingCoach?.departureDate,
@@ -171,13 +299,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   };
 
   useEffect(() => {
-    //@ts-ignore
-    setValue("coachConfigId", bookingCoach?.id);
-    //@ts-ignore
-    setValue("schedule", bookingCoach?.schedule);
     setValue("amount", totalAmount);
     setValue("noOfSeat", totalSeats);
     setValue("date", bookingCoach?.departureDate);
+    setValue("counterId", user?.id);
 
     if (bookingFormState?.selectedSeats?.length) {
       setValue(
@@ -186,246 +311,318 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
       );
     }
   }, [
-    bookingCoach?.departureDate,
-    bookingCoach?.id,
-    bookingCoach?.schedule,
+    bookingCoach,
     bookingFormState.selectedSeats,
     setValue,
     totalAmount,
     totalSeats,
+    user.id,
   ]);
+  //
+  //
+  //
+  const paymentType = watch("paymentType");
+  const partialAmount = watch("paymentAmount");
+  //@ts-ignore
+  const paymentMethod = watch("paymentMethod");
+  const dueAmount = partialAmount ? totalAmount - partialAmount : 0;
 
-  useEffect(() => {
-    if (bookingFormState?.redirectLink && bookingFormState?.redirectConfirm) {
-      toast.success(
+  const handleCancelBooking = async () => {
+    // Define the data structure for seats to cancel
+    const data = {
+      seats: bookingFormState.selectedSeats.map((seat: any) => ({
+        seat: seat.seat,
+        coachConfigId: bookingCoach.id,
+        schedule: bookingCoach.schedule,
+        date: bookingCoach.departureDate,
+      })),
+    };
+
+    try {
+      // Call the unbook API with the prepared data
+      const response = await unBookSeatFromCounterBooking(data).unwrap();
+
+      if (response.success) {
+        setBookingFormState((prevState: any) => ({
+          ...prevState,
+          selectedSeats: [], // Clear selected seats on successful cancellation
+        }));
+        toast.success(
+          translate(
+            "Booking canceled successfully.",
+            "বুকিং সফলভাবে বাতিল করা হয়েছে।"
+          )
+        );
+      }
+    } catch (error) {
+      console.error(
         translate(
-          `প্রিয় ${bookingFormState?.customerName}, আপনার সিট সফলভাবে বুক করা হয়েছে! আমাদের সেবা ব্যবহার করার জন্য ধন্যবাদ।`,
-          `Dear ${bookingFormState?.customerName}, your seat has been successfully booked! Thank you for choosing our service.`
+          "Failed to cancel booking:",
+          "বুকিং বাতিল করতে ব্যর্থ হয়েছে:"
+        ),
+        error
+      );
+      toast.error(
+        translate(
+          "Failed to cancel booking.",
+          "বুকিং বাতিল করতে ব্যর্থ হয়েছে।"
         )
       );
-
-      setTimeout(() => {
-        const paymentPromise = new Promise((resolve) =>
-          setTimeout(resolve, 2000)
-        );
-
-        toast.promise(paymentPromise, {
-          loading: translate("পুনঃনির্দেশিত হচ্ছে...", "Redirecting..."),
-          success: () => {
-            setTimeout(() => {
-              if (bookingFormState.redirectLink) {
-                window.location.href = bookingFormState.redirectLink;
-              }
-            }, 1500);
-            return translate(
-              "পেমেন্টের জন্য পুনঃনির্দেশনা সম্পন্ন হয়েছে।",
-              "Redirecting is complete for payment."
-            );
-          },
-          error: translate("ত্রুটি ঘটেছে", "Error occurred"),
-        });
-      }, 3000);
-
-      setBookingFormState((prevState: IBookingFormStateProps) => ({
-        ...prevState,
-        redirectConfirm: false,
-      }));
     }
-  }, [
-    bookingFormState?.redirectLink,
-    bookingFormState?.redirectConfirm,
-    bookingFormState?.customerName,
-    translate,
-    setBookingFormState,
-  ]);
-
-  const [phoneNumber, setPhoneNumber] = useState("");
-
-  const [errorMessage, setErrorMessage] = useState("");
-  //const [submitted, setSubmitted] = useState(false);
-
-  const {
-    data: userInfoData,
-    isLoading: userInfoLoading,
-    refetch,
-  } = useGetTickitInfoByPhoneQuery(phoneNumber, {
-    skip: phoneNumber.length !== 11, // Skip unless phone number is 11 digits
-  }) as any;
-  useEffect(() => {
-    if (phoneNumber.length === 11) {
-      refetch(); // Trigger API call if phone number is 11 digits
-    }
-  }, [phoneNumber, refetch]);
-
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!phoneNumber) {
-      setErrorMessage("Please enter a valid phone number.");
-      return;
-    }
-
-    //setSubmitted(true);
-    await refetch(); // Trigger API call manually
   };
-
-  useEffect(() => {
-    if (userInfoData?.data) {
-      // Populate all relevant form fields
-      setValue("customerName", userInfoData.data.name || "");
-      setValue("phone", userInfoData.data.phone || "");
-      setValue("gender", userInfoData.data.gender || "");
-      setValue("email", userInfoData.data.email || "");
-      setValue("address", userInfoData.data.address || "");
-      setValue("nationality", userInfoData.data.nationality || "");
-      setValue("nid", userInfoData.data.nid || "");
-
-      // Clear any previous error message
-      setErrorMessage("");
-      // setSubmitted(false);
-    } else {
-      // Set error message if no data found
-      setErrorMessage("No data found for this phone number.");
-      //setSubmitted(false);
-    }
-  }, [userInfoData, setValue]);
-  const onSubmit = async (data: AddBookingSeatDataProps) => {
-    const tripType = localStorage.getItem("tripType");
-    const returnDate = localStorage.getItem("returnDate");
-
-    if (tripType === "Round_Trip" && returnDate) {
-      const hasReturnSeat = bookingFormState.selectedSeats.some(
-        (seat: any) => format(new Date(seat.date), "yyyy-MM-dd") === returnDate
-      );
-
-      if (!hasReturnSeat) {
-        toast.error("Please select a return seat for your round trip.");
+  const ResetDataOfForm = async () => {
+    try {
+      if (!bookingFormState.selectedSeats.length) {
+        toast.warning(
+          translate(
+            "No seats selected to reset.",
+            "রিসেট করার জন্য কোন আসন নির্বাচন করা হয়নি"
+          )
+        );
         return;
       }
-    }
 
-    const cleanedData = removeFalsyProperties(data, [
-      "nid",
-      "email",
-      "nationality",
-      "address",
-      "customerName",
-      "gender",
-    ]);
-
-    const check = await checkingSeat({
-      coachConfigId: bookingCoach?.id,
-      schedule: bookingCoach.schedule,
-      date: bookingCoach.departureDate,
-      seats: cleanedData?.seats,
-    });
-
-    if (check?.data?.data?.available) {
-      //
-      const finalData = {
-        ...cleanedData,
-        bookingType: "SeatIssue",
-        returnDate: returnDate,
-        date: goingDate,
-        orderType: tripType,
-        seats: bookingFormState.selectedSeats.map((seat: any) => ({
+      const promises = bookingFormState.selectedSeats.map((seat: any) =>
+        removeBookingSeat({
+          coachConfigId: seat?.coachConfigId,
+          date: seat?.date,
+          schedule: seat?.schedule,
           seat: seat.seat,
-          coachConfigId: seat.coachConfigId, // Use each seat's specific coachConfigId
-          schedule: seat.schedule, // Use each seat's specific schedule
-          date: seat.date, // Use each seat's specific date
-        })),
-      };
-      const booking = await addBooking(finalData);
-
-      if (booking.data?.success) {
-        // return;
-        const payment = await addBookingPayment(booking?.data?.data?.id);
-        if (payment.data?.success) {
-          playSound("success");
-          setBookingFormState((prevState: IBookingFormStateProps) => ({
-            ...prevState,
-            redirectLink: payment?.data?.data?.url,
-            customerName: booking.data?.data?.customerName,
-            redirectConfirm: true,
-          }));
-        }
-        localStorage.removeItem("returnDate");
-        onClose();
-      }
-    } else {
-      const targetSeat = check?.data?.message?.split(" ")[0];
-      toast.warning(
-        `Seat "${targetSeat}" is no longer available. Choose another seat.`
+        })
       );
-      playSound("warning");
+
+      const results = await Promise.all(promises);
+
+      const allSuccessful = results.every((result) => result?.data?.success);
+      if (allSuccessful) {
+        toast.success(
+          translate(
+            "All seats reset successfully.",
+            "সমস্ত আসন সফলভাবে পুনরায় সেট করা হয়েছে৷"
+          )
+        );
+        setBookingFormState({
+          selectedSeats: [],
+          targetedSeat: null,
+          redirectLink: null,
+          customerName: null,
+          redirectConfirm: false,
+        });
+      } else {
+        toast.error(
+          translate(
+            "Some seats could not be reset. Try again.",
+            "কিছু আসন রিসেট করা যায়নি। আবার চেষ্টা করুন"
+          )
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        translate("Error resetting the seats.", "আসন রিসেট করার সময় ত্রুটি")
+      );
     }
   };
+  //on submit
+  const onSubmit = async (data: addBookingSeatFromCounterProps) => {
+    try {
+      const cleanedData = removeFalsyProperties(data, [
+        "customerName",
+        "nid",
+        "email",
+        "nationality",
+        "address",
+      ]);
 
+      // Check seat availability
+      const check = await checkingSeat({
+        coachConfigId: bookingCoach.id,
+        schedule: bookingCoach.schedule,
+        date: bookingCoach.departureDate,
+        seats: cleanedData?.seats,
+      });
+
+      // Build the payload
+      const finalData = {
+        ...cleanedData,
+        bookingType: "SeatIssue", // "SeatIssue" or "SeatBooking"
+        orderType: "Round_Trip", // Assuming Round Trip, modify as needed
+        noOfSeat: bookingFormState.selectedSeats.length,
+        amount: totalAmount, // Total amount calculated earlier
+        date: bookingCoach.departureDate,
+        returnDate: bookingCoach.returnDate || undefined, // Optional return date
+
+        seats: bookingFormState.selectedSeats.map((seat: any) => ({
+          seat: seat.seat,
+          coachConfigId: seat.coachConfigId, // Include coachConfigId
+          schedule: seat.schedule, // Include schedule
+          date: seat.date, // Include date
+        })),
+      };
+      if (check?.data?.data?.available) {
+        // Proceed with booking
+        const booking = await addBooking(finalData);
+
+        if (booking.data?.success) {
+          toast.success(`seat Booking successful`);
+
+          setBookingFormState({
+            selectedSeats: [],
+            targetedSeat: null,
+            redirectLink: null,
+            customerName: null,
+            redirectConfirm: false,
+          });
+
+          if (bookingType === "SeatIssue") {
+            handlePrint(); // Print if it's not a booking
+          }
+        } else {
+          toast.error("Booking failed. Please try again.");
+        }
+      } else {
+        toast.warning("Some selected seats are no longer available.");
+      }
+    } catch (error) {
+      console.error("Error during booking submission:", error);
+      toast.error("An error occurred during booking submission.");
+    }
+  };
+  // const invoiceReprintHandler = () => {
+  //   // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
+  //   const data = shareWithLocal("get", `${appConfiguration.appCode}`);
+  //   setSaleData(data);
+  //   handlePrint();
+  // };
+  //const formValues = watch();
   return (
-    <PageTransition>
-      {/* find tickit */}
-      <div className=" h-[600px] overflow-y-scroll">
-        <div className="">
-          <PageTransition>
-            <form
-              onSubmit={handleFormSubmit}
-              className="ml-4 flex justify-start items-center"
+    <section className=" w-full">
+      <PageTransition>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* seat issue or seat booking part counter 
+          <PageTransition className="flex py-5 lg:flex-row flex-col gap-6 items-center justify-center h-full w-full">
+            <RadioGroup
+              className="flex lg:flex-row flex-row gap-4 mt-8"
+              value={bookingType}
+              onValueChange={setBookingType} 
             >
-              <InputWrapper
-                className="w-full"
-                labelFor="FinfTickit"
-                error=" "
-                label={translate(
-                  "ফোন নম্বর দ্বারা টিকিট খুঁজুন",
-                  "Find Ticket By Phone Number"
-                )}
-              >
-                <Input
-                  type="text"
-                  name="phoneNumber"
-                  value={phoneNumber}
-                  onChange={(e: any) => setPhoneNumber(e.target.value)}
-                  id="phoneNumber"
-                  placeholder={translate(
-                    "ফোন নম্বর দ্বারা টিকিট খুঁজুন",
-                    "Find Ticket By Phone Number"
-                  )}
-                />
-              </InputWrapper>
-              <Button type="submit" className="lg:mt-7 md:mt-4 mt-7 ml-2">
-                <span>
-                  {userInfoLoading && (
-                    <svg
-                      className="animate-spin h-5 w-5 mr-3 ..."
-                      viewBox="0 0 24 24"
-                    ></svg>
-                  )}
-                </span>
-                Search
-              </Button>
-            </form>
-            {errorMessage && (
-              <div className="text-red-500 mt-1 ml-5">{errorMessage}</div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="SeatIssue" id="r2" />
+                <Label htmlFor="r2">Seat Issue</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="SeatBooking" id="r3" />
+                <Label htmlFor="r3">Seat Booking</Label>
+              </div>
+            </RadioGroup>
+            {bookingType === "SeatBooking" && (
+              <div className="flex items-center justify-center gap-4 lg:mt-9">
+                <h2 className="text-red-500 text-lg">
+                  This coach's booking seat expire Date{" "}
+                  {bookingCoach.departureDate} before departure time of{" "}
+                  {partialData?.data?.counterBookingTime}
+                </h2>
+              </div>
             )}
           </PageTransition>
-        </div>
+          */}
+          <div className="flex items-center gap-5 mx-3">
+            {/* STATUS BUTTON */}
+            <Dialog
+              open={status}
+              onOpenChange={(open: boolean) => setStatus(open)}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  className="group relative px-10"
+                  variant="default"
+                  size="icon"
+                >
+                  <span className="">{translate("অবস্থা", "Status")}</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent size="lg">
+                <DialogTitle className="sr-only">status</DialogTitle>
+                <Status bookingCoach={statusBookingCoach} />
+              </DialogContent>
+            </Dialog>
 
-        {/*end find tickit */}
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-row items-start my-0 h-full mt-3 px-4 gap-x-12 ">
-            {/* COUCH SEAT PLAN CONTAINER */}
+            {/* STRIP SHEET BUTTON */}
+            <Dialog
+              open={tripSheet}
+              onOpenChange={(open: boolean) => setTripSheet(open)}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  className="group relative px-14"
+                  variant="outline"
+                  size="icon"
+                >
+                  <span className="">
+                    {translate("ট্রিপ তালিকার ", "Trip Sheet")}
+                  </span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent size="xl">
+                <DialogTitle className="sr-only">Strip sheet</DialogTitle>
+                <TripSheet bookingCoach={bookingCoach} />
+              </DialogContent>
+            </Dialog>
 
+            {/* SEAT STATUS */}
+            <Dialog
+              open={seatStatus}
+              onOpenChange={(open: boolean) => setSeatStatus(open)}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  className="group relative px-14"
+                  variant="destructive"
+                  size="icon"
+                >
+                  <span className="">
+                    {translate("আসন অবস্থা", "Seat Status")}
+                  </span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent size="xl">
+                <DialogTitle className="sr-only">seat status</DialogTitle>
+                <SeatStatus bookingCoach={seatStatusBooking} />
+              </DialogContent>
+            </Dialog>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    className="text-muted-foreground"
+                    onClick={ResetDataOfForm}
+                    variant="outline"
+                    size="icon"
+                  >
+                    <span className="sr-only">Refresh Button</span>
+                    <LuRefreshCw className="size-[21px]" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p> {translate("ফিল্টার রিসেট", "Reset Filter")}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+
+          {/* seat issue or seat booking part counter */}
+          <div className="lg:flex flex-row items-start my-0 h-full mt-6 px-4 gap-x-12 ">
             {/* CUSTOMER & PAYMENT INFORMATION */}
-            <PageTransition className="flex flex-col justify-between h-full w-full">
+            <PageTransition className="flex flex-col justify-between h-full ">
               <div>
-                <h2 className="lg:text-2xl text-lg font-semibold">
+                <Heading size="h4">
                   {translate(
                     "গ্রাহকের ব্যক্তিগত তথ্য",
                     "Client Personal Information"
                   )}
-                </h2>
-
-                <div className="md:grid lg:grid-cols-3 md:grid-cols-2">
+                </Heading>
+                <div className="grid lg:grid-cols-3 md:grid-cols-2">
                   {/* NAME */}
                   <InputWrapper
                     className={cn(
@@ -462,8 +659,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       {...register("phone")}
                       type="tel"
                       id="phone"
-                      value={phoneNumber}
-                      onChange={(e: any) => setPhoneNumber(e.target.value)}
                       placeholder={translate(
                         addBookingSeatForm.phone.placeholder.bn,
                         addBookingSeatForm.phone.placeholder.en
@@ -504,7 +699,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       </SelectContent>
                     </Select>
                   </InputWrapper>
-
                   <div className="lg:col-span-3 col-span-2 py-2">
                     <h2 className="lg:text-2xl text-lg font-semibold">
                       {translate("যাত্রার বিবরণ:", "Journey Details:")}
@@ -725,7 +919,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       </InputWrapper>
                     </div>
                   </div>
-
                   {/* EMAIL */}
                   <InputWrapper
                     error={errors?.email?.message}
@@ -745,30 +938,6 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       )}
                     />
                   </InputWrapper>
-
-                  {/* PASSPORT OR NID */}
-                  <InputWrapper
-                    error={errors?.nid?.message}
-                    className={cn(
-                      bookingFormState?.selectedSeats?.length < 3 &&
-                        "col-span-1"
-                    )}
-                    labelFor="pass/nid"
-                    label={translate(
-                      addBookingSeatForm.passportOrNID.label.bn,
-                      addBookingSeatForm.passportOrNID.label.en
-                    )}
-                  >
-                    <Input
-                      {...register("nid")}
-                      type="text"
-                      id="pass/nid"
-                      placeholder={translate(
-                        addBookingSeatForm.passportOrNID.placeholder.bn,
-                        addBookingSeatForm.passportOrNID.placeholder.en
-                      )}
-                    />
-                  </InputWrapper>
                   {/* NATIONALITY */}
                   <InputWrapper
                     error={errors?.nationality?.message}
@@ -779,6 +948,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                     )}
                   >
                     <Select
+                      value={watch("nationality") || ""}
                       onValueChange={(value: string) => {
                         setValue("nationality", value);
                         setError("nationality", {
@@ -812,13 +982,36 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       </SelectContent>
                     </Select>
                   </InputWrapper>
+                  {/* PASSPORT OR NID */}
+                  <InputWrapper
+                    error={errors?.nid?.message}
+                    className={cn(
+                      bookingFormState?.selectedSeats?.length < 3 &&
+                        "col-span-1"
+                    )}
+                    labelFor="pass/nid"
+                    label={translate(
+                      addBookingSeatForm.passportOrNID.label.bn,
+                      addBookingSeatForm.passportOrNID.label.en
+                    )}
+                  >
+                    <Input
+                      {...register("nid")}
+                      type="text"
+                      id="pass/nid"
+                      placeholder={translate(
+                        addBookingSeatForm.passportOrNID.placeholder.bn,
+                        addBookingSeatForm.passportOrNID.placeholder.en
+                      )}
+                    />
+                  </InputWrapper>
                 </div>
               </div>
 
-              <div className="my-2">
-                <h2 className="lg:text-2xl text-lg font-semibold">
+              <div className="mt-6">
+                <Heading size="h4">
                   {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
-                </h2>
+                </Heading>
                 <div>
                   {bookingFormState.selectedSeats?.length > 0 ? (
                     <VanishList
@@ -837,14 +1030,57 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                   )}
                 </div>
               </div>
-              <div className="mt-4">
-                <h2 className="lg:text-2xl text-lg font-semibold">
-                  {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
-                </h2>
-              </div>
-
-              {/* paymnet div */}
-              <div className="lg:mt-6 mt-3 md:grid lg:grid-cols-3 grid-cols-2">
+              {/* PAYMENT METHOD */}
+              <Heading className="mt-6" size="h4">
+                {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
+              </Heading>
+              <div className="grid lg:grid-cols-3 md:grid-cols-2">
+                <InputWrapper
+                  error={errors?.paymentMethod?.message}
+                  labelFor="paymentMethod"
+                  label={translate(
+                    addBookingSeatForm.paymentMethod.label.bn,
+                    addBookingSeatForm.paymentMethod.label.en
+                  )}
+                >
+                  <Select
+                    value={watch("paymentMethod") || ""}
+                    onValueChange={(value: string) => {
+                      setValue("paymentMethod", value);
+                      setError("paymentMethod", {
+                        type: "custom",
+                        message: "",
+                      });
+                    }}
+                  >
+                    <SelectTrigger id="paymentMethod" className="w-full">
+                      <SelectValue
+                        placeholder={translate(
+                          addBookingSeatForm.paymentMethod.placeholder.bn,
+                          addBookingSeatForm.paymentMethod.placeholder.en
+                        )}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {counterPaymentMethodOptions?.map(
+                        (
+                          singleNationality: ICounterPaymentMethodOptions,
+                          nationalityIndex: number
+                        ) => (
+                          <SelectItem
+                            key={nationalityIndex}
+                            value={singleNationality.key}
+                          >
+                            {translate(
+                              singleNationality.bn,
+                              singleNationality.en
+                            )}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                </InputWrapper>
                 {/* payment type */}
                 <InputWrapper
                   error={errors?.paymentType?.message}
@@ -900,83 +1136,35 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       onChange={(e) =>
                         setValue("paymentAmount", parseFloat(e.target.value))
                       }
-                      value={minimumPartialPayment} // Display minimum partial payment
-                      disabled={true}
                     />
                   </InputWrapper>
                 )}
-                {/* PAYMENT METHOD */}
-                <InputWrapper
-                  error={errors?.paymentMethod?.message}
-                  labelFor="paymentMethod"
-                  label={translate(
-                    addBookingSeatForm.paymentMethod.label.bn,
-                    addBookingSeatForm.paymentMethod.label.en
-                  )}
-                >
-                  <Select
-                    onValueChange={(value: string) => {
-                      setValue("paymentMethod", value);
-                      setError("paymentMethod", {
-                        type: "custom",
-                        message: "",
-                      });
-                    }}
-                  >
-                    <SelectTrigger id="paymentMethod" className="w-full">
-                      <SelectValue
-                        placeholder={translate(
-                          addBookingSeatForm.paymentMethod.placeholder.bn,
-                          addBookingSeatForm.paymentMethod.placeholder.en
-                        )}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {paymentMethodOptions?.map(
-                        (
-                          singleNationality: IPaymentMethodOptions,
-                          nationalityIndex: number
-                        ) => (
-                          <SelectItem
-                            key={nationalityIndex}
-                            value={singleNationality.key}
-                          >
-                            {translate(
-                              singleNationality.bn,
-                              singleNationality.en
-                            )}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                </InputWrapper>
               </div>
               {paymentType === "PARTIAL" && (
                 <div className="flex justify-center text-center">
                   <Paragraph variant="destructive" size="sm">
                     {translate(
-                      `যাত্রীকে অবশ্যই প্রস্থানের সময় কমপক্ষে ${partialInfoData.data.time} আগে বকেয়া অর্থ প্রদান করতে হবে। অন্যথায় আপনার টিকিট বাতিল বলে বিবেচিত হবে।`,
-                      `passenger must pay the due amount at least ${partialInfoData.data.time} before the departure time.Otherwise your ticket will be considered cancelled`
+                      "“যাত্রীকে অবশ্যই প্রস্থানের সময় কমপক্ষে 2 ঘন্টা আগে বকেয়া অর্থ প্রদান করতে হবে। অন্যথায় আপনার টিকিট বাতিল বলে বিবেচিত হবে।”",
+                      "passenger must pay the due amount at least 2 hours before the departure time.Otherwise your ticket will be considered cancelled"
                     )}
                   </Paragraph>
                 </div>
               )}
-              <div className="mt-3">
-                <ul className="md:flex grid grid-cols-2 justify-between">
-                  <li className="lg:text-lg text-sm tracking-tight">
+
+              <div className="mt-6">
+                <ul className="flex justify-between">
+                  <li className="text-lg tracking-tight">
                     <label>{translate("মোট আসনঃ ", "Total Seats: ")}</label>
-                    <b className="lg:font-[500] font-normal">
+                    <b className="font-[500]">
                       {translate(
                         convertToBnDigit(totalSeats?.toString()),
                         totalSeats?.toString()
                       )}
                     </b>
                   </li>
-
-                  <li className="lg:text-lg text-sm tracking-tight">
+                  <li className="text-lg tracking-tight">
                     <label>{translate("প্রদত্ত বিল: ", "Paid Amount: ")}</label>
-                    <b className="lg:font-[500] font-normal font-anek">
+                    <b className="font-[500] font-anek">
                       {translate(
                         convertToBnDigit(
                           formatter({
@@ -991,9 +1179,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       )}
                     </b>
                   </li>
-                  <li className="lg:text-lg text-sm tracking-tight">
+                  <li className="text-lg tracking-tight">
                     <label>{translate("বকেয়া বিল:", "Due Amount: ")}</label>
-                    <b className="lg:font-[500] font-normal font-anek">
+                    <b className="font-[500] font-anek">
                       {translate(
                         convertToBnDigit(
                           formatter({
@@ -1008,9 +1196,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       )}
                     </b>
                   </li>
-                  <li className="lg:text-lg text-sm tracking-tight">
+                  <li className="text-lg tracking-tight">
                     <label>{translate("মোট বিল: ", "Total Amount: ")}</label>
-                    <b className="lg:font-[500] font-normal font-anek">
+                    <b className="font-[500] font-anek">
                       {translate(
                         convertToBnDigit(
                           formatter({
@@ -1027,27 +1215,53 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                   </li>
                 </ul>
               </div>
-              <Submit
-                loading={
-                  addBookingLoading ||
-                  checkingSeatLoading ||
-                  addBookingPaymentLoading
-                }
-                errors={
-                  addBookingError || checkingSeatError || addBookingPaymentError
-                }
-                submitTitle={translate("আসন বুক করুন", "Book Seat")}
-                errorTitle={translate(
-                  "আসন বুক করতে ত্রুটি হয়েছে",
-                  "Seat Booking Error"
-                )}
-              />
+
+              <div className="flex justify-end items-center gap-5 mt-8">
+                <Button
+                  onClick={handleCancelBooking}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                >
+                  {translate("বুকিং বাতিল করুন", "Restore Seat")}
+                </Button>
+
+                <Submit
+                  loading={addBookingLoading || checkingSeatLoading}
+                  errors={addBookingError || checkingSeatError}
+                  submitTitle={translate("আসন বুক করুন", "Book Seat")}
+                  errorTitle={translate(
+                    "আসন বুক করতে ত্রুটি হয়েছে",
+                    "Seat Booking Error"
+                  )}
+                  className="py-0 my-0"
+                />
+
+                {/* <div className="mt-">
+                  <Button
+                    onClick={() => invoiceReprintHandler()}
+                    type="button"
+                    variant="default"
+                    size="sm"
+                  >
+                    Reprint
+                  </Button>
+                </div> */}
+              </div>
             </PageTransition>
           </div>
         </form>
+      </PageTransition>
+      <div className="invisible hidden -left-full">
+        {addBookingSuccess && (
+          <TickitPrint ref={printSaleRef} tickitData={saleInfo} />
+        )}
+        {saleData && bookingType === "SeatIssue" && (
+          <TickitPrint ref={printSaleRef} tickitData={saleData?.saleInfo} />
+        )}
       </div>
-    </PageTransition>
+    </section>
   );
 };
 
-export default BoookingFormRoundTripPublic;
+export default RoundTripFormModal;

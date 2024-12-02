@@ -41,6 +41,39 @@ export default function SearchResult({
   const [removeBookingSeat] = useRemoveBookingSeatMutation({}) as any;
   // Open and close modal
   const handleProceedClick = () => {
+    const hasGoingSeat = bookingFormState.selectedSeats.some((seat) =>
+      bookingState.roundTripGobookingCoachesList.some(
+        (coach: any) => coach.id === seat.coachConfigId
+      )
+    );
+
+    const hasReturnSeat = bookingFormState.selectedSeats.some((seat) =>
+      bookingState.roundTripReturnBookingCoachesList.some(
+        (coach: any) => coach.id === seat.coachConfigId
+      )
+    );
+
+    if (!hasGoingSeat) {
+      toast.error(
+        translate(
+          "Please select at least one seat for the outgoing trip.",
+          "যাত্রার জন্য অন্তত একটি আসন নির্বাচন করুন।"
+        )
+      );
+      return;
+    }
+
+    if (!hasReturnSeat) {
+      toast.error(
+        translate(
+          "Please select at least one seat for the return trip.",
+          "ফেরার জন্য অন্তত একটি আসন নির্বাচন করুন।"
+        )
+      );
+      return;
+    }
+
+    // Proceed to open the modal if both conditions are satisfied
     setIsModalOpen(true);
   };
 

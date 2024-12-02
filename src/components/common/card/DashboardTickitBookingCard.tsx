@@ -54,9 +54,9 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
                   : "Suite Class"}
               </Badge>
             </li>
-            <li className="text-lg tracking-tight font-semibold mt-1">
+            <li className="lg:text-lg text-sm tracking-tight font-semibold mt-1">
               <span className="">{translate("কোচ নম্বরঃ ", "Couch No: ")}</span>
-              <span className="font-[500] uppercase">
+              <span className="lg:font-[500] font-medium uppercase">
                 {coachData?.coachNo ||
                   translate(fallback.notFound.bn, fallback.notFound.en)}
               </span>

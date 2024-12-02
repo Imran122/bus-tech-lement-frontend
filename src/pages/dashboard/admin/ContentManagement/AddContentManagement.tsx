@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FilePenLine, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import HomePageDescription from "./HomePageDescription";
 
 const AddContentManagement = () => {
   const { translate } = useCustomTranslator();
@@ -88,6 +89,7 @@ const AddContentManagement = () => {
     register,
     setValue,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<AddUpdateCompanyProps>({
     resolver: zodResolver(addUpdateCompanySchema),
@@ -705,9 +707,20 @@ const AddContentManagement = () => {
             </InputWrapper>
           ))}
         </div>
+        <HomePageDescription
+          //register={register}
+          setValue={setValue}
+          editStates={editStates}
+          toggleEditState={toggleEditState}
+          errors={errors}
+          isLoading={isLoading}
+          uploadPhotoLoading={uploadPhotoLoading}
+          error={error}
+          translate={translate}
+          getValues={getValues}
+        />
 
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
           <InputWrapper
             key="homePageDescription"
             error={(errors as any)?.homePageDescription?.message}
@@ -812,7 +825,7 @@ const AddContentManagement = () => {
               </div>
             </div>
           </InputWrapper>
-        </div>
+        </div> */}
       </form>
     </FormWrapper>
   );

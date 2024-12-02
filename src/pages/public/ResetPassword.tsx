@@ -146,7 +146,7 @@ const ResetPassword: FC<IResetPasswordProps> = () => {
                 </AlertDescription>
               </Alert>
             )}
-            <div className="flex flex-col justify-center items-center">
+            <div className="flex justify-center items-center">
               <Paragraph size="sm">
                 {translate(
                   "আপনার কি আগে থেকেই একটি অ্যাকাউন্ট আছে?",

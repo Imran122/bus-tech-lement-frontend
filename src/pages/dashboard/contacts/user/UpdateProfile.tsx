@@ -154,7 +154,7 @@ const UpdateProfile: FC<IUpdateProfileProps> = ({ userData, userLoading }) => {
       )}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+        <div className="grid lg:grid-cols-2 gap-x-4 gap-y-2">
           {/* FULL NAME */}
           <InputWrapper
             labelFor="userName"

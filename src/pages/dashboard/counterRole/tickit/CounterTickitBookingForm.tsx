@@ -80,7 +80,7 @@ import TripSheet from "./TripSheet";
 interface ICounterBookingFormProps {
   bookingCoach: any;
 }
-interface ICounterBookingFormStateProps {
+export interface ICounterBookingFormStateProps {
   targetedSeat: number | null;
   selectedSeats: any[];
   redirectLink: string | null;
@@ -522,7 +522,6 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
       console.error("Error:", error);
     }
   };
-
   const invoiceReprintHandler = () => {
     // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
     const data = shareWithLocal("get", `${appConfiguration.appCode}`);

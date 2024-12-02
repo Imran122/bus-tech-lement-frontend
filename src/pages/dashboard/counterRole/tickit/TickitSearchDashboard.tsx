@@ -127,17 +127,13 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
   const { data: countersData, isLoading: countersLoading } =
     useGetCountersQuery({}) as any;
   return (
-    <div className="flex pb-2 justify-start items-center text-white">
+    <div className="flex pb-2 justify-start items-center text-white ">
       <div className="w-auto">
-        <div className="mb-9">
+        <div className="">
           <div className="rounded-xl ">
-            <ul className="grid lg:grid-cols-6 md:grid-cols-2 lg:gap-4 gap-2 items-center justify-start">
+            <ul className="grid lg:grid-cols-6  lg:gap-4 gap-2 items-center justify-start">
               <li>
-                <Button
-                  onClick={() => dispatch(openModal())}
-                  size="lg"
-                  className=""
-                >
+                <Button onClick={() => dispatch(openModal())} className="">
                   Round Trip
                 </Button>
               </li>
@@ -311,7 +307,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
               {/* seelct trip type */}
 
               {/* REFRESH BUTTON */}
-              <li className="lg:ml-5">
+              <li className="lg:ml-5 md:ml-12">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>

@@ -55,8 +55,8 @@ const DashboardSidebarLargeDevices: FC<
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-10 hidden  flex-col m-1.5 bg-muted/30 backdrop-blur-sm rounded-md sm:flex transition-all duration-300",
-        sidebarOpen ? "w-[280px]" : "w-14"
+        "fixed inset-y-0 left-0 z-10 hidden lg:flex flex-col m-1.5 bg-muted/30 backdrop-blur-sm rounded-md  transition-all duration-300",
+        sidebarOpen ? "lg:w-[280px]" : "lg:w-14"
       )}
     >
       <nav

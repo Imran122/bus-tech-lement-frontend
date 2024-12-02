@@ -34,6 +34,8 @@ export const addBookingSeatFromCounterSchema = z.object({
   droppingPoint: z
     .string({ required_error: "Dropping point is required" })
     .min(1, "Dropping point is required"),
+  returnDroppingPoint: z.string().optional(),
+  returnBoardingPoint: z.string().optional(),
   noOfSeat: z
     .number({ required_error: "Number of seats is required" })
     .int()
