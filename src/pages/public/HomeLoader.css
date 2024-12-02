@@ -9,11 +9,13 @@
 }
 
 .main {
+  background-color: #f8e3fb;
   position: relative;
   width: 140px;
   height: 140px;
   border: 6px solid #d948ec; /* Primary border color */
   border-radius: 50%;
+  overflow: hidden; /* Ensure content stays within the circle */
 }
 
 .circle {
@@ -24,6 +26,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2; /* Place above the road */
 }
 
 .bus-image {
@@ -32,4 +35,34 @@
   transform: translateY(50%);
   width: 80px; /* Adjust the size of the bus */
   height: auto;
+  z-index: 2; /* Ensure it's above the road */
+}
+
+.road {
+  position: absolute;
+  bottom: 10px; /* Align road with the circle bottom */
+  width: 100%;
+  height: 20px;
+  rotate: 90deg;
+  background: linear-gradient(
+    90deg,
+    #840494 25%,
+    #d948ec 25%,
+    #d948ec 50%,
+    #840494 50%,
+    #840494 75%,
+    #d948ec 75%
+  );
+  background-size: 40px 100%;
+  animation: moveRoad 1s linear infinite;
+  z-index: 1; /* Place it behind the bus */
+}
+
+@keyframes moveRoad {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: 40px;
+  }
 }

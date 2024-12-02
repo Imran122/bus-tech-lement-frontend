@@ -36,7 +36,6 @@ const Home: FC<IHomeProps> = () => {
             <div>No routes available</div>
           )}
           <Hero />
-          <HomeLoader />
         </PageWrapper>
       </div>
     </div>
