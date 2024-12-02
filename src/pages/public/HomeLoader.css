@@ -4,7 +4,7 @@
     transform: rotate(0deg);
   }
   100% {
-    transform: rotate(-360deg);
+    transform: rotate(360deg);
   }
 }
 
@@ -15,35 +15,44 @@
   height: 140px;
   border: 6px solid #d948ec; /* Primary border color */
   border-radius: 50%;
-  overflow: hidden; /* Ensure content stays within the circle */
+  overflow: visible; /* Keep the road inside the circle */
 }
 
 .circle {
   position: absolute;
   width: 100%;
   height: 100%;
-  animation: circularMotion 4s linear infinite;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2; /* Place above the road */
+  z-index: 1; /* Place below the bus */
+}
+
+.bus-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  animation: circularMotion 6s linear infinite; /* Rotate the bus around the circle */
 }
 
 .bus-image {
   position: absolute;
-  bottom: 20px; /* Adjust this based on bus size */
-  transform: translateY(50%);
-  width: 80px; /* Adjust the size of the bus */
+  top: -40px; /* Align the wheel to touch the border */
+  left: 50%; /* Center horizontally */
+
+  transform: translateX(-50%); /* Center the bus */
+  width: 85px; /* Adjust the size of the bus */
   height: auto;
-  z-index: 2; /* Ensure it's above the road */
+  z-index: 2; /* Ensure it's above the circle */
 }
 
 .road {
   position: absolute;
-  bottom: 10px; /* Align road with the circle bottom */
+  bottom: 0; /* Align road with the circle bottom */
   width: 100%;
   height: 20px;
-  rotate: 90deg;
   background: linear-gradient(
     90deg,
     #840494 25%,
@@ -55,7 +64,7 @@
   );
   background-size: 40px 100%;
   animation: moveRoad 1s linear infinite;
-  z-index: 1; /* Place it behind the bus */
+  z-index: 0; /* Place it inside the circle */
 }
 
 @keyframes moveRoad {

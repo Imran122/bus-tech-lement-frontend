@@ -3,7 +3,7 @@ import Submit from "@/components/common/form/Submit";
 import { Button } from "@/components/ui/button";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import { FilePenLine } from "lucide-react";
+import { Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   FieldErrors,
@@ -38,7 +38,49 @@ const HomePageDescription: React.FC<Props> = ({
   const [homePageDescription, setHomePageDescription] = useState<string>("");
   const [homePageDescriptionBangla, setHomePageDescriptionBangla] =
     useState<string>("");
-
+  const editorConfiguration = {
+    toolbar: [
+      "heading",
+      "|",
+      "bold",
+      "italic",
+      "underline",
+      "strikethrough",
+      "|",
+      "fontColor",
+      "fontBackgroundColor",
+      "|",
+      "link",
+      "bulletedList",
+      "numberedList",
+      "blockQuote",
+      "|",
+      "undo",
+      "redo",
+    ],
+    fontColor: {
+      colors: [
+        { color: "hsl(0, 75%, 60%)", label: "Red" },
+        { color: "hsl(30, 75%, 60%)", label: "Orange" },
+        { color: "hsl(60, 75%, 60%)", label: "Yellow" },
+        { color: "hsl(120, 75%, 60%)", label: "Green" },
+        { color: "hsl(180, 75%, 60%)", label: "Cyan" },
+        { color: "hsl(240, 75%, 60%)", label: "Blue" },
+        { color: "hsl(270, 75%, 60%)", label: "Purple" },
+      ],
+    },
+    fontBackgroundColor: {
+      colors: [
+        { color: "hsl(0, 75%, 90%)", label: "Light Red" },
+        { color: "hsl(30, 75%, 90%)", label: "Light Orange" },
+        { color: "hsl(60, 75%, 90%)", label: "Light Yellow" },
+        { color: "hsl(120, 75%, 90%)", label: "Light Green" },
+        { color: "hsl(180, 75%, 90%)", label: "Light Cyan" },
+        { color: "hsl(240, 75%, 90%)", label: "Light Blue" },
+        { color: "hsl(270, 75%, 90%)", label: "Light Purple" },
+      ],
+    },
+  };
   // Populate initial values if provided
   useEffect(() => {
     const initialEnglish = getValues("homePageDescription") || "";
@@ -60,6 +102,7 @@ const HomePageDescription: React.FC<Props> = ({
         <div className="flex flex-col items-center gap-3">
           <CKEditor
             editor={ClassicEditor}
+            config={editorConfiguration}
             data={homePageDescription}
             onChange={(_, editor) => {
               const data = editor.getData();
@@ -68,7 +111,7 @@ const HomePageDescription: React.FC<Props> = ({
             }}
             disabled={!editStates.homePageDescription}
           />
-          <div className="flex items-center gap-3 absolute top-19 right-1">
+          <div className="flex items-center lg:gap-3 gap-1 absolute -top-4 right-1">
             <Button
               onClick={() => toggleEditState("homePageDescription")}
               variant="outline"
@@ -86,7 +129,13 @@ const HomePageDescription: React.FC<Props> = ({
                 className="mt-0 pt-0"
                 loading={isLoading || uploadPhotoLoading}
                 errors={error}
-                icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                icon={
+                  <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                    {" "}
+                    <Save className="h-4 w-4 " />
+                    Save
+                  </span>
+                }
                 errorTitle={translate(
                   "সিএমএস আপডেট করতে ত্রুটি",
                   "Error updating CMS"
@@ -111,6 +160,7 @@ const HomePageDescription: React.FC<Props> = ({
         <div className="flex flex-col items-center gap-3">
           <CKEditor
             editor={ClassicEditor}
+            config={editorConfiguration}
             data={homePageDescriptionBangla}
             onChange={(_, editor) => {
               const data = editor.getData();
@@ -119,7 +169,7 @@ const HomePageDescription: React.FC<Props> = ({
             }}
             disabled={!editStates.homePageDescriptionBangla}
           />
-          <div className="flex items-center gap-3 absolute top-19 right-1">
+          <div className="flex items-center lg:gap-3 gap-1 absolute -top-4 right-1">
             <Button
               onClick={() => toggleEditState("homePageDescriptionBangla")}
               variant="outline"
@@ -137,7 +187,13 @@ const HomePageDescription: React.FC<Props> = ({
                 className="mt-0 pt-0"
                 loading={isLoading || uploadPhotoLoading}
                 errors={error}
-                icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                icon={
+                  <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                    {" "}
+                    <Save className="h-4 w-4 " />
+                    Save
+                  </span>
+                }
                 errorTitle={translate(
                   "সিএমএস আপডেট করতে ত্রুটি",
                   "Error updating CMS"
