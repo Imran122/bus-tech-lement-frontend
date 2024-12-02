@@ -1,5 +1,3 @@
-import HeroTiltCard from "@/components/common/effect/HeroTiltCard";
-import PageTransition from "@/components/common/effect/PageTransition";
 import { FlipWords } from "@/components/common/typography/FlipWords";
 import { Heading } from "@/components/common/typography/Heading";
 import SectionWrapper from "@/components/common/wrapper/SectionWrapper";
@@ -8,9 +6,10 @@ import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { useLocaleContext } from "@/utils/hooks/useLocaleContext";
 import { FC, useState } from "react";
 import Booking, { IBookingStateProps } from "./Booking";
-import SearchResult from "./SearchResult";
-import OfferSlider from "./OfferSlider";
+import BusAnimation from "./BusAnimation";
 import ClientNote from "./ClientNote";
+import OfferSlider from "./OfferSlider";
+import SearchResult from "./SearchResult";
 
 interface IHeroProps {}
 
@@ -41,7 +40,7 @@ const Hero: FC<IHeroProps> = () => {
 
   return (
     <section>
-      <SectionWrapper className="px-4 mt-5 mb-0 mx-auto">
+      <SectionWrapper className="lg:px-4 mt-5 mb-0 mx-auto">
         {/* Left side: Heading and Booking Form */}
         <div className="w-full flex flex-col-reverse lg:flex-row items-center justify-center px-2">
           <Heading
@@ -89,7 +88,7 @@ const Hero: FC<IHeroProps> = () => {
         {/* Container for left and right sides */}
         <div className="w-full flex flex-col lg:flex-row justify-center items-start gap-6">
           {/* Booking form */}
-          <div className="w-11/12 lg:w-full mx-auto">
+          <div className="w-full mx-auto px-5">
             <Booking
               bookingState={bookingState}
               setBookingState={setBookingState}
@@ -97,22 +96,8 @@ const Hero: FC<IHeroProps> = () => {
           </div>
 
           {/* Right side: Thumbnail */}
-          <div className=" w-full flex justify-center lg:justify-end pt-0 lg:pt-[68px]">
-            <HeroTiltCard className="lg:w-[500px] w-11/12 lg:h-[260px] h-[300px] border-8 border-secondary/10 overflow-visible rounded-xl">
-              <PageTransition>
-                <img
-                  className="w-[450px]"
-                  src="/iconic_car.svg"
-                  alt="Iconic Car"
-                />
-                <h2 className="text-center text-xl font-lora font-extralight">
-                  <strong className="font-extrabold text-secondary">
-                    Iconic
-                  </strong>{" "}
-                  Express
-                </h2>
-              </PageTransition>
-            </HeroTiltCard>
+          <div className="w-full lg:block hidden ">
+            <BusAnimation />
           </div>
         </div>
 
@@ -122,6 +107,9 @@ const Hero: FC<IHeroProps> = () => {
             bookingState={bookingState}
             setBookingState={setBookingState}
           />
+        </div>
+        <div className="w-full lg:hidden block pb-4 px-5">
+          <BusAnimation />
         </div>
       </SectionWrapper>
       <div className="mx-auto px-5">

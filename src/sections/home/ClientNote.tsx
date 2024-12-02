@@ -20,7 +20,7 @@ const ClientNote = () => {
 
       {/* Render HTML content safely */}
       <div
-        className="text-center w-full lg:w-5/6"
+        className=" w-full "
         dangerouslySetInnerHTML={{ __html: description }}
       />
     </div>
