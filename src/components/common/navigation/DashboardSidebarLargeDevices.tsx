@@ -96,7 +96,7 @@ const DashboardSidebarLargeDevices: FC<
         <div
           className={`${cn(
             !sidebarOpen && "hidden"
-          )} flex gap-2 items-center border-2 px-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]`}
+          )} flex gap-2 items-center border-2 px-2 rounded-xl border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]`}
         >
           <div className="rounder-full p-2">
             <img

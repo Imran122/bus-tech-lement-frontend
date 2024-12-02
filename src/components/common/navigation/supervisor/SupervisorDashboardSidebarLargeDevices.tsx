@@ -98,7 +98,7 @@ const SupervisorDashboardSidebarLargeDevices: FC<
         <div
           className={`${cn(
             !sidebarOpen && "hidden"
-          )} flex gap-2 items-center border-2 px-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]`}
+          )} flex gap-2 items-center rounded-xl border-2 px-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]`}
         >
           {" "}
           <div className="rounder-full py-2">

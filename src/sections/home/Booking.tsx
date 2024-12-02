@@ -1,6 +1,5 @@
 import PageTransition from "@/components/common/effect/PageTransition";
 import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
-import { Heading } from "@/components/common/typography/Heading";
 import { Label } from "@/components/common/typography/Label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -150,11 +149,11 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   return (
     <div className="flex justify-center items-center">
       <PageTransition className=" w-full ">
-        <div className="mt-2">
+        <div className="">
           <div id="booking" className="rounded-lg ">
-            <Heading className="text-start text-base lg:text-[24px] pb-6">
+            <h2 className="mt-2 text-transparent bg-clip-text bg-gradient-to-r from-[#c84cd9] to-[#840495] sm:bg-gradient-to-l text-start text-base lg:text-[40px] font-bold pb-6 text-grad">
               {translate("আপনার যাত্রা শুরু করুন", "Start Your Journey")}
-            </Heading>
+            </h2>
             {/* COACH FILTERS */}
             <div className="rounded-xl p-3 lg:p-7  bg-gradient-to-tr from-primary to-tertiary text-primary-foreground">
               {/* seelct trip type */}
@@ -174,7 +173,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                   </div>
                 </RadioGroup>
               </PageTransition>
-              <ul className="grid grid-cols-2 gap-5">
+              <ul className="grid grid-cols-2 gap-5 pb-5">
                 {/* STARTING POINT */}
                 <li>
                   <Select
@@ -185,7 +184,6 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                         fromCounterId: +value,
                       }));
                     }}
-                    
                   >
                     <SelectTrigger className="uppercase text-xs lg:text-sm px-2 lg:px-3">
                       <SelectValue
@@ -271,7 +269,10 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                       }));
                     }}
                   >
-                    <SelectTrigger id="coachType" className="w-full uppercase text-xs lg:text-sm px-2 lg:px-3">
+                    <SelectTrigger
+                      id="coachType"
+                      className="w-full uppercase text-xs lg:text-sm px-2 lg:px-3"
+                    >
                       <SelectValue
                         placeholder={translate("কোচের ধরণ", "Coach Type")}
                       />
@@ -313,10 +314,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                           format(bookingState.date, "dd/MM/yyyy")
                         ) : (
                           <span>
-                            {translate(
-                              "বুকিংয়ের তারিখ",
-                              "Booking Date"
-                            )}
+                            {translate("বুকিংয়ের তারিখ", "Booking Date")}
                           </span>
                         )}
                       </Button>
@@ -377,10 +375,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                             format(bookingState.returnDate, "dd/MM/yyyy")
                           ) : (
                             <span>
-                              {translate(
-                                "ফেরার তারিখ",
-                                "Return Date"
-                              )}
+                              {translate("ফেরার তারিখ", "Return Date")}
                             </span>
                           )}
                         </Button>
