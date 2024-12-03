@@ -162,24 +162,28 @@ const DashboardRoundTripTickitBookingCard: FC<IBookingTickitCardProps> = ({
                   : "Suite Class"}
               </Badge>
             </li>
-            <li className="lg:text-lg text-sm tracking-tight font-semibold mt-1">
-              <span className="">{translate("কোচ নম্বরঃ ", "Couch No: ")}</span>
-              <span className="lg:font-[500] md:font-medium uppercase">
-                {coachData?.coachNo ||
-                  translate(fallback.notFound.bn, fallback.notFound.en)}
-              </span>
-            </li>
-            <li className="lg:text-lg text-sm tracking-tight">
-              <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
-                {coachData?.fromCounter?.name ||
-                  translate(fallback.notFound.bn, fallback.notFound.en)}
-              </span>{" "}
-              {`=>`}{" "}
-              <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
-                {coachData?.destinationCounter?.name ||
-                  translate(fallback.notFound.bn, fallback.notFound.en)}
-              </span>
-            </li>
+            <div className=" w-full flex lg:flex-col md:flex-row flex-col lg:items-start md:items-center justify-start md:gap-2">
+              <li className="lg:text-lg text-sm tracking-tight font-semibold mt-1">
+                <span className="">
+                  {translate("কোচ নম্বরঃ ", "Couch No: ")}
+                </span>
+                <span className="lg:font-[500] md:font-medium uppercase">
+                  {coachData?.coachNo ||
+                    translate(fallback.notFound.bn, fallback.notFound.en)}
+                </span>
+              </li>
+              <li className="lg:text-lg text-sm tracking-tight">
+                <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
+                  {coachData?.fromCounter?.name ||
+                    translate(fallback.notFound.bn, fallback.notFound.en)}
+                </span>{" "}
+                {`=>`}{" "}
+                <span className="font-[500] uppercase text-red-400  rounded-lg  py-[2px]">
+                  {coachData?.destinationCounter?.name ||
+                    translate(fallback.notFound.bn, fallback.notFound.en)}
+                </span>
+              </li>
+            </div>
           </ul>
           <ul className="grid grid-cols-3 gap-x-4 gap-y-2 mt-1">
             <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
@@ -216,9 +220,13 @@ const DashboardRoundTripTickitBookingCard: FC<IBookingTickitCardProps> = ({
               </span>
             </li>
           </ul>
-          <ul className="flex gap-x-4 justify-center mt-3 px-2">
+          <ul className="flex gap-x-4 lg:justify-center md:justify-start mt-3 px-2">
             <li className="flex flex-col items-center justify-center text-center">
-              <Badge shape="pill" size="sm" variant="tertiary">
+              <Badge
+                shape="responsivepill"
+                size="responsivesize"
+                variant="tertiary"
+              >
                 {translate("অতিরিক্ত কোনো চার্জ নেই", "No Additional Charge")}
               </Badge>
               <span className="font-anek font-light md:text-base text-sm line-through mt-1">
