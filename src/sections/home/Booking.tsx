@@ -174,7 +174,7 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
                   </div>
                 </RadioGroup>
               </PageTransition>
-              <ul className="grid grid-cols-2 gap-5">
+              <ul className="grid grid-cols-2 gap-3 lg:gap-5 pb-5">
                 {/* STARTING POINT */}
                 <li>
                   <Select
