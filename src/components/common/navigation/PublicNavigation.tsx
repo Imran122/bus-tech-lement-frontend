@@ -41,7 +41,7 @@ const PublicNavigation = () => {
   const { locale } = useLocaleContext();
   const navigate = useNavigate();
   const { translate, locale: language } = useCustomTranslator();
-  const { email, role } = shareAuthentication();
+  const { role } = shareAuthentication();
   const publicLinks = publicNavigationLinks[locale] as any;
   const { avatar } = shareAuthentication();
 
@@ -131,7 +131,7 @@ const PublicNavigation = () => {
                 <ThemeSwitcher />
               </li>
               <li>
-                {email ? (
+                {role ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button className="size-9" variant="ghost" size="icon">

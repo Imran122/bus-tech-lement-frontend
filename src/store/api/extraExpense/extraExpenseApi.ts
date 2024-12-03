@@ -25,6 +25,14 @@ const expenseAccountsApi = apiSlice.injectEndpoints({
       providesTags: ["expense_accounts"],
     }),
 
+    getExpenseReport:builder.query({
+      query: (data) => ({
+        url: `/expense-accounts/expense-report?fromDate=${data.from}&toDate=${data?.to}&category=${data?.categoryId}&subcategory=${data?.subCategoryId}`,
+        method: "GET",
+      }),
+      providesTags: ["expense_accounts"],
+    }),
+
     // GETTING SINGLE EXPENSE ACCOUNT BY ID
     getSingleExpenseAccount: builder.query({
       query: (id) => ({
@@ -49,4 +57,5 @@ export const {
   useGetAllExpenseAccountsQuery,
   useGetSingleExpenseAccountQuery,
   useDeleteExpenseAccountMutation,
+  useGetExpenseReportQuery
 } = expenseAccountsApi;
