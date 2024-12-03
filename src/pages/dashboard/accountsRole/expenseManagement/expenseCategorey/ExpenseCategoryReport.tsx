@@ -31,15 +31,17 @@ import {
   TableWrapper,
 } from "@/components/common/wrapper/TableWrapper";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import {
-  useGetExpenseReportQuery,
-} from "@/store/api/extraExpense/extraExpenseApi";
+import { useGetExpenseReportQuery } from "@/store/api/extraExpense/extraExpenseApi";
 import { useGetExpenseCategoreyAccountListQuery } from "@/store/api/accounts/expenseDashboardApi";
 import { useGetExpenseSubCategoreyAccountListQuery } from "@/store/api/accounts/expenseSubCategory";
 import { IExtraExpense } from "@/types/dashboard/extraExpense/extraExpense";
 import { DataTable } from "@/components/common/table/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
-import { skipToken } from "@reduxjs/toolkit/query/react";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PdfExpenseReport from "@/pages/dashboard/pdf/PdfExpenseReport";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
+import ExpenseReportExcel from "@/pages/dashboard/exel/ExpenseReportExcel";
+
 export interface IExpenseStateProps {
   expenseList: IExtraExpense[];
 }
@@ -72,20 +74,18 @@ const ExpenseCategoryReport = () => {
   //   : fromDate;
 
   // GET PAYMENTS REPORTS
-  const { data: paymentReportsData } = useGetExpenseReportQuery(
-    expenseReportsState?.from instanceof Date &&
-    expenseReportsState?.to instanceof Date &&
-    expenseReportsState?.categoryId &&
-    expenseReportsState?.subCategoryId
-      ? {
-          from: format(expenseReportsState.from, "yyyy-MM-dd"),
-          to: format(expenseReportsState.to, "yyyy-MM-dd"),
-          categoryId: expenseReportsState.categoryId,
-          subCategoryId: expenseReportsState.subCategoryId,
-        }
-      : skipToken
-  );
-  
+  const { data: paymentReportsData } = useGetExpenseReportQuery({
+    from:
+      expenseReportsState?.from instanceof Date
+        ? format(expenseReportsState.from, "yyyy-MM-dd")
+        : undefined,
+    to:
+      expenseReportsState?.to instanceof Date
+        ? format(expenseReportsState.to, "yyyy-MM-dd")
+        : undefined,
+    categoryId: expenseReportsState.categoryId,
+    subCategoryId: expenseReportsState.subCategoryId,
+  });
 
   useEffect(() => {
     if (paymentReportsData?.data?.length > 0) {
@@ -96,6 +96,7 @@ const ExpenseCategoryReport = () => {
             paymentReportsData.data,
             expenseIndex
           ),
+          dummyNote:singleExpense?.note || "",
           dummyCategory:
             singleExpense?.expenseCategoryAccount?.name || fallback.notFound,
           dummySubCategory:
@@ -125,6 +126,10 @@ const ExpenseCategoryReport = () => {
       header: "Sub-category Name",
     },
     {
+      accessorKey: "dummyNote",
+      header: "Note",
+    },
+    {
       accessorKey: "dummyDate",
       header: "Date",
     },
@@ -144,9 +149,9 @@ const ExpenseCategoryReport = () => {
     isLoading: expenseSubcategoryLoading,
   } = useGetExpenseSubCategoreyAccountListQuery({});
 
-  // const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
-  //   {}
-  // );
+  const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
+    {}
+  );
   // const printSaleRef = useRef(null);
 
   // const handlePrint = useReactToPrint({
@@ -154,97 +159,11 @@ const ExpenseCategoryReport = () => {
   //   documentTitle: `${appConfiguration?.appName}_expense_category_report`,
   // });
 
-  // if (singleCmsLoading) {
-  //   return <Loader />;
-  // }
+  if (singleCmsLoading) {
+    return <Loader />;
+  }
 
   return (
-    // <section className="pt-4">
-    //   {/* SEARCH SUPPLIER FILED */}
-
-    //   <div>
-    //     <InfoWrapper className="my-2" heading="Payment Reports">
-    //       <div className="-mx-2 border rounded-md overflow-hidden">
-    //         <Table className="overflow-hidden">
-    //           <TableCaption className="mt-0 border-t-[0.5px]">
-    //             A list of payment reports
-    //           </TableCaption>
-    //           <TableHeader>
-    //             <TableRow>
-    //               {[
-    //                 "Index",
-    //                 "Name",
-    //                 "Category",
-    //                 "Subcategory",
-    //                 "Date",
-    //                 "Amount",
-    //               ].map((singleHead: string) => (
-    //                 <TableHead className="custom-table" key={singleHead}>
-    //                   {singleHead}
-    //                 </TableHead>
-    //               ))}
-    //             </TableRow>
-    //           </TableHeader>
-    //           <TableBody>
-    //             {paymentReportsData &&
-    //               paymentReportsData?.data?.length > 0 &&
-    //               paymentReportsData?.data?.map(
-    //                 (singleExpense: any, expenseIndex: number) => (
-    //                   <TableRow className="divide-[0.5px]" key={expenseIndex}>
-    //                     <TableCell className="custom-table">
-    //                       {generateDynamicIndexWithMeta(
-    //                         paymentReportsData?.data,
-    //                         expenseIndex
-    //                       )}
-    //                     </TableCell>
-    //                     <TableCell className="custom-table">
-    //                       {singleExpense?.name || fallback.notFound}
-    //                     </TableCell>
-    //                     <TableCell className="custom-table">
-    //                       {singleExpense?.expenseCategory?.name ||
-    //                         fallback.notFound}
-    //                     </TableCell>
-    //                     <TableCell className="custom-table">
-    //                       {singleExpense?.expenseSubcategory?.name ||
-    //                         fallback.notFound}
-    //                     </TableCell>
-    //                     {/* <TableCell className="custom-table">
-    //                       {formatter(singleExpense.date) ||fallback.notFound}
-    //                     </TableCell> */}
-    //                     <TableCell className="custom-table">
-    //                       {(singleExpense?.totalAmount ?? 0).toFixed(2)}৳
-    //                     </TableCell>
-    //                   </TableRow>
-    //                 )
-    //               )}
-    //             <TableRow className="bg-muted font-semibold">
-    //               <TableCell className="custom-table">Total</TableCell>
-    //               <EmptyTableCell item={4} className="custom-table" />
-    //               <TableCell className="custom-table">
-    //                 {totalCalculator(
-    //                   paymentReportsData?.data,
-    //                   "totalAmount"
-    //                 )?.toFixed(2) || fallback.amount}
-    //                 ৳
-    //               </TableCell>
-    //             </TableRow>
-    //           </TableBody>
-    //         </Table>
-    //       </div>
-    //     </InfoWrapper>
-    //   </div>
-
-    //   {/* <div className="invisible hidden -left-full">
-    //     {filteredData.length > 0 && (
-    //       <ExpenseCategoryPrint
-    //         ref={printSaleRef}
-    //         categoryData={filteredData}
-    //         logo={singleCms?.data}
-    //       />
-    //     )}
-    //   </div> */}
-    // </section>
-
     <PageWrapper>
       <TableWrapper
         subHeading={translate(
@@ -253,6 +172,39 @@ const ExpenseCategoryReport = () => {
         )}
         heading={translate("খরচ তথ্য", "Expense Report")}
       >
+        <ul className="flex space-x-3 w-full">
+        <li>
+          <ExpenseReportExcel result={expenseState?.expenseList} />
+        </li>
+
+        <li>
+          <PDFDownloadLink
+            document={<PdfExpenseReport result={expenseState?.expenseList} logo={singleCms} />}
+            fileName="expense_report.pdf"
+          >
+            
+            {
+            //@ts-ignore
+            (params) => {
+              const { loading } = params;
+              return loading ? (
+                <Button
+                  disabled
+                  className="transition-all duration-150"
+                  variant="destructive"
+                  size="xs"
+                >
+                  <Loader /> Pdf
+                </Button>
+              ) : (
+                <Button variant="destructive" size="xs">
+                  Pdf
+                </Button>
+              );
+            }}
+          </PDFDownloadLink>
+        </li>
+      </ul>
         <TableToolbar alignment="responsive">
           <div className="flex flex-col lg:flex-row justify-end items-center space-x-2">
             <div className="flex space-x-2">
