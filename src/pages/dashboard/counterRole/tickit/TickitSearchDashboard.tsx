@@ -344,7 +344,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
         </div>
       </div>
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 lg:top-[400px] top-[200px]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 lg:top-[400px] md:top-[270px] top-[360px]">
           <div className="relative w-full max-w-7xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
             {/* Close Button */}
             <button
