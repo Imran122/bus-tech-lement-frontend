@@ -19,9 +19,10 @@ import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperti
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FilePenLine, X } from "lucide-react";
+import { FilePenLine, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import HomePageDescription from "./HomePageDescription";
 
 const AddContentManagement = () => {
   const { translate } = useCustomTranslator();
@@ -88,6 +89,7 @@ const AddContentManagement = () => {
     register,
     setValue,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<AddUpdateCompanyProps>({
     resolver: zodResolver(addUpdateCompanySchema),
@@ -304,7 +306,7 @@ const AddContentManagement = () => {
                 }}
                 disabled={!editStates.companyLogo}
               />
-              <div className="flex gap-3 items-center">
+              <div className="flex lg:gap-3 gap-2 items-center">
                 <Button
                   onClick={() => toggleEditState("companyLogo")}
                   variant="outline"
@@ -312,9 +314,9 @@ const AddContentManagement = () => {
                   type="button"
                 >
                   {editStates.companyLogo ? (
-                    <X className="h-6 w-6 text-red-600" />
+                    <X className="lg:h-6 lg:w-6 h-4 w-4 text-red-600" />
                   ) : (
-                    <FilePenLine className="h-6 w-6 text-green-600" />
+                    <FilePenLine className="lg:h-6 lg:w-6 h-4 w-4 text-green-600" />
                   )}
                 </Button>
 
@@ -324,7 +326,13 @@ const AddContentManagement = () => {
                     className="mt-0 pt-0"
                     loading={isLoading || uploadPhotoLoading}
                     errors={error}
-                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    icon={
+                      <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                        {" "}
+                        <Save className="h-4 w-4 " />
+                        Save
+                      </span>
+                    }
                     errorTitle={translate(
                       "সিএমএস আপডেট করতে ত্রুটি",
                       "Error updating CMS"
@@ -360,7 +368,7 @@ const AddContentManagement = () => {
                 }}
                 disabled={!editStates.companyLogoBangla}
               />
-              <div className="flex gap-3 items-center">
+              <div className="flex lg:gap-3 gap-2 items-center">
                 <Button
                   onClick={() => toggleEditState("companyLogoBangla")}
                   variant="outline"
@@ -368,9 +376,9 @@ const AddContentManagement = () => {
                   type="button"
                 >
                   {editStates.companyLogoBangla ? (
-                    <X className="h-6 w-6 text-red-600" />
+                    <X className="lg:h-6 lg:w-6 h-4 w-4 text-red-600" />
                   ) : (
-                    <FilePenLine className="h-6 w-6 text-green-600" />
+                    <FilePenLine className="lg:h-6 lg:w-6 h-4 w-4 text-green-600" />
                   )}
                 </Button>
                 {editStates.companyLogoBangla && (
@@ -378,7 +386,13 @@ const AddContentManagement = () => {
                     className="mt-0 pt-0"
                     loading={isLoading || uploadPhotoLoading}
                     errors={error}
-                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    icon={
+                      <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                        {" "}
+                        <Save className="h-4 w-4 " />
+                        Save
+                      </span>
+                    }
                     errorTitle={translate(
                       "সিএমএস আপডেট করতে ত্রুটি",
                       "Error updating CMS"
@@ -414,7 +428,7 @@ const AddContentManagement = () => {
                 }}
                 disabled={!editStates.footerLogo}
               />
-              <div className="flex gap-3 items-center">
+              <div className="flex lg:gap-3 gap-2 items-center">
                 <Button
                   onClick={() => toggleEditState("footerLogo")}
                   variant="outline"
@@ -422,9 +436,9 @@ const AddContentManagement = () => {
                   type="button"
                 >
                   {editStates.footerLogo ? (
-                    <X className="h-6 w-6 text-red-600" />
+                    <X className="lg:h-6 lg:w-6 h-4 w-4 text-red-600" />
                   ) : (
-                    <FilePenLine className="h-6 w-6 text-green-600" />
+                    <FilePenLine className="lg:h-6 lg:w-6 h-4 w-4 text-green-600" />
                   )}
                 </Button>
                 {editStates.footerLogo && (
@@ -432,7 +446,13 @@ const AddContentManagement = () => {
                     className="mt-0 pt-0"
                     loading={isLoading || uploadPhotoLoading}
                     errors={error}
-                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    icon={
+                      <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                        {" "}
+                        <Save className="h-4 w-4 " />
+                        Save
+                      </span>
+                    }
                     errorTitle={translate(
                       "সিএমএস আপডেট করতে ত্রুটি",
                       "Error updating CMS"
@@ -468,7 +488,7 @@ const AddContentManagement = () => {
                 }}
                 disabled={!editStates.footerLogoBangla}
               />
-              <div className="flex gap-3 items-center">
+              <div className="flex lg:gap-3 gap-2 items-center">
                 <Button
                   onClick={() => toggleEditState("footerLogoBangla")}
                   variant="outline"
@@ -476,9 +496,9 @@ const AddContentManagement = () => {
                   type="button"
                 >
                   {editStates.footerLogoBangla ? (
-                    <X className="h-6 w-6 text-red-600" />
+                    <X className="lg:h-6 lg:w-6 h-4 w-4 text-red-600" />
                   ) : (
-                    <FilePenLine className="h-6 w-6 text-green-600" />
+                    <FilePenLine className="lg:h-6 lg:w-6 h-4 w-4 text-green-600" />
                   )}
                 </Button>
                 {editStates.footerLogoBangla && (
@@ -486,7 +506,13 @@ const AddContentManagement = () => {
                     className="mt-0 pt-0"
                     loading={isLoading || uploadPhotoLoading}
                     errors={error}
-                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    icon={
+                      <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                        {" "}
+                        <Save className="h-4 w-4 " />
+                        Save
+                      </span>
+                    }
                     errorTitle={translate(
                       "সিএমএস আপডেট করতে ত্রুটি",
                       "Error updating CMS"
@@ -521,7 +547,7 @@ const AddContentManagement = () => {
                 }}
                 disabled={!editStates.offerSliderOne}
               />
-              <div className="flex gap-3 items-center">
+              <div className="flex lg:gap-3 gap-2 items-center">
                 <Button
                   onClick={() => toggleEditState("offerSliderOne")}
                   variant="outline"
@@ -529,9 +555,9 @@ const AddContentManagement = () => {
                   type="button"
                 >
                   {editStates.offerSliderOne ? (
-                    <X className="h-6 w-6 text-red-600" />
+                    <X className="lg:h-6 lg:w-6 h-4 w-4 text-red-600" />
                   ) : (
-                    <FilePenLine className="h-6 w-6 text-green-600" />
+                    <FilePenLine className="lg:h-6 lg:w-6 h-4 w-4 text-green-600" />
                   )}
                 </Button>
                 {editStates.offerSliderOne && (
@@ -539,7 +565,13 @@ const AddContentManagement = () => {
                     className="mt-0 pt-0"
                     loading={isLoading || uploadPhotoLoading}
                     errors={error}
-                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    icon={
+                      <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                        {" "}
+                        <Save className="h-4 w-4 " />
+                        Save
+                      </span>
+                    }
                     errorTitle={translate(
                       "সিএমএস আপডেট করতে ত্রুটি",
                       "Error updating CMS"
@@ -574,7 +606,7 @@ const AddContentManagement = () => {
                 }}
                 disabled={!editStates.offerSliderTwo}
               />
-              <div className="flex gap-3 items-center">
+              <div className="flex lg:gap-3 gap-2 items-center">
                 <Button
                   onClick={() => toggleEditState("offerSliderTwo")}
                   variant="outline"
@@ -582,9 +614,9 @@ const AddContentManagement = () => {
                   type="button"
                 >
                   {editStates.offerSliderTwo ? (
-                    <X className="h-6 w-6 text-red-600" />
+                    <X className="lg:h-6 lg:w-6 h-4 w-4 text-red-600" />
                   ) : (
-                    <FilePenLine className="h-6 w-6 text-green-600" />
+                    <FilePenLine className="lg:h-6 lg:w-6 h-4 w-4 text-green-600" />
                   )}
                 </Button>
                 {editStates.offerSliderTwo && (
@@ -592,7 +624,13 @@ const AddContentManagement = () => {
                     className="mt-0 pt-0"
                     loading={isLoading || uploadPhotoLoading}
                     errors={error}
-                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    icon={
+                      <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                        {" "}
+                        <Save className="h-4 w-4 " />
+                        Save
+                      </span>
+                    }
                     errorTitle={translate(
                       "সিএমএস আপডেট করতে ত্রুটি",
                       "Error updating CMS"
@@ -626,7 +664,7 @@ const AddContentManagement = () => {
                 }}
                 disabled={!editStates.offerSliderThree}
               />
-              <div className="flex gap-3 items-center">
+              <div className="flex lg:gap-3 gap-2 items-center">
                 <Button
                   onClick={() => toggleEditState("offerSliderThree")}
                   variant="outline"
@@ -634,9 +672,9 @@ const AddContentManagement = () => {
                   type="button"
                 >
                   {editStates.offerSliderThree ? (
-                    <X className="h-6 w-6 text-red-600" />
+                    <X className="lg:h-6 lg:w-6 h-4 w-4 text-red-600" />
                   ) : (
-                    <FilePenLine className="h-6 w-6 text-green-600" />
+                    <FilePenLine className="lg:h-6 lg:w-6 h-4 w-4 text-green-600" />
                   )}
                 </Button>
                 {editStates.offerSliderThree && (
@@ -644,7 +682,13 @@ const AddContentManagement = () => {
                     className="mt-0 pt-0"
                     loading={isLoading || uploadPhotoLoading}
                     errors={error}
-                    icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                    icon={
+                      <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                        {" "}
+                        <Save className="h-4 w-4 " />
+                        Save
+                      </span>
+                    }
                     errorTitle={translate(
                       "সিএমএস আপডেট করতে ত্রুটি",
                       "Error updating CMS"
@@ -683,9 +727,9 @@ const AddContentManagement = () => {
                     type="button"
                   >
                     {editOpen[key] ? (
-                      <X className="h-6 w-6 text-red-600" />
+                      <X className="lg:h-6 lg:w-6 h-4 w-4 text-red-600" />
                     ) : (
-                      <FilePenLine className="h-6 w-6 text-green-600" />
+                      <FilePenLine className="lg:h-6 lg:w-6 h-4 w-4 text-green-600" />
                     )}
                   </Button>
                   {editOpen[key] && (
@@ -693,7 +737,13 @@ const AddContentManagement = () => {
                       className="mt-0 pt-0"
                       loading={isLoading || uploadPhotoLoading}
                       errors={error}
-                      icon={<FilePenLine className="h-6 w-5 text-gray-100" />}
+                      icon={
+                        <span className="flex items-center text-white lg:text-lg text-base lg:gap-1">
+                          {" "}
+                          <Save className="h-4 w-4 " />
+                          Save
+                        </span>
+                      }
                       errorTitle={translate(
                         "সিএমএস আপডেট করতে ত্রুটি",
                         "Error updating CMS"
@@ -705,9 +755,20 @@ const AddContentManagement = () => {
             </InputWrapper>
           ))}
         </div>
+        <HomePageDescription
+          //register={register}
+          setValue={setValue}
+          editStates={editStates}
+          toggleEditState={toggleEditState}
+          errors={errors}
+          isLoading={isLoading}
+          uploadPhotoLoading={uploadPhotoLoading}
+          error={error}
+          translate={translate}
+          getValues={getValues}
+        />
 
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
           <InputWrapper
             key="homePageDescription"
             error={(errors as any)?.homePageDescription?.message}
@@ -812,7 +873,7 @@ const AddContentManagement = () => {
               </div>
             </div>
           </InputWrapper>
-        </div>
+        </div> */}
       </form>
     </FormWrapper>
   );

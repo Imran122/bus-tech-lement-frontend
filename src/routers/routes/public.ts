@@ -2,9 +2,12 @@ import AboutUs from "@/pages/public/AboutUs";
 import Blog from "@/pages/public/Blog";
 import Contact from "@/pages/public/Contact";
 import FindTickit from "@/pages/public/FindTickit";
+import ForgetPassword from "@/pages/public/ForgetPassword";
 import Home from "@/pages/public/Home";
 import Login from "@/pages/public/Login";
+import NewPassword from "@/pages/public/NewPassword";
 import Notice from "@/pages/public/Notice";
+import OtpCode from "@/pages/public/OtpCode";
 import PaymentCancel from "@/pages/public/PaymentCancel";
 import PaymentFailed from "@/pages/public/PaymentFailed";
 import PaymentSuccess from "@/pages/public/PaymentSuccess";
@@ -30,6 +33,18 @@ export const publicRoutes: IRouteProps[] = [
   {
     path: "reset-password",
     element: React.createElement(ResetPassword),
+  },
+  {
+    path: "forget-password",
+    element: React.createElement(ForgetPassword),
+  },
+  {
+    path: "otp",
+    element: React.createElement(OtpCode),
+  },
+  {
+    path: "new-password",
+    element: React.createElement(NewPassword),
   },
   {
     path: "about_us",

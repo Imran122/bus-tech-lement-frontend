@@ -1,32 +1,30 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-const date = new Date();
-const dateString = date.toISOString();
-interface ITickitBookingStateProps {
+import { format } from "date-fns";
+
+export interface ITickitBookingStateProps {
   calenderOpen: boolean;
   fromCounterId: number | null;
   destinationCounterId: number | null;
-  schedule: string;
   coachType: string;
   date: string | null;
+  returnDate: string | null;
+  orderType: "One_Trip" | "Round_Trip";
   bookingCoachesList: any[];
+  roundTripGobookingCoachesList: any[]; // Added for round trip go data
+  roundTripReturnBookingCoachesList: any[]; // Added for round trip return data
 }
-export interface ICounterSearchFilterState {
-  calenderOpen: boolean;
-  fromCounterId: number | null;
-  destinationCounterId: number | null;
-  schedule: string;
-  coachType: string;
-  date: string | null;
-  bookingCoachesList: any[];
-}
+
 const initialState: ITickitBookingStateProps = {
   calenderOpen: false,
   fromCounterId: null,
   destinationCounterId: null,
-  schedule: "",
   coachType: "AC",
-  date: dateString,
+  date: format(new Date(), "yyyy-MM-dd"),
+  returnDate: null,
+  orderType: "One_Trip",
   bookingCoachesList: [],
+  roundTripGobookingCoachesList: [],
+  roundTripReturnBookingCoachesList: [],
 };
 
 const counterSearchFilterSlice = createSlice({
@@ -39,18 +37,26 @@ const counterSearchFilterSlice = createSlice({
     setDestinationCounterId(state, action: PayloadAction<number | null>) {
       state.destinationCounterId = action.payload;
     },
-    setSchedule(state, action: PayloadAction<string>) {
-      state.schedule = action.payload;
-    },
     setCoachType(state, action: PayloadAction<string>) {
       state.coachType = action.payload;
     },
     setDate(state, action: PayloadAction<string | null>) {
       state.date = action.payload;
     },
-    //
+    setReturnDate(state, action: PayloadAction<string | null>) {
+      state.returnDate = action.payload;
+    },
+    setOrderType(state, action: PayloadAction<"One_Trip" | "Round_Trip">) {
+      state.orderType = action.payload;
+    },
     setBookingCoachesList(state, action: PayloadAction<any[]>) {
       state.bookingCoachesList = action.payload;
+    },
+    setRoundTripGoBookingCoachesList(state, action: PayloadAction<any[]>) {
+      state.roundTripGobookingCoachesList = action.payload;
+    },
+    setRoundTripReturnBookingCoachesList(state, action: PayloadAction<any[]>) {
+      state.roundTripReturnBookingCoachesList = action.payload;
     },
     resetFilters(state) {
       Object.assign(state, initialState);
@@ -61,10 +67,13 @@ const counterSearchFilterSlice = createSlice({
 export const {
   setFromCounterId,
   setDestinationCounterId,
-  setSchedule,
   setCoachType,
   setDate,
+  setReturnDate,
+  setOrderType,
   setBookingCoachesList,
+  setRoundTripGoBookingCoachesList,
+  setRoundTripReturnBookingCoachesList,
   resetFilters,
 } = counterSearchFilterSlice.actions;
 

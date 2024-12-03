@@ -249,7 +249,7 @@ const financialManagementLinks = {
 // EXPENDITURE MANAGEMENT LIST
 const expenditureManagementLinks = {
   icon: LuArrowRightFromLine,
-  label: { bn: "ব্যয় ব্যবস্থাপনা", en: "Expenditure Management" },
+  label: { bn: "ব্যয় ব্যবস্থাপনা", en: "Expense Management" },
   key: "expenditure",
   href: "expenditure",
   subLinks: [
@@ -381,7 +381,7 @@ const settingsLinks = {
       label: { bn: "আমাদের সম্পর্কে", en: "About Us" },
       key: "aboutus_list",
       href: "aboutus_list",
-    },    
+    },
   ],
 };
 

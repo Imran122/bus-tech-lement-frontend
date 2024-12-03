@@ -18,21 +18,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
+
 import { cn } from "@/lib/utils";
-import { useOrderCancelRequestMutation } from "@/store/api/bookingApi";
+import {
+  useOrderCancelRequestMutation,
+  useRemoveBookingSeatMutation,
+} from "@/store/api/bookingApi";
 import { useGetSalesTickitListQuery } from "@/store/api/counter/counterSalesBookingApi";
 import { selectCounterSearchFilter } from "@/store/api/counter/counterSearchFilterSlice";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
-import { LuDownload } from "react-icons/lu";
+import { LuDownload, LuRefreshCw } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import CounterOrderDetailsModal from "../sales/CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "../sales/UpdateCounterOrderModal";
 
+import DashboardRoundTripTickitBookingCard from "@/components/common/card/DashboardRoundTripTickitBookingCard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,9 +47,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { PiKeyReturnBold } from "react-icons/pi";
 import { useReactToPrint } from "react-to-print";
+import { toast } from "sonner";
 import TicketPrintSingle from "../../printLabel/TicketPrintSingle";
-
+import { ICounterBookingFormStateProps } from "../tickit/CounterTickitBookingForm";
+import RoundTripFormModal from "./RoundTripFormModal";
 interface ISalesListProps {}
 export interface ISalesDataStateProps {
   search: string;
@@ -60,7 +72,7 @@ export interface ISalesDataStateProps {
 
 const CounterDashboardHome: FC<ISalesListProps> = () => {
   const { translate } = useCustomTranslator();
-  const { toastMessage } = useMessageGenerator();
+  //const { toastMessage } = useMessageGenerator();
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
     page: 1,
@@ -68,10 +80,22 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     meta: { page: 0, size: 10, total: 100, totalPage: 10 },
   });
   const bookingState = useSelector(selectCounterSearchFilter);
-
+  const [removeBookingSeat] = useRemoveBookingSeatMutation({}) as any;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bookingCoachSingle, setBookingCoachSingle] = useState({});
+  const [goViaRoute, setGoViaRoute] = useState([]);
+  const [returnViaRoute, setReturnViaRoute] = useState([]);
   const [cancelRequst] = useOrderCancelRequestMutation();
   const printSaleRef = useRef(null);
-
+  //const [popoverOpen, setPopoverOpen] = useState(false);
+  const [bookingFormState, setBookingFormState] =
+    useState<ICounterBookingFormStateProps>({
+      selectedSeats: [],
+      targetedSeat: null,
+      redirectLink: null,
+      customerName: null,
+      redirectConfirm: false,
+    });
   // STORE PROMISE RESOLVE REFERENCE
   const promiseResolveRef = useRef<any>(null);
 
@@ -133,16 +157,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     try {
       const result = await cancelRequst(orderId).unwrap();
       if (result?.data?.success) {
-        toast({
-          title: translate(
-            "টিকিট বাতিলের অনুরোধের জন্য বার্তা",
-            "Message for cancel ticket request"
-          ),
-          description: toastMessage(
-            "cancel",
-            translate("টিকিট বাতিলের অনুরোধ", "Cancel Ticket Request")
-          ),
-        });
+        toast(translate("টিকিট বাতিলের অনুরোধ", "Cancel Ticket Request"));
       }
     } catch (error) {
       console.error(error);
@@ -302,7 +317,110 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       },
     },
   ];
+  //round trip related code
 
+  const handleProceedClick = () => {
+    const hasGoingSeat = bookingFormState.selectedSeats.some((seat) =>
+      bookingState.roundTripGobookingCoachesList.some(
+        (coach: any) => coach.id === seat.coachConfigId
+      )
+    );
+
+    const hasReturnSeat = bookingFormState.selectedSeats.some((seat) =>
+      bookingState.roundTripReturnBookingCoachesList.some(
+        (coach: any) => coach.id === seat.coachConfigId
+      )
+    );
+
+    if (!hasGoingSeat) {
+      toast.error(
+        translate(
+          "Please select at least one seat for the outgoing trip.",
+          "যাত্রার জন্য অন্তত একটি আসন নির্বাচন করুন।"
+        )
+      );
+      return;
+    }
+
+    if (!hasReturnSeat) {
+      toast.error(
+        translate(
+          "Please select at least one seat for the return trip.",
+          "ফেরার জন্য অন্তত একটি আসন নির্বাচন করুন।"
+        )
+      );
+      return;
+    }
+
+    // Proceed to open the modal if both conditions are satisfied
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+  //reset button
+  const ResetDataOfForm = async () => {
+    try {
+      if (!bookingFormState.selectedSeats.length) {
+        toast.warning(
+          translate(
+            "No seats selected to reset.",
+            "রিসেট করার জন্য কোনো আসন নির্বাচন করা হয়নি।"
+          )
+        );
+        return;
+      }
+
+      // Iterate over selected seats and call `removeBookingSeat` for each
+      const promises = bookingFormState.selectedSeats.map((seat) =>
+        removeBookingSeat({
+          coachConfigId: seat?.coachConfigId,
+          date: seat?.date,
+          schedule: seat?.schedule,
+          seat: seat.seat,
+        })
+      );
+
+      // Wait for all API calls to complete
+      const results = await Promise.all(promises);
+
+      // Check if all API calls were successful
+      const allSuccessful = results.every((result) => result?.data?.success);
+
+      if (allSuccessful) {
+        toast.success(
+          translate(
+            "All seats reset successfully.",
+            "সব আসন সফলভাবে রিসেট হয়েছে।"
+          )
+        );
+
+        // Reset the form state
+        setBookingFormState({
+          targetedSeat: null,
+          selectedSeats: [],
+          redirectLink: null,
+          customerName: null,
+          redirectConfirm: false,
+        });
+      } else {
+        toast.error(
+          translate(
+            "Some seats could not be reset. Please try again.",
+            "কিছু আসন রিসেট করা যায়নি। আবার চেষ্টা করুন।"
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error resetting seats:", error);
+      toast.error(
+        translate(
+          "Error resetting the seats. Please try again.",
+          "আসন রিসেট করার সময় ত্রুটি হয়েছে। আবার চেষ্টা করুন।"
+        )
+      );
+    }
+  };
   if (loadingSalesTickit) {
     return <TableSkeleton columns={7} />;
   }
@@ -366,7 +484,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
             </div>
           </PageTransition>
         </div>
-        {/* search design  */}
+        {/* search result design  */}
         <div>
           {bookingState.bookingCoachesList.length > 0 && (
             <Accordion className="w-full" type="single" collapsible>
@@ -383,6 +501,95 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
           )}
         </div>
 
+        {/* roundtrip design work card */}
+        {bookingState.orderType === "Round_Trip" &&
+          bookingState.roundTripGobookingCoachesList.length > 0 && (
+            <Accordion className="w-full" type="single" collapsible>
+              {bookingState?.roundTripGobookingCoachesList.map(
+                (singleCoachData: any, coachDataIndex: number) => (
+                  <DashboardRoundTripTickitBookingCard
+                    key={coachDataIndex}
+                    coachData={singleCoachData}
+                    index={coachDataIndex}
+                    setBookingCoachSingle={setBookingCoachSingle}
+                    bookingCoachSingle={bookingCoachSingle}
+                    setGoViaRoute={setGoViaRoute}
+                    setReturnViaRoute={setReturnViaRoute}
+                    bookingFormState={bookingFormState}
+                    setBookingFormState={setBookingFormState}
+                  />
+                )
+              )}
+            </Accordion>
+          )}
+        {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
+          <div className="my-10 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-green-500/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
+            <h2 className="font-bold text-green-400 text-2xl">
+              Select Return Ticket
+            </h2>
+            <span className="py-3">
+              <PiKeyReturnBold size={24} />
+            </span>
+          </div>
+        )}
+
+        {/* roundtrip design work card back */}
+        {bookingState.orderType === "Round_Trip" &&
+          bookingState.roundTripReturnBookingCoachesList.length > 0 && (
+            <Accordion className="w-full" type="single" collapsible>
+              {bookingState?.roundTripReturnBookingCoachesList.map(
+                (singleCoachData: any, coachDataIndex: number) => (
+                  <DashboardRoundTripTickitBookingCard
+                    key={coachDataIndex}
+                    coachData={singleCoachData}
+                    index={coachDataIndex}
+                    setBookingCoachSingle={setBookingCoachSingle}
+                    bookingCoachSingle={bookingCoachSingle}
+                    setGoViaRoute={setGoViaRoute}
+                    setReturnViaRoute={setReturnViaRoute}
+                    bookingFormState={bookingFormState}
+                    setBookingFormState={setBookingFormState}
+                  />
+                )
+              )}
+            </Accordion>
+          )}
+
+        {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
+          <div className="w-full mt-5 flex justify-between items-center">
+            <button
+              onClick={handleProceedClick}
+              className="block px-10 py-3 text-xl font-semibold bg-primary text-white rounded-md hover:bg-primary-dark"
+            >
+              Proceed
+            </button>
+            <div className="lg:py-3 py-[7px] flex gap-4 items-end lg:px-6 px-2 border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+              <h2 className="text-primary text-2xl  font-semibold">
+                Reset Seat
+              </h2>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      className="text-muted-foreground"
+                      onClick={ResetDataOfForm}
+                      variant="outline"
+                      size="icon"
+                    >
+                      <span className="sr-only">Refresh Button</span>
+                      <LuRefreshCw className="size-[21px]" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p> {translate("ফিল্টার রিসেট", "Reset Filter")}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+        )}
+        {/* table design */}
         <TableWrapper
           subHeading={translate(
             "আজকের সেলস তথ্য উপাত্ত",
@@ -451,6 +658,28 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
           <TicketPrintSingle ref={printSaleRef} tickitData={invoiceData} />
         )}
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center">
+          <div className=" absolute top-[50px] left-1/2 transform -translate-x-1/2 w-full max-w-[95%] md:max-w-4xl bg-background border border-primary/50 border-dashed rounded-lg p-5 backdrop-blur-[2px] max-h-[80vh] overflow-y-auto">
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-4 right-4 text-red-500 font-bold"
+            >
+              Close
+            </button>
+            <RoundTripFormModal
+              bookingCoach={bookingCoachSingle}
+              onClose={handleCloseModal}
+              goViaRoute={goViaRoute}
+              returnViaRoute={returnViaRoute}
+              bookingFormState={bookingFormState}
+              setBookingFormState={setBookingFormState}
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 };

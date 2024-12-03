@@ -136,8 +136,8 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
     <AccordionItem value={index?.toString()}>
       <CardWrapper rounded="md" variant="muted" className="p-4 ">
         <div className="lg:flex grid grid-cols-4 md:flex-row flex-col gap-3 md:justify-between md:items-center items-start w-full">
-          <ul className="lg:w-3/12 flex lg:flex-col md:flex-row gap-3 md:col-span-4 col-span-4">
-            <li className="flex md:gap-3 gap-1">
+          <ul className="lg:w-3/12 w-full flex lg:flex-col md:flex-row flex-col justify-start items-start lg:gap-1 md:gap-4 gap-1 md:col-span-4 col-span-4">
+            <li className="flex lg:w-full md:w-6/12 justify-start md:gap-3 gap-1">
               <Badge shape="responsivepill">
                 {coachData?.coachType == "AC"
                   ? translate("শীতাতপ নিয়ন্ত্রিত", "Air Condition")
@@ -156,25 +156,29 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
                   : "Economy Class"}
               </Badge>
             </li>
-            <li className="md:text-lg text-sm tracking-tight md:font-semibold font-normal mt-1">
-              <span className="">{translate("কোচ নম্বরঃ ", "Couch No: ")}</span>
-              <span className="md:font-[500] font-normal uppercase">
-                {coachData?.coachNo ||
-                  translate(fallback.notFound.bn, fallback.notFound.en)}
-              </span>
-            </li>
+            <div className=" w-full flex flex-row gap-2">
+              <li className="md:text-lg w-full text-sm  tracking-tight md:font-semibold font-normal">
+                <span className="">
+                  {translate("কোচ নম্বরঃ ", "Couch No: ")}
+                </span>
+                <span className="md:font-[500] font-normal uppercase">
+                  {coachData?.coachNo ||
+                    translate(fallback.notFound.bn, fallback.notFound.en)}
+                </span>
+              </li>
 
-            <li className="md:text-lg text-sm tracking-tight">
-              <span className="md:font-[500] font-normal uppercase text-red-400  rounded-lg  py-[2px]">
-                {coachData?.fromCounter?.name ||
-                  translate(fallback.notFound.bn, fallback.notFound.en)}
-              </span>{" "}
-              {`=>`}{" "}
-              <span className="md:font-[500] font-normal uppercase text-red-400  rounded-lg  py-[2px]">
-                {coachData?.destinationCounter?.name ||
-                  translate(fallback.notFound.bn, fallback.notFound.en)}
-              </span>
-            </li>
+              <li className="md:text-lg w-full text-sm  tracking-tight">
+                <span className="md:font-[500] font-normal uppercase text-red-400  rounded-lg  py-[2px]">
+                  {coachData?.fromCounter?.name ||
+                    translate(fallback.notFound.bn, fallback.notFound.en)}
+                </span>{" "}
+                {`=>`}{" "}
+                <span className="md:font-[500] font-normal uppercase text-red-400  rounded-lg  py-[2px]">
+                  {coachData?.destinationCounter?.name ||
+                    translate(fallback.notFound.bn, fallback.notFound.en)}
+                </span>
+              </li>
+            </div>
           </ul>
           <ul className="md:col-span-2 col-span-4 grid grid-cols-3 lg:gap-x-4 gap-x-2">
             <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
@@ -213,7 +217,11 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
           </ul>
           <ul className="md:col-span-2 col-span-4 flex gap-x-4 justify-center">
             <li className="flex flex-col items-center justify-center text-center">
-              <Badge shape="pill" size="sm" variant="tertiary">
+              <Badge
+                shape="responsivepill"
+                size="responsivesize"
+                variant="tertiary"
+              >
                 {translate("অতিরিক্ত কোনো চার্জ নেই", "No Additional Charge")}
               </Badge>
               {coachData.discount > 0 && (
@@ -233,7 +241,7 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
                 </span>
               )}
 
-              <span className="font-anek lg:font-semibold font-normal text-xl">
+              <span className="font-anek lg:font-semibold font-normal lg:text-xl text-base">
                 {translate(
                   convertToBnDigit(
                     formatter({

@@ -1,8 +1,8 @@
-import React from "react";
+import { Heading } from "@/components/common/typography/Heading";
 import { Paragraph } from "@/components/common/typography/Paragraph";
+import React from "react";
 import QRCode from "react-qr-code";
 import bus from "../../../assets/buspng.png";
-import { Heading } from "@/components/common/typography/Heading";
 
 interface ITickitPrintClientProps {
   tickitData: any;
@@ -48,7 +48,6 @@ const TickitPrintClient = React.forwardRef<
 
     return `${reportingHours}:${reportingMinutes} ${reportingPeriod}`;
   };
-
   // Generate the QR code data
   const qrData = JSON.stringify({
     phone: tickitInfo?.data?.phone || "N/A",
@@ -77,31 +76,29 @@ const TickitPrintClient = React.forwardRef<
   const seatNo = tickitInfo?.data?.orderSeat?.filter(
     (s: any) => s.date === tickitInfo?.data?.date
   );
-
   return (
     <section
       ref={ref}
       style={{
         width: "5in",
-        height: "5.5in",
+        height: "6in",
       }}
-      className="flex justify-center mx-auto border-2 border-black relative"
+      className="flex justify-center mx-auto border-2 border-black relative mt-5"
     >
       {/* Client Section */}
-      <section className="relative">
-        <div>
-          <img
-            src={logo?.companyLogoBangla}
-            alt="Logo"
-            className="w-32 h-auto mx-auto"
-          />
-          <Paragraph size={"sm"} className="font-bold pb-2 text-center">
-            {" "}
-            Hot line: 01945518927
-          </Paragraph>
-        </div>
-        <div className="absolute top-2 right-5">
-          <QRCode value={qrData} size={80} />
+      <section className="relative w-full px-10">
+        <div className="flex justify-center items-center py-5">
+          <div>
+            <img
+              src={logo?.companyLogoBangla}
+              alt="Logo"
+              className="w-32 h-auto mx-auto"
+            />
+            <Paragraph size={"sm"} className="font-bold pb-2 text-center">
+              {" "}
+              Hot line: 01945518927
+            </Paragraph>
+          </div>
         </div>
         <div
           style={{
@@ -120,97 +117,123 @@ const TickitPrintClient = React.forwardRef<
           }}
         ></div>
         {/* Content */}
-        <div className="relative z-10 left-5 top-0">
-          <Paragraph size="sm">
-            Passenger Name: {tickitInfo?.data?.customerName}
-          </Paragraph>
-          <Paragraph size="sm">Address: {tickitInfo?.data?.address}</Paragraph>
-          <div className="flex gap-2 items-center">
-            <Paragraph size="sm">Mobile: {tickitInfo?.data?.phone}</Paragraph>
-            <Paragraph size="sm">
+        <div className="relative z-10 left-0 top-0 w-full">
+          <div className="flex flex-col items-center">
+            <Paragraph className="font-bold" size="sm">
               Ticket No: {tickitInfo?.data?.ticketNo}
             </Paragraph>
-          </div>
-          <div className="flex gap-2 items-center">
-            <Paragraph size="sm">
-              Seat No:{" "}
-              {seatNo?.map((seat: any) => seat?.seat).join(", ") || "N/A"}
-            </Paragraph>
-            <Paragraph size="sm">
+            <Paragraph className="font-bold" size="sm">
               Coach No: {seatNo?.[0]?.coachConfig?.coachNo}
             </Paragraph>
           </div>
-          <Paragraph size="sm">Gender: {tickitInfo?.data?.gender}</Paragraph>
-
-          <div className="flex gap-2 items-center">
+          <div className="flex flex-col items-center">
             <Paragraph size="sm">
-              From: {tickitInfo?.data?.boardingPoint}
-            </Paragraph>
-            <Paragraph size="sm">
-              To: {tickitInfo?.data?.droppingPoint}
+              <span className="font-bold">Name:</span>{" "}
+              {tickitInfo?.data?.customerName}
             </Paragraph>
           </div>
-          <div className="flex gap-2 items-center">
+
+          <div className="flex flex-col items-center">
             <Paragraph size="sm">
-              Journey Dt: {seatNo?.[0]?.coachConfig?.departureDate}
+              <span className="font-bold"> Address:</span>{" "}
+              {tickitInfo?.data?.address}
             </Paragraph>
             <Paragraph size="sm">
-              Issue Dt:{" "}
+              {" "}
+              <span className="font-bold"> Mobile:</span>{" "}
+              {tickitInfo?.data?.phone}
+            </Paragraph>
+          </div>
+
+          {/* <Paragraph size="sm">Gender: {tickitInfo?.data?.gender}</Paragraph> */}
+
+          <div className="flex flex-col items-center">
+            <Paragraph size="sm">
+              <span className="font-bold"> Boarding Point:</span>{" "}
+              {tickitInfo?.data?.boardingPoint}
+            </Paragraph>
+            <Paragraph size="sm">
+              <span className="font-bold">Droping Point:</span>{" "}
+              {tickitInfo?.data?.droppingPoint}
+            </Paragraph>
+          </div>
+          <div className="flex flex-row items-center justify-between">
+            <Paragraph size="sm">
+              <span className="font-bold">Journey Date:</span>{" "}
+              {/* {seatNo?.[0]?.coachConfig?.departureDate} */}
+              {seatNo?.[0]?.coachConfig?.departureDate
+                ? new Date(
+                    seatNo?.[0]?.coachConfig?.departureDate
+                  ).toLocaleDateString()
+                : "N/A"}
+            </Paragraph>
+            <Paragraph size="sm">
+              <span className="font-bold">Issue Date:</span>
               {tickitInfo?.data?.createdAt
                 ? new Date(tickitInfo.data.createdAt).toLocaleDateString()
                 : "N/A"}
             </Paragraph>
           </div>
-          <div className="flex gap-2 items-center">
+          <div className="flex flex-row items-center ">
             <Paragraph size="sm">
-              Reporting Time:{" "}
+              <span className="font-bold">Reporting Time:</span>{" "}
               {calculateReportingTime(seatNo?.[0]?.coachConfig?.schedule)}
             </Paragraph>
             <Paragraph size="sm">
-              Departure Time: {seatNo?.[0]?.coachConfig?.schedule}
+              <span className="font-bold">Departure Time: </span>{" "}
+              {seatNo?.[0]?.coachConfig?.schedule}
             </Paragraph>
           </div>
 
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center">
             <Paragraph size="sm">
-              Seat Fare(Tk): {seatNo?.[0]?.unitPrice}
+              <span className="font-bold"> Seat Fare(Tk): </span>{" "}
+              {seatNo?.[0]?.unitPrice}
             </Paragraph>
             <Paragraph size="sm">
-              Total Fare(Tk): {tickitInfo?.data?.paymentAmount}
+              <span className="font-bold">Total Fare(Tk):</span>{" "}
+              {tickitInfo?.data?.paymentAmount}
             </Paragraph>
           </div>
-
+          <div className="flex items-center">
+            <Paragraph size="sm">
+              <span className="font-bold"> Seat No:</span>
+              {seatNo?.map((seat: any) => seat?.seat).join(", ") || "N/A"}
+            </Paragraph>
+          </div>
           {/* RETURN TICKET INFO */}
           {tickitInfo?.data?.orderType === "Round_Trip" && (
             <div>
-              <Heading className="py-3" size={"h5"}>
+              <Heading className="py-3 font-bold" size={"h5"}>
                 Return Seat Info
               </Heading>
               <div className="flex gap-2 items-center">
                 <Paragraph size="sm">
-                  Coach No:{returnSeatNo?.[0]?.coachConfig?.coachNo}
-                </Paragraph>
-                <Paragraph size="sm">
-                  Seat No:{" "}
-                  {returnSeatNo?.map((seat: any) => seat?.seat).join(", ") ||
-                    "N/A"}
+                  <span className="font-bold">Coach No:</span>{" "}
+                  {returnSeatNo?.[0]?.coachConfig?.coachNo}
                 </Paragraph>
               </div>
 
               <div className="flex gap-2 items-center">
                 <Paragraph size="sm">
-                  From: {tickitInfo?.data?.returnBoardingPoint}
+                  <span className="font-bold"> From:</span>{" "}
+                  {tickitInfo?.data?.returnBoardingPoint}
                 </Paragraph>
                 <Paragraph size="sm">
-                  To: {tickitInfo?.data?.returnDroppingPoint}
+                  <span className="font-bold">To:</span>{" "}
+                  {tickitInfo?.data?.returnDroppingPoint}
                 </Paragraph>
               </div>
               <div className="flex gap-2 items-center">
                 <Paragraph size="sm">
-                  Journey Dt: {tickitInfo?.data?.returnDate}
-                </Paragraph>
-                <Paragraph size="sm">
-                  Issue Dt:{" "}
+                  <span className="font-bold">Journey Date:</span>{" "}
+                  {/* {tickitInfo?.data?.returnDate}{" "} */}
+                  {tickitInfo?.data?.returnDate
+                    ? new Date(
+                        tickitInfo?.data?.returnDate
+                      ).toLocaleDateString()
+                    : "N/A"}
+                  <span className="font-bold">Issue Date:</span>{" "}
                   {tickitInfo?.data?.createdAt
                     ? new Date(tickitInfo.data.createdAt).toLocaleDateString()
                     : "N/A"}
@@ -218,32 +241,43 @@ const TickitPrintClient = React.forwardRef<
               </div>
               <div className="flex gap-2 items-center">
                 <Paragraph size="sm">
-                  Reporting Time:{" "}
+                  <span className="font-bold"> Reporting Time:</span>{" "}
                   {calculateReportingTime(
                     returnSeatNo?.[0]?.coachConfig?.schedule
-                  )}
-                </Paragraph>
-                <Paragraph size="sm">
-                  Departure Time: {returnSeatNo?.[0]?.coachConfig?.schedule}
+                  )}{" "}
+                  <span className="font-bold">Departure Time:</span>{" "}
+                  {returnSeatNo?.[0]?.coachConfig?.schedule}
                 </Paragraph>
               </div>
 
               <div className="flex gap-2 items-center">
                 <Paragraph size="sm">
-                  Seat Fare(Tk): {returnSeatNo?.[0]?.unitPrice}
+                  <span className="font-bold"> Seat Fare(Tk):</span>{" "}
+                  {returnSeatNo?.[0]?.unitPrice}
                 </Paragraph>
                 <Paragraph size="sm">
-                  Total Fare(Tk): {tickitInfo?.data?.paymentAmount}
+                  <span className="font-bold">Total Fare(Tk):</span>{" "}
+                  {tickitInfo?.data?.paymentAmount}
+                </Paragraph>
+              </div>
+              <div className="flex gap-2 items-center">
+                <Paragraph size="sm">
+                  <span className="font-bold"> Seat No:</span>{" "}
+                  {returnSeatNo?.map((seat: any) => seat?.seat).join(", ") ||
+                    "N/A"}
                 </Paragraph>
               </div>
             </div>
           )}
         </div>
         {/* Rotated Text */}
-        <div className="absolute z-20 bg-[#BE02D3] px-3 rounded-br-md rounded-bl-md -left-14 top-[45%] -rotate-90">
+        {/* <div className="absolute z-20 bg-[#BE02D3] px-3 rounded-br-md rounded-bl-md -left-14 top-[45%] -rotate-90">
           <Paragraph size="sm" className="text-white font-semibold">
-            Client Copy
+            Online Copy
           </Paragraph>
+        </div> */}
+        <div className="flex justify-center pt-5 items-center">
+          <QRCode value={qrData} size={80} />
         </div>
       </section>
       <div className="bg-[#BE02D3] absolute mt-1 w-full pl-2 bottom-0">

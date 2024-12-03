@@ -37,7 +37,7 @@ const DashboardSidebarSmallDevices: FC<
   return (
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
       <SheetTrigger asChild>
-        <Button size="icon" variant="outline" className="sm:hidden">
+        <Button size="icon" variant="outline" className="lg:hidden mr-4">
           <PanelLeft className="h-5 w-5" />
           <span className="sr-only">Toggle Menu</span>
         </Button>
@@ -60,7 +60,7 @@ const DashboardSidebarSmallDevices: FC<
                 {/* Main Navigation */}
                 <Button
                   variant="outline"
-                  size="default"
+                  size="menu"
                   className="justify-between items-center"
                   onClick={() => toggleMenu(singleLink.key)}
                 >

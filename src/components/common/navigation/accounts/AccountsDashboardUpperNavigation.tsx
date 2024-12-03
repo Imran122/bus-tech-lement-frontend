@@ -42,7 +42,7 @@ const AccountsDashboardUpperNavigation: FC<
   return (
     <header className="sticky !h-14 md:!bg-muted/30 !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
       {/* NAVIGATION LINKS */}
-      <div className="md:hidden block">
+      <div className="lg:hidden block">
         <img src={logocompany} />
       </div>
       <nav className="justify-between w-full flex">

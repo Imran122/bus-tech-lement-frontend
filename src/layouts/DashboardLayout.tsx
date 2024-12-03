@@ -20,21 +20,6 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
   );
   return (
     <TooltipProvider>
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative w-full max-w-7xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
-            {/* Close Button */}
-            <button
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-              onClick={() => dispatch(closeModal())}
-              aria-label="Close Modal"
-            >
-              &times;
-            </button>
-            <UpdateCoachConfigNavigationForm />
-          </div>
-        </div>
-      )}
       <main
         className={cn("flex min-h-screen w-full flex-col", useFontShifter())}
       >
@@ -43,7 +28,7 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
         <section
           className={cn(
             "flex flex-col sm:gap-4 transition-all",
-            sidebarOpen ? "sm:pl-[280px]" : "sm:pl-14"
+            sidebarOpen ? "lg:pl-[280px]" : "lg:pl-14"
           )}
         >
           {/* DASHBOARD UPPER NAVIGATION */}
@@ -53,6 +38,23 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
             <Outlet />
           </section>
         </section>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="relative w-full max-w-7xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
+              {/* Close Button */}
+              <button
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                onClick={() => dispatch(closeModal())}
+                aria-label="Close Modal"
+              >
+                &times;
+              </button>
+              <div className="lg:px-10 py-6 lg:h-[70vh] h-[550px] overflow-y-auto">
+                <UpdateCoachConfigNavigationForm />
+              </div>{" "}
+            </div>
+          </div>
+        )}
       </main>
     </TooltipProvider>
   );

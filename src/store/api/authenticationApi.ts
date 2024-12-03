@@ -19,7 +19,37 @@ const authenticationApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["user"],
     }),
+    forgetPasswordMail: builder.mutation({
+      query: (data) => ({
+        url: "/auth/forget-password-request",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["user"],
+    }),
+    otpVerify: builder.mutation({
+      query: (data) => ({
+        url: "/auth/otp-verify",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["user"],
+    }),
+    newPaaswordChange: builder.mutation({
+      query: (data) => ({
+        url: "/auth/forget-changePassword",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["user"],
+    }),
   }),
 });
 
-export const { useLoginMutation, useResetPasswordMutation } = authenticationApi;
+export const {
+  useLoginMutation,
+  useResetPasswordMutation,
+  useForgetPasswordMailMutation,
+  useOtpVerifyMutation,
+  useNewPaaswordChangeMutation,
+} = authenticationApi;

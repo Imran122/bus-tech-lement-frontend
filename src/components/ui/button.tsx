@@ -1,6 +1,6 @@
-import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { useFontShifter } from "@/utils/hooks/useFontShifter";
@@ -32,6 +32,7 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-6 py-1.5 text-[18px]",
+        menu: "h-9 px-3 py-1.5 text-[16px]",
         xs: "h-7, text-[16px] px-2 py-0.5 font-normal",
         sm: "h-9 px-3",
         lg: "h-11  px-8",

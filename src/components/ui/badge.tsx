@@ -12,6 +12,8 @@ const badgeVariants = cva(
         sm: "px-2 pt-[1.5px] pb-[2px] text-sm font-light",
         md: "px-4 pt-[2.5px] pb-[3px] text-base",
         lg: "px-4 pt-[3px] pb-[3.5px] text-lg",
+        responsivesize:
+          "px-2 pt-[1.5px] pb-[2px] md:text-sm text-xs font-light",
       },
       shape: {
         default: "rounded-md",

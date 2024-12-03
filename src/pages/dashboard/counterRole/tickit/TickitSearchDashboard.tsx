@@ -29,13 +29,17 @@ import {
   setDate,
   setDestinationCounterId,
   setFromCounterId,
+  setRoundTripGoBookingCoachesList,
+  setRoundTripReturnBookingCoachesList,
 } from "@/store/api/counter/counterSearchFilterSlice";
+import { closeModal, openModal } from "@/store/api/user/coachConfigModalSlice";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react"; // Added useState here
 import { LuRefreshCw } from "react-icons/lu";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import DashboardRountTripSearchModal from "./DashboardRountTripSearchModal";
 
 interface IDashboardBookingProps {
   bookingState: any;
@@ -57,46 +61,82 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
 }) => {
   const dispatch = useDispatch();
   const { translate } = useCustomTranslator();
-  const [popoverOpen, setPopoverOpen] = useState(false); // Local state to control popover
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const isModalOpen = useSelector(
+    (state: any) => state.coachConfigModal.isModalOpen
+  );
 
   // Fetch booking coaches
   const { data: bookingCoachesData } = useGetBookingCoachesQuery({
     fromCounterId: bookingState.fromCounterId,
     destinationCounterId: bookingState.destinationCounterId,
     coachType: bookingState.coachType,
-    date: bookingState.date && format(bookingState.date, "yyyy-MM-dd"),
-    orderType: "One_Trip",
+    date: bookingState.date
+      ? format(new Date(bookingState.date), "yyyy-MM-dd")
+      : undefined,
+    returnDate: bookingState.returnDate
+      ? format(new Date(bookingState.returnDate), "yyyy-MM-dd")
+      : undefined,
+    orderType: bookingState.orderType,
   }) as any;
 
   useEffect(() => {
-    if (
-      bookingState.fromCounterId &&
-      bookingState.destinationCounterId &&
-      bookingState.date &&
-      bookingState.coachType
-    ) {
-      dispatch(setBookingCoachesList(bookingCoachesData?.data || [])); // Update Redux
-    } else {
-      dispatch(setBookingCoachesList([])); // Reset to empty if criteria are missing
+    if (bookingState.orderType === "One_Trip") {
+      if (
+        bookingState.fromCounterId &&
+        bookingState.destinationCounterId &&
+        bookingState.date &&
+        bookingState.coachType
+      ) {
+        dispatch(setBookingCoachesList(bookingCoachesData?.data || []));
+      } else {
+        dispatch(setBookingCoachesList([]));
+      }
+    } else if (bookingState.orderType === "Round_Trip") {
+      if (
+        bookingState.fromCounterId &&
+        bookingState.destinationCounterId &&
+        bookingState.date &&
+        bookingState.returnDate &&
+        bookingState.coachType
+      ) {
+        dispatch(
+          setRoundTripGoBookingCoachesList(bookingCoachesData?.data || [])
+        );
+        dispatch(
+          setRoundTripReturnBookingCoachesList(
+            bookingCoachesData?.returnData || []
+          )
+        );
+      } else {
+        dispatch(setRoundTripGoBookingCoachesList([]));
+        dispatch(setRoundTripReturnBookingCoachesList([]));
+      }
     }
   }, [
     bookingState.fromCounterId,
     bookingState.destinationCounterId,
     bookingState.date,
+    bookingState.returnDate,
     bookingState.coachType,
-    bookingCoachesData?.data,
+    bookingState.orderType,
+    bookingCoachesData,
+    dispatch,
   ]);
-
   // Fetch counters data
   const { data: countersData, isLoading: countersLoading } =
     useGetCountersQuery({}) as any;
-
   return (
-    <div className="flex pb-2 justify-center items-center text-white">
+    <div className="flex pb-2 justify-start items-center text-white ">
       <div className="w-auto">
-        <div className="mb-9">
+        <div className="">
           <div className="rounded-xl ">
-            <ul className="grid lg:grid-cols-5 md:grid-cols-2 lg:gap-5 gap-2 items-center justify-start">
+            <ul className="grid lg:grid-cols-6  lg:gap-4 gap-2 items-center justify-start">
+              <li>
+                <Button onClick={() => dispatch(openModal())} className="">
+                  Round Trip
+                </Button>
+              </li>
               {/* STARTING POINT */}
               <li>
                 <Select
@@ -264,9 +304,10 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
                   </PopoverContent>
                 </Popover>
               </li>
+              {/* seelct trip type */}
 
               {/* REFRESH BUTTON */}
-              <li>
+              <li className="lg:ml-5 md:ml-12">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -302,6 +343,25 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
           </div>
         </div>
       </div>
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 lg:top-[400px] top-[200px]">
+          <div className="relative w-full max-w-7xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
+            {/* Close Button */}
+            <button
+              className="absolute top-6 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => dispatch(closeModal())}
+              aria-label="Close Modal"
+            >
+              &times;
+            </button>
+            <DashboardRountTripSearchModal
+              countersData={countersData?.data || []}
+              bookingState={bookingState}
+              setBookingState={setBookingState}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -27,8 +27,8 @@ const UserProfile: FC<IUserProfileProps> = () => {
 
   return (
     <PageWrapper>
-      <SectionWrapper className="flex gap-x-6 flex-row items-start w-full my-8">
-        <div className="flex flex-col items-center w-3/12 px-4 py-6 rounded-md bg-muted/30">
+      <SectionWrapper className="flex gap-6 lg:flex-row flex-col items-start w-full my-8">
+        <div className="flex flex-col items-center lg:w-3/12 md:w-1/2 w-full px-4 py-6 rounded-md bg-muted/30">
           {userLoading || !user ? (
             <Skeleton className="size-24 rounded-full" />
           ) : (
@@ -51,7 +51,11 @@ const UserProfile: FC<IUserProfileProps> = () => {
           )}
 
           {userLoading ? (
-            <Skeleton className="w-3/12" shape="pill" button="xs" />
+            <Skeleton
+              className="lg:w-3/12 md:w-1/2 w-full"
+              shape="pill"
+              button="xs"
+            />
           ) : (
             <Badge shape="pill" size="sm">
               {formatter({
@@ -61,7 +65,7 @@ const UserProfile: FC<IUserProfileProps> = () => {
             </Badge>
           )}
         </div>
-        <div className="w-9/12 bg-muted/30 rounded-md">
+        <div className="lg:w-9/12 w-full bg-muted/30 rounded-md">
           <Tabs defaultValue="profile">
             <TabsList>
               <TabsTrigger value="profile">
