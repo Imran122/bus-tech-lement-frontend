@@ -79,6 +79,7 @@ interface ICounterBookingFormProps {
 export interface ICounterBookingFormStateProps {
   targetedSeat: number | null;
   selectedSeats: any[];
+
   redirectLink: string | null;
   customerName: string | null;
   redirectConfirm: boolean;
@@ -263,6 +264,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
         targetedSeat: null,
         selectedSeats: [],
         redirectLink: null,
+
         customerName: null,
         redirectConfirm: false,
       });
@@ -429,6 +431,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
           targetedSeat: null,
           selectedSeats: [],
           redirectLink: null,
+
           customerName: null,
           redirectConfirm: false,
         });
