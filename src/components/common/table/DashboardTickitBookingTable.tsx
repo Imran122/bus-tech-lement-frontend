@@ -22,39 +22,39 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
   return (
     <table className="min-w-full border-collapse border border-gray-300">
       <thead>
-        <tr className="">
-          <th className="border-2 border-gray-400 p-2">
+        <tr className="bg-primary">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("যাত্রা শুরু সময় এবং তারিখ", "Departure Time & Date")}
           </th>
 
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("কোচ নং", "Coach No")}
           </th>
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("শুরুর কাউন্টার", "Starting Counter")}
           </th>
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("শেষের কাউন্টার", "End Counter")}
           </th>
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("নিবন্ধন নম্বর", "Registration Number")}
           </th>
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("ভাড়া", "Fare")}
           </th>
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("কোচের ধরণ", "Coach Type")}
           </th>
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("বিক্রিত", "Sold")}
           </th>
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("বুকড", "Booked")}
           </th>
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("উপলব্ধ", "Available")}
           </th>
-          <th className="border-2 border-gray-400 p-2">
+          <th className="border-2 border-[#3491b1] p-2">
             {translate("অ্যাকশন", "Actions")}
           </th>
         </tr>

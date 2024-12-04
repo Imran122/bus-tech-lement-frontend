@@ -635,7 +635,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                 <h2 className="absolute border border-[#e57bf3] -top-3 left-2  z-50 px-2 bg-[#e074ee]">
                   {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
                 </h2>
-                <div className="px-3  h-full">
+                <div className="px-3  h-[250px] overflow-y-scroll">
                   <div className="mt-6">
                     <div>
                       {bookingFormState.selectedSeats?.length > 0 ? (
