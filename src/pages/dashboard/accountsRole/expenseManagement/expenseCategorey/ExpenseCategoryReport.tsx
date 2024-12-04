@@ -5,7 +5,6 @@ import { generateDynamicIndexWithMeta } from "@/utils/helpers/generateDynamicInd
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/common/Loader";
 // import { appConfiguration } from "@/utils/constants/common/appConfiguration";
-// import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 // import { useReactToPrint } from "react-to-print";
 import {
   Select,
@@ -41,6 +40,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfExpenseReport from "@/pages/dashboard/pdf/PdfExpenseReport";
 import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 import ExpenseReportExcel from "@/pages/dashboard/exel/ExpenseReportExcel";
+import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 
 export interface IExpenseStateProps {
   expenseList: IExtraExpense[];
@@ -60,18 +60,18 @@ const ExpenseCategoryReport = () => {
     expenseList: [],
   });
 
-  // const fromDate = expenseReportsState?.from
-  //   ? dateFormatter(expenseReportsState?.from)
-  //   : null;
-  // const toDate = expenseReportsState?.to
-  //   ? dateFormatter(expenseReportsState?.to)
-  //   : null;
+  const fromDate = expenseReportsState?.from
+    ? dateFormatter(expenseReportsState?.from)
+    : null;
+  const toDate = expenseReportsState?.to
+    ? dateFormatter(expenseReportsState?.to)
+    : null;
 
-  // const dateRange = toDate
-  //   ? toDate === fromDate
-  //     ? fromDate
-  //     : `${fromDate} to ${toDate}`
-  //   : fromDate;
+  const dateRange = toDate
+    ? toDate === fromDate
+      ? fromDate
+      : `${fromDate} to ${toDate}`
+    : fromDate;
 
   // GET PAYMENTS REPORTS
   const { data: paymentReportsData } = useGetExpenseReportQuery({
@@ -160,7 +160,7 @@ const ExpenseCategoryReport = () => {
   // });
 
   if (singleCmsLoading) {
-    return <Loader />;
+    return <TableSkeleton columns={6} />;
   }
 
   return (
@@ -179,7 +179,7 @@ const ExpenseCategoryReport = () => {
 
         <li>
           <PDFDownloadLink
-            document={<PdfExpenseReport result={expenseState?.expenseList} logo={singleCms} />}
+            document={<PdfExpenseReport result={expenseState?.expenseList} logo={singleCms} dateRange={dateRange}/>}
             fileName="expense_report.pdf"
           >
             
