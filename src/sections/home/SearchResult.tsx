@@ -149,7 +149,7 @@ export default function SearchResult({
     }
   };
   return (
-    <div>
+    <div className="px-3">
       <Accordion className="w-full space-y-3" type="single" collapsible>
         {bookingState.bookingCoachesList?.length > 0 &&
           bookingState.bookingCoachesList.map(

@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -8,10 +7,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { FC } from "react";
-import { GiSteeringWheel } from "react-icons/gi";
 import { useSelector } from "react-redux";
 import PageTransition from "../effect/PageTransition";
-import SeatIcon from "../icon/SeatIcon";
 
 interface ISeatLayoutProps {
   seatsAllocation: { left: any[]; right: any[]; lastRow: any[] };
@@ -123,23 +120,24 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
               type="button"
               onClick={() => handleBookingSeat(seat)}
               className={cn(
-                "text-foreground/50 hover:text-foreground/80 size-10 relative",
+                "text-foreground/50 hover:text-foreground/80  relative",
                 shouldDisableSeat && "cursor-not-allowed" // Add a class if disabled
               )}
               disabled={shouldDisableSeat} // Disable based on conditions above
             >
               <div
                 className={cn(
-                  "w-[40px] h-[40px] rounded-md flex items-center justify-center",
+                  "w-[40px] h-[40px] border px-7 py-3 rounded-md flex items-center justify-center",
                   seatStatusClass,
                   bookingFormState?.targetedSeat === seat.id &&
                     addBookingSeatLoading &&
                     "animate-pulse"
                 )}
               >
-                <SeatIcon className="size-11" />
+                <span className="text-sm font-semibold whitespace-nowrap">
+                  {seat.seat}
+                </span>
               </div>
-              <span>{seat.seat}</span>
             </button>
           </TooltipTrigger>
           {user.role && tooltipText && (
@@ -154,7 +152,7 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
     <div className="flex flex-col items-start my-0 h-full mt-6 px-4 gap-x-12">
       <PageTransition className="w-full mb-5 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
         {/* Top Design */}
-        <div className="p-6 flex justify-between items-center w-full">
+        <div className="p-2 w-full">
           <div>
             <h2 className="text-center pb-1">
               {bookingCoach.coachClass === "E_Class" && "Economy"} Class
@@ -186,20 +184,20 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
               </li>
             </ul>
           </div>
-          <div className="flex flex-col items-center">
+          {/* <div className="flex flex-col items-center">
             <GiSteeringWheel className="size-12 text-foreground opacity-80" />
             <Badge className="text-xs" size="sm" variant="outline" shape="pill">
               {translate("ড্রাইভার", "Driver")}
             </Badge>
-          </div>
+          </div> */}
         </div>
       </PageTransition>
 
       {/* Seat Layout */}
       <PageTransition className="w-full flex flex-col gap-3 h-full">
-        <div className="grid grid-cols-5 gap-x-1 pb-6 gap-y-6">
+        <div className="grid grid-cols-5 gap-x-1 pb-6 gap-y-8">
           {/* Left Side - 2 Columns */}
-          <div className="col-span-2 grid grid-cols-2 gap-x-2 gap-y-8">
+          <div className="col-span-2 grid grid-cols-2 gap-x-[7px] gap-y-6">
             {seatsAllocation.left.map((seat: any) => renderSeatButton(seat))}
           </div>
 
@@ -209,13 +207,13 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
           </div>
 
           {/* Right Side - 2 Columns */}
-          <div className="col-span-2 grid grid-cols-2 gap-x-2 gap-y-8">
+          <div className="col-span-2 grid grid-cols-2 gap-x-[7px] gap-y-6">
             {seatsAllocation.right.map((seat: any) => renderSeatButton(seat))}
           </div>
         </div>
 
         {/* Last Row with 5 Seats */}
-        <div className="grid grid-cols-5 gap-x-1 pb-6 gap-y-6">
+        <div className="grid grid-cols-5 gap-x-[7px] pb-6 gap-y-6">
           {seatsAllocation.lastRow.map((seat: any) => renderSeatButton(seat))}
         </div>
       </PageTransition>

@@ -61,7 +61,7 @@ const CounterDashboardUpperNavigation: FC = () => {
   };
 
   return (
-    <header className="sticky lg:!h-14 !h-20 md:!bg-muted/30 !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all duration-300">
+    <header className="sticky  !h-20 md:!bg-[#b642c5] !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all duration-300">
       <div className="lg:hidden block">
         <img src={logocompany} />
       </div>

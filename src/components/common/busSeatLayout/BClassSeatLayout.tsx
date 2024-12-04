@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -9,10 +8,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { FC } from "react";
-import { GiSteeringWheel } from "react-icons/gi";
 import { useSelector } from "react-redux";
 import PageTransition from "../effect/PageTransition";
-import SeatIcon from "../icon/SeatIcon";
 interface ISeatLayoutProps {
   seatsAllocation: any[];
   handleBookingSeat: (seatData: any) => void;
@@ -127,16 +124,17 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
             >
               <div
                 className={cn(
-                  "w-[40px] h-[40px] rounded-md flex items-center justify-center",
+                  "w-[70px] h-[40px] border px-10 py-3 rounded-md flex items-center justify-center",
                   seatStatusClass,
                   bookingFormState?.targetedSeat === seat.id &&
                     addBookingSeatLoading &&
                     "animate-pulse"
                 )}
               >
-                <SeatIcon className="size-11" />
+                <span className="text-sm font-semibold whitespace-nowrap">
+                  {seat.seat}
+                </span>
               </div>
-              <span>{seat.seat}</span>
             </button>
           </TooltipTrigger>
           {user.role && tooltipText && (
@@ -150,7 +148,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
   return (
     <div className="flex flex-col items-start my-0 h-full mt-6 px-4 gap-x-12">
       <PageTransition className="w-full mb-5 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-        <div className="p-6 flex justify-between items-center w-full">
+        <div className="p-2 w-full">
           <div>
             <h2 className="text-center pb-1">
               {bookingCoach.coachClass === "B_Class" && "Business"} Class
@@ -182,12 +180,12 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
               </li>
             </ul>
           </div>
-          <div className="flex flex-col items-center">
+          {/* <div className="flex flex-col items-center">
             <GiSteeringWheel className="size-12 text-foreground opacity-80" />
             <Badge className="text-xs" size="sm" variant="outline" shape="pill">
               {translate("ড্রাইভার", "Driver")}
             </Badge>
-          </div>
+          </div> */}
         </div>
       </PageTransition>
 
@@ -204,7 +202,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
             <h2 className="vertical-text  ">Ac Business Class</h2>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-12 gap-y-8">
+          <div className="grid grid-cols-2 gap-x-[88px] gap-y-8">
             {
               //@ts-ignore
               seatsAllocation.right.map((seat: any) => renderSeatButton(seat))
@@ -213,7 +211,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
         </div>
 
         {/* Last Row with Left, Middle, and Right Seats */}
-        <div className="grid grid-cols-4 pb-6 gap-x-0 gap-y-3 ">
+        <div className="grid grid-cols-4 pb-6 gap-x-5 gap-y-3 ">
           <div className="grid-cols-1">
             {
               //@ts-ignore
@@ -228,7 +226,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
             }
           </div>
 
-          <div className=" grid grid-cols-2 gap-x-12 gap-y-8">
+          <div className=" grid grid-cols-2 gap-x-[88px] gap-y-8">
             {
               //@ts-ignore
               renderSeatButton(seatsAllocation.lastRow[2])

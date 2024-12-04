@@ -1,4 +1,3 @@
-import DashboardTickitBookingCard from "@/components/common/card/DashboardTickitBookingCard";
 import PageTransition from "@/components/common/effect/PageTransition";
 import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 import { DataTable, IQueryProps } from "@/components/common/table/DataTable";
@@ -36,6 +35,7 @@ import CounterOrderDetailsModal from "../sales/CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "../sales/UpdateCounterOrderModal";
 
 import DashboardRoundTripTickitBookingCard from "@/components/common/card/DashboardRoundTripTickitBookingCard";
+import DashboardTickitBookingTable from "@/components/common/table/DashboardTickitBookingTable";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -486,19 +486,9 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
         </div>
         {/* search result design  */}
         <div>
-          {bookingState.bookingCoachesList.length > 0 && (
-            <Accordion className="w-full" type="single" collapsible>
-              {bookingState?.bookingCoachesList.map(
-                (singleCoachData: any, coachDataIndex: number) => (
-                  <DashboardTickitBookingCard
-                    key={coachDataIndex}
-                    coachData={singleCoachData}
-                    index={coachDataIndex}
-                  />
-                )
-              )}
-            </Accordion>
-          )}
+          <DashboardTickitBookingTable
+            coachData={bookingState?.bookingCoachesList}
+          />
         </div>
 
         {/* roundtrip design work card */}

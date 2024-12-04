@@ -60,10 +60,10 @@ const DashboardRountTripSearchModal: FC<
   };
 
   return (
-    <div className="text-black">
+    <div className="text-black ">
       <h2 className="text-xl font-bold mb-4">Round Trip Details</h2>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-4">
         {/* Starting Counter */}
         <div className="mb-4">
           <label className="block text-sm font-medium">Starting Counter</label>

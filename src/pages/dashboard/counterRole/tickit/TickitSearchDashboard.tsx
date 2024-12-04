@@ -65,6 +65,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
   const isModalOpen = useSelector(
     (state: any) => state.coachConfigModal.isModalOpen
   );
+  const user = useSelector((state: any) => state.user);
 
   // Fetch booking coaches
   const { data: bookingCoachesData } = useGetBookingCoachesQuery({
@@ -126,6 +127,15 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
   // Fetch counters data
   const { data: countersData, isLoading: countersLoading } =
     useGetCountersQuery({}) as any;
+  useEffect(() => {
+    if (!bookingState?.fromCounterId && user?.counterId) {
+      dispatch(setFromCounterId(user.counterId));
+      setBookingState((prevState: IDashboardBookingStateProps) => ({
+        ...prevState,
+        fromCounterId: user.counterId,
+      }));
+    }
+  }, [bookingState?.fromCounterId, user?.counterId, dispatch]);
   return (
     <div className="flex pb-2 justify-start items-center text-white ">
       <div className="w-auto">
@@ -138,15 +148,23 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
                 </Button>
               </li>
               {/* STARTING POINT */}
+              {/* STARTING POINT */}
               <li>
                 <Select
-                  value={bookingState?.fromCounterId?.toString() || ""}
+                  value={
+                    bookingState?.fromCounterId
+                      ? bookingState.fromCounterId.toString() // Use selected counter
+                      : user?.counterId
+                      ? user.counterId.toString() // Default to user.counterId
+                      : ""
+                  }
                   onValueChange={(value: string) => {
-                    dispatch(setFromCounterId(+value));
+                    const selectedCounterId = +value;
+                    dispatch(setFromCounterId(selectedCounterId)); // Update Redux state
                     setBookingState(
                       (prevState: IDashboardBookingStateProps) => ({
                         ...prevState,
-                        fromCounterId: +value,
+                        fromCounterId: selectedCounterId, // Update local state
                       })
                     );
                   }}
@@ -344,7 +362,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
         </div>
       </div>
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 lg:top-[400px] top-[200px]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 lg:top-[400px] md:top-[270px] top-[360px]">
           <div className="relative w-full max-w-7xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
             {/* Close Button */}
             <button
