@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -8,10 +7,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { FC } from "react";
-import { GiSteeringWheel } from "react-icons/gi";
 import { useSelector } from "react-redux";
 import PageTransition from "../effect/PageTransition";
-import SeatIcon from "../icon/SeatIcon";
 interface ISeatLayoutProps {
   seatsAllocation: { left: any[]; right: any[]; lastRow: any[] };
   handleBookingSeat: (seatData: any) => void;
@@ -126,16 +123,17 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
             >
               <div
                 className={cn(
-                  "w-[40px] h-[40px] rounded-md flex items-center justify-center",
+                  "w-[70px] h-[40px] border px-10 py-3 rounded-md flex items-center justify-center",
                   seatStatusClass,
                   bookingFormState?.targetedSeat === seat.id &&
                     addBookingSeatLoading &&
                     "animate-pulse"
                 )}
               >
-                <SeatIcon className="size-11" />
+                <span className="text-sm font-semibold whitespace-nowrap">
+                  {seat.seat}
+                </span>
               </div>
-              <span>{seat.seat}</span>
             </button>
           </TooltipTrigger>
           {user.role && tooltipText && (
@@ -149,7 +147,7 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
   return (
     <div className="flex flex-col items-start my-0 h-full mt-6 px-4 gap-x-12">
       <PageTransition className="w-full mb-5 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-        <div className="p-6 flex justify-between items-center w-full">
+        <div className="p-6 w-full">
           <div>
             <h2 className="text-center pb-1">
               {bookingCoach.coachClass} Class
@@ -181,43 +179,43 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
               </li>
             </ul>
           </div>
-          <div className="flex flex-col items-center">
+          {/* <div className="flex flex-col items-center">
             <GiSteeringWheel className="size-12 text-foreground opacity-80" />
             <Badge className="text-xs" size="sm" variant="outline" shape="pill">
               {translate("ড্রাইভার", "Driver")}
             </Badge>
-          </div>
+          </div> */}
         </div>
       </PageTransition>
 
       <PageTransition className="w-full flex flex-col gap-3 h-full relative">
-        <div className="relative grid grid-cols-4 gap-x-6 pb-6 gap-y-8">
-          <div className="grid grid-cols-1 gap-x-4 gap-y-8">
+        <div className="relative grid grid-cols-4 gap-x-6 pb-6 gap-y-6">
+          <div className="grid grid-cols-1 gap-x-4 gap-y-6">
             {seatsAllocation.left.map((seat) => renderSeatButton(seat))}
           </div>
 
           <div className="w-4"></div>
 
-          <div className="grid grid-cols-2 gap-x-12 gap-y-8">
+          <div className="grid grid-cols-2 gap-x-[88px] gap-y-6">
             {seatsAllocation.right.map((seat) => renderSeatButton(seat))}
           </div>
         </div>
 
         {/* Divider Between Decks */}
         <div
-          className="absolute top-[352px] left-0 w-full pointer-events-none z-10 flex flex-col gap-20 items-center "
+          className="absolute top-[310px] left-0 w-full pointer-events-none z-10 flex flex-col gap-20 items-center "
           style={{ transform: "translateY(-50%)" }}
         >
-          <h3 className="text-lg font-semibold mr-36 px-2 -rotate-90">
+          <h3 className="text-lg font-semibold mr-24 px-2 -rotate-90">
             Lower Deck
           </h3>
           <div className="w-full border-t-2 border-primary/50 border-dashed"></div>
-          <h3 className="text-lg font-semibold mr-36 px-2 -rotate-90">
+          <h3 className="text-lg font-semibold mr-24 px-2 -rotate-90">
             Upper Deck
           </h3>
         </div>
 
-        <div className="grid grid-cols-3 gap-x-12 pb-6 gap-y-8">
+        <div className="grid grid-cols-3 gap-x-[88px] pb-0 gap-y-6">
           {seatsAllocation.lastRow.map((seat) => renderSeatButton(seat))}
         </div>
       </PageTransition>
