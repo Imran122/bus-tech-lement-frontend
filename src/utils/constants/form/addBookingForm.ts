@@ -96,7 +96,7 @@ export const addBookingSeatForm: IAddBookingFromProps = {
       bn: "পাসপোর্ট বা এনআইডি",
     },
     placeholder: {
-      en: "Enter your Passport or NID number",
+      en: "Enter Passport or NID No:",
       bn: "আপনার পাসপোর্ট বা এনআইডি নম্বর লিখুন",
     },
   },

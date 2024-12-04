@@ -28,7 +28,7 @@ const Home: FC<IHomeProps> = () => {
       }}
     >
       <div className="relative z-10 ">
-        <PageWrapper className="bg-white -mt-2 max-w-[1300px] mx-auto shadow-2xl rounded-bl-xl rounded-br-xl pb-10 md:px-5">
+        <PageWrapper className=" -mt-2 max-w-[1300px] mx-auto  rounded-bl-xl rounded-br-xl pb-10 md:px-5">
           {allRoutes.length > 0 ? (
             // Render only one InfiniteTexts with combined routes
             <InfiniteTexts speed="slow" items={allRoutes} />

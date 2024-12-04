@@ -922,10 +922,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                             </p>
                           )}
                         </td>
-                        <td className="border border-gray-300 p-2 font-medium">
+                        <td className="border  p-2 font-medium">
                           {translate("ড্রপিং পয়েন্ট ✼", "Dropping Point ✼")}
                         </td>
-                        <td className="border border-gray-300 p-2">
+                        <td className="border  p-2">
                           <Select
                             value={watch("droppingPoint") || ""}
                             onValueChange={(value: string) => {
