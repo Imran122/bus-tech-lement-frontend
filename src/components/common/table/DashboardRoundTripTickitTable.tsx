@@ -123,29 +123,32 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
             {translate("কোচ নং", "Coach No")}
           </th>
           <th className="border-2 border-[#3491b1] p-2">
-            {translate("শুরুর কাউন্টার", "Starting Counter")}
-          </th>
-          <th className="border-2 border-[#3491b1] p-2">
-            {translate("শেষের কাউন্টার", "End Counter")}
-          </th>
-          <th className="border-2 border-[#3491b1] p-2">
-            {translate("নিবন্ধন নম্বর", "Registration Number")}
-          </th>
-          <th className="border-2 border-[#3491b1] p-2">
-            {translate("ভাড়া", "Fare")}
-          </th>
-          <th className="border-2 border-[#3491b1] p-2">
-            {translate("কোচের ধরণ", "Coach Type")}
-          </th>
-          <th className="border-2 border-[#3491b1] p-2">
-            {translate("বিক্রিত", "Sold")}
+            {translate("উপলব্ধ", "Available")}
           </th>
           <th className="border-2 border-[#3491b1] p-2">
             {translate("বুকড", "Booked")}
           </th>
           <th className="border-2 border-[#3491b1] p-2">
-            {translate("উপলব্ধ", "Available")}
+            {translate("বিক্রিত", "Sold")}
           </th>
+
+          <th className="border-2 border-[#3491b1] p-2">
+            {translate("ভাড়া", "Fare")}
+          </th>
+          <th className="border-2 border-[#3491b1] p-2">
+            {translate("নিবন্ধন নম্বর", "Registration Number")}
+          </th>
+          <th className="border-2 border-[#3491b1] p-2">
+            {translate("শুরুর কাউন্টার", "Starting Counter")}
+          </th>
+          <th className="border-2 border-[#3491b1] p-2">
+            {translate("শেষের কাউন্টার", "End Counter")}
+          </th>
+
+          {/* <th className="border-2 border-[#3491b1] p-2">
+            {translate("কোচের ধরণ", "Coach Type")}
+          </th> */}
+
           <th className="border-2 border-[#3491b1] p-2">
             {translate("অ্যাকশন", "Actions")}
           </th>
@@ -166,35 +169,10 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
                 {item.coachNo || translate("N/A", "N/A")}
               </td>
               <td className="border border-gray-300 p-2">
-                {item.fromCounter?.name || translate("N/A", "N/A")}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {item.destinationCounter?.name || translate("N/A", "N/A")}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {item.registrationNo || translate("N/A", "N/A")}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {formatter({
-                  type: "amount",
-                  amount: item.fare?.amount || 0,
-                })}
-              </td>
-              <td className="border border-gray-300 p-2">
                 {translate(
-                  item.coachType === "AC"
-                    ? "শীতাতপ নিয়ন্ত্রিত"
-                    : "শীতাতপ নিয়ন্ত্রিত বিহীন",
-                  item.coachType === "AC" ? "Air Conditioned" : "Non-AC"
+                  `${convertToBnDigit(item?.seatAvailable?.toString())}`,
+                  item.seatAvailable?.toString()
                 )}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {item?.orderSeat?.length
-                  ? translate(
-                      `${convertToBnDigit(item?.orderSeat?.length)}`,
-                      item.orderSeat?.length
-                    )
-                  : "0"}
               </td>
               <td className="border border-gray-300 p-2">
                 {item?.CounterBookedSeat?.length
@@ -205,11 +183,39 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
                   : "0"}
               </td>
               <td className="border border-gray-300 p-2">
-                {translate(
-                  `${convertToBnDigit(item?.seatAvailable?.toString())}`,
-                  item.seatAvailable?.toString()
-                )}
+                {item?.orderSeat?.length
+                  ? translate(
+                      `${convertToBnDigit(item?.orderSeat?.length)}`,
+                      item.orderSeat?.length
+                    )
+                  : "0"}
               </td>
+
+              <td className="border border-gray-300 p-2">
+                {formatter({
+                  type: "amount",
+                  amount: item.fare?.amount || 0,
+                })}
+              </td>
+              <td className="border border-gray-300 p-2">
+                {item.registrationNo || translate("N/A", "N/A")}
+              </td>
+              <td className="border border-gray-300 p-2">
+                {item.fromCounter?.name || translate("N/A", "N/A")}
+              </td>
+              <td className="border border-gray-300 p-2">
+                {item.destinationCounter?.name || translate("N/A", "N/A")}
+              </td>
+
+              {/* <td className="border border-gray-300 p-2">
+                {translate(
+                  item.coachType === "AC"
+                    ? "শীতাতপ নিয়ন্ত্রিত"
+                    : "শীতাতপ নিয়ন্ত্রিত বিহীন",
+                  item.coachType === "AC" ? "Air Conditioned" : "Non-AC"
+                )}
+              </td> */}
+
               <td className="border border-gray-300 p-2">
                 <Button
                   variant="outline"

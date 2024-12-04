@@ -313,7 +313,7 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
   //
   //
   //
-  const paymentType = watch("paymentType");
+  //const paymentType = watch("paymentType");
   const partialAmount = watch("paymentAmount");
   //@ts-ignore
   const paymentMethod = watch("paymentMethod");

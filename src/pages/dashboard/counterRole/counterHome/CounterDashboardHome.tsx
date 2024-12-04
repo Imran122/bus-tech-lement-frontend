@@ -97,6 +97,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     });
   // STORE PROMISE RESOLVE REFERENCE
   const promiseResolveRef = useRef<any>(null);
+  //const dispatch = useDispatch();
 
   const [invoiceData, setInvoiceData] = useState();
 
@@ -127,6 +128,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       selectedOrderId: orderId,
     }));
   };
+
   // UPDATE THE COMPONENT VIA REFERENCE
   useEffect(() => {
     if (salesTickitState.isPrinting && promiseResolveRef.current) {

@@ -39,7 +39,7 @@
 
 .bus-image {
   position: absolute;
-  top: -40px; /* Align the wheel to touch the border */
+  top: -50px; /* Align the wheel to touch the border */
   left: 50%; /* Center horizontally */
 
   transform: translateX(-50%); /* Center the bus */
