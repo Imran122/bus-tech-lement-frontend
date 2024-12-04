@@ -632,7 +632,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
             </div>
             <div className="col-span-8 py-10 px-3 w-full ">
               <div className="relative w-full  border-2">
-                <h2 className="absolute border -top-3 left-2  z-50 px-2 bg-gray-300">
+                <h2 className="absolute border border-[#e57bf3] -top-3 left-2  z-50 px-2 bg-[#e074ee]">
                   {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
                 </h2>
                 <div className="px-3  h-full">
@@ -687,7 +687,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
               {/* CUSTOMER & PAYMENT INFORMATION */}
 
               <div className="border-2 mt-4 relative py-10 px-1">
-                <h2 className="absolute border -top-3 left-2  px-2 bg-gray-300">
+                <h2 className="absolute border border-[#e57bf3] -top-3 left-2  px-2 bg-[#e074ee]">
                   {translate(
                     "গ্রাহকের ব্যক্তিগত তথ্য",
                     "Client Personal Information"
