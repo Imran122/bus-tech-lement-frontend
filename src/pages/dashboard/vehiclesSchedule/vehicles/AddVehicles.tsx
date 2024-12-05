@@ -267,6 +267,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 onSelect={(date) =>
                   handleDateChange("deliveryDate", date || new Date())
                 }
+                captionLayout="dropdown-buttons"
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
               />
@@ -304,6 +305,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 }
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
               />
             </PopoverContent>
           </Popover>

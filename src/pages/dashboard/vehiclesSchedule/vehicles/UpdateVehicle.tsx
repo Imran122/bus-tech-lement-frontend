@@ -304,6 +304,7 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
                 } // Fallback to null if date is undefined
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
               />
             </PopoverContent>
           </Popover>
@@ -335,6 +336,7 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
                 onSelect={(date) => handleDateChange("orderDate", date ?? null)} // Fallback to null if date is undefined
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
               />
             </PopoverContent>
           </Popover>

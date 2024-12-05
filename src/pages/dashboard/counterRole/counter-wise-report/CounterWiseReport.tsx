@@ -126,6 +126,9 @@ export default function CounterWiseReport() {
                       setSelectedDate(date ?? null); // Handle undefined by setting to null
                       setCalendarOpen(false);
                     }}
+                    fromYear={1960}
+                    toYear={new Date().getFullYear()}
+                    captionLayout="dropdown-buttons"
                   />
                 </PopoverContent>
               </Popover>

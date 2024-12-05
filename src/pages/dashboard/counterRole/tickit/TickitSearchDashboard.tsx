@@ -318,6 +318,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
                       }}
                       fromYear={1960}
                       toYear={new Date().getFullYear()}
+                      captionLayout="dropdown-buttons"
                     />
                   </PopoverContent>
                 </Popover>

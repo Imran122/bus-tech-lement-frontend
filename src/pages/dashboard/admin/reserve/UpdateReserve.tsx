@@ -200,7 +200,7 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-x-4 gap-y-2">
-        <div>
+          <div>
             <Paragraph size={"md"}>
               <span className="text-base font-bold pr-2">Total Amount:</span>
               {totalAmount || 0}
@@ -219,8 +219,8 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
               {dueAmount}
             </Paragraph>
           </div>
-            {/* PASSANGER NAME */}
-            <InputWrapper
+          {/* PASSANGER NAME */}
+          <InputWrapper
             labelFor="passengerName"
             error={errors.passengerName?.message}
             label={translate(
@@ -400,8 +400,8 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
               </SelectContent>
             </Select>
           </InputWrapper>
-    {/* FROM DATE */}
-    <InputWrapper
+          {/* FROM DATE */}
+          <InputWrapper
             label={translate(
               addUpdateResurbForm?.fromDate.label.bn,
               addUpdateResurbForm.fromDate.label.en
@@ -456,6 +456,7 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
                       })
                     );
                   }}
+                  captionLayout="dropdown-buttons"
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
                 />
@@ -521,11 +522,12 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
                   }}
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
+                  captionLayout="dropdown-buttons"
                 />
               </PopoverContent>
             </Popover>
           </InputWrapper>
-        
+
           {/* REMARKS */}
           <InputWrapper
             label={translate(
@@ -608,9 +610,6 @@ const UpdateReserve: FC<IUpdateReserveProps> = ({ id }) => {
               )}
             />
           </InputWrapper>
-
-
-      
 
           {/*  FROM DATE TIME */}
           {/* <InputWrapper

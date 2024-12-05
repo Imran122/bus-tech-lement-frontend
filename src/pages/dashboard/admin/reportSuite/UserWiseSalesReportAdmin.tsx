@@ -196,6 +196,9 @@ const UserWiseSalesReportAdmin: FC<IUserWiseSalesReportAdminProps> = () => {
                 onSelect={(date) => {
                   setValue("fromDate", date);
                 }}
+                fromYear={1960}
+                toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
               />
             </PopoverContent>
           </Popover>
@@ -226,6 +229,9 @@ const UserWiseSalesReportAdmin: FC<IUserWiseSalesReportAdminProps> = () => {
                 onSelect={(date) => {
                   setValue("toDate", date);
                 }}
+                fromYear={1960}
+                toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
               />
             </PopoverContent>
           </Popover>
