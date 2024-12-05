@@ -25,7 +25,11 @@ export interface ISupervisorNavigationLinks {
   key: string;
   href: string;
   subLinks?: ISupervisorNavigationLinks[];
+
+  action?: string; // Custom action identifier, e.g., "openModal"
+  modalComponent?: string; // Modal component identifier
 }
+
 const superviosrDashboardRootLinks = {
   icon: LuContact2,
   label: { bn: "ড্যাশবোর্ড", en: "Dashboard" },
@@ -37,6 +41,12 @@ const superviosrDashboardRootLinks = {
       label: { bn: "ড্যাশবোর্ড", en: "Dashboard" },
       key: "dashboard",
       href: "dashboard",
+    },
+    {
+      icon: LuUserCog,
+      label: { bn: "অতিরিক্ত আয় যোগ করুন", en: "Add Extra Income" },
+      key: "add_extra_income",
+      modalComponent: "AddExtraIncome", // Indicates it opens a modal
     },
   ],
 };

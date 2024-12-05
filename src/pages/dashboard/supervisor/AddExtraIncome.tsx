@@ -37,10 +37,12 @@ interface CoachConfig {
 }
 interface IAddSupervisorCollectionProps {
   setCollectionState: (state: (prevState: any) => any) => void;
+  setIncomeOpen?: (incomeOpen: boolean) => void;
 }
 
 const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
   setCollectionState,
+  setIncomeOpen,
 }) => {
   const { toast } = useToast();
   const { translate } = useCustomTranslator();
@@ -118,6 +120,7 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
         ...prevState,
         addCollectionOpen: false,
       }));
+      setIncomeOpen(false);
     }
   };
 

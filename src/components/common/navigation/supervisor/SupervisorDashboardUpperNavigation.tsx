@@ -11,17 +11,17 @@ import { cn } from "@/lib/utils";
 import { shareAuthentication } from "@/utils/helpers/shareAuthentication";
 import { useAppContext } from "@/utils/hooks/useAppContext";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { LuUserCircle } from "react-icons/lu";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import logocompany from "../../../../assets/longeng.png";
 
+import ModalSystem from "@/utils/constants/common/commonModal/ModalSystem";
 import {
   ISupervisorNavigationLinks,
   supervisorNavigationLinks,
 } from "@/utils/constants/common/supervisor/supervisorNavigationLinks";
-import PageTransition from "../../effect/PageTransition";
-import { Label } from "../../typography/Label";
+import { useDispatch } from "react-redux";
 import LocaleSwitcher from "../LocaleSwitcher";
 import ThemeSwitcher from "../ThemeSwitcher";
 import SupervisorDashboardSidebarSmallDevices from "./SupervisorDashboardSidebarSmallDevices";
@@ -31,13 +31,21 @@ const SupervisorDashboardUpperNavigation: FC<
   ISupervisorDashboardUpperNavigationProps
 > = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+
   const { route } = useAppContext();
   const { translate } = useCustomTranslator();
   const { role, avatar } = shareAuthentication();
-  const subNavigation = supervisorNavigationLinks?.find(
-    (singleSubNavigation: ISupervisorNavigationLinks) =>
-      singleSubNavigation.key === route
-  ) as any;
+  const subNavigation = supervisorNavigationLinks.find(
+    (singleSubNavigation) => singleSubNavigation.key === route
+  );
+
+  const handleLinkClick = (subLink: ISupervisorNavigationLinks) => {
+    if (subLink.modalComponent) {
+      setActiveModal(subLink.modalComponent); // Open modal
+    }
+  };
 
   return (
     <header className="sticky !h-14 md:!bg-muted/30 !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
@@ -46,30 +54,39 @@ const SupervisorDashboardUpperNavigation: FC<
         <img src={logocompany} />
       </div>
       <nav className="justify-between w-full flex">
-        <ul className="hidden lg:flex gap-x-2 items-center">
-          {subNavigation?.subLinks?.length > 0 &&
-            subNavigation?.subLinks?.map(
-              (singleNav: ISupervisorNavigationLinks, navIndex: number) => (
-                <li key={navIndex}>
-                  <PageTransition>
-                    <NavLink
-                      to={"/" + role + "/" + singleNav.href}
-                      className={({ isActive, isPending }) =>
-                        isPending
-                          ? "pending"
-                          : isActive
-                          ? "active_link"
-                          : "inactive_link"
-                      }
-                    >
-                      <Label className="cursor-pointer" size="sm">
-                        {translate(singleNav.label.bn, singleNav.label.en)}
-                      </Label>
-                    </NavLink>
-                  </PageTransition>
-                </li>
-              )
-            )}
+        <ul className="hidden lg:flex gap-x-2 items-center ">
+          {subNavigation?.subLinks?.map((subLink: any, index: any) => (
+            <li key={index}>
+              {
+                //@ts-ignore
+                subLink.action ? (
+                  <button
+                    onClick={() => handleLinkClick(subLink)}
+                    className="btn btn-primary"
+                  >
+                    {translate(subLink.label.bn, subLink.label.en)}
+                  </button>
+                ) : //@ts-ignore
+                subLink.modalComponent ? (
+                  <button
+                    onClick={() => handleLinkClick(subLink)}
+                    className="btn btn-link"
+                  >
+                    {translate(subLink.label.bn, subLink.label.en)}
+                  </button>
+                ) : (
+                  <NavLink
+                    to={"/" + role + "/" + subLink.href}
+                    className={({ isActive }) =>
+                      isActive ? "active_link" : "inactive_link"
+                    }
+                  >
+                    {translate(subLink.label.bn, subLink.label.en)}
+                  </NavLink>
+                )
+              }
+            </li>
+          ))}
         </ul>
         <ul className="flex gap-x-2 items-center">
           <li className="flex gap-1 items-center">
@@ -120,6 +137,7 @@ const SupervisorDashboardUpperNavigation: FC<
       </nav>
       {/* DASHBOARD SIDEBAR FOR SMALL DEVICES */}
       <SupervisorDashboardSidebarSmallDevices />
+      <ModalSystem activeModal={activeModal} setActiveModal={setActiveModal} />
     </header>
   );
 };
