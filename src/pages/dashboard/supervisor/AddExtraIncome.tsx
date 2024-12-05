@@ -120,7 +120,9 @@ const AddExtraIncome: FC<IAddSupervisorCollectionProps> = ({
         ...prevState,
         addCollectionOpen: false,
       }));
-      setIncomeOpen(false);
+      if (setIncomeOpen) {
+        setIncomeOpen(false);
+      }
     }
   };
 
