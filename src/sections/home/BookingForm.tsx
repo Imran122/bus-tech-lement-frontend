@@ -522,9 +522,9 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
 
       {/*end find tickit */}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex md:flex-row flex-col items-start my-0 h-full mt-6 px-4 gap-x-12 ">
+        <div className="grid grid-cols-12 gap-5 my-0 h-full mt-6 px-4">
           {/* COUCH SEAT PLAN CONTAINER */}
-          <PageTransition className="lg:w-4/12 flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+          <PageTransition className="col-span-5 w-full flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <SeatLayoutSelector
               checkingSeat={checkingSeat}
               bookingCoach={bookingCoach}
@@ -539,7 +539,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
           </PageTransition>
 
           {/* CUSTOMER & PAYMENT INFORMATION */}
-          <PageTransition className="flex flex-col justify-between h-full lg:w-8/12">
+          <PageTransition className="col-span-7 flex flex-col justify-between h-full w-full">
             <div className="border-2 mt-4 relative py-10 px-1">
               <h2 className="absolute border border-[#e57bf3] -top-3 left-2 px-2 bg-[#e074ee]">
                 {translate(
