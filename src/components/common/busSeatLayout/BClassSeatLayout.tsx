@@ -147,7 +147,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
 
   return (
     <div className="flex flex-col justify-center items-center w-full my-0 h-full mt-6 px-4 gap-x-12">
-      <PageTransition className="w-full mb-5 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+      <PageTransition className="px-1 w-full mb-5 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
         <div className="p-2 w-full">
           <div>
             <h2 className="text-center pb-1">
@@ -185,7 +185,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
 
       <PageTransition className="w-full flex flex-col gap-3 h-full px-2">
         <div className="grid grid-cols-4 gap-x-6 pb-6 gap-y-8">
-          <div className="col-span-1 grid grid-cols-1  gap-y-8">
+          <div className="col-span-1 grid grid-cols-1 justify-items-start  gap-y-8">
             {
               //@ts-ignore
               seatsAllocation.left.map((seat: any) => renderSeatButton(seat))
@@ -196,7 +196,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
             <h2 className="vertical-text  ">Ac Business Class</h2>
           </div>
 
-          <div className="col-span-2 grid grid-cols-2 justify-items-start gap-x-[58px] gap-y-8">
+          <div className="col-span-2 w-full grid grid-cols-2 gap-x-[38px] gap-y-6">
             {
               //@ts-ignore
               seatsAllocation.right.map((seat: any) => renderSeatButton(seat))
@@ -206,7 +206,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
 
         {/* Last Row with Left, Middle, and Right Seats */}
         <div className="grid grid-cols-4 pb-6 gap-x-5 gap-y-3 ">
-          <div className="grid-cols-1 col-span-1">
+          <div className="grid-cols-1 col-span-1 justify-items-start">
             {
               //@ts-ignore
               renderSeatButton(seatsAllocation.lastRow[0])
@@ -220,7 +220,7 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
             }
           </div>
 
-          <div className="col-span-2 grid grid-cols-2 gap-x-[58px] gap-y-8">
+          <div className="col-span-2 w-full grid grid-cols-2 gap-x-[38px] gap-y-6">
             {
               //@ts-ignore
               renderSeatButton(seatsAllocation.lastRow[2])
