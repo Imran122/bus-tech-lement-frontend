@@ -231,19 +231,21 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
             {openRowIndex === index && (
               <tr>
                 <td
-                  colSpan={3}
-                  className="p-2 text-center  border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]"
+                  colSpan={10} // Adjust according to the number of columns in the parent table
+                  className="p-2 text-center w-full"
                 >
-                  <SeatLayoutSelector
-                    checkingSeat={checkingSeat}
-                    coachClass={item.coachClass}
-                    bookingCoach={item}
-                    handleBookingSeat={handleBookingSeat}
-                    bookingFormState={bookingFormState}
-                    addBookingSeatLoading={addBookingSeatLoading}
-                    removeBookingSeatLoading={removeBookingSeatLoading}
-                    coachId={item.id}
-                  />
+                  <div className="border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] flex justify-center items-center w-[500px] mx-auto">
+                    <SeatLayoutSelector
+                      checkingSeat={checkingSeat}
+                      coachClass={item.coachClass}
+                      bookingCoach={item}
+                      handleBookingSeat={handleBookingSeat}
+                      bookingFormState={bookingFormState}
+                      addBookingSeatLoading={addBookingSeatLoading}
+                      removeBookingSeatLoading={removeBookingSeatLoading}
+                      coachId={item.id}
+                    />
+                  </div>
                 </td>
               </tr>
             )}

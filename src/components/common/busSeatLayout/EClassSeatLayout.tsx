@@ -149,7 +149,7 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-start my-0 h-full mt-6 px-4 gap-x-12">
+    <div className="flex w-full flex-col items-start my-0 h-full mt-6 px-4 gap-x-12">
       <PageTransition className="w-full mb-5 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
         {/* Top Design */}
         <div className="p-2 w-full">
@@ -184,20 +184,14 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
               </li>
             </ul>
           </div>
-          {/* <div className="flex flex-col items-center">
-            <GiSteeringWheel className="size-12 text-foreground opacity-80" />
-            <Badge className="text-xs" size="sm" variant="outline" shape="pill">
-              {translate("ড্রাইভার", "Driver")}
-            </Badge>
-          </div> */}
         </div>
       </PageTransition>
 
       {/* Seat Layout */}
       <PageTransition className="w-full flex flex-col gap-3 h-full">
-        <div className="grid grid-cols-5 gap-x-1 pb-6 gap-y-8">
+        <div className="grid grid-cols-5  pb-6 gap-y-8">
           {/* Left Side - 2 Columns */}
-          <div className="col-span-2 grid grid-cols-2 gap-x-[7px] gap-y-6">
+          <div className="col-span-2 grid grid-cols-2 gap-x-[6px] gap-y-6">
             {seatsAllocation.left.map((seat: any) => renderSeatButton(seat))}
           </div>
 
@@ -207,14 +201,28 @@ const EClassSeatLayout: FC<ISeatLayoutProps> = ({
           </div>
 
           {/* Right Side - 2 Columns */}
-          <div className="col-span-2 grid grid-cols-2 gap-x-[7px] gap-y-6">
+          <div className="col-span-2 grid grid-cols-2 justify-items-end gap-x-[6px] gap-y-6">
             {seatsAllocation.right.map((seat: any) => renderSeatButton(seat))}
           </div>
         </div>
 
         {/* Last Row with 5 Seats */}
-        <div className="grid grid-cols-5 gap-x-[7px] pb-6 gap-y-6">
-          {seatsAllocation.lastRow.map((seat: any) => renderSeatButton(seat))}
+        <div className="grid grid-cols-5 gap-x-[6px] pb-6 gap-y-6">
+          {seatsAllocation.lastRow.map((seat: any, index: number) => (
+            <div
+              key={seat.id}
+              className={cn(
+                "flex items-center",
+                index === 0 || index === 1
+                  ? "justify-self-start" // Align the first two seats to start
+                  : index >= seatsAllocation.lastRow.length - 2
+                  ? "justify-self-end" // Align the last two seats to end
+                  : "justify-self-center" // Align the middle seats to center
+              )}
+            >
+              {renderSeatButton(seat)}
+            </div>
+          ))}
         </div>
       </PageTransition>
     </div>
