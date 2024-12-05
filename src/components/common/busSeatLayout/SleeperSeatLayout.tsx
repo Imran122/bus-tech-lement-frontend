@@ -145,9 +145,9 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-start my-0 h-full mt-6 px-4 gap-x-12">
+    <div className="flex w-full flex-col items-start my-0 h-full mt-6 px-4 gap-x-12">
       <PageTransition className="w-full mb-5 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-        <div className="p-6 w-full">
+        <div className="p-2 w-full">
           <div>
             <h2 className="text-center pb-1">
               {bookingCoach.coachClass} Class
@@ -190,13 +190,13 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
 
       <PageTransition className="w-full flex flex-col gap-3 h-full relative">
         <div className="relative grid grid-cols-4 gap-x-6 pb-6 gap-y-6">
-          <div className="grid grid-cols-1 gap-x-4 gap-y-6">
+          <div className="col-span-1 grid grid-cols-1 gap-x-4 gap-y-6">
             {seatsAllocation.left.map((seat) => renderSeatButton(seat))}
           </div>
 
-          <div className="w-4"></div>
+          <div className=" col-span-1"></div>
 
-          <div className="grid grid-cols-2 gap-x-[88px] gap-y-6">
+          <div className="col-span-2 w-full grid grid-cols-2 gap-x-[38px] gap-y-6">
             {seatsAllocation.right.map((seat) => renderSeatButton(seat))}
           </div>
         </div>
@@ -215,7 +215,7 @@ const SleeperSeatLayout: FC<ISeatLayoutProps> = ({
           </h3>
         </div>
 
-        <div className="grid grid-cols-3 gap-x-[88px] pb-0 gap-y-6">
+        <div className="grid grid-cols-3 gap-x-[38px] pb-0 gap-y-6">
           {seatsAllocation.lastRow.map((seat) => renderSeatButton(seat))}
         </div>
       </PageTransition>

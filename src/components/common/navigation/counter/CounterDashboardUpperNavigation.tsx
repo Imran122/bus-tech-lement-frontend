@@ -11,7 +11,7 @@ import { shareAuthentication } from "@/utils/helpers/shareAuthentication";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { FC, useState } from "react";
 import { LuUserCircle } from "react-icons/lu";
-import { Link } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import logocompany from "../../../../assets/longeng.png";
 
 import TickitSearchDashboard from "@/pages/dashboard/counterRole/tickit/TickitSearchDashboard";
@@ -24,19 +24,29 @@ import {
   setOrderType,
   setReturnDate,
 } from "@/store/api/counter/counterSearchFilterSlice";
+import {
+  counterNavigationLinks,
+  ICounterNavigationLinks,
+} from "@/utils/constants/common/counter/counterNavigationLinks";
+import { useAppContext } from "@/utils/hooks/useAppContext";
 import { useDispatch, useSelector } from "react-redux";
+import PageTransition from "../../effect/PageTransition";
+import { Label } from "../../typography/Label";
 import LocaleSwitcher from "../LocaleSwitcher";
 import ThemeSwitcher from "../ThemeSwitcher";
 import CounterDashboardSidebarSmallDevices from "./CounterDashboardSidebarSmallDevices";
 
 const CounterDashboardUpperNavigation: FC = () => {
-  //const location = useLocation();
-  //const { route } = useAppContext();
+  const location = useLocation();
+  const { route } = useAppContext();
   const { translate } = useCustomTranslator();
   const { role, avatar } = shareAuthentication();
   const dispatch = useDispatch();
   const [showSearchDashboard, setShowSearchDashboard] = useState(false);
-
+  const subNavigation = counterNavigationLinks?.find(
+    (singleSubNavigation: ICounterNavigationLinks) =>
+      singleSubNavigation.key === route
+  ) as any;
   const bookingState = useSelector(selectCounterSearchFilter);
 
   const setBookingState = (newState: any) => {
@@ -59,15 +69,39 @@ const CounterDashboardUpperNavigation: FC = () => {
       dispatch(setOrderType(newState.orderType));
     }
   };
-
   return (
     <header className="sticky  !h-20 md:!bg-[#b642c5] !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all duration-300">
       <div className="lg:hidden block">
         <img src={logocompany} />
       </div>
-      <nav className="justify-between w-full items-center flex">
-        <ul className="hidden md:flex gap-x-2 items-center">
-          {/* Your navigation links */}
+      <nav className=" w-full flex gap-1">
+        <ul className="hidden lg:flex gap-x-2 items-center">
+          {subNavigation?.subLinks?.length > 0 &&
+            subNavigation?.subLinks?.map(
+              (singleNav: ICounterNavigationLinks, navIndex: number) => (
+                <li className="text-white bg-primary rounded-md" key={navIndex}>
+                  <PageTransition>
+                    <NavLink
+                      to={"/" + role + "/" + singleNav.href}
+                      className={({ isActive, isPending }) =>
+                        isPending
+                          ? "pending"
+                          : isActive
+                          ? "active_link"
+                          : "inactive_link"
+                      }
+                    >
+                      <Label
+                        className="cursor-pointer text-white text-nowrap"
+                        size="sm"
+                      >
+                        {translate(singleNav.label.bn, singleNav.label.en)}
+                      </Label>
+                    </NavLink>
+                  </PageTransition>
+                </li>
+              )
+            )}
         </ul>
 
         <ul className="hidden lg:block">
