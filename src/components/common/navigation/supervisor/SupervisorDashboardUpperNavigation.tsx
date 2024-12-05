@@ -21,7 +21,6 @@ import {
   ISupervisorNavigationLinks,
   supervisorNavigationLinks,
 } from "@/utils/constants/common/supervisor/supervisorNavigationLinks";
-import { useDispatch } from "react-redux";
 import LocaleSwitcher from "../LocaleSwitcher";
 import ThemeSwitcher from "../ThemeSwitcher";
 import SupervisorDashboardSidebarSmallDevices from "./SupervisorDashboardSidebarSmallDevices";
@@ -31,7 +30,7 @@ const SupervisorDashboardUpperNavigation: FC<
   ISupervisorDashboardUpperNavigationProps
 > = () => {
   const location = useLocation();
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   const { route } = useAppContext();
