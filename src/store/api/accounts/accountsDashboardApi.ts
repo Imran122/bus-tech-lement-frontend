@@ -87,6 +87,13 @@ const accountsDashboardApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["accounts-dashboard-home"], // Adjust tags as needed
     }),
+    getAccountDashboardSummaryData: builder.query({
+      query: () => ({
+        url: "/admin/get-aggregation-accounts",
+        method: "GET",
+      }),
+      providesTags: ["accounts-dashboard-home"],
+    }),
   }),
 });
 
@@ -101,4 +108,5 @@ export const {
   useAuthorizeReportFromAccountMutation,
   useGetAccountDashboardCounterReportDataQuery,
   useAuthorizeCounterReportMutation,
+  useGetAccountDashboardSummaryDataQuery,
 } = accountsDashboardApi;
