@@ -70,7 +70,7 @@ const SupervisorDashboardUpperNavigation: FC<
                 subLink.modalComponent ? (
                   <button
                     onClick={() => handleLinkClick(subLink)}
-                    className="btn btn-link"
+                    className="btn btn-primary border border-primary rounded-md px-3 py-1"
                   >
                     {translate(subLink.label.bn, subLink.label.en)}
                   </button>

@@ -48,6 +48,12 @@ const superviosrDashboardRootLinks = {
       key: "add_extra_income",
       modalComponent: "AddExtraIncome", // Indicates it opens a modal
     },
+    {
+      icon: LuUserCog,
+      label: { bn: "ব্যয় যোগ করুন", en: "Add Expense" },
+      key: "add_expense",
+      modalComponent: "AddExpense", // Indicates it opens a modal
+    },
   ],
 };
 const supervisorManagementLinks = {

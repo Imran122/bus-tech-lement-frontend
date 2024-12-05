@@ -36,13 +36,14 @@ import { useSelector } from "react-redux";
 
 interface IAddExpenseProps {
   setOpen: (open: boolean) => void;
+  setExpenseOpen?: (incomeOpen: boolean) => void;
 }
 interface CoachConfig {
   id: number;
   coachNo: string;
   departureDate: string;
 }
-const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
+const AddExpense: FC<IAddExpenseProps> = ({ setOpen, setExpenseOpen }) => {
   const { toast } = useToast();
   const { translate } = useCustomTranslator();
   //const { toastMessage } = useMessageGenerator();
@@ -221,6 +222,9 @@ const AddExpense: FC<IAddExpenseProps> = ({ setOpen }) => {
           });
           playSound("add");
           setOpen(false); // Close the form
+        }
+        if (setExpenseOpen) {
+          setExpenseOpen(false);
         }
       }
     } catch (error) {
