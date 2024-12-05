@@ -29,7 +29,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { LuDownload, LuRefreshCw } from "react-icons/lu";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import CounterOrderDetailsModal from "../sales/CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "../sales/UpdateCounterOrderModal";
 
@@ -71,7 +71,7 @@ export interface ISalesDataStateProps {
 
 const CounterDashboardHome: FC<ISalesListProps> = () => {
   const { translate } = useCustomTranslator();
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   //const { toastMessage } = useMessageGenerator();
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",

@@ -11,7 +11,7 @@ import { shareAuthentication } from "@/utils/helpers/shareAuthentication";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { FC, useState } from "react";
 import { LuUserCircle } from "react-icons/lu";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import logocompany from "../../../../assets/longeng.png";
 
 import TickitSearchDashboard from "@/pages/dashboard/counterRole/tickit/TickitSearchDashboard";
@@ -37,7 +37,7 @@ import ThemeSwitcher from "../ThemeSwitcher";
 import CounterDashboardSidebarSmallDevices from "./CounterDashboardSidebarSmallDevices";
 
 const CounterDashboardUpperNavigation: FC = () => {
-  const location = useLocation();
+  //const location = useLocation();
   const { route } = useAppContext();
   const { translate } = useCustomTranslator();
   const { role, avatar } = shareAuthentication();
