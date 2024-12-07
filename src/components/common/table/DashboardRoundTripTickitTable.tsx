@@ -112,6 +112,9 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
       }
     }
   }, [selectedBookingCoach?.route]);
+  // if (data.length) {
+  //   return <TableSkeleton />;
+  // }
   return (
     <table className="min-w-full text-center border-collapse border border-gray-300">
       <thead>

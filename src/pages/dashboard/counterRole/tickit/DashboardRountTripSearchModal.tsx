@@ -13,9 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
 import { closeModal } from "@/store/api/user/coachConfigModalSlice";
+import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { format } from "date-fns";
-import { FC, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 interface IDashboardRountTripSearchModalProps {
@@ -24,10 +26,12 @@ interface IDashboardRountTripSearchModalProps {
   countersData: any[];
 }
 
-const DashboardRountTripSearchModal: FC<
+const DashboardRountTripSearchModal: React.FC<
   IDashboardRountTripSearchModalProps
 > = ({ bookingState, setBookingState, countersData }) => {
   const dispatch = useDispatch();
+  const { toast } = useToast();
+  const { translate } = useCustomTranslator();
 
   const [formState, setFormState] = useState({
     fromCounterId: bookingState.fromCounterId || null,
@@ -36,6 +40,11 @@ const DashboardRountTripSearchModal: FC<
     date: bookingState.date || null,
     returnDate: bookingState.returnDate || null,
   });
+
+  // State to manage calendar popover visibility
+  const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
+  const [isReturnDatePopoverOpen, setIsReturnDatePopoverOpen] = useState(false);
+
   const handleSubmit = () => {
     if (
       !formState.fromCounterId ||
@@ -44,7 +53,17 @@ const DashboardRountTripSearchModal: FC<
       !formState.date ||
       !formState.returnDate
     ) {
-      alert("Please fill in all required fields.");
+      toast({
+        title: translate(
+          "সব ক্ষেত্র নির্বাচন করুন",
+          "Please Select All Fields"
+        ),
+        description: translate(
+          "দয়া করে আবার চেষ্টা করুন।",
+          "Please try again."
+        ),
+        variant: "destructive",
+      });
       return;
     }
     const formattedReturnDate = format(formState.returnDate, "yyyy-MM-dd");
@@ -149,7 +168,7 @@ const DashboardRountTripSearchModal: FC<
         {/* Going Date */}
         <div className="mb-4">
           <label className="block text-sm font-medium py-2">Going Date</label>
-          <Popover>
+          <Popover open={isDatePopoverOpen} onOpenChange={setIsDatePopoverOpen}>
             <PopoverTrigger asChild>
               <Button className="w-full text-left">
                 {formState.date
@@ -161,12 +180,13 @@ const DashboardRountTripSearchModal: FC<
               <Calendar
                 mode="single"
                 selected={formState.date ? new Date(formState.date) : undefined}
-                onSelect={(date) =>
+                onSelect={(date) => {
                   setFormState((prev) => ({
                     ...prev,
                     date: date ? date.toISOString() : null,
-                  }))
-                }
+                  }));
+                  setIsDatePopoverOpen(false); // Close popover on select
+                }}
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
                 captionLayout="dropdown-buttons"
@@ -178,7 +198,10 @@ const DashboardRountTripSearchModal: FC<
         {/* Return Date */}
         <div className="mb-4">
           <label className="block text-sm font-medium py-2">Return Date</label>
-          <Popover>
+          <Popover
+            open={isReturnDatePopoverOpen}
+            onOpenChange={setIsReturnDatePopoverOpen}
+          >
             <PopoverTrigger asChild>
               <Button className="w-full text-left">
                 {formState.returnDate
@@ -194,12 +217,13 @@ const DashboardRountTripSearchModal: FC<
                     ? new Date(formState.returnDate)
                     : undefined
                 }
-                onSelect={(date) =>
+                onSelect={(date) => {
                   setFormState((prev) => ({
                     ...prev,
                     returnDate: date ? date.toISOString() : null,
-                  }))
-                }
+                  }));
+                  setIsReturnDatePopoverOpen(false); // Close popover on select
+                }}
                 disabled={(date) =>
                   formState.date && date < new Date(formState.date)
                 }
