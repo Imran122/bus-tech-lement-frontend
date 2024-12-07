@@ -1,5 +1,5 @@
-import BookingSeatCard from "@/components/common/card/BookingSeatCard";
 import BookingSeatCardRoundTripPublic from "@/components/common/card/BookingSeatCardRoundTripPublic";
+import HomeTickitBookingTable from "@/components/common/table/HomeTickitBookingTable";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
@@ -151,17 +151,9 @@ export default function SearchResult({
   return (
     <div className="px-3">
       <Accordion className="w-full space-y-3" type="single" collapsible>
-        {bookingState.bookingCoachesList?.length > 0 &&
-          bookingState.bookingCoachesList.map(
-            (singleCoachData: any, coachDataIndex: number) => (
-              <BookingSeatCard
-                setBookingState={setBookingState}
-                key={coachDataIndex}
-                coachData={singleCoachData}
-                index={coachDataIndex}
-              />
-            )
-          )}
+        {bookingState.bookingCoachesList?.length > 0 && (
+          <HomeTickitBookingTable coachData={bookingState.bookingCoachesList} />
+        )}
       </Accordion>
 
       <Accordion className="w-full space-y-3" type="single" collapsible>
@@ -251,7 +243,7 @@ export default function SearchResult({
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="border-primary/50 border-dashed bg-background backdrop-blur-[2px] duration-300 rounded-lg p-8 w-full max-w-3xl">
+          <div className="border-primary/50 border-dashed bg-background backdrop-blur-[2px] duration-300 rounded-lg p-8 w-full max-w-4xl">
             <button
               onClick={handleCloseModal}
               className="text-red-500 font-bold mb-4"

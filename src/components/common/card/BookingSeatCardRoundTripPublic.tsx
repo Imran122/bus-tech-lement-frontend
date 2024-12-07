@@ -3,7 +3,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { IBookingStateProps } from "@/sections/home/Booking";
 import {
   useAddBookingSeatMutation,
@@ -134,19 +133,48 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
 
   return (
     <AccordionItem value={index?.toString()}>
-      <CardWrapper rounded="md" variant="muted" className="p-4 ">
-        <div className="lg:flex grid grid-cols-4 md:flex-row flex-col gap-3 md:justify-between md:items-center items-start w-full">
-          <ul className="lg:w-3/12 w-full flex lg:flex-col md:flex-row flex-col justify-start items-start lg:gap-1 md:gap-4 gap-1 md:col-span-4 col-span-4">
-            <li className="flex lg:w-full md:w-6/12 justify-start md:gap-3 gap-1">
-              <Badge shape="responsivepill">
-                {coachData?.coachType == "AC"
-                  ? translate("শীতাতপ নিয়ন্ত্রিত", "Air Condition")
-                  : translate(
-                      "শীতাতপ নিয়ন্ত্রিত বিহীন",
-                      "Without Air Condition"
-                    )}
-              </Badge>
-              <Badge shape="responsivepill">
+      <CardWrapper rounded="md" variant="muted" className="p-4">
+        <table className="min-w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-primary text-white">
+              <th className="border-2 border-[#3491b1] p-2">
+                {translate("কোচ নম্বর", "Coach No")}
+              </th>
+              <th className="border-2 border-[#3491b1] p-2">
+                {translate("শীতাতপ নিয়ন্ত্রিত", "Air Condition")}
+              </th>
+              <th className="border-2 border-[#3491b1] p-2">
+                {translate("ক্লাস", "Class")}
+              </th>
+              <th className="border-2 border-[#3491b1] p-2">
+                {translate("যাত্রা শুরু সময়", "Departure Time")}
+              </th>
+              <th className="border-2 border-[#3491b1] p-2">
+                {translate("পৌঁছানোর সময়", "Arrival Time")}
+              </th>
+              <th className="border-2 border-[#3491b1] p-2">
+                {translate("খালি আসন", "Available Seats")}
+              </th>
+              <th className="border-2 border-[#3491b1] p-2">
+                {translate("ভাড়া", "Fare")}
+              </th>
+              <th className="border-2 border-[#3491b1] p-2">
+                {translate("অ্যাকশন", "Actions")}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="hover:bg-[#e074ee]">
+              <td className="border border-gray-300 p-2">
+                {coachData?.coachNo ||
+                  translate(fallback.notFound.bn, fallback.notFound.en)}
+              </td>
+              <td className="border border-gray-300 p-2">
+                {coachData?.coachType === "AC"
+                  ? translate("হ্যাঁ", "Yes")
+                  : translate("না", "No")}
+              </td>
+              <td className="border border-gray-300 p-2">
                 {coachData?.coachClass === "B_Class"
                   ? "Business Class"
                   : coachData?.coachClass === "S_Class"
@@ -154,115 +182,68 @@ const BookingSeatCardRoundTripPublic: FC<IBookingSeatCardProps> = ({
                   : coachData?.coachClass === "Sleeper"
                   ? "Sleeper Coach"
                   : "Economy Class"}
-              </Badge>
-            </li>
-            <div className=" w-full flex flex-row gap-2">
-              <li className="md:text-lg w-full text-sm  tracking-tight md:font-semibold font-normal">
-                <span className="">
-                  {translate("কোচ নম্বরঃ ", "Couch No: ")}
-                </span>
-                <span className="md:font-[500] font-normal uppercase">
-                  {coachData?.coachNo ||
-                    translate(fallback.notFound.bn, fallback.notFound.en)}
-                </span>
-              </li>
-
-              <li className="md:text-lg w-full text-sm  tracking-tight">
-                <span className="md:font-[500] font-normal uppercase text-red-400  rounded-lg  py-[2px]">
-                  {coachData?.fromCounter?.name ||
-                    translate(fallback.notFound.bn, fallback.notFound.en)}
-                </span>{" "}
-                {`=>`}{" "}
-                <span className="md:font-[500] font-normal uppercase text-red-400  rounded-lg  py-[2px]">
-                  {coachData?.destinationCounter?.name ||
-                    translate(fallback.notFound.bn, fallback.notFound.en)}
-                </span>
-              </li>
-            </div>
-          </ul>
-          <ul className="md:col-span-2 col-span-4 grid grid-cols-3 lg:gap-x-4 gap-x-2">
-            <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
-              <span className="font-semibold lg:text-lg text-sm tracking-tighter">
-                {translate("যাত্রা শুরু সময়", "Departure Time")}
-              </span>
-              <span className="lg:text-lg text-sm tracking-tight text-red-400 px-2 rounded-md mt-1">
+              </td>
+              <td className="border border-gray-300 p-2">
                 {translate(
                   convertTimeToBengali(coachData?.schedule),
                   coachData?.schedule
                 )}
-              </span>
-            </li>
-            <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-warning/50 border-dashed bg-warning/5 backdrop-blur-[2px]">
-              <span className="font-semibold lg:text-lg text-sm tracking-tighter">
-                {translate("পৌঁছানোর সময়", "Arrival time")}
-              </span>
-              <span className="lg:text-lg text-sm tracking-tight text-red-400 px-2 rounded-md mt-1">
+              </td>
+              <td className="border border-gray-300 p-2">
                 {translate(
                   convertTimeToBengali(coachData?.schedule),
                   coachData?.schedule
                 )}
-              </span>
-            </li>
-            <li className="flex flex-col lg:p-4 rounded-md justify-center items-center border-2 border-success/50 border-dashed bg-success/5 backdrop-blur-[2px]">
-              <span className="font-semibold lg:text-lg text-sm tracking-tighter">
-                {translate("খালি আসন", "Available Seat")}
-              </span>
-              <span className="lg:text-lg text-sm tracking-tight text-red-400 px-2 rounded-md mt-1">
+              </td>
+              <td className="border border-gray-300 p-2">
                 {translate(
                   convertToBnDigit(totalAvaliableSetas?.toString()),
                   totalAvaliableSetas.toString()
                 )}
-              </span>
-            </li>
-          </ul>
-          <ul className="md:col-span-2 col-span-4 flex gap-x-4 justify-center">
-            <li className="flex flex-col items-center justify-center text-center">
-              <Badge
-                shape="responsivepill"
-                size="responsivesize"
-                variant="tertiary"
-              >
-                {translate("অতিরিক্ত কোনো চার্জ নেই", "No Additional Charge")}
-              </Badge>
-              {coachData.discount > 0 && (
-                <span className="font-anek font-light lg:text-base text-sm line-through mt-1">
+              </td>
+              <td className="border border-gray-300 p-2">
+                <div className="text-center">
+                  <span className="line-through mr-2">
+                    {coachData?.discount > 0 &&
+                      translate(
+                        convertToBnDigit(
+                          formatter({
+                            type: "amount",
+                            amount: coachData?.fare?.amount,
+                          })
+                        ),
+                        formatter({
+                          type: "amount",
+                          amount: coachData?.fare?.amount,
+                        })
+                      )}
+                  </span>
                   {translate(
                     convertToBnDigit(
                       formatter({
                         type: "amount",
-                        amount: coachData?.fare?.amount,
+                        amount:
+                          coachData?.fare?.amount - coachData?.discount || 0,
                       })
                     ),
                     formatter({
                       type: "amount",
-                      amount: coachData?.fare?.amount,
+                      amount:
+                        coachData?.fare?.amount - coachData?.discount || 0,
                     })
                   )}
-                </span>
-              )}
-
-              <span className="font-anek lg:font-semibold font-normal lg:text-xl text-base">
-                {translate(
-                  convertToBnDigit(
-                    formatter({
-                      type: "amount",
-                      amount: coachData?.fare?.amount - coachData.discount,
-                    })
-                  ),
-                  formatter({
-                    type: "amount",
-                    amount: coachData?.fare?.amount - coachData.discount,
-                  })
-                )}
-              </span>
-            </li>
-            <li className="ml-6 lg:px-3">
-              <AccordionTrigger className="hover:no-underline border backdrop-blur-sm py-1 px-2 rounded-md">
-                <span className="mr-1">View Seats</span>
-              </AccordionTrigger>
-            </li>
-          </ul>
-        </div>
+                </div>
+              </td>
+              <td className="border border-gray-300 p-2">
+                <AccordionTrigger className="hover:no-underline border backdrop-blur-sm py-1 px-2 rounded-md">
+                  <span className="mr-1">
+                    {translate("আসন দেখুন", "View Seats")}
+                  </span>
+                </AccordionTrigger>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </CardWrapper>
       {/* <BoookingFormRoundTripPublic selectedBookingCoach={coachData} /> */}
       <AccordionContent>
