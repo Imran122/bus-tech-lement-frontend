@@ -131,7 +131,10 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleToggleRow(index)}
+                    onClick={(event) => {
+                      event.stopPropagation(); // Prevent triggering parent row's onClick
+                      handleToggleRow(index);
+                    }}
                   >
                     {openRowIndex === index
                       ? translate("লুকান", "Hide")

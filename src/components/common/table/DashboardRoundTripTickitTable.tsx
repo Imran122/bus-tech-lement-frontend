@@ -227,7 +227,10 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleToggleRow(index, item)}
+                  onClick={(event) => {
+                    event.stopPropagation(); // Prevent row click
+                    handleToggleRow(index, item);
+                  }}
                 >
                   {openRowIndex === index
                     ? translate("লুকান", "Hide")
