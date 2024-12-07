@@ -92,12 +92,17 @@ const ProfitandLoseReport = () => {
       </Paragraph>
 
       <ul className="flex my-3 space-x-3">
-        <li>
-          <PDFDownloadLink
-              document={<PdfProfitandLoss  dateRange={dateRange}
-              profitData={profitAndLossData?.data}
-              logo={singleCms?.data} />}
-              fileName="expense_category_report.pdf"
+        {profitAndLossData?.data?.length > 0 && (
+          <li>
+            <PDFDownloadLink
+              document={
+                <PdfProfitandLoss
+                  dateRange={dateRange}
+                  profitData={profitAndLossData?.data}
+                  logo={singleCms?.data}
+                />
+              }
+              fileName="profit_and_loss_report.pdf"
             >
               {
                 //@ts-ignore
@@ -121,15 +126,24 @@ const ProfitandLoseReport = () => {
               }
             </PDFDownloadLink>
           </li>
-        <li>
-          <Button onClick={handlePrint} variant="destructive" size="xs">
-            Print
-          </Button>
-        </li>
+        )}
+
+        {profitAndLossData?.data?.length > 0 && (
+          <li>
+            <Button onClick={handlePrint} variant="destructive" size="xs">
+              Print
+            </Button>
+          </li>
+        )}
       </ul>
       <div className="flex justify-between items-center">
         <div className="flex flex-col">
-          <label className="text-xs lg:text-sm py-2 lg:py-0 font-semibold" htmlFor="">Select Bus No</label>
+          <label
+            className="text-xs lg:text-sm py-2 lg:py-0 font-semibold"
+            htmlFor=""
+          >
+            Select Bus No
+          </label>
           <Select onValueChange={handleRegistrationNoChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a Bus No" />
@@ -158,7 +172,10 @@ const ProfitandLoseReport = () => {
                   {/* <CalendarIcon className="mr-2 h-4 w-4" /> */}
                   {date?.from ? (
                     date.to ? (
-                      `${format(date.from, "dd-MM-yyyy")} - ${format(date.to, "dd-MM-yyyy")}`
+                      `${format(date.from, "dd-MM-yyyy")} - ${format(
+                        date.to,
+                        "dd-MM-yyyy"
+                      )}`
                     ) : (
                       format(date.from, "dd-MM-yyyy")
                     )
@@ -183,7 +200,10 @@ const ProfitandLoseReport = () => {
       </div>
 
       <section className="mt-10">
-        <Heading className="text-xs md:text-xl" size={"h6"}>{`Profit / Loss details for the month of ${
+        <Heading
+          className="text-xs md:text-xl"
+          size={"h6"}
+        >{`Profit / Loss details for the month of ${
           date?.from && date?.to ? dateRange : ""
         }`}</Heading>
         <div className="border overflow-hidden overflow-x-auto">
@@ -302,7 +322,7 @@ const ProfitandLoseReport = () => {
       </section>
 
       <section className="border overflow-hidden overflow-x-auto my-10">
-        <table className="table-auto w-full border-collapse border border-gray-200">
+        <table className="table-auto w-full border-collapse font-bold border border-gray-200">
           <tbody>
             {[
               {
@@ -314,7 +334,7 @@ const ProfitandLoseReport = () => {
                         acc + (row.cashOnHand - row.gp || 0),
                       0
                     )
-                    .toFixed(2) ?? "0.00"
+                    .toFixed(2) ?? "00.00"
                 }`,
               },
               { label: "Compensation from Iconic Express", value: "00.00" },

@@ -1,11 +1,11 @@
 import { FC } from "react";
-import { format } from "date-fns";
 import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 
 interface IReportProps {
   result: any; 
   logo:any
+  dateRange:any
 }
 
 const styles = StyleSheet.create({
@@ -72,9 +72,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const PdfExpenseReport: FC<IReportProps> = ({ result, logo }) => {
+const PdfExpenseReport: FC<IReportProps> = ({ result, logo, dateRange }) => {
     const { appName } = appConfiguration;
-    const currentDate = format(new Date(), "MMMM dd, yyyy");
   
     return (
       <Document>
@@ -83,7 +82,7 @@ const PdfExpenseReport: FC<IReportProps> = ({ result, logo }) => {
             {/* Logo */}
             <Image source={logo?.data?.companyLogoBangla} style={styles.logo} />
             <Text style={styles.heading}>{appName}</Text>
-            <Text style={styles.subHeading}>Date: {currentDate}</Text>
+            <Text style={styles.subHeading}>Date: {dateRange}</Text>
             <Text style={styles.title}>Expense Report</Text>
   
             {/* Table */}
