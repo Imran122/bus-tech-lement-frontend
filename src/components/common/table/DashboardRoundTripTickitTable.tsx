@@ -160,7 +160,11 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
       <tbody>
         {data.map((item: any, index: number) => (
           <>
-            <tr key={index} className="hover:bg-[#e074ee]">
+            <tr
+              onClick={() => handleToggleRow(index, item)}
+              key={index}
+              className="hover:bg-[#e074ee] cursor-pointer "
+            >
               <td className="border border-gray-300 p-2">
                 {translate(
                   `${convertTimeToBengali(item.schedule)}`,

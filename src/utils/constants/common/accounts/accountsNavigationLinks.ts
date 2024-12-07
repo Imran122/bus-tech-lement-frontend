@@ -51,7 +51,7 @@ const accountsManagementLinks = {
   icon: LuCar,
   label: {
     bn: "হিসাব ব্যবস্থাপনা",
-    en: "accounts_management",
+    en: "Accounts Management",
   },
   key: "accounts_management",
   href: "accounts_management",
@@ -132,13 +132,13 @@ const accountantExpenseManagementLinks = {
     //   label: { bn: "ব্যয় উপবিভাগ প্রতিবেদন", en: "Expense Sub Category Report" },
     //   key: "expense_sub_category_report",
     //   href: "expense_sub_category_report",
-    // },    
+    // },
     {
       icon: LuBus,
       label: { bn: "লাভ ও ক্ষতির প্রতিবেদন", en: "Profit And Loss" },
       key: "profit_and_loss",
       href: "profit_and_loss",
-    }      
+    },
   ],
 };
 //new

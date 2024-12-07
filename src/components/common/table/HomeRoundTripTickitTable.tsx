@@ -152,7 +152,11 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
       <tbody>
         {data.map((item: any, index: number) => (
           <>
-            <tr key={index} className="hover:bg-[#e074ee]">
+            <tr
+              key={index}
+              onClick={() => handleToggleRow(index, item)}
+              className="hover:bg-[#e074ee] cursor-pointer"
+            >
               <td className="border border-gray-300 p-2">
                 {translate(
                   `${convertTimeToBengali(item.schedule)}`,
@@ -185,38 +189,40 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
                     )
                   : "0"}
               </td>
-              <td className="border border-gray-300 p-2 flex flex-col">
-                {item.discount > 0 && (
-                  <span className="font-anek font-light text-sm line-through mt-1">
-                    {translate(
-                      convertToBnDigit(
+              <td className="border border-gray-300 p-2">
+                <div className="flex flex-col items-start">
+                  {item.discount > 0 && (
+                    <span className="font-anek font-light text-sm line-through mt-1">
+                      {translate(
+                        convertToBnDigit(
+                          formatter({
+                            type: "amount",
+                            amount: item?.fare?.amount,
+                          })
+                        ),
                         formatter({
                           type: "amount",
                           amount: item?.fare?.amount,
                         })
-                      ),
-                      formatter({
-                        type: "amount",
-                        amount: item?.fare?.amount,
-                      })
-                    )}
-                  </span>
-                )}
+                      )}
+                    </span>
+                  )}
 
-                <span className="font-anek font-medium text-xl">
-                  {translate(
-                    convertToBnDigit(
+                  <span className="font-anek font-medium text-xl">
+                    {translate(
+                      convertToBnDigit(
+                        formatter({
+                          type: "amount",
+                          amount: item?.fare?.amount - item.discount,
+                        })
+                      ),
                       formatter({
                         type: "amount",
                         amount: item?.fare?.amount - item.discount,
                       })
-                    ),
-                    formatter({
-                      type: "amount",
-                      amount: item?.fare?.amount - item.discount,
-                    })
-                  )}
-                </span>
+                    )}
+                  </span>
+                </div>
               </td>
               <td className="border border-gray-300 p-2">
                 {item?.coachClass === "B_Class"

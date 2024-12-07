@@ -66,7 +66,11 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
         {coachData.length !== 0 ? (
           coachData.map((coach: any, index: any) => (
             <>
-              <tr key={index} className="hover:bg-[#e074ee] ">
+              <tr
+                onClick={() => handleToggleRow(index)}
+                key={index}
+                className="hover:bg-[#e074ee] cursor-pointer "
+              >
                 <td className="border border-gray-300 p-2">
                   {translate(
                     `${convertTimeToBengali(coach.schedule)}`,
