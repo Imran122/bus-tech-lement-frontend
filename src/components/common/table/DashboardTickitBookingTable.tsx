@@ -63,58 +63,59 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
         </tr>
       </thead>
       <tbody>
-        {coachData.map((coach: any, index: any) => (
-          <>
-            <tr key={index} className="hover:bg-[#e074ee] ">
-              <td className="border border-gray-300 p-2">
-                {translate(
-                  `${convertTimeToBengali(coach.schedule)}`,
-                  `${coach.schedule}`
-                )}{" "}
-                & {coach.departureDate}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {coach.coachNo || translate("N/A", "N/A")}
-              </td>{" "}
-              <td className="border border-gray-300 p-2">
-                {translate(
-                  `${convertToBnDigit(coach?.seatAvailable?.toString())}`,
-                  coach.seatAvailable?.toString()
-                )}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {coach?.CounterBookedSeat?.length
-                  ? translate(
-                      `$
+        {coachData.length !== 0 ? (
+          coachData.map((coach: any, index: any) => (
+            <>
+              <tr key={index} className="hover:bg-[#e074ee] ">
+                <td className="border border-gray-300 p-2">
+                  {translate(
+                    `${convertTimeToBengali(coach.schedule)}`,
+                    `${coach.schedule}`
+                  )}{" "}
+                  & {coach.departureDate}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {coach.coachNo || translate("N/A", "N/A")}
+                </td>{" "}
+                <td className="border border-gray-300 p-2">
+                  {translate(
+                    `${convertToBnDigit(coach?.seatAvailable?.toString())}`,
+                    coach.seatAvailable?.toString()
+                  )}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {coach?.CounterBookedSeat?.length
+                    ? translate(
+                        `$
                     {convertToBnDigit(coach?.CounterBookedSeat?.length)}`,
-                      coach.CounterBookedSeat?.length
-                    )
-                  : "0"}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {coach?.orderSeat?.length
-                  ? translate(
-                      `${convertToBnDigit(coach?.orderSeat?.length)}`,
-                      coach.orderSeat?.length
-                    )
-                  : "0"}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {formatter({
-                  type: "amount",
-                  amount: coach.fare?.amount || 0,
-                })}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {coach.registrationNo || translate("N/A", "N/A")}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {coach.fromCounter?.name || translate("N/A", "N/A")}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {coach.destinationCounter?.name || translate("N/A", "N/A")}
-              </td>
-              {/* <td className="border border-gray-300 p-2">
+                        coach.CounterBookedSeat?.length
+                      )
+                    : "0"}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {coach?.orderSeat?.length
+                    ? translate(
+                        `${convertToBnDigit(coach?.orderSeat?.length)}`,
+                        coach.orderSeat?.length
+                      )
+                    : "0"}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {formatter({
+                    type: "amount",
+                    amount: coach.fare?.amount || 0,
+                  })}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {coach.registrationNo || translate("N/A", "N/A")}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {coach.fromCounter?.name || translate("N/A", "N/A")}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {coach.destinationCounter?.name || translate("N/A", "N/A")}
+                </td>
+                {/* <td className="border border-gray-300 p-2">
                 {translate(
                   coach.coachType === "AC"
                     ? "শীতাতপ নিয়ন্ত্রিত"
@@ -122,27 +123,34 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
                   coach.coachType === "AC" ? "Air Conditioned" : "Non-AC"
                 )}
               </td> */}
-              <td className="border border-gray-300 p-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleToggleRow(index)}
-                >
-                  {openRowIndex === index
-                    ? translate("লুকান", "Hide")
-                    : translate("আসন দেখুন", "View Seats")}
-                </Button>
-              </td>
-            </tr>
-            {openRowIndex === index && (
-              <tr>
-                <td colSpan={12} className="p-4">
-                  <CounterTickitBookingForm bookingCoach={coach} />
+                <td className="border border-gray-300 p-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleToggleRow(index)}
+                  >
+                    {openRowIndex === index
+                      ? translate("লুকান", "Hide")
+                      : translate("আসন দেখুন", "View Seats")}
+                  </Button>
                 </td>
               </tr>
-            )}
-          </>
-        ))}
+              {openRowIndex === index && (
+                <tr>
+                  <td colSpan={12} className="p-4">
+                    <CounterTickitBookingForm bookingCoach={coach} />
+                  </td>
+                </tr>
+              )}
+            </>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={12} className="p-4 text-center">
+              {translate("কোনো তথ্য নেই", "No Data available")}
+            </td>
+          </tr>
+        )}
       </tbody>
     </table>
   );

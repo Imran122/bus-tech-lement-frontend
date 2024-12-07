@@ -38,6 +38,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react"; // Added useState here
 import { LuRefreshCw } from "react-icons/lu";
+import { MdClose } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import DashboardRountTripSearchModal from "./DashboardRountTripSearchModal";
 
@@ -137,7 +138,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
     }
   }, [bookingState?.fromCounterId, user?.counterId, dispatch]);
   return (
-    <div className="flex pb-2 justify-start items-center text-white ">
+    <div className="flex pb-2 justify-start items-center ">
       <div className="w-auto">
         <div className="">
           <div className="rounded-xl ">
@@ -364,14 +365,14 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
       </div>
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 lg:top-[400px] md:top-[270px] top-[360px]">
-          <div className="relative w-full max-w-7xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
+          <div className="relative w-full max-w-5xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
             {/* Close Button */}
             <button
               className="absolute top-6 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => dispatch(closeModal())}
               aria-label="Close Modal"
             >
-              &times;
+              <MdClose />
             </button>
             <DashboardRountTripSearchModal
               countersData={countersData?.data || []}

@@ -66,7 +66,9 @@ const DashboardRountTripSearchModal: FC<
       <div className="grid md:grid-cols-2 gap-4">
         {/* Starting Counter */}
         <div className="mb-4">
-          <label className="block text-sm font-medium">Starting Counter</label>
+          <label className="block text-sm font-medium py-2">
+            Starting Counter
+          </label>
           <Select
             value={formState.fromCounterId?.toString() || ""}
             onValueChange={(value: string) =>
@@ -92,7 +94,9 @@ const DashboardRountTripSearchModal: FC<
 
         {/* Ending Counter */}
         <div className="mb-4">
-          <label className="block text-sm font-medium">Ending Counter</label>
+          <label className="block text-sm font-medium py-2">
+            Ending Counter
+          </label>
           <Select
             value={formState.destinationCounterId?.toString() || ""}
             onValueChange={(value: string) =>
@@ -122,7 +126,7 @@ const DashboardRountTripSearchModal: FC<
 
         {/* Coach Type */}
         <div className="mb-4">
-          <label className="block text-sm font-medium">Coach Type</label>
+          <label className="block text-sm font-medium py-2">Coach Type</label>
           <Select
             value={formState.coachType}
             onValueChange={(value: string) =>
@@ -144,7 +148,7 @@ const DashboardRountTripSearchModal: FC<
 
         {/* Going Date */}
         <div className="mb-4">
-          <label className="block text-sm font-medium">Going Date</label>
+          <label className="block text-sm font-medium py-2">Going Date</label>
           <Popover>
             <PopoverTrigger asChild>
               <Button className="w-full text-left">
@@ -173,7 +177,7 @@ const DashboardRountTripSearchModal: FC<
 
         {/* Return Date */}
         <div className="mb-4">
-          <label className="block text-sm font-medium">Return Date</label>
+          <label className="block text-sm font-medium py-2">Return Date</label>
           <Popover>
             <PopoverTrigger asChild>
               <Button className="w-full text-left">
