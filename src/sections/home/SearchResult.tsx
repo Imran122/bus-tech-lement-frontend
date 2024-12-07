@@ -1,4 +1,4 @@
-import BookingSeatCardRoundTripPublic from "@/components/common/card/BookingSeatCardRoundTripPublic";
+import HomeRoundTripTickitTable from "@/components/common/table/HomeRoundTripTickitTable";
 import HomeTickitBookingTable from "@/components/common/table/HomeTickitBookingTable";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -157,23 +157,16 @@ export default function SearchResult({
       </Accordion>
 
       <Accordion className="w-full space-y-3" type="single" collapsible>
-        {bookingState.roundTripGobookingCoachesList?.length > 0 &&
-          bookingState.roundTripGobookingCoachesList.map(
-            (singleCoachData: any, coachDataIndex: number) => (
-              <BookingSeatCardRoundTripPublic
-                setBookingState={setBookingState}
-                key={coachDataIndex}
-                coachData={singleCoachData}
-                index={coachDataIndex}
-                bookingFormState={bookingFormState}
-                setBookingFormState={setBookingFormState}
-                setGoViaRoute={setGoViaRoute}
-                setReturnViaRoute={setReturnViaRoute}
-                setBookingCoachSingle={setBookingCoachSingle}
-                bookingCoachSingle={bookingCoachSingle}
-              />
-            )
-          )}
+        {bookingState?.roundTripGobookingCoachesList?.length > 0 && (
+          <HomeRoundTripTickitTable
+            data={bookingState.roundTripGobookingCoachesList}
+            bookingFormState={bookingFormState}
+            setBookingFormState={setBookingFormState}
+            setGoViaRoute={setGoViaRoute}
+            setReturnViaRoute={setReturnViaRoute}
+            setBookingCoachSingle={setBookingCoachSingle}
+          />
+        )}
       </Accordion>
 
       {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
@@ -188,23 +181,16 @@ export default function SearchResult({
       )}
 
       <Accordion className="w-full space-y-3" type="single" collapsible>
-        {bookingState.roundTripReturnBookingCoachesList?.length > 0 &&
-          bookingState.roundTripReturnBookingCoachesList.map(
-            (singleCoachData: any, coachDataIndex: number) => (
-              <BookingSeatCardRoundTripPublic
-                setBookingState={setBookingState}
-                key={coachDataIndex}
-                coachData={singleCoachData}
-                index={coachDataIndex}
-                bookingFormState={bookingFormState}
-                setBookingFormState={setBookingFormState}
-                setGoViaRoute={setGoViaRoute}
-                setReturnViaRoute={setReturnViaRoute}
-                setBookingCoachSingle={setBookingCoachSingle}
-                bookingCoachSingle={bookingCoachSingle}
-              />
-            )
-          )}
+        {bookingState?.roundTripReturnBookingCoachesList?.length > 0 && (
+          <HomeRoundTripTickitTable
+            data={bookingState.roundTripReturnBookingCoachesList}
+            bookingFormState={bookingFormState}
+            setBookingFormState={setBookingFormState}
+            setGoViaRoute={setGoViaRoute}
+            setReturnViaRoute={setReturnViaRoute}
+            setBookingCoachSingle={setBookingCoachSingle}
+          />
+        )}
       </Accordion>
 
       {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
