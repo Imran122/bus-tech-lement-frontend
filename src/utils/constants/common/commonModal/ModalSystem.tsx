@@ -36,8 +36,8 @@ const ModalSystem = ({
           <AddExpenseAccountsRole
             setOpen={() => {}} // Add appropriate function
             setExpenseOpen={() => setActiveModal(null)}
-            setExpenseState={(stateUpdater) => {
-            }}
+            //@ts-ignore
+            setExpenseState={(stateUpdater: any) => {}}
           />
         )}
         {/* Add other modals dynamically */}
