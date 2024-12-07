@@ -114,9 +114,9 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
   }, [selectedBookingCoach?.route]);
 
   return (
-    <table className="min-w-full border-collapse border border-gray-300">
+    <table className="min-w-full text-center border-collapse border border-gray-300">
       <thead>
-        <tr className="bg-primary text-white">
+        <tr className="bg-primary ">
           <th className="border-2 border-[#3491b1] p-2">
             {translate("যাত্রা শুরু সময় এবং তারিখ", "Departure Time & Date")}
           </th>
@@ -136,7 +136,7 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
             {translate("ভাড়া", "Fare")}
           </th>
           <th className="border-2 border-[#3491b1] p-2">
-            {translate("নিবন্ধন নম্বর", "Registration Number")}
+            {translate("কোচের ধরন", "Coach Type")}
           </th>
           <th className="border-2 border-[#3491b1] p-2">
             {translate("শুরুর কাউন্টার", "Starting Counter")}
@@ -192,7 +192,13 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
                 })}
               </td>
               <td className="border border-gray-300 p-2">
-                {item.registrationNo || translate("N/A", "N/A")}
+                {item?.coachClass === "B_Class"
+                  ? "Business Class"
+                  : item?.coachClass === "S_Class"
+                  ? "Suite Class"
+                  : item?.coachClass === "Sleeper"
+                  ? "Sleeper Coach"
+                  : "Economy Class"}
               </td>
               <td className="border border-gray-300 p-2">
                 {item.fromCounter?.name || translate("N/A", "N/A")}

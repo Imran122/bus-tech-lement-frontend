@@ -19,6 +19,7 @@ import BoookingFormRoundTripPublic, {
 } from "./BoookingFormRoundTripPublic";
 export default function SearchResult({
   bookingState,
+  //@ts-ignore
   setBookingState,
 }: {
   bookingState: any;
@@ -150,12 +151,27 @@ export default function SearchResult({
   };
   return (
     <div className="px-3">
+      {/* {bookingState.orderType !== "Round_Trip" && 
+       
+       } */}
       <Accordion className="w-full space-y-3" type="single" collapsible>
         {bookingState.bookingCoachesList?.length > 0 && (
           <HomeTickitBookingTable coachData={bookingState.bookingCoachesList} />
         )}
       </Accordion>
-
+      {bookingState.roundTripGobookingCoachesList?.length > 0 && (
+        <div className="my-3 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-[#b642c5]/50 border-dashed bg-[#b642c5] backdrop-blur-[2px]">
+          <h2 className="font-bold text-white text-2xl">
+            {translate(
+              "আপনার যাত্রা শুরুর টিকিট নির্বাচন করুন",
+              "Select Your Start Journey Ticket"
+            )}
+          </h2>
+          <span className="py-3 text-white">
+            <PiKeyReturnBold size={24} />
+          </span>
+        </div>
+      )}
       <Accordion className="w-full space-y-3" type="single" collapsible>
         {bookingState?.roundTripGobookingCoachesList?.length > 0 && (
           <HomeRoundTripTickitTable
@@ -170,11 +186,14 @@ export default function SearchResult({
       </Accordion>
 
       {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
-        <div className="my-10 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-green-500/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
-          <h2 className="font-bold text-green-400 text-2xl">
-            Select Return Ticket
+        <div className="my-3 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-[#b642c5]/50 border-dashed bg-[#b642c5] backdrop-blur-[2px]">
+          <h2 className="font-bold text-white text-2xl">
+            {translate(
+              "আপনার রিটার্ন জার্নি টিকিট নির্বাচন করুন",
+              " Select Your Return Journey Ticket"
+            )}
           </h2>
-          <span className="py-3">
+          <span className="py-3 text-white">
             <PiKeyReturnBold size={24} />
           </span>
         </div>

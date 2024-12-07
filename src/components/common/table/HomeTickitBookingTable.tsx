@@ -21,9 +21,9 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full border-collapse border border-gray-300">
+      <table className="min-w-full text-center border-collapse border border-gray-300">
         <thead>
-          <tr className="bg-primary text-white">
+          <tr className="bg-primary ">
             <th className="border-2 border-[#3491b1] p-2">
               {translate("যাত্রা শুরু সময় এবং তারিখ", "Departure Time & Date")}
             </th>
