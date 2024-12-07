@@ -161,6 +161,12 @@ const accountantExpenseManagementLinks = {
       key: "profit_and_loss",
       href: "profit_and_loss",
     },
+    {
+      icon: LuBus,
+      label: { bn: "ট্রিপ ওয়াইজ প্রতিবেদন", en: "Trip No Wise Report" },
+      key: "trip-no-wise-report",
+      href: "trip-no-wise-report",
+    },
   ],
 };
 //new
