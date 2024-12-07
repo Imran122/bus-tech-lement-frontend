@@ -211,6 +211,7 @@ const ProfitandLoseReport = () => {
             <thead className="bg-gray-100">
               <tr>
                 {[
+                  "Date",
                   "Trip No",
                   "Bus No",
                   "Up Date",
@@ -246,15 +247,16 @@ const ProfitandLoseReport = () => {
                     className="hover:bg-gray-50 text-center"
                   >
                     {[
+                      row.date, // Trip No
                       row.id, // Trip No
                       row.registrationNo ?? "N/A", // Bus No
                       row.upDate ?? "N/A", // Down Date
                       row.downDate ?? "N/A", // Down Date
-                      row.passengerUp ?? "N/A", // Down Date
-                      row.PassengerDown ?? "N/A", // Down Date
-                      row.passengerTotal ?? "N/A", // Bus No
-                      row.upIncome ?? "N/A", // Bus No
-                      row.downIncome ?? "N/A", // Bus No
+                      row.passengerUpWay ?? "N/A", // Down Date
+                      row.passengerDownWay ?? "N/A", // Down Date
+                      row.totalPassenger ?? "N/A", // Bus No
+                      row.upWayIncome ?? "N/A", // Bus No
+                      row.downWayIncome ?? "N/A", // Bus No
 
                       (row.totalIncome - row.totalExpense)?.toFixed(2) ??
                         "0.00",
@@ -286,7 +288,7 @@ const ProfitandLoseReport = () => {
               {/* Footer Row (Totals) */}
               <tr className="font-semibold bg-gray-100 text-center">
                 <td className="border border-gray-300 px-4 py-2">Totals</td>
-                {[...Array(8)].map((_, i) => (
+                {[...Array(9)].map((_, i) => (
                   <td key={i} className="border border-gray-300 px-4 py-2"></td>
                 ))}
                 <td className="border border-gray-300 px-4 py-2">
@@ -339,24 +341,59 @@ const ProfitandLoseReport = () => {
           <tbody>
             {[
               {
-                label: "Actual Profit",
+                label: "Total Up & Down",
                 value: `${
                   profitAndLossData?.data
                     ?.reduce(
-                      (acc: any, row: any) =>
-                        acc + (row.cashOnHand - row.gp || 0),
+                      (acc: any, row: any) => acc + (row.totalIncome || 0),
                       0
                     )
                     .toFixed(2) ?? "00.00"
                 }`,
               },
-              { label: "Compensation from Iconic Express", value: "00.00" },
-              { label: "Total Monthly Profit", value: "00.00" },
               {
-                label: "Bus Owner received for Repair & Maintenance",
-                value: "00.00",
+                label: "Road Expense",
+                value: `${
+                  profitAndLossData?.data
+                    ?.reduce(
+                      (acc: any, row: any) => acc + (row.totalExpense || 0),
+                      0
+                    )
+                    .toFixed(2) ?? "00.00"
+                }`,
               },
-              { label: "Owner Balance", value: "00.00" },
+              {
+                label: "Total Amount",
+                value: `${
+                  profitAndLossData?.data
+                    ?.reduce(
+                      (acc: any, row: any) =>
+                        acc + (row.totalIncome - row.totalExpense || 0),
+                      0
+                    )
+                    .toFixed(2) ?? "00.00"
+                }`,
+              },
+              {
+                label: "GP",
+                value: `${
+                  profitAndLossData?.data
+                    ?.reduce((acc: any, row: any) => acc + (row.gp || 0), 0)
+                    .toFixed(2) ?? "00.00"
+                }`,
+              },
+              {
+                label: "Bus Wise Profit",
+                value: `${
+                  profitAndLossData?.data
+                    ?.reduce(
+                      (acc: any, row: any) =>
+                        acc + (row.totalIncome - row.totalExpense - row.gp),
+                      0
+                    )
+                    .toFixed(2) ?? "00.00"
+                }`,
+              },
             ].map((row, index) => (
               <tr key={index} className="hover:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2 font-medium">

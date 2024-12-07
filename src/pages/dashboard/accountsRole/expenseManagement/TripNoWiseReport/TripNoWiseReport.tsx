@@ -1,3 +1,4 @@
+import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -12,6 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  useFetchTripWiseReportQuery,
+  useGetTripDataByDateQuery,
+} from "@/store/api/adminReport/adminReportApi";
 import { format } from "date-fns";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -21,10 +26,17 @@ const TripNoWiseReport = () => {
     from: undefined,
     to: undefined,
   });
+
   const [selectedTripNo, setSelectedTripNo] = useState<string | undefined>();
 
-  const tripNumbers = ["T123", "T456", "T789"]; // Example static trip numbers
+  const { data: tripData, isLoading: isTripsLoading } =
+    useGetTripDataByDateQuery({
+      fromDate: date?.from ? format(date.from, "yyyy-MM-dd") : "",
+      toDate: date?.to ? format(date.to, "yyyy-MM-dd") : "",
+    });
 
+  const { data: reportData, isLoading: isReportLoading } =
+    useFetchTripWiseReportQuery({ selectedTripNo });
   const staticTableData = [
     {
       index: 1,
@@ -77,6 +89,16 @@ const TripNoWiseReport = () => {
     0
   );
 
+  // Handler to fetch table data when trip number is selected
+  // Handler to fetch table data when trip number is selected
+  const handleFetchReport = (tripNo: string) => {
+    setSelectedTripNo(tripNo);
+    fetchTripWiseReport({ tripNumber: tripNo });
+  };
+
+  if (isTripsLoading || isReportLoading) {
+    return <TableSkeleton />;
+  }
   return (
     <section className="p-4">
       {/* Date Range Selector and Trip No Dropdown */}
@@ -116,20 +138,37 @@ const TripNoWiseReport = () => {
 
         <div>
           <label className="text-sm font-semibold">Select Trip No</label>
-          <Select onValueChange={setSelectedTripNo}>
+          <Select onValueChange={(value) => handleFetchReport(value)}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select Trip No" />
             </SelectTrigger>
             <SelectContent>
-              {tripNumbers.map((tripNo) => (
-                <SelectItem key={tripNo} value={tripNo}>
-                  {tripNo}
+              {isTripsLoading ? (
+                <SelectItem value="loading" disabled>
+                  Loading...
                 </SelectItem>
-              ))}
+              ) : tripData?.data?.length > 0 ? (
+                tripData?.data?.map((trip: any) => (
+                  <SelectItem key={trip.id} value={trip.id}>
+                    {trip.id}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="no-trips" disabled>
+                  No Trips Available
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>
       </div>
+
+      {/* Display Selected Trip */}
+      {selectedTripNo && (
+        <p className="mt-4 text-sm font-semibold">
+          Selected Trip: <span className="text-blue-600">{selectedTripNo}</span>
+        </p>
+      )}
 
       {/* Previous Table */}
       <div className="border overflow-x-auto mb-6">

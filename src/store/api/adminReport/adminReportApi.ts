@@ -16,23 +16,37 @@ const adminReportApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["admin_report"],
     }),
-    getTripReport:builder.query({
-     query:({registrationNo, fromDate, toDate})=>({
-      url:`/admin/trip-report?registrationNo=${registrationNo}&fromDate=${fromDate}&toDate=${toDate}`,
-      method: 'GET',
-     }),
-     providesTags:["tripReport"]
+    getTripReport: builder.query({
+      query: ({ registrationNo, fromDate, toDate }) => ({
+        url: `/admin/trip-report?registrationNo=${registrationNo}&fromDate=${fromDate}&toDate=${toDate}`,
+        method: "GET",
+      }),
+      providesTags: ["tripReport"],
     }),
-    getExpenseSubCategoryReport:builder.query({
-     query:({registrationNo, fromDate, toDate})=>({
-      url:`/admin/expense-accounts/get-expense-report?registrationNo=${registrationNo}&fromDate=${fromDate}&toDate=${toDate}`,
-      method: 'GET',
-     }),
-     providesTags:["tripReport"]
+    getExpenseSubCategoryReport: builder.query({
+      query: ({ registrationNo, fromDate, toDate }) => ({
+        url: `/admin/expense-accounts/get-expense-report?registrationNo=${registrationNo}&fromDate=${fromDate}&toDate=${toDate}`,
+        method: "GET",
+      }),
+      providesTags: ["tripReport"],
     }),
     getUserList: builder.query({
       query: ({ size, page }) => ({
         url: `/user/get-user-all?size=${size}&page=${page}`,
+        method: "GET",
+      }),
+      providesTags: ["admin_report"],
+    }),
+    getTripDataByDate: builder.query({
+      query: ({ fromDate, toDate }) => ({
+        url: `/admin/get-trip-number?fromDate=${fromDate}&toDate=${toDate}`,
+        method: "GET",
+      }),
+      providesTags: ["admin_report"],
+    }),
+    fetchTripWiseReport: builder.query({
+      query: ({ tripNumber }) => ({
+        url: `/admin/trip-wise-report?tripNumber=${tripNumber}`,
         method: "GET",
       }),
       providesTags: ["admin_report"],
@@ -44,5 +58,7 @@ export const {
   useGetTodaysSaleAdminReportQuery,
   useGetUserWiseSaleAdminReportQuery,
   useGetUserListQuery,
-  useGetTripReportQuery
+  useGetTripReportQuery,
+  useGetTripDataByDateQuery,
+  useFetchTripWiseReportQuery,
 } = adminReportApi;
