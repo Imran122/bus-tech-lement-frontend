@@ -29,6 +29,9 @@ export interface IAccountsNavigationLinks {
   key: string;
   href: string;
   subLinks?: INavigationLinks[];
+
+  action?: string; // Custom action identifier, e.g., "openModal"
+  modalComponent?: string; // Modal component identifier
 }
 
 // CONTACTS LINKS
@@ -43,6 +46,25 @@ const accountDashboardRootLinks = {
       label: { bn: "ড্যাশবোর্ড", en: "Dashboard" },
       key: "dashboard",
       href: "dashboard",
+    },
+    {
+      icon: LuUserCog,
+      label: { bn: "ব্যয় যোগ করুন", en: "Add Expense" },
+      key: "add_accounts_role_expense",
+      modalComponent: "AddAccountsRoleExpense", // Indicates it opens a modal
+    },
+    {
+      icon: LuBus,
+      label: { bn: "ব্যয় প্রতিবেদন", en: "Expense Report" },
+      key: "expense_category_report",
+      href: "expense_category_report",
+    },
+
+    {
+      icon: LuBus,
+      label: { bn: "লাভ ও ক্ষতির প্রতিবেদন", en: "Profit And Loss" },
+      key: "profit_and_loss",
+      href: "profit_and_loss",
     },
   ],
 };

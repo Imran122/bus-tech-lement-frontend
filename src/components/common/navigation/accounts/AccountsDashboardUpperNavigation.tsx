@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { shareAuthentication } from "@/utils/helpers/shareAuthentication";
 import { useAppContext } from "@/utils/hooks/useAppContext";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { LuUserCircle } from "react-icons/lu";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import logocompany from "../../../../assets/longeng.png";
@@ -20,8 +20,7 @@ import {
   accountsNavigationLinks,
   IAccountsNavigationLinks,
 } from "@/utils/constants/common/accounts/accountsNavigationLinks";
-import PageTransition from "../../effect/PageTransition";
-import { Label } from "../../typography/Label";
+import ModalSystem from "@/utils/constants/common/commonModal/ModalSystem";
 import LocaleSwitcher from "../LocaleSwitcher";
 import ThemeSwitcher from "../ThemeSwitcher";
 import AccountsDashboardSidebarSmallDevices from "./AccountsDashboardSidebarSmallDevices";
@@ -38,7 +37,13 @@ const AccountsDashboardUpperNavigation: FC<
     (singleSubNavigation: IAccountsNavigationLinks) =>
       singleSubNavigation.key === route
   ) as any;
+  const [activeModal, setActiveModal] = useState<string | null>(null);
 
+  const handleLinkClick = (subLink: IAccountsNavigationLinks) => {
+    if (subLink.modalComponent) {
+      setActiveModal(subLink.modalComponent); // Open modal
+    }
+  };
   return (
     <header className="sticky !h-14 md:!bg-muted/30 !bg-muted/70 backdrop-blur-md !w-[98.7%] ml-[13px] rounded-md top-[7px] z-30 flex items-center gap-4 !px-2 sm:border-0 sm:bg-transparent transition-all  duration-300">
       {/* NAVIGATION LINKS */}
@@ -49,24 +54,36 @@ const AccountsDashboardUpperNavigation: FC<
         <ul className="hidden lg:flex gap-x-2 items-center">
           {subNavigation?.subLinks?.length > 0 &&
             subNavigation?.subLinks?.map(
-              (singleNav: IAccountsNavigationLinks, navIndex: number) => (
-                <li key={navIndex}>
-                  <PageTransition>
-                    <NavLink
-                      to={"/" + role + "/" + singleNav.href}
-                      className={({ isActive, isPending }) =>
-                        isPending
-                          ? "pending"
-                          : isActive
-                          ? "active_link"
-                          : "inactive_link"
-                      }
-                    >
-                      <Label className="cursor-pointer" size="sm">
-                        {translate(singleNav.label.bn, singleNav.label.en)}
-                      </Label>
-                    </NavLink>
-                  </PageTransition>
+              (subLink: IAccountsNavigationLinks, index: number) => (
+                <li key={index}>
+                  {
+                    //@ts-ignore
+                    subLink.action ? (
+                      <button
+                        onClick={() => handleLinkClick(subLink)}
+                        className="btn btn-primary"
+                      >
+                        {translate(subLink.label.bn, subLink.label.en)}
+                      </button>
+                    ) : //@ts-ignore
+                    subLink.modalComponent ? (
+                      <button
+                        onClick={() => handleLinkClick(subLink)}
+                        className="btn btn-primary  px-3 py-1"
+                      >
+                        {translate(subLink.label.bn, subLink.label.en)}
+                      </button>
+                    ) : (
+                      <NavLink
+                        to={"/" + role + "/" + subLink.href}
+                        className={({ isActive }) =>
+                          isActive ? "active_link" : "inactive_link"
+                        }
+                      >
+                        {translate(subLink.label.bn, subLink.label.en)}
+                      </NavLink>
+                    )
+                  }
                 </li>
               )
             )}
@@ -119,6 +136,7 @@ const AccountsDashboardUpperNavigation: FC<
       </nav>
       {/* DASHBOARD SIDEBAR FOR SMALL DEVICES */}
       <AccountsDashboardSidebarSmallDevices />
+      <ModalSystem activeModal={activeModal} setActiveModal={setActiveModal} />
     </header>
   );
 };

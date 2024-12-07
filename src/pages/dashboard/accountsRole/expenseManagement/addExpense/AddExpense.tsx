@@ -36,12 +36,21 @@ import useMessageGenerator from "@/utils/hooks/useMessageGenerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { LuCheck, LuLoader2 } from "react-icons/lu";
 import { IExpenseStateProps } from "./ExpenseList";
 
 interface IAddExpenseProps {
+  setOpen?: Dispatch<SetStateAction<boolean>>; // Proper type for setOpen function
+  setExpenseOpen?: Dispatch<SetStateAction<boolean>>; // Proper type for setExpenseOpen function
   setExpenseState: (
     userState: (prevState: IExpenseStateProps) => IExpenseStateProps
   ) => void;
@@ -52,7 +61,11 @@ interface IAddExpenseStateProps {
   calenderOpen: boolean;
 }
 
-const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
+const AddExpense: FC<IAddExpenseProps> = ({
+  setOpen,
+  setExpenseState,
+  setExpenseOpen,
+}) => {
   const { translate } = useCustomTranslator();
   const { toast } = useToast();
   const { toastMessage } = useMessageGenerator();
@@ -112,6 +125,10 @@ const AddExpense: FC<IAddExpenseProps> = ({ setExpenseState }) => {
         ...prevState,
         addExpenseOpen: false,
       }));
+      if (setOpen) setOpen(false);
+      if (setExpenseOpen) {
+        setExpenseOpen(false);
+      }
     }
   };
 
