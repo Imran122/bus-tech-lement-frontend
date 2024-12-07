@@ -18,7 +18,6 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
   const toggleRow = (index: number) => {
     setExpandedRowIndex((prevIndex) => (prevIndex === index ? null : index));
   };
-
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-center border-collapse border border-gray-300">
@@ -33,9 +32,9 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
             <th className="border-2 border-[#3491b1] p-2">
               {translate("উপলব্ধ", "Available")}
             </th>
-            <th className="border-2 border-[#3491b1] p-2">
+            {/* <th className="border-2 border-[#3491b1] p-2">
               {translate("বুকড", "Booked")}
-            </th>
+            </th> */}
             <th className="border-2 border-[#3491b1] p-2">
               {translate("বিক্রিত", "Sold")}
             </th>
@@ -76,14 +75,14 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
                     coach?.seatAvailable?.toString() || "0"
                   )}
                 </td>
-                <td className="border border-gray-300 p-2">
+                {/* <td className="border border-gray-300 p-2">
                   {translate(
                     convertToBnDigit(
                       coach?.CounterBookedSeat?.length?.toString() || "0"
                     ),
                     coach?.CounterBookedSeat?.length?.toString() || "0"
                   )}
-                </td>
+                </td> */}
                 <td className="border border-gray-300 p-2">
                   {translate(
                     convertToBnDigit(
@@ -92,11 +91,38 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
                     coach?.orderSeat?.length?.toString() || "0"
                   )}
                 </td>
-                <td className="border border-gray-300 p-2">
-                  {formatter({
-                    type: "amount",
-                    amount: coach.fare?.amount || 0,
-                  })}
+                <td className="border border-gray-300 p-2 flex flex-col">
+                  {coach.discount > 0 && (
+                    <span className="font-anek font-light text-sm line-through ">
+                      {translate(
+                        convertToBnDigit(
+                          formatter({
+                            type: "amount",
+                            amount: coach?.fare?.amount,
+                          })
+                        ),
+                        formatter({
+                          type: "amount",
+                          amount: coach?.fare?.amount,
+                        })
+                      )}
+                    </span>
+                  )}
+
+                  <span className="font-anek font-medium text-xl">
+                    {translate(
+                      convertToBnDigit(
+                        formatter({
+                          type: "amount",
+                          amount: coach?.fare?.amount - coach.discount,
+                        })
+                      ),
+                      formatter({
+                        type: "amount",
+                        amount: coach?.fare?.amount - coach.discount,
+                      })
+                    )}
+                  </span>
                 </td>
                 <td className="border border-gray-300 p-2">
                   {coach?.coachClass === "B_Class"
