@@ -403,6 +403,7 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
               </PopoverTrigger>
               <PopoverContent align="end">
                 <Calendar
+                  captionLayout="dropdown-buttons"
                   style={{ pointerEvents: "auto" }}
                   mode="single"
                   selected={addUserFormState.date || undefined}

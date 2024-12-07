@@ -126,6 +126,9 @@ export default function CounterWiseReport() {
                       setSelectedDate(date ?? null); // Handle undefined by setting to null
                       setCalendarOpen(false);
                     }}
+                    fromYear={1960}
+                    toYear={new Date().getFullYear()}
+                    captionLayout="dropdown-buttons"
                   />
                 </PopoverContent>
               </Popover>
@@ -194,20 +197,22 @@ export default function CounterWiseReport() {
         </div>
 
         {/* Table Display */}
-        {filteredCounterData && (
-          <div ref={printSaleRef} className="mt-4">
-            <table className="min-w-full border-collapse border border-gray-200">
-              <thead>
-                <tr>
-                  <th className="border px-4 py-2">Counter Name</th>
-                  <th className="border px-4 py-2">Coach No</th>
-                  <th className="border px-4 py-2">Total Seat</th>
-                  <th className="border px-4 py-2">Total Taka</th>
-                  <th className="border px-4 py-2">Commission (Tk)</th>
-                  <th className="border px-4 py-2">Payable Amount (Tk)</th>
-                </tr>
-              </thead>
-              <tbody>
+
+        {/* Table Display */}
+        <div ref={printSaleRef} className="mt-4">
+          <table className="min-w-full border-collapse border border-gray-200">
+            <thead>
+              <tr>
+                <th className="border px-4 py-2">Counter Name</th>
+                <th className="border px-4 py-2">Coach No</th>
+                <th className="border px-4 py-2">Total Seat</th>
+                <th className="border px-4 py-2">Total Taka</th>
+                <th className="border px-4 py-2">Commission (Tk)</th>
+                <th className="border px-4 py-2">Payable Amount (Tk)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCounterData ? (
                 <tr className="text-center">
                   <td className="border px-4 py-2">
                     {filteredCounterData.counterName || "N/A"}
@@ -229,23 +234,34 @@ export default function CounterWiseReport() {
                       filteredCounterData.commission || 0}
                   </td>
                 </tr>
-              </tbody>
-            </table>
+              ) : (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="border px-4 py-6 text-center text-gray-500"
+                  >
+                    No Data Available
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
 
-            {/* Additional Table for Passenger Details */}
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-4">Passenger Details</h3>
-              <table className="min-w-full border-collapse border border-gray-200">
-                <thead>
-                  <tr>
-                    <th className="border px-4 py-2">Passenger Name</th>
-                    <th className="border px-4 py-2">Phone</th>
-                    <th className="border px-4 py-2">Seats Booked</th>
-                    <th className="border px-4 py-2">Sold By</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredCounterData.orderDetails.map(
+          {/* Additional Table for Passenger Details */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-4">Passenger Details</h3>
+            <table className="min-w-full border-collapse border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="border px-4 py-2">Passenger Name</th>
+                  <th className="border px-4 py-2">Phone</th>
+                  <th className="border px-4 py-2">Seats Booked</th>
+                  <th className="border px-4 py-2">Sold By</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCounterData?.orderDetails?.length > 0 ? (
+                  filteredCounterData.orderDetails.map(
                     (order: any, index: number) => (
                       <tr key={index} className="text-center">
                         <td className="border px-4 py-2">
@@ -260,16 +276,26 @@ export default function CounterWiseReport() {
                             .join(", ")}
                         </td>
                         <td className="border px-4 py-2">
-                          {order.user?.userName}
+                          {order.user?.userName || "N/A"}
                         </td>
                       </tr>
                     )
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  )
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="border px-4 py-6 text-center text-gray-500"
+                    >
+                      No Passenger Details Available
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
+
         {filteredCounterData &&
           filteredCounterData?.counterType !== "Own_Counter" &&
           !filteredCounterData.reportSubmitStatus && (
@@ -278,11 +304,11 @@ export default function CounterWiseReport() {
             </Button>
           )}
 
-        {!filteredCounterData && (
+        {/* {!filteredCounterData && (
           <div className="mt-4 text-red-500 text-center">
             No data available for your counter.
           </div>
-        )}
+        )} */}
       </FormWrapper>
       <div className="invisible hidden -left-full">
         <PrintCounterReport

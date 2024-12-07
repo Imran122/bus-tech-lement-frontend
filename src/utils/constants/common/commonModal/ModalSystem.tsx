@@ -1,5 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import AddFuelPayment from "@/pages/dashboard/admin/fuel/AddFuelPayment";
+import AddExtraIncome from "@/pages/dashboard/supervisor/AddExtraIncome";
+import AddExpense from "@/pages/dashboard/supervisor/expense/AddExpense";
 
 const ModalSystem = ({
   activeModal,
@@ -16,6 +18,18 @@ const ModalSystem = ({
       <DialogContent>
         {activeModal === "AddFuelPayment" && (
           <AddFuelPayment setPaymentOpen={() => setActiveModal(null)} />
+        )}
+        {activeModal === "AddExtraIncome" && (
+          <AddExtraIncome
+            setCollectionState={() => {}} // Add appropriate function
+            setIncomeOpen={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === "AddExpense" && (
+          <AddExpense
+            setOpen={() => {}} // Add appropriate function
+            setExpenseOpen={() => setActiveModal(null)}
+          />
         )}
         {/* Add other modals dynamically */}
       </DialogContent>

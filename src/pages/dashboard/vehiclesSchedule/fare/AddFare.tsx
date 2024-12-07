@@ -246,6 +246,7 @@ const AddFare: FC<IAddFareProps> = ({ setFareState }) => {
                       })
                     );
                   }}
+                  captionLayout="dropdown-buttons"
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
                 />
@@ -310,6 +311,7 @@ const AddFare: FC<IAddFareProps> = ({ setFareState }) => {
                       })
                     );
                   }}
+                  captionLayout="dropdown-buttons"
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
                 />

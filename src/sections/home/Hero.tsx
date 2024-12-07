@@ -40,7 +40,7 @@ const Hero: FC<IHeroProps> = () => {
 
   return (
     <>
-      <section className="shadow-2xl pb-10 rounded-md bg-white">
+      <section className="shadow-2xl pb-10 rounded-md ">
         <SectionWrapper className="lg:px-4 mt-5 mb-0 mx-auto">
           {/* Left side: Heading and Booking Form */}
           <div className="w-full flex flex-col-reverse lg:flex-row items-center justify-center px-2">
@@ -119,7 +119,7 @@ const Hero: FC<IHeroProps> = () => {
           </div>
         </div>
       </section>
-      <section className="shadow-2xl rounded-md bg-white px-3 py-10 mt-10">
+      <section className="shadow-2xl rounded-md  px-3 py-10 mt-10">
         <div className=" w-full mx-auto">
           <ClientNote />
         </div>

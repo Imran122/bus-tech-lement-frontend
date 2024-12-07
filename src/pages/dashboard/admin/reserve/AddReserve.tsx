@@ -2,6 +2,7 @@ import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
 // import { TimePicker } from "@/components/common/form/TimePicker";
 import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
+import { Paragraph } from "@/components/common/typography/Paragraph";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -38,7 +39,6 @@ import { CalendarIcon } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IReserveStateProps } from "./ReserveList";
-import { Paragraph } from "@/components/common/typography/Paragraph";
 
 interface IAddReserveProps {
   setReserveState: (
@@ -403,6 +403,7 @@ const AddResurb: FC<IAddReserveProps> = ({ setReserveState, reserveState }) => {
                   }}
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
+                  captionLayout="dropdown-buttons"
                 />
               </PopoverContent>
             </Popover>
@@ -492,6 +493,7 @@ const AddResurb: FC<IAddReserveProps> = ({ setReserveState, reserveState }) => {
                   }}
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
+                  captionLayout="dropdown-buttons"
                 />
               </PopoverContent>
             </Popover>

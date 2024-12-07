@@ -141,7 +141,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
       <div className="w-auto">
         <div className="">
           <div className="rounded-xl ">
-            <ul className="grid lg:grid-cols-6  lg:gap-4 gap-2 items-center justify-start">
+            <ul className="grid lg:grid-cols-6  lg:gap-4 gap-2 justify-start">
               <li>
                 <Button onClick={() => dispatch(openModal())} className="">
                   Round Trip
@@ -318,6 +318,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
                       }}
                       fromYear={1960}
                       toYear={new Date().getFullYear()}
+                      captionLayout="dropdown-buttons"
                     />
                   </PopoverContent>
                 </Popover>

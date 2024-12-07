@@ -35,6 +35,15 @@ const counterDashboardRootLinks = {
       key: "dashboard",
       href: "dashboard",
     },
+  ],
+};
+// CONTACTS LINKS
+const counterDashboardReportLinks = {
+  icon: LuContact2,
+  label: { bn: "কোচ ভিত্তিক রিপোর্ট", en: "Coach Wise Report" },
+  key: "coach-wise-report",
+  href: "coach-wise-report",
+  subLinks: [
     {
       icon: LuUserCog,
       label: { bn: "কোচ ভিত্তিক রিপোর্ট", en: "Coach Wise Report" },
@@ -43,8 +52,6 @@ const counterDashboardRootLinks = {
     },
   ],
 };
-// CONTACTS LINKS
-
 const settingsLinks = {
   icon: LuSettings,
   label: { bn: "সেটিংস", en: "Settings" },
@@ -99,12 +106,7 @@ const settingsLinks = {
 export const counterNavigationLinks = [
   // CONTACT LINKS
   { ...counterDashboardRootLinks },
-  // VEHICLES & SCHEDULE MANAGEMENT
 
-  // FINANCE MANAGEMENT LINKS
-
-  // EXPENDITURE MANAGEMENT LINKS
-
-  // SETTINGS LINKS
+  { ...counterDashboardReportLinks },
   { ...settingsLinks },
 ];

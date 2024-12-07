@@ -1,5 +1,5 @@
-import BookingSeatCard from "@/components/common/card/BookingSeatCard";
-import BookingSeatCardRoundTripPublic from "@/components/common/card/BookingSeatCardRoundTripPublic";
+import HomeRoundTripTickitTable from "@/components/common/table/HomeRoundTripTickitTable";
+import HomeTickitBookingTable from "@/components/common/table/HomeTickitBookingTable";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ import BoookingFormRoundTripPublic, {
 } from "./BoookingFormRoundTripPublic";
 export default function SearchResult({
   bookingState,
+  //@ts-ignore
   setBookingState,
 }: {
   bookingState: any;
@@ -150,69 +151,65 @@ export default function SearchResult({
   };
   return (
     <div className="px-3">
+      {/* {bookingState.orderType !== "Round_Trip" && 
+       
+       } */}
       <Accordion className="w-full space-y-3" type="single" collapsible>
-        {bookingState.bookingCoachesList?.length > 0 &&
-          bookingState.bookingCoachesList.map(
-            (singleCoachData: any, coachDataIndex: number) => (
-              <BookingSeatCard
-                setBookingState={setBookingState}
-                key={coachDataIndex}
-                coachData={singleCoachData}
-                index={coachDataIndex}
-              />
-            )
-          )}
+        {bookingState.bookingCoachesList?.length > 0 && (
+          <HomeTickitBookingTable coachData={bookingState.bookingCoachesList} />
+        )}
       </Accordion>
-
+      {bookingState.roundTripGobookingCoachesList?.length > 0 && (
+        <div className="my-3 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-[#b642c5]/50 border-dashed bg-[#b642c5] backdrop-blur-[2px]">
+          <h2 className="font-bold text-white text-2xl">
+            {translate(
+              "আপনার যাত্রা শুরুর টিকিট নির্বাচন করুন",
+              "Select Your Start Journey Ticket"
+            )}
+          </h2>
+          <span className="py-3 text-white">
+            <PiKeyReturnBold size={24} />
+          </span>
+        </div>
+      )}
       <Accordion className="w-full space-y-3" type="single" collapsible>
-        {bookingState.roundTripGobookingCoachesList?.length > 0 &&
-          bookingState.roundTripGobookingCoachesList.map(
-            (singleCoachData: any, coachDataIndex: number) => (
-              <BookingSeatCardRoundTripPublic
-                setBookingState={setBookingState}
-                key={coachDataIndex}
-                coachData={singleCoachData}
-                index={coachDataIndex}
-                bookingFormState={bookingFormState}
-                setBookingFormState={setBookingFormState}
-                setGoViaRoute={setGoViaRoute}
-                setReturnViaRoute={setReturnViaRoute}
-                setBookingCoachSingle={setBookingCoachSingle}
-                bookingCoachSingle={bookingCoachSingle}
-              />
-            )
-          )}
+        {bookingState?.roundTripGobookingCoachesList?.length > 0 && (
+          <HomeRoundTripTickitTable
+            data={bookingState.roundTripGobookingCoachesList}
+            bookingFormState={bookingFormState}
+            setBookingFormState={setBookingFormState}
+            setGoViaRoute={setGoViaRoute}
+            setReturnViaRoute={setReturnViaRoute}
+            setBookingCoachSingle={setBookingCoachSingle}
+          />
+        )}
       </Accordion>
 
       {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
-        <div className="my-10 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-green-500/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
-          <h2 className="font-bold text-green-400 text-2xl">
-            Select Return Ticket
+        <div className="my-3 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-[#b642c5]/50 border-dashed bg-[#b642c5] backdrop-blur-[2px]">
+          <h2 className="font-bold text-white text-2xl">
+            {translate(
+              "আপনার রিটার্ন জার্নি টিকিট নির্বাচন করুন",
+              " Select Your Return Journey Ticket"
+            )}
           </h2>
-          <span className="py-3">
+          <span className="py-3 text-white">
             <PiKeyReturnBold size={24} />
           </span>
         </div>
       )}
 
       <Accordion className="w-full space-y-3" type="single" collapsible>
-        {bookingState.roundTripReturnBookingCoachesList?.length > 0 &&
-          bookingState.roundTripReturnBookingCoachesList.map(
-            (singleCoachData: any, coachDataIndex: number) => (
-              <BookingSeatCardRoundTripPublic
-                setBookingState={setBookingState}
-                key={coachDataIndex}
-                coachData={singleCoachData}
-                index={coachDataIndex}
-                bookingFormState={bookingFormState}
-                setBookingFormState={setBookingFormState}
-                setGoViaRoute={setGoViaRoute}
-                setReturnViaRoute={setReturnViaRoute}
-                setBookingCoachSingle={setBookingCoachSingle}
-                bookingCoachSingle={bookingCoachSingle}
-              />
-            )
-          )}
+        {bookingState?.roundTripReturnBookingCoachesList?.length > 0 && (
+          <HomeRoundTripTickitTable
+            data={bookingState.roundTripReturnBookingCoachesList}
+            bookingFormState={bookingFormState}
+            setBookingFormState={setBookingFormState}
+            setGoViaRoute={setGoViaRoute}
+            setReturnViaRoute={setReturnViaRoute}
+            setBookingCoachSingle={setBookingCoachSingle}
+          />
+        )}
       </Accordion>
 
       {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
@@ -251,7 +248,7 @@ export default function SearchResult({
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="border-primary/50 border-dashed bg-background backdrop-blur-[2px] duration-300 rounded-lg p-8 w-full max-w-3xl">
+          <div className="border-primary/50 border-dashed bg-background backdrop-blur-[2px] duration-300 rounded-lg p-8 w-full max-w-4xl">
             <button
               onClick={handleCloseModal}
               className="text-red-500 font-bold mb-4"

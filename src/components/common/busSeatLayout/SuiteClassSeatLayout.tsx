@@ -148,7 +148,7 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
   };
 
   return (
-    <div className="flex flex-col justify-center items-start my-0 h-full mt-6 px-4 gap-x-12">
+    <div className="flex w-full flex-col justify-center items-start my-0 h-full mt-6 px-4 gap-x-12">
       <PageTransition className="w-full mb-5 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
         <div className="p-2  w-full">
           <div>
@@ -191,16 +191,16 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
         </div>
       </PageTransition>
 
-      <PageTransition className="w-full flex flex-col items-center justify-center gap-3">
+      <PageTransition className=" w-full flex flex-col justify-center items-center gap-3 h-full">
         <div className=" relative grid grid-cols-4 gap-x-6 pb-3 gap-y-0">
-          <div className="flex flex-col items-center gap-y-2">
+          <div className="col-span-1 flex flex-col items-center gap-y-2">
             {seatsAllocation.left?.map((seat) => renderSeatButton(seat))}
           </div>
 
           {
             //@ts-ignore
             seatsAllocation?.middle?.length > 0 && (
-              <div className="mt-[145px] mr-[10px] flex items-center justify-center">
+              <div className="mt-[145px] col-span-1 mr-[10px] flex items-center justify-center">
                 {
                   //@ts-ignore
                   seatsAllocation.middle.map((seat) => renderSeatButton(seat))
@@ -209,7 +209,7 @@ const SuiteClassSeatLayout: FC<ISeatLayoutProps> = ({
             )
           }
 
-          <div className="grid  w-[150px] grid-cols-2 text-center gap-x-6 gap-y-2">
+          <div className="col-span-2 grid   grid-cols-2 text-center gap-x-7 gap-y-2">
             {seatsAllocation.right?.map((seat) => renderSeatButton(seat))}
           </div>
 

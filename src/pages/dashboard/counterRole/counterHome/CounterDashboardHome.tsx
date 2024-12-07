@@ -6,7 +6,6 @@ import {
   TableToolbar,
   TableWrapper,
 } from "@/components/common/wrapper/TableWrapper";
-import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
@@ -34,7 +33,7 @@ import { useSelector } from "react-redux";
 import CounterOrderDetailsModal from "../sales/CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "../sales/UpdateCounterOrderModal";
 
-import DashboardRoundTripTickitBookingCard from "@/components/common/card/DashboardRoundTripTickitBookingCard";
+import DashboardRoundTripTickitTable from "@/components/common/table/DashboardRoundTripTickitTable";
 import DashboardTickitBookingTable from "@/components/common/table/DashboardTickitBookingTable";
 import {
   AlertDialog,
@@ -72,6 +71,7 @@ export interface ISalesDataStateProps {
 
 const CounterDashboardHome: FC<ISalesListProps> = () => {
   const { translate } = useCustomTranslator();
+  //const dispatch = useDispatch();
   //const { toastMessage } = useMessageGenerator();
   const [query, setQuery] = useState<IQueryProps>({
     sort: "asc",
@@ -90,14 +90,15 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
   //const [popoverOpen, setPopoverOpen] = useState(false);
   const [bookingFormState, setBookingFormState] =
     useState<ICounterBookingFormStateProps>({
-      selectedSeats: [],
       targetedSeat: null,
       redirectLink: null,
       customerName: null,
       redirectConfirm: false,
+      selectedSeats: [],
     });
   // STORE PROMISE RESOLVE REFERENCE
   const promiseResolveRef = useRef<any>(null);
+  //const dispatch = useDispatch();
 
   const [invoiceData, setInvoiceData] = useState();
 
@@ -128,6 +129,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       selectedOrderId: orderId,
     }));
   };
+
   // UPDATE THE COMPONENT VIA REFERENCE
   useEffect(() => {
     if (salesTickitState.isPrinting && promiseResolveRef.current) {
@@ -485,39 +487,47 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
           </PageTransition>
         </div>
         {/* search result design  */}
-        <div>
-          <DashboardTickitBookingTable
-            coachData={bookingState?.bookingCoachesList}
-          />
-        </div>
-
+        {bookingState.orderType !== "Round_Trip" && (
+          <div>
+            <DashboardTickitBookingTable
+              coachData={bookingState?.bookingCoachesList}
+            />
+          </div>
+        )}
+        {bookingState.roundTripGobookingCoachesList?.length > 0 && (
+          <div className="my-3 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-[#b642c5]/50 border-dashed bg-[#b642c5] backdrop-blur-[2px]">
+            <h2 className="font-bold text-white text-2xl">
+              {translate(
+                "আপনার যাত্রা শুরুর টিকিট নির্বাচন করুন",
+                "Select Your Start Journey Ticket"
+              )}
+            </h2>
+            <span className="py-3 text-white">
+              <PiKeyReturnBold size={24} />
+            </span>
+          </div>
+        )}
         {/* roundtrip design work card */}
         {bookingState.orderType === "Round_Trip" &&
           bookingState.roundTripGobookingCoachesList.length > 0 && (
-            <Accordion className="w-full" type="single" collapsible>
-              {bookingState?.roundTripGobookingCoachesList.map(
-                (singleCoachData: any, coachDataIndex: number) => (
-                  <DashboardRoundTripTickitBookingCard
-                    key={coachDataIndex}
-                    coachData={singleCoachData}
-                    index={coachDataIndex}
-                    setBookingCoachSingle={setBookingCoachSingle}
-                    bookingCoachSingle={bookingCoachSingle}
-                    setGoViaRoute={setGoViaRoute}
-                    setReturnViaRoute={setReturnViaRoute}
-                    bookingFormState={bookingFormState}
-                    setBookingFormState={setBookingFormState}
-                  />
-                )
-              )}
-            </Accordion>
+            <DashboardRoundTripTickitTable
+              data={bookingState?.roundTripGobookingCoachesList}
+              bookingFormState={bookingFormState}
+              setBookingFormState={setBookingFormState}
+              setGoViaRoute={setGoViaRoute}
+              setReturnViaRoute={setReturnViaRoute}
+              setBookingCoachSingle={setBookingCoachSingle}
+            />
           )}
         {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
-          <div className="my-10 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-green-500/50 border-dashed bg-primary/5 backdrop-blur-[2px]">
-            <h2 className="font-bold text-green-400 text-2xl">
-              Select Return Ticket
+          <div className="my-3 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-[#b642c5]/50 border-dashed bg-[#b642c5] backdrop-blur-[2px]">
+            <h2 className="font-bold text-white text-2xl">
+              {translate(
+                "আপনার রিটার্ন জার্নি টিকিট নির্বাচন করুন",
+                " Select Your Return Journey Ticket"
+              )}
             </h2>
-            <span className="py-3">
+            <span className="py-3 text-white">
               <PiKeyReturnBold size={24} />
             </span>
           </div>
@@ -526,23 +536,14 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
         {/* roundtrip design work card back */}
         {bookingState.orderType === "Round_Trip" &&
           bookingState.roundTripReturnBookingCoachesList.length > 0 && (
-            <Accordion className="w-full" type="single" collapsible>
-              {bookingState?.roundTripReturnBookingCoachesList.map(
-                (singleCoachData: any, coachDataIndex: number) => (
-                  <DashboardRoundTripTickitBookingCard
-                    key={coachDataIndex}
-                    coachData={singleCoachData}
-                    index={coachDataIndex}
-                    setBookingCoachSingle={setBookingCoachSingle}
-                    bookingCoachSingle={bookingCoachSingle}
-                    setGoViaRoute={setGoViaRoute}
-                    setReturnViaRoute={setReturnViaRoute}
-                    bookingFormState={bookingFormState}
-                    setBookingFormState={setBookingFormState}
-                  />
-                )
-              )}
-            </Accordion>
+            <DashboardRoundTripTickitTable
+              data={bookingState?.roundTripReturnBookingCoachesList}
+              bookingFormState={bookingFormState}
+              setBookingFormState={setBookingFormState}
+              setGoViaRoute={setGoViaRoute}
+              setReturnViaRoute={setReturnViaRoute}
+              setBookingCoachSingle={setBookingCoachSingle}
+            />
           )}
 
         {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
@@ -649,7 +650,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
         )}
       </div>
 
-      {/* Modal */}
+      {/* Modal for round trip form */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center">
           <div className=" absolute top-[50px] left-1/2 transform -translate-x-1/2 w-full max-w-[95%] md:max-w-4xl bg-background border border-primary/50 border-dashed rounded-lg p-5 backdrop-blur-[2px] max-h-[80vh] overflow-y-auto">

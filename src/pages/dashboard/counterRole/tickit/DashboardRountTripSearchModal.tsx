@@ -60,7 +60,7 @@ const DashboardRountTripSearchModal: FC<
   };
 
   return (
-    <div className="text-black ">
+    <div className="">
       <h2 className="text-xl font-bold mb-4">Round Trip Details</h2>
 
       <div className="grid md:grid-cols-2 gap-4">
@@ -163,6 +163,9 @@ const DashboardRountTripSearchModal: FC<
                     date: date ? date.toISOString() : null,
                   }))
                 }
+                fromYear={1960}
+                toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
               />
             </PopoverContent>
           </Popover>
@@ -196,6 +199,9 @@ const DashboardRountTripSearchModal: FC<
                 disabled={(date) =>
                   formState.date && date < new Date(formState.date)
                 }
+                fromYear={1960}
+                toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
               />
             </PopoverContent>
           </Popover>
