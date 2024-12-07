@@ -1,8 +1,15 @@
-import { useRef, useState } from "react";
-import { skipToken } from "@reduxjs/toolkit/query/react";
-import { Button } from "@/components/ui/button";
+import { InputWrapper } from "@/components/common/form/InputWrapper";
 import { Loader } from "@/components/common/Loader";
-import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
+import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
+import { Heading } from "@/components/common/typography/Heading";
+import { Paragraph } from "@/components/common/typography/Paragraph";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -10,27 +17,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
-import { Paragraph } from "@/components/common/typography/Paragraph";
-import { InputWrapper } from "@/components/common/form/InputWrapper";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import { DateRange } from "react-day-picker";
-import { dateFormatter } from "@/utils/helpers/dateFormatter";
-import { appConfiguration } from "@/utils/constants/common/appConfiguration";
-import { useReactToPrint } from "react-to-print";
 import { useGetTripReportQuery } from "@/store/api/adminReport/adminReportApi";
-import { format } from "date-fns";
-import { Heading } from "@/components/common/typography/Heading";
-import ProfitandLossPrint from "../../printLabel/ProfitandLossPrint";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
+import { useGetVehiclesQuery } from "@/store/api/vehiclesSchedule/vehicleApi";
+import { appConfiguration } from "@/utils/constants/common/appConfiguration";
+import { dateFormatter } from "@/utils/helpers/dateFormatter";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { skipToken } from "@reduxjs/toolkit/query/react";
+import { format } from "date-fns";
+import { useRef, useState } from "react";
+import { DateRange } from "react-day-picker";
+import { useReactToPrint } from "react-to-print";
 import PdfProfitandLoss from "../../pdf/PdfProfitandLoss";
-import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
+import ProfitandLossPrint from "../../printLabel/ProfitandLossPrint";
 
 const ProfitandLoseReport = () => {
   const [selectedRegistrationNo, setSelectedRegistrationNo] = useState<
@@ -84,7 +84,6 @@ const ProfitandLoseReport = () => {
   if (singleCmsLoading || vehiclesLoading || profitLossLoading) {
     return <TableSkeleton columns={5} />;
   }
-
   return (
     <section className="pt-4">
       <Paragraph className="text-center pb-4" size={"lg"}>
@@ -213,11 +212,18 @@ const ProfitandLoseReport = () => {
               <tr>
                 {[
                   "Trip No",
-                  "Down Date",
                   "Bus No",
+                  "Up Date",
+                  "Down Date",
+                  "Passenger Up",
+                  "Passenger Down",
+                  "Passenger Total",
+                  "Up Income",
+                  "Down Income",
                   "Up-Down Total Amount",
-                  "Iconic Transport Road Expenses",
-                  "Iconic Transport Balance",
+
+                  "Road Expenses",
+                  "Total Balance",
                   "Iconic Express GP",
                   "Trip Wise Profit",
                 ].map((header) => (
@@ -241,8 +247,15 @@ const ProfitandLoseReport = () => {
                   >
                     {[
                       row.id, // Trip No
-                      row.downDate ?? "N/A", // Down Date
                       row.registrationNo ?? "N/A", // Bus No
+                      row.upDate ?? "N/A", // Down Date
+                      row.downDate ?? "N/A", // Down Date
+                      row.passengerUp ?? "N/A", // Down Date
+                      row.PassengerDown ?? "N/A", // Down Date
+                      row.passengerTotal ?? "N/A", // Bus No
+                      row.upIncome ?? "N/A", // Bus No
+                      row.downIncome ?? "N/A", // Bus No
+
                       (row.totalIncome - row.totalExpense)?.toFixed(2) ??
                         "0.00",
                       row.totalExpense?.toFixed(2) ?? "0.00",
@@ -273,7 +286,7 @@ const ProfitandLoseReport = () => {
               {/* Footer Row (Totals) */}
               <tr className="font-semibold bg-gray-100 text-center">
                 <td className="border border-gray-300 px-4 py-2">Totals</td>
-                {[...Array(2)].map((_, i) => (
+                {[...Array(8)].map((_, i) => (
                   <td key={i} className="border border-gray-300 px-4 py-2"></td>
                 ))}
                 <td className="border border-gray-300 px-4 py-2">
