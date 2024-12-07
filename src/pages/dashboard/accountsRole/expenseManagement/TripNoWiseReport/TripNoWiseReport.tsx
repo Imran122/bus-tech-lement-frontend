@@ -36,65 +36,14 @@ const TripNoWiseReport = () => {
     });
 
   const { data: reportData, isLoading: isReportLoading } =
-    useFetchTripWiseReportQuery({ selectedTripNo });
-  const staticTableData = [
-    {
-      index: 1,
-      coachNo: "C123",
-      routeNo: "R45",
-      registrationNo: "ABC-123",
-      guideName: "John Doe",
-      driverName: "Robert Smith",
-      helperName: "Alan Brown",
-    },
-    {
-      index: 2,
-      coachNo: "C124",
-      routeNo: "R46",
-      registrationNo: "DEF-456",
-      guideName: "Emily White",
-      driverName: "Chris Johnson",
-      helperName: "Dave Lee",
-    },
-  ];
-
-  const incomeTableData = [
-    {
-      counterName: "Dhaka",
-      counterMasterName: "Rafiq",
-      qty: 100,
-      fare: 1000,
-      totalPrice: 100000,
-    },
-  ];
-
-  const expenseTableData = [
-    {
-      expenseName: "Fuel",
-      amount: 20000,
-      totalAmount: 80000,
-    },
-  ];
-
-  const totalIncome = incomeTableData.reduce(
-    (sum, row) => sum + row.totalPrice,
-    0
-  );
-  const totalExpense = expenseTableData.reduce(
-    (sum, row) => sum + row.amount,
-    0
-  );
-  const totalAmount = expenseTableData.reduce(
-    (sum, row) => sum + row.totalAmount,
-    0
-  );
+    useFetchTripWiseReportQuery({ tripNumber: selectedTripNo });
 
   // Handler to fetch table data when trip number is selected
   // Handler to fetch table data when trip number is selected
   const handleFetchReport = (tripNo: string) => {
     setSelectedTripNo(tripNo);
-    fetchTripWiseReport({ tripNumber: tripNo });
   };
+  const { upWayCoachInfo, downWayCoachInfo } = reportData?.data || {};
 
   if (isTripsLoading || isReportLoading) {
     return <TableSkeleton />;
@@ -176,13 +125,14 @@ const TripNoWiseReport = () => {
           <thead className="bg-gray-100">
             <tr>
               {[
-                "Index",
+                "Coach ",
                 "Coach No",
-                "Route No",
+                "Route Name",
                 "Registration No",
-                "Guide Name",
+                "Supervisor Name",
                 "Driver Name",
                 "Helper Name",
+                "Schedule",
               ].map((header) => (
                 <th
                   key={header}
@@ -194,31 +144,31 @@ const TripNoWiseReport = () => {
             </tr>
           </thead>
           <tbody>
-            {staticTableData.map((row) => (
-              <tr
-                key={row.index}
-                className="hover:bg-gray-50 text-center text-sm"
-              >
+            {[upWayCoachInfo, downWayCoachInfo].map((info, index) => (
+              <tr key={index} className="hover:bg-gray-50 text-center text-sm">
                 <td className="border border-gray-300 px-4 py-2">
-                  {row.index}
+                  {index === 0 ? "Up Way Coach" : "Down Way Coach"}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {row.coachNo}
+                  {info?.coachNo}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {row.routeNo}
+                  {info?.route?.routeName}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {row.registrationNo}
+                  {info?.registrationNo}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {row.guideName}
+                  {info?.supervisor?.userName}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {row.driverName}
+                  {info?.driver?.name || "N/A"}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {row.helperName}
+                  {info?.helper?.name || "N/A"}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {info?.schedule}
                 </td>
               </tr>
             ))}
@@ -258,38 +208,40 @@ const TripNoWiseReport = () => {
               </tr>
             </thead>
             <tbody>
-              {incomeTableData.map((row, index) => (
-                <tr
-                  key={index}
-                  className="hover:bg-gray-50 text-center text-sm"
-                >
-                  <td className="border border-gray-300 px-4 py-2">
-                    {row.counterName}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {row.counterMasterName}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {row.qty}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {row.fare}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {row.totalPrice}
-                  </td>
-                </tr>
-              ))}
+              {reportData?.data?.collectionReport?.map(
+                (row: any, index: any) => (
+                  <tr
+                    key={index}
+                    className="hover:bg-gray-50 text-center text-sm"
+                  >
+                    <td className="border border-gray-300 px-4 py-2">
+                      {row.counterName}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {row.counterMasterName}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {row.noOfPassenger}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {row.fare}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {row.amount}
+                    </td>
+                  </tr>
+                )
+              )}
               {/* Total Row */}
               <tr className="font-semibold bg-gray-100">
                 <td
                   colSpan={4}
-                  className="border border-gray-300 px-4 py-2 text-right"
+                  className="border border-gray-300 px-4 py-2 text-center"
                 >
                   Total Income
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {totalIncome}
+                <td className="border border-gray-300 px-4 py-2 text-center">
+                  {reportData?.data?.totalIncome || 0}
                 </td>
               </tr>
             </tbody>
@@ -298,7 +250,7 @@ const TripNoWiseReport = () => {
 
         {/* Right Table: Expense */}
         <div className="flex-1 border border-gray-300">
-          <table className="table-auto w-full h-full border-collapse">
+          <table className="table-auto w-full h-full border-collapse text-center">
             <thead className="bg-gray-100">
               <tr>
                 <th
@@ -326,33 +278,33 @@ const TripNoWiseReport = () => {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {expenseTableData.map((row, index) => (
+            <tbody className="text-center">
+              {reportData?.data?.expenseReport?.map((row: any, index: any) => (
                 <tr
                   key={index}
                   className="hover:bg-gray-50 text-center text-sm"
                 >
                   <td className="border border-gray-300 px-4 py-2">
-                    {row.expenseName}
+                    {row.expenseCategory}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {row.amount}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {row.totalAmount}
+                    {row.amount}
                   </td>
                 </tr>
               ))}
               {/* Totals Row */}
               <tr className="font-semibold bg-gray-100">
-                <td className="border border-gray-300 px-4 py-2 text-right">
+                <td className="border border-gray-300 px-4 py-2">
                   Total Expense
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {totalExpense}
+                  {reportData?.data?.totalExpense || 0}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {totalAmount}
+                  {reportData?.data?.totalAmount || 0}
                 </td>
               </tr>
             </tbody>
@@ -362,7 +314,7 @@ const TripNoWiseReport = () => {
 
       {/* bottom table design total */}
       <div className="border border-gray-300 w-5/12 flex justify-end mt-6">
-        <table className="table-auto w-full border-collapse">
+        <table className="table-auto w-full border-collapse text-left">
           <thead className="bg-gray-100">
             <tr>
               <th
@@ -380,16 +332,17 @@ const TripNoWiseReport = () => {
                 Balance
               </td>
               <td className="border border-gray-300 px-4 py-2 text-right">
-                {totalIncome - totalExpense}
+                {reportData?.data?.totalIncome -
+                  reportData?.data?.totalExpense || 0}
               </td>
             </tr>
             {/* Gap Row */}
             <tr className="hover:bg-gray-50 text-sm">
               <td className="border border-gray-300 px-4 py-2 font-semibold">
-                Gap
+                Gp
               </td>
               <td className="border border-gray-300 px-4 py-2 text-right">
-                {totalIncome > totalExpense ? totalIncome - totalExpense : 0}
+                {reportData?.data?.gp}
               </td>
             </tr>
             {/* Gross Income Row */}
@@ -398,7 +351,9 @@ const TripNoWiseReport = () => {
                 Gross Income
               </td>
               <td className="border border-gray-300 px-4 py-2 text-right">
-                {totalIncome}
+                {reportData?.data?.totalIncome -
+                  reportData?.data?.totalExpense -
+                  reportData?.data?.gp}
               </td>
             </tr>
           </tbody>
