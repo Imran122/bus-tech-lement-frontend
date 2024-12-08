@@ -254,7 +254,7 @@ const TripNoWiseReport = () => {
                 ].map((header) => (
                   <th
                     key={header}
-                    className="border border-gray-300 px-4 py-2 text-center text-sm font-semibold"
+                    className="border whitespace-nowrap border-gray-300 px-4 py-2 text-center text-sm font-semibold"
                   >
                     {header}
                   </th>
@@ -329,7 +329,7 @@ const TripNoWiseReport = () => {
                   Amount
                 </th>
                 <th className="border border-gray-300 px-4 py-2 text-center text-sm font-semibold">
-                  Amount in Tk
+                  Amount
                 </th>
               </tr>
             </thead>

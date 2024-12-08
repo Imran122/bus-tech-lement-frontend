@@ -12,20 +12,27 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     padding: 10,
   },
-  headerSection: {
-    marginBottom: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+
   logo: {
     width: 60,
     height: 40,
     marginBottom: 5,
   },
+  headerSection: {
+    marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row", // Ensure all elements align in a single row
+    flexWrap: "nowrap", // Prevent wrapping to the next line
+  },
   heading: {
     fontSize: 16,
     fontWeight: "semibold",
     textAlign: "center",
+    flexShrink: 1, // Prevent overflowing text
+    whiteSpace: "nowrap", // Ensure text stays on one line
+    overflow: "hidden", // Hide overflow text
+    textOverflow: "ellipsis", // Add ellipsis for overflow text
   },
   subHeading: {
     fontSize: 12,
@@ -36,6 +43,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     fontWeight: "bold",
     textAlign: "center",
+    whiteSpace: "nowrap", // Ensure the title is also on one line
   },
   table: {
     width: "100%",
@@ -100,18 +108,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 10,
-    gap: 10,
     alignItems: "stretch",
   },
   incomeTable: {
     flex: 3, // Occupies more space than expense table
     borderWidth: 1,
     borderColor: "#ccc",
+    borderBottomWidth: 0, // Removes the bottom border
   },
+
   expenseTable: {
     flex: 2, // Occupies less space
     borderWidth: 1,
     borderColor: "#ccc",
+    borderBottomWidth: 0, // Removes the bottom border
   },
   summaryTable: {
     width: "50%",
@@ -213,7 +223,7 @@ const TripWiseReportPDF = ({
             <View style={styles.tableRow}>
               {[
                 "Counter Name",
-                "Counter Master Name",
+                "Counter Master",
                 "Qty",
                 "Fare",
                 "Discount",
@@ -245,10 +255,8 @@ const TripWiseReportPDF = ({
               </View>
             ))}
             <View style={styles.tableRow}>
-              <Text style={[styles.tableHeader, { flex: 5 }]}>
-                Total Income
-              </Text>
-              <Text style={[styles.tableHeader, styles.lastCell]}>
+              <Text style={[styles.tableCell, { flex: 5 }]}>Total Income</Text>
+              <Text style={[styles.tableCell, styles.lastCell]}>
                 {totalIncome}
               </Text>
             </View>
