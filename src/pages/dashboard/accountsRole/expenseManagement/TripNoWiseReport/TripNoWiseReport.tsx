@@ -188,7 +188,6 @@ const TripNoWiseReport = () => {
                 "Supervisor Name",
                 "Driver Name",
                 "Helper Name",
-                "Schedule",
               ].map((header) => (
                 <th
                   key={header}
@@ -223,9 +222,6 @@ const TripNoWiseReport = () => {
                 <td className="border border-gray-300 px-4 py-2">
                   {info?.helper?.name || "N/A"}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {info?.schedule}
-                </td>
               </tr>
             ))}
           </tbody>
@@ -233,7 +229,7 @@ const TripNoWiseReport = () => {
       </div>
 
       {/* Side-by-Side Tables */}
-      <div className="flex gap-5 mt-6">
+      <div className="flex mt-6">
         {/* Left Table: Income */}
         <div className="flex-1 border border-gray-300">
           <table className="table-auto w-full h-full border-collapse">
@@ -423,6 +419,7 @@ const TripNoWiseReport = () => {
             reportData={reportData}
             dateRange={formattedDateRange}
             logo={singleCms?.data}
+            selectedTripNo={selectedTripNo}
           />
         )}
       </div>

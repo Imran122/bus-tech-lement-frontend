@@ -15,51 +15,69 @@ const ProfitandLossPrint = React.forwardRef<
   const { appName } = appConfiguration;
 
   return (
-    <section ref={ref}>
-      <section className="w-full h-full break-after-page text-black font-anek mx-auto px-[40px] pt-[30px] pb-[10px]">
-        <div className="my-3">
-          <img src={logo?.companyLogoBangla} alt="app logo" className="w-60 mx-auto" />
-          <Paragraph size={"md"} className="text-center">{appName}</Paragraph>
-          <Paragraph size={"sm"} className="text-center">Date Range: {dateRange}</Paragraph>
+    <section ref={ref} className="w-[794px] mx-auto pt-5 pb-5">
+      {/* A4 Width: 794px */}
+      <section className="w-full h-full text-black font-anek px-5">
+        {/* Header */}
+        <div className="my-3 text-center">
+          <img
+            src={logo?.companyLogoBangla}
+            alt="app logo"
+            className="w-40 mx-auto"
+          />
+          <Paragraph size={"md"}>{appName}</Paragraph>
+          <Paragraph size={"sm"}>Date Range: {dateRange}</Paragraph>
         </div>
-        <div className="border overflow-hidden">
-          <table className="table-auto w-full border-collapse border border-gray-200">
+
+        {/* Main Table */}
+        <div className="mt-5">
+          <table className="table-auto text-center w-full border-collapse border border-gray-200 text-xs">
             {/* Table Header */}
             <thead className="bg-gray-100">
               <tr>
                 {[
-                  "Trip No",
-                  "Down Date",
-                  "Bus No",
-                  "Up-Down Total Amount",
-                  "Iconic Transport Road Expenses",
-                  "Iconic Transport Balance",
-                  "Iconic Express GP",
-                  "Trip Wise Profit",
-                ].map((header) => (
+                  { label: "Date" },
+                  { label: "Trip No" },
+                  { label: "Bus No" },
+                  { label: "Up Date" },
+                  { label: "Down Date" },
+                  { label: "Passenger Up", width: "40px" }, // Narrower
+                  { label: "Passenger Down", width: "40px" }, // Narrower
+                  { label: "Passenger Total", width: "40px" }, // Narrower
+                  { label: "Up Income" }, // Narrower
+                  { label: "Down Income" }, // Narrower
+                  { label: "Up-Down Total Amount" },
+                  { label: "Road Expenses" },
+                  { label: "Total Balance" },
+                  { label: "Iconic Express GP" },
+                  { label: "Trip Wise Profit" },
+                ].map((header, index) => (
                   <th
-                    key={header}
-                    className="border border-gray-300 px-4 py-2 text-center text-sm font-semibold"
+                    key={index}
+                    className={`border border-gray-300 text-wrap px-1 py-2 text-center font-semibold `}
+                    style={{ width: header.width }}
                   >
-                    {header}
+                    {header.label}
                   </th>
                 ))}
               </tr>
             </thead>
-
-            {/* Table Body */}
-            <tbody>
+            <tbody className="text-center">
               {profitInfo?.length > 0 ? (
                 profitInfo.map((row: any, rowIndex: any) => (
-                  <tr
-                    key={row.id || rowIndex}
-                    className="hover:bg-gray-50 text-center"
-                  >
+                  <tr key={row.id || rowIndex} className="text-center">
                     {[
-                      row.id, // Trip No
-                      row.downDate ?? "N/A", // Down Date
-                      row.registrationNo ?? "N/A", // Bus No
-                      (row.totalIncome - row.totalExpense)?.toFixed(2) ??
+                      row.date ?? "N/A",
+                      row.id ?? "N/A",
+                      row.registrationNo ?? "N/A",
+                      row.upDate ?? "N/A",
+                      row.downDate ?? "N/A",
+                      row.passengerUpWay ?? "0",
+                      row.passengerDownWay ?? "0",
+                      row.totalPassenger ?? "0",
+                      row.upWayIncome?.toFixed(2) ?? "0.00",
+                      row.downWayIncome?.toFixed(2) ?? "0.00",
+                      (row.upWayIncome + row.downWayIncome)?.toFixed(2) ??
                         "0.00",
                       row.totalExpense?.toFixed(2) ?? "0.00",
                       row.cashOnHand?.toFixed(2) ?? "0.00",
@@ -68,7 +86,11 @@ const ProfitandLossPrint = React.forwardRef<
                     ].map((value, cellIndex) => (
                       <td
                         key={cellIndex}
-                        className="border border-gray-300 px-4 py-2 h-12 w-32 text-sm"
+                        className={`border border-gray-300  px-1 py-2 ${
+                          cellIndex >= 5 && cellIndex <= 9
+                            ? "text-center "
+                            : "text-center "
+                        }`}
                       >
                         {value}
                       </td>
@@ -78,7 +100,7 @@ const ProfitandLossPrint = React.forwardRef<
               ) : (
                 <tr>
                   <td
-                    colSpan={8}
+                    colSpan={15}
                     className="text-center text-gray-500 py-4 border border-gray-300"
                   >
                     No data available
@@ -86,22 +108,22 @@ const ProfitandLossPrint = React.forwardRef<
                 </tr>
               )}
 
-              {/* Footer Row (Totals) */}
-              <tr className="font-semibold bg-gray-100 text-center">
-                <td className="border border-gray-300 px-4 py-2">Totals</td>
-                {[...Array(2)].map((_, i) => (
-                  <td key={i} className="border border-gray-300 px-4 py-2"></td>
+              {/* Totals Row */}
+              <tr className="font-semibold  bg-gray-100 text-center">
+                <td className="border border-gray-300 px-1 py-2">Totals</td>
+                {[...Array(9)].map((_, i) => (
+                  <td key={i} className="border border-gray-300 px-1 py-2"></td>
                 ))}
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="border border-gray-300 px-1 py-2">
                   {profitInfo
                     ?.reduce(
                       (acc: any, row: any) =>
-                        acc + (row.totalIncome - row.totalExpense || 0),
+                        acc + (row.upWayIncome + row.downWayIncome || 0),
                       0
                     )
                     .toFixed(2) ?? "0.00"}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="border border-gray-300 px-1 py-2">
                   {profitInfo
                     ?.reduce(
                       (acc: any, row: any) => acc + (row.totalExpense || 0),
@@ -109,7 +131,7 @@ const ProfitandLossPrint = React.forwardRef<
                     )
                     .toFixed(2) ?? "0.00"}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="border border-gray-300 px-1 py-2">
                   {profitInfo
                     ?.reduce(
                       (acc: any, row: any) => acc + (row.cashOnHand || 0),
@@ -117,12 +139,12 @@ const ProfitandLossPrint = React.forwardRef<
                     )
                     .toFixed(2) ?? "0.00"}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="border border-gray-300 px-1 py-2">
                   {profitInfo
                     ?.reduce((acc: any, row: any) => acc + (row.gp || 0), 0)
                     .toFixed(2) ?? "0.00"}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="border border-gray-300 px-1 py-2">
                   {profitInfo
                     ?.reduce(
                       (acc: any, row: any) =>
@@ -135,41 +157,80 @@ const ProfitandLossPrint = React.forwardRef<
             </tbody>
           </table>
         </div>
-        <div className="border overflow-hidden my-10">
-          <table className="table-auto w-full border-collapse border border-gray-200">
-            <tbody>
-              {[
-                {
-                  label: "Actual Profit",
-                  value: `${
-                    profitInfo
-                      ?.reduce(
-                        (acc: any, row: any) =>
-                          acc + (row.cashOnHand - row.gp || 0),
-                        0
-                      )
-                      .toFixed(2) ?? "0.00"
-                  }`,
-                },
-                { label: "Compensation from Iconic Express", value: "00.00" },
-                { label: "Total Monthly Profit", value: "00.00" },
-                {
-                  label: "Bus Owner received for Repair & Maintenance",
-                  value: "00.00",
-                },
-                { label: "Owner Balance", value: "00.00৳" },
-              ].map((row, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2 font-medium">
-                    {row.label}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {row.value}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+        {/* Bottom Table */}
+        <div className="flex justify-end overflow-hidden mt-10">
+          <div className="border w-6/12">
+            <table className="font-semibold table-auto w-full border-collapse border border-gray-200 mx-auto text-xs">
+              <tbody>
+                {[
+                  {
+                    label: "Total Up & Down Income",
+                    value: `${
+                      profitInfo
+                        ?.reduce(
+                          (acc: any, row: any) =>
+                            acc + (row.upWayIncome + row.downWayIncome || 0),
+                          0
+                        )
+                        .toFixed(2) ?? "0.00"
+                    }`,
+                  },
+                  {
+                    label: "Road Expenses",
+                    value: `${
+                      profitInfo
+                        ?.reduce(
+                          (acc: any, row: any) => acc + (row.totalExpense || 0),
+                          0
+                        )
+                        .toFixed(2) ?? "0.00"
+                    }`,
+                  },
+                  {
+                    label: "Total Balance",
+                    value: `${
+                      profitInfo
+                        ?.reduce(
+                          (acc: any, row: any) => acc + (row.cashOnHand || 0),
+                          0
+                        )
+                        .toFixed(2) ?? "0.00"
+                    }`,
+                  },
+                  {
+                    label: "GP",
+                    value: `${
+                      profitInfo
+                        ?.reduce((acc: any, row: any) => acc + (row.gp || 0), 0)
+                        .toFixed(2) ?? "0.00"
+                    }`,
+                  },
+                  {
+                    label: "Total Profit",
+                    value: `${
+                      profitInfo
+                        ?.reduce(
+                          (acc: any, row: any) =>
+                            acc + (row.cashOnHand - row.gp || 0),
+                          0
+                        )
+                        .toFixed(2) ?? "0.00"
+                    }`,
+                  },
+                ].map((row, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-300 px-2 py-2 font-semibold">
+                      {row.label}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-2 text-right">
+                      {row.value}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
     </section>

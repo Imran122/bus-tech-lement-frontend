@@ -85,7 +85,7 @@ const ProfitandLoseReport = () => {
     return <TableSkeleton columns={5} />;
   }
   return (
-    <section className="pt-4">
+    <section className="pt-4 ">
       <Paragraph className="text-center pb-4" size={"lg"}>
         Iconic Transport
       </Paragraph>
@@ -202,7 +202,7 @@ const ProfitandLoseReport = () => {
         <Heading
           className="text-xs md:text-xl"
           size={"h6"}
-        >{`Profit / Loss details for the month of ${
+        >{`Bus no wise report for the month of ${
           date?.from && date?.to ? dateRange : ""
         }`}</Heading>
         <div className="border overflow-hidden overflow-x-auto">
@@ -336,76 +336,78 @@ const ProfitandLoseReport = () => {
         </div>
       </section>
 
-      <section className="border overflow-hidden overflow-x-auto my-10">
-        <table className="table-auto w-full border-collapse font-bold border border-gray-200">
-          <tbody>
-            {[
-              {
-                label: "Total Up & Down",
-                value: `${
-                  profitAndLossData?.data
-                    ?.reduce(
-                      (acc: any, row: any) => acc + (row.totalIncome || 0),
-                      0
-                    )
-                    .toFixed(2) ?? "00.00"
-                }`,
-              },
-              {
-                label: "Road Expense",
-                value: `${
-                  profitAndLossData?.data
-                    ?.reduce(
-                      (acc: any, row: any) => acc + (row.totalExpense || 0),
-                      0
-                    )
-                    .toFixed(2) ?? "00.00"
-                }`,
-              },
-              {
-                label: "Total Amount",
-                value: `${
-                  profitAndLossData?.data
-                    ?.reduce(
-                      (acc: any, row: any) =>
-                        acc + (row.totalIncome - row.totalExpense || 0),
-                      0
-                    )
-                    .toFixed(2) ?? "00.00"
-                }`,
-              },
-              {
-                label: "GP",
-                value: `${
-                  profitAndLossData?.data
-                    ?.reduce((acc: any, row: any) => acc + (row.gp || 0), 0)
-                    .toFixed(2) ?? "00.00"
-                }`,
-              },
-              {
-                label: "Bus Wise Profit",
-                value: `${
-                  profitAndLossData?.data
-                    ?.reduce(
-                      (acc: any, row: any) =>
-                        acc + (row.totalIncome - row.totalExpense - row.gp),
-                      0
-                    )
-                    .toFixed(2) ?? "00.00"
-                }`,
-              },
-            ].map((row, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                <td className="border border-gray-300 px-4 py-2 font-medium">
-                  {row.label}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {row.value}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <section className="flex justify-end my-10">
+        <div className="border w-6/12 ">
+          <table className="table-auto w-full border-collapse font-bold border border-gray-200">
+            <tbody>
+              {[
+                {
+                  label: "Total Up & Down",
+                  value: `${
+                    profitAndLossData?.data
+                      ?.reduce(
+                        (acc: any, row: any) => acc + (row.totalIncome || 0),
+                        0
+                      )
+                      .toFixed(2) ?? "00.00"
+                  }`,
+                },
+                {
+                  label: "Road Expense",
+                  value: `${
+                    profitAndLossData?.data
+                      ?.reduce(
+                        (acc: any, row: any) => acc + (row.totalExpense || 0),
+                        0
+                      )
+                      .toFixed(2) ?? "00.00"
+                  }`,
+                },
+                {
+                  label: "Total Amount",
+                  value: `${
+                    profitAndLossData?.data
+                      ?.reduce(
+                        (acc: any, row: any) =>
+                          acc + (row.totalIncome - row.totalExpense || 0),
+                        0
+                      )
+                      .toFixed(2) ?? "00.00"
+                  }`,
+                },
+                {
+                  label: "GP",
+                  value: `${
+                    profitAndLossData?.data
+                      ?.reduce((acc: any, row: any) => acc + (row.gp || 0), 0)
+                      .toFixed(2) ?? "00.00"
+                  }`,
+                },
+                {
+                  label: "Bus Wise Profit",
+                  value: `${
+                    profitAndLossData?.data
+                      ?.reduce(
+                        (acc: any, row: any) =>
+                          acc + (row.totalIncome - row.totalExpense - row.gp),
+                        0
+                      )
+                      .toFixed(2) ?? "00.00"
+                  }`,
+                },
+              ].map((row, index) => (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="border border-gray-300 px-4 py-2 font-semibold">
+                    {row.label}
+                  </td>
+                  <td className="border border-gray-300 px-4 font-semibold py-2">
+                    {row.value}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <div className="invisible hidden -left-full">
