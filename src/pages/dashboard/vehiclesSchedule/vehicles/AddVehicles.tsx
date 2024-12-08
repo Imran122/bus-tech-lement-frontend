@@ -1,5 +1,6 @@
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
+import PhotoCropper from "@/components/common/photo/PhotoCropper";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,6 +15,7 @@ import {
   AddUpdateVehicleDataProps,
   addUpdateVehicleSchema,
 } from "@/schemas/vehiclesSchedule/addUpdateVehicleSchema";
+import { useUploadPhotoMutation } from "@/store/api/fileApi";
 import { useAddVehicleMutation } from "@/store/api/vehiclesSchedule/vehicleApi";
 import { removeFalsyProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
@@ -37,11 +39,13 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
   const { toastMessage } = useMessageGenerator();
   const [addVehicle, { isLoading: addVehicleLoading, error: addVehicleError }] =
     useAddVehicleMutation();
-
+  const [uploadPhoto, { isLoading: uploadPhotoLoading }] =
+    useUploadPhotoMutation({});
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<AddUpdateVehicleDataProps>({
     resolver: zodResolver(addUpdateVehicleSchema),
@@ -73,31 +77,66 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
   };
 
   const onSubmit = async (data: AddUpdateVehicleDataProps) => {
-    const cleanedData = removeFalsyProperties(data, [
-      "orderDate",
-      "deliveryDate",
-      "deliveryToDipo",
-      "color",
-      "lcCode",
-      "countryOfOrigin",
-      "engineNo",
-      "manufacturerCompany",
-      "chasisNo",
-      "model",
-    ]);
-    const result = await addVehicle(cleanedData);
-    if (result?.data?.success) {
+    try {
+      // Step 1: Upload Photos and Store URLs
+      const photoUploads = [
+        { field: "registrationFile", value: data.registrationFile },
+        { field: "fitnessCertificate", value: data.fitnessCertificate },
+        { field: "taxToken", value: data.taxToken },
+        { field: "routePermit", value: data.routePermit },
+      ];
+
+      const uploadedFiles: Record<string, string> = {};
+
+      for (const photo of photoUploads) {
+        if (photo.value) {
+          const result = await uploadPhoto(photo.value).unwrap();
+          uploadedFiles[photo.field] = result.data; // Store the URL returned by the API
+        }
+      }
+
+      // Step 2: Combine Uploaded File URLs with Other Data
+      const cleanedData = {
+        ...removeFalsyProperties(data, [
+          "orderDate",
+          "deliveryDate",
+          "deliveryToDipo",
+          "color",
+          "lcCode",
+          "countryOfOrigin",
+          "engineNo",
+          "manufacturerCompany",
+          "chasisNo",
+          "model",
+        ]),
+        ...uploadedFiles, // Add uploaded file URLs
+      };
+
+      // Step 3: Submit Data to Backend
+      const result = await addVehicle(cleanedData);
+
+      if (result?.data?.success) {
+        toast({
+          title: translate(
+            "যানবাহন যোগ করার বার্তা",
+            "Message for adding vehicle"
+          ),
+          description: toastMessage("add", translate("যানবাহন", "vehicle")),
+        });
+        setVehicleState((prevState: IVehicleStateProps) => ({
+          ...prevState,
+          addVehicleOpen: false, // Close the modal after success
+        }));
+      }
+    } catch (error) {
+      console.error("Error:", error);
       toast({
-        title: translate(
-          "যানবাহন যোগ করার বার্তা",
-          "Message for adding vehicle"
+        title: translate("ত্রুটি", "Error"),
+        description: translate(
+          "ছবি আপলোড করতে বা তথ্য জমা দিতে ব্যর্থ হয়েছে।",
+          "Failed to upload photos or submit data."
         ),
-        description: toastMessage("add", translate("যানবাহন", "vehicle")),
       });
-      setVehicleState((prevState: IVehicleStateProps) => ({
-        ...prevState,
-        addVehicleOpen: false, // Close the modal after success
-      }));
     }
   };
 
@@ -127,6 +166,69 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
               "রেজিস্ট্রেশন নম্বর লিখুন",
               "Enter registration number"
             )}
+          />
+        </InputWrapper>
+        {/* photo registrationFile uplaod */}
+        <InputWrapper
+          error={errors?.registrationFile?.message}
+          labelFor="registrationFile"
+          label={translate("রেজিস্ট্রেশন ফাইল ✼", "Registration File ✼")}
+        >
+          <PhotoCropper
+            ratio={3 / 4}
+            id="registrationFile"
+            photo={watch("registrationFile") || undefined}
+            setPhoto={(value: string | undefined) => {
+              setValue("registrationFile", value || ""); // Ensure the value is a string
+            }}
+          />
+        </InputWrapper>
+
+        {/* Fitness Certificate */}
+        <InputWrapper
+          error={errors?.fitnessCertificate?.message}
+          labelFor="fitnessCertificate"
+          label={translate("ফিটনেস সার্টিফিকেট ✼", "Fitness Certificate ✼")}
+        >
+          <PhotoCropper
+            ratio={3 / 4}
+            photo={watch("fitnessCertificate") || undefined}
+            id="fitnessCertificate"
+            setPhoto={(value: string | undefined) => {
+              setValue("fitnessCertificate", value || ""); // Ensure the value is a string
+            }}
+          />
+        </InputWrapper>
+
+        {/* Tax Token */}
+        <InputWrapper
+          error={errors?.taxToken?.message}
+          labelFor="taxToken"
+          label={translate("ট্যাক্স টোকেন ✼", "Tax Token ✼")}
+        >
+          <PhotoCropper
+            ratio={3 / 4}
+            id="taxToken"
+            photo={watch("taxToken") || undefined}
+            setPhoto={(value: string | undefined) => {
+              setValue("taxToken", value || ""); // Ensure the value is a string
+            }}
+          />
+        </InputWrapper>
+
+        {/* Route Permit */}
+        <InputWrapper
+          error={errors?.routePermit?.message}
+          labelFor="routePermit"
+          label={translate("রুট পারমিট ✼", "Route Permit ✼")}
+        >
+          <PhotoCropper
+            ratio={3 / 4}
+            id="routePermit"
+            photo={watch("routePermit") || undefined}
+            setPhoto={(value: string | undefined) => {
+              setValue("routePermit", value || ""); // Ensure the value is a string
+            }}
           />
         </InputWrapper>
 
@@ -312,7 +414,7 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
         </InputWrapper>
 
         <Submit
-          loading={addVehicleLoading}
+          loading={addVehicleLoading || uploadPhotoLoading}
           errors={addVehicleError}
           submitTitle={translate("যানবাহন যুক্ত করুন", "Add Vehicle")}
           errorTitle={translate(

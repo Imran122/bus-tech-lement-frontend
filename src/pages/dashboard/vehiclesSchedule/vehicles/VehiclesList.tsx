@@ -46,6 +46,10 @@ interface IVehiclesListProps {}
 export interface Vehicle {
   id: number;
   registrationNo: string;
+  registrationFile: string;
+  fitnessCertificate: string;
+  taxToken: string;
+  routePermit: string;
   manufacturerCompany?: string;
   model?: string;
   chasisNo?: string;

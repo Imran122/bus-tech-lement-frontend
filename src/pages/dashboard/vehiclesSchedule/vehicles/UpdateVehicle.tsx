@@ -1,5 +1,6 @@
 import { InputWrapper } from "@/components/common/form/InputWrapper";
 import Submit from "@/components/common/form/Submit";
+import PhotoCropper from "@/components/common/photo/PhotoCropper";
 import FormWrapper from "@/components/common/wrapper/FormWrapper";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,6 +15,7 @@ import {
   AddUpdateVehicleDataProps,
   addUpdateVehicleSchema,
 } from "@/schemas/vehiclesSchedule/addUpdateVehicleSchema";
+import { useUploadPhotoMutation } from "@/store/api/fileApi";
 import {
   useGetSingleVehicleQuery,
   useUpdateVehicleMutation,
@@ -38,7 +40,8 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
     updateVehicle,
     { isLoading: updateVehicleLoading, error: updateVehicleError },
   ] = useUpdateVehicleMutation();
-
+  const [uploadPhoto, { isLoading: uploadPhotoLoading }] =
+    useUploadPhotoMutation();
   const { data: vehicleData, isLoading: vehicleLoading } =
     useGetSingleVehicleQuery(id);
 
@@ -46,6 +49,7 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<AddUpdateVehicleDataProps>({
     resolver: zodResolver(addUpdateVehicleSchema),
@@ -81,6 +85,10 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
         deliveryToDipo,
         deliveryDate,
         orderDate,
+        registrationFile,
+        fitnessCertificate,
+        taxToken,
+        routePermit,
       } = vehicleData.data;
 
       setValue("registrationNo", registrationNo);
@@ -92,6 +100,10 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
       setValue("lcCode", lcCode);
       setValue("color", color);
       setValue("deliveryToDipo", deliveryToDipo);
+      setValue("registrationFile", registrationFile);
+      setValue("fitnessCertificate", fitnessCertificate);
+      setValue("taxToken", taxToken);
+      setValue("routePermit", routePermit);
       setSelectedDates({
         deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
         orderDate: orderDate ? new Date(orderDate) : null,
@@ -109,14 +121,58 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
   };
 
   const onSubmit = async (data: AddUpdateVehicleDataProps) => {
-    const result = await updateVehicle({ id, data });
-    if (result?.data?.success) {
+    try {
+      // Step 1: Upload Photos and Store URLs
+      const photoUploads = [
+        { field: "registrationFile", value: data.registrationFile },
+        { field: "fitnessCertificate", value: data.fitnessCertificate },
+        { field: "taxToken", value: data.taxToken },
+        { field: "routePermit", value: data.routePermit },
+      ];
+
+      const uploadedFiles: Record<string, string> = {};
+
+      for (const photo of photoUploads) {
+        if (
+          photo.value &&
+          typeof photo.value === "string" &&
+          photo.value.startsWith("data:")
+        ) {
+          // Upload new photos
+          const result = await uploadPhoto(photo.value).unwrap();
+          uploadedFiles[photo.field] = result.data;
+        } else {
+          // Retain existing URLs
+          uploadedFiles[photo.field] = photo.value || "";
+        }
+      }
+
+      // Step 2: Combine Uploaded File URLs with Other Data
+      const cleanedData = {
+        ...data,
+        ...uploadedFiles, // Include photo URLs
+      };
+
+      // Step 3: Submit Data to Backend
+      const result = await updateVehicle({ id, data: cleanedData });
+
+      if (result?.data?.success) {
+        toast({
+          title: translate(
+            "যানবাহন সফলভাবে আপডেট হয়েছে",
+            "Vehicle updated successfully"
+          ),
+          description: toastMessage("update", translate("যানবাহন", "vehicle")),
+        });
+      }
+    } catch (error: any) {
+      console.error("Error submitting form:", error);
       toast({
-        title: translate(
-          "যানবাহন সফলভাবে আপডেট হয়েছে",
-          "Vehicle updated successfully"
+        title: translate("ত্রুটি", "Error"),
+        description: translate(
+          "ছবি আপলোড করতে বা তথ্য জমা দিতে ব্যর্থ হয়েছে।",
+          "Failed to upload photos or submit data."
         ),
-        description: toastMessage("update", translate("যানবাহন", "vehicle")),
       });
     }
   };
@@ -151,6 +207,69 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
               "রেজিস্ট্রেশন নম্বর লিখুন",
               "Enter registration number"
             )}
+          />
+        </InputWrapper>
+        {/* Registration File */}
+        <InputWrapper
+          error={errors?.registrationFile?.message}
+          labelFor="registrationFile"
+          label={translate("রেজিস্ট্রেশন ফাইল", "Registration File")}
+        >
+          <PhotoCropper
+            ratio={3 / 4}
+            id="registrationFile"
+            photo={watch("registrationFile") || undefined}
+            setPhoto={(value: string | undefined) =>
+              setValue("registrationFile", value || "")
+            }
+          />
+        </InputWrapper>
+
+        {/* Fitness Certificate */}
+        <InputWrapper
+          error={errors?.fitnessCertificate?.message}
+          labelFor="fitnessCertificate"
+          label={translate("ফিটনেস সার্টিফিকেট", "Fitness Certificate")}
+        >
+          <PhotoCropper
+            ratio={3 / 4}
+            id="fitnessCertificate"
+            photo={watch("fitnessCertificate") || undefined}
+            setPhoto={(value: string | undefined) =>
+              setValue("fitnessCertificate", value || "")
+            }
+          />
+        </InputWrapper>
+
+        {/* Tax Token */}
+        <InputWrapper
+          error={errors?.taxToken?.message}
+          labelFor="taxToken"
+          label={translate("ট্যাক্স টোকেন", "Tax Token")}
+        >
+          <PhotoCropper
+            ratio={3 / 4}
+            id="taxToken"
+            photo={watch("taxToken") || undefined}
+            setPhoto={(value: string | undefined) =>
+              setValue("taxToken", value || "")
+            }
+          />
+        </InputWrapper>
+
+        {/* Route Permit */}
+        <InputWrapper
+          error={errors?.routePermit?.message}
+          labelFor="routePermit"
+          label={translate("রুট পারমিট", "Route Permit")}
+        >
+          <PhotoCropper
+            ratio={3 / 4}
+            id="routePermit"
+            photo={watch("routePermit") || undefined}
+            setPhoto={(value: string | undefined) =>
+              setValue("routePermit", value || "")
+            }
           />
         </InputWrapper>
 
@@ -343,7 +462,7 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
         </InputWrapper>
 
         <Submit
-          loading={updateVehicleLoading}
+          loading={updateVehicleLoading || uploadPhotoLoading}
           errors={updateVehicleError}
           submitTitle={translate("আপডেট যানবাহন", "Update Vehicle")}
           errorTitle={translate(
