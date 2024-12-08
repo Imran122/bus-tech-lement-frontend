@@ -1,3 +1,4 @@
+import { Loader } from "@/components/common/Loader";
 import TableSkeleton from "@/components/common/skeleton/TableSkeleton";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -13,10 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import TripWiseReportPDF from "@/pages/dashboard/pdf/TripWiseReportPDF";
 import {
   useFetchTripWiseReportQuery,
   useGetTripDataByDateQuery,
 } from "@/store/api/adminReport/adminReportApi";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -26,7 +30,9 @@ const TripNoWiseReport = () => {
     from: undefined,
     to: undefined,
   });
-
+  const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
+    {}
+  );
   const [selectedTripNo, setSelectedTripNo] = useState<string | undefined>();
 
   const { data: tripData, isLoading: isTripsLoading } =
@@ -43,13 +49,54 @@ const TripNoWiseReport = () => {
   const handleFetchReport = (tripNo: string) => {
     setSelectedTripNo(tripNo);
   };
-  const { upWayCoachInfo, downWayCoachInfo } = reportData?.data || {};
-
+  const { upWayCoachInfo = [], downWayCoachInfo = [] } = reportData?.data || {};
+  const formattedDateRange = date?.from
+    ? date.to
+      ? `${format(date.from, "dd-MM-yyyy")} - ${format(date.to, "dd-MM-yyyy")}`
+      : format(date.from, "dd-MM-yyyy")
+    : "N/A";
   if (isTripsLoading || isReportLoading) {
     return <TableSkeleton />;
   }
   return (
     <section className="p-4">
+      <div>
+        {selectedTripNo && reportData?.data && (
+          <div className="mt-4">
+            <PDFDownloadLink
+              document={
+                <TripWiseReportPDF
+                  reportData={reportData}
+                  dateRange={formattedDateRange}
+                  logo={singleCms?.data}
+                />
+              }
+              fileName="trip_report.pdf"
+            >
+              {
+                //@ts-ignore
+                (params) => {
+                  const { loading } = params;
+                  return loading ? (
+                    <Button
+                      disabled
+                      className="transition-all duration-150"
+                      variant="destructive"
+                      size="xs"
+                    >
+                      <Loader /> Pdf
+                    </Button>
+                  ) : (
+                    <Button variant="destructive" size="xs">
+                      Pdf
+                    </Button>
+                  );
+                }
+              }
+            </PDFDownloadLink>
+          </div>
+        )}
+      </div>
       {/* Date Range Selector and Trip No Dropdown */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex flex-col gap-1">

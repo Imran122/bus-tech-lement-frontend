@@ -1,12 +1,12 @@
+import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import {
   Document,
+  Image,
   Page,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  Image,
 } from "@react-pdf/renderer";
-import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 
 const styles = StyleSheet.create({
   page: {
@@ -78,21 +78,29 @@ const PdfProfitAndLoss = ({ profitData, logo, dateRange }: any) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.section}>
+          {/* Logo and Title */}
           <Image source={logo?.companyLogoBangla} style={styles.logo} />
           <Text style={styles.heading}>{appName}</Text>
           <Text style={styles.subHeading}>Date Range: {dateRange}</Text>
           <Text style={styles.title}>Profit and Loss Report</Text>
 
+          {/* Table Header */}
           <View style={styles.table}>
-            {/* Table Header */}
             <View style={styles.tableRow}>
               {[
+                "Date",
                 "Trip No",
-                "Down Date",
                 "Bus No",
+                "Up Date",
+                "Down Date",
+                "Passenger Up",
+                "Passenger Down",
+                "Passenger Total",
+                "Up Income",
+                "Down Income",
                 "Up-Down Total Amount",
-                "Iconic Transport Road Expenses",
-                "Iconic Transport Balance",
+                "Road Expenses",
+                "Total Balance",
                 "Iconic Express GP",
                 "Trip Wise Profit",
               ].map((header, index) => (
@@ -103,15 +111,32 @@ const PdfProfitAndLoss = ({ profitData, logo, dateRange }: any) => {
             </View>
 
             {/* Table Rows */}
-            {profitData?.map((row: any, index: number) => (
+            {profitData?.map((row: any, index: any) => (
               <View style={styles.tableRow} key={index}>
-                <Text style={styles.tableCol}>{row.id}</Text>
-                <Text style={styles.tableCol}>{row.downDate ?? "N/A"}</Text>
+                <Text style={styles.tableCol}>{row.date ?? "N/A"}</Text>
+                <Text style={styles.tableCol}>{row.id ?? "N/A"}</Text>
                 <Text style={styles.tableCol}>
                   {row.registrationNo ?? "N/A"}
                 </Text>
+                <Text style={styles.tableCol}>{row.upDate ?? "N/A"}</Text>
+                <Text style={styles.tableCol}>{row.downDate ?? "N/A"}</Text>
                 <Text style={styles.tableCol}>
-                  {(row.totalIncome - row.totalExpense)?.toFixed(2) ?? "0.00"}
+                  {row.passengerUpWay ?? "N/A"}
+                </Text>
+                <Text style={styles.tableCol}>
+                  {row.passengerDownWay ?? "N/A"}
+                </Text>
+                <Text style={styles.tableCol}>
+                  {row.totalPassenger ?? "N/A"}
+                </Text>
+                <Text style={styles.tableCol}>
+                  {row.upWayIncome?.toFixed(2) ?? "0.00"}
+                </Text>
+                <Text style={styles.tableCol}>
+                  {row.downWayIncome?.toFixed(2) ?? "0.00"}
+                </Text>
+                <Text style={styles.tableCol}>
+                  {(row.upWayIncome + row.downWayIncome)?.toFixed(2) ?? "0.00"}
                 </Text>
                 <Text style={styles.tableCol}>
                   {row.totalExpense?.toFixed(2) ?? "0.00"}
@@ -127,73 +152,55 @@ const PdfProfitAndLoss = ({ profitData, logo, dateRange }: any) => {
                 </Text>
               </View>
             ))}
-          </View>
 
-          {/* Footer Row (Totals) */}
-          <View style={styles.tableRow}>
-            <Text style={styles.tableHeader}>Totals</Text>
-            <Text style={styles.tableCol}>{"\u00A0"}</Text>
-            <Text style={styles.tableCol}>{"\u00A0"}</Text>
-
-            <Text style={styles.tableCol}>
-              {profitData
-                ?.reduce(
-                  (acc: any, row: any) =>
-                    acc + (row.totalIncome - row.totalExpense || 0),
-                  0
-                )
-                .toFixed(2) ?? "0.00"}
-            </Text>
-            <Text style={styles.tableCol}>
-              {profitData
-                ?.reduce(
-                  (acc: any, row: any) => acc + (row.totalExpense || 0),
-                  0
-                )
-                .toFixed(2) ?? "0.00"}
-            </Text>
-            <Text style={styles.tableCol}>
-              {profitData
-                ?.reduce((acc: any, row: any) => acc + (row.cashOnHand || 0), 0)
-                .toFixed(2) ?? "0.00"}
-            </Text>
-            <Text style={styles.tableCol}>
-              {profitData
-                ?.reduce((acc: any, row: any) => acc + (row.gp || 0), 0)
-                .toFixed(2) ?? "0.00"}
-            </Text>
-            <Text style={styles.tableCol}>
-              {profitData
-                ?.reduce(
-                  (acc: any, row: any) => acc + (row.cashOnHand - row.gp || 0),
-                  0
-                )
-                .toFixed(2) ?? "0.00"}
-            </Text>
-          </View>
-           {/* Additional Table */}
-           <View style={{ marginTop: 10 }}>
-            {[
-              {
-                label: "Actual Profit",
-                value: profitData?.reduce(
-                  (acc: any, row: any) => acc + (row.cashOnHand - row.gp || 0),
-                  0
-                ).toFixed(2) ?? "0.00",
-              },
-              { label: "Compensation from Iconic Express", value: "00.00" },
-              { label: "Total Monthly Profit", value: "00.00" },
-              {
-                label: "Bus Owner received for Repair & Maintenance",
-                value: "00.00",
-              },
-              { label: "Owner Balance", value: "00.00" },
-            ].map((row, index) => (
-              <View style={styles.tableRow} key={index}>
-                <Text style={styles.tableCol}>{row.label}</Text>
-                <Text style={styles.tableCol}>{row.value}</Text>
-              </View>
-            ))}
+            {/* Footer Totals */}
+            <View style={styles.tableRow}>
+              <Text style={styles.tableHeader}>Totals</Text>
+              {[...Array(9)].map((_, i) => (
+                <Text key={i} style={styles.tableCol}>
+                  {"\u00A0"}
+                </Text>
+              ))}
+              <Text style={styles.tableCol}>
+                {profitData
+                  ?.reduce(
+                    (acc: any, row: any) =>
+                      acc + (row.upWayIncome + row.downWayIncome || 0),
+                    0
+                  )
+                  .toFixed(2) ?? "0.00"}
+              </Text>
+              <Text style={styles.tableCol}>
+                {profitData
+                  ?.reduce(
+                    (acc: any, row: any) => acc + (row.totalExpense || 0),
+                    0
+                  )
+                  .toFixed(2) ?? "0.00"}
+              </Text>
+              <Text style={styles.tableCol}>
+                {profitData
+                  ?.reduce(
+                    (acc: any, row: any) => acc + (row.cashOnHand || 0),
+                    0
+                  )
+                  .toFixed(2) ?? "0.00"}
+              </Text>
+              <Text style={styles.tableCol}>
+                {profitData
+                  ?.reduce((acc: any, row: any) => acc + (row.gp || 0), 0)
+                  .toFixed(2) ?? "0.00"}
+              </Text>
+              <Text style={styles.tableCol}>
+                {profitData
+                  ?.reduce(
+                    (acc: any, row: any) =>
+                      acc + (row.cashOnHand - row.gp || 0),
+                    0
+                  )
+                  .toFixed(2) ?? "0.00"}
+              </Text>
+            </View>
           </View>
         </View>
       </Page>
