@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import TripWiseReportPDF from "@/pages/dashboard/pdf/TripWiseReportPDF";
+import TripWiseReportPrint from "@/pages/dashboard/printLabel/TripWiseReportPrint";
 import {
   useFetchTripWiseReportQuery,
   useGetTripDataByDateQuery,
@@ -22,17 +23,16 @@ import {
 import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
+import { useReactToPrint } from "react-to-print";
 
 const TripNoWiseReport = () => {
   const [date, setDate] = useState<DateRange | undefined>({
     from: undefined,
     to: undefined,
   });
-  const { data: singleCms, isLoading: singleCmsLoading } = useGetSingleCMSQuery(
-    {}
-  );
+  const { data: singleCms } = useGetSingleCMSQuery({});
   const [selectedTripNo, setSelectedTripNo] = useState<string | undefined>();
 
   const { data: tripData, isLoading: isTripsLoading } =
@@ -43,12 +43,18 @@ const TripNoWiseReport = () => {
 
   const { data: reportData, isLoading: isReportLoading } =
     useFetchTripWiseReportQuery({ tripNumber: selectedTripNo });
+  const printSaleRef = useRef(null);
 
   // Handler to fetch table data when trip number is selected
   // Handler to fetch table data when trip number is selected
   const handleFetchReport = (tripNo: string) => {
     setSelectedTripNo(tripNo);
   };
+  const handlePrint = useReactToPrint({
+    content: () => printSaleRef.current,
+    documentTitle: `Trip_Wise_Report_${selectedTripNo}`,
+  });
+
   const { upWayCoachInfo = [], downWayCoachInfo = [] } = reportData?.data || {};
   const formattedDateRange = date?.from
     ? date.to
@@ -60,9 +66,9 @@ const TripNoWiseReport = () => {
   }
   return (
     <section className="p-4">
-      <div>
+      <div className="flex gap-3">
         {selectedTripNo && reportData?.data && (
-          <div className="mt-4">
+          <div className="mt-4 flex gap-3 py-2">
             <PDFDownloadLink
               document={
                 <TripWiseReportPDF
@@ -94,6 +100,9 @@ const TripNoWiseReport = () => {
                 }
               }
             </PDFDownloadLink>
+            <Button onClick={handlePrint} variant="destructive" size="xs">
+              Print
+            </Button>
           </div>
         )}
       </div>
@@ -405,6 +414,17 @@ const TripNoWiseReport = () => {
             </tr>
           </tbody>
         </table>
+      </div>
+      {/* Invisible Print Component */}
+      <div className="invisible hidden">
+        {selectedTripNo && reportData?.data && (
+          <TripWiseReportPrint
+            ref={printSaleRef}
+            reportData={reportData}
+            dateRange={formattedDateRange}
+            logo={singleCms?.data}
+          />
+        )}
       </div>
     </section>
   );
