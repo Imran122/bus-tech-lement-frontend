@@ -75,6 +75,7 @@ const TripNoWiseReport = () => {
                   reportData={reportData}
                   dateRange={formattedDateRange}
                   logo={singleCms?.data}
+                  selectedTripNo={selectedTripNo}
                 />
               }
               fileName="trip_report.pdf"

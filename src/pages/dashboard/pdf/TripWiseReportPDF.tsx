@@ -14,6 +14,8 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   heading: {
     fontSize: 16,
@@ -34,7 +36,6 @@ const styles = StyleSheet.create({
   },
   table: {
     width: "100%",
-    borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#ccc",
     marginBottom: 10,
@@ -48,48 +49,50 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: "bold",
     textAlign: "center",
-    borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#ccc",
+    height: 25, // Uniform header height
+    whiteSpace: "nowrap", // Prevent text wrapping
   },
   tableCell: {
     flex: 1,
     padding: 2,
     fontSize: 8,
     textAlign: "center",
-    borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#ccc",
+    whiteSpace: "nowrap", // Prevent text wrapping
   },
   summaryTable: {
     width: "50%",
     alignSelf: "flex-end",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#ccc",
     marginTop: 10,
   },
   bothTable: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 5,
     marginBottom: 10,
+    alignItems: "stretch",
   },
   halfTable: {
     flex: 1,
-    borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#ccc",
+    alignSelf: "stretch",
   },
   logo: {
-    width: 40,
-    height: 25,
+    width: 60,
+    height: 40,
     marginBottom: 10,
-    alignSelf: "center",
   },
 });
 
-const TripWiseReportPDF = ({ reportData, dateRange, logo }: any) => {
+const TripWiseReportPDF = ({
+  reportData,
+  dateRange,
+  logo,
+  selectedTripNo,
+}: any) => {
   const {
     upWayCoachInfo = [],
     downWayCoachInfo = [],
@@ -108,6 +111,7 @@ const TripWiseReportPDF = ({ reportData, dateRange, logo }: any) => {
         <View style={styles.section}>
           <Image source={logo?.companyLogoBangla} style={styles.logo} />
           <Text style={styles.heading}>Iconic Express</Text>
+          <Text style={styles.subHeading}>Trip No: {selectedTripNo}</Text>
           <Text style={styles.subHeading}>Date Range: {dateRange}</Text>
           <Text style={styles.title}>Trip-Wise Report</Text>
         </View>
@@ -123,7 +127,6 @@ const TripWiseReportPDF = ({ reportData, dateRange, logo }: any) => {
               "Supervisor Name",
               "Driver Name",
               "Helper Name",
-              "Schedule",
             ].map((header, index) => (
               <Text key={index} style={styles.tableHeader}>
                 {header}
@@ -151,7 +154,6 @@ const TripWiseReportPDF = ({ reportData, dateRange, logo }: any) => {
               <Text style={styles.tableCell}>
                 {info?.helper?.name || "N/A"}
               </Text>
-              <Text style={styles.tableCell}>{info?.schedule || "N/A"}</Text>
             </View>
           ))}
         </View>
@@ -205,7 +207,7 @@ const TripWiseReportPDF = ({ reportData, dateRange, logo }: any) => {
               </Text>
             </View>
             <View style={styles.tableRow}>
-              {["Expense Name", "Amount", "Amount in Tk"].map(
+              {["Expense Name", "Amount", "Total Amount"].map(
                 (header, index) => (
                   <Text key={index} style={styles.tableHeader}>
                     {header}

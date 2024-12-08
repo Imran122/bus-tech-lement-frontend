@@ -99,6 +99,7 @@ const ProfitandLoseReport = () => {
                   dateRange={dateRange}
                   profitData={profitAndLossData?.data}
                   logo={singleCms?.data}
+                  selectedRegistrationNo={selectedRegistrationNo}
                 />
               }
               fileName="profit_and_loss_report.pdf"
@@ -417,6 +418,7 @@ const ProfitandLoseReport = () => {
             dateRange={dateRange}
             profitData={profitAndLossData?.data}
             logo={singleCms?.data}
+            selectedRegistrationNo={selectedRegistrationNo}
           />
         )}
       </div>
