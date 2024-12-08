@@ -237,7 +237,7 @@ const TripNoWiseReport = () => {
             <thead className="bg-gray-100">
               <tr>
                 <th
-                  colSpan={5}
+                  colSpan={6}
                   className="border border-gray-300 px-4 py-2 text-center text-lg font-semibold"
                 >
                   Receive / Income
@@ -249,6 +249,7 @@ const TripNoWiseReport = () => {
                   "Counter Master Name",
                   "Qty",
                   "Fare",
+                  "Dsicount",
                   "Total Price",
                 ].map((header) => (
                   <th
@@ -279,6 +280,7 @@ const TripNoWiseReport = () => {
                     <td className="border border-gray-300 px-4 py-2">
                       {row.fare}
                     </td>
+                    <td className="border border-gray-300 px-4 py-2">00.00</td>
                     <td className="border border-gray-300 px-4 py-2">
                       {row.amount}
                     </td>
@@ -288,7 +290,7 @@ const TripNoWiseReport = () => {
               {/* Total Row */}
               <tr className="font-semibold bg-gray-100">
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   className="border border-gray-300 px-4 py-2 text-center"
                 >
                   Total Income
@@ -366,51 +368,53 @@ const TripNoWiseReport = () => {
       </div>
 
       {/* bottom table design total */}
-      <div className="border border-gray-300 w-5/12 flex justify-end mt-6">
-        <table className="table-auto w-full border-collapse text-left">
-          <thead className="bg-gray-100">
-            <tr>
-              <th
-                colSpan={2}
-                className="border border-gray-300 px-4 py-2 text-center text-lg font-semibold"
-              >
-                Summary
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Balance Row */}
-            <tr className="hover:bg-gray-50 text-sm">
-              <td className="border border-gray-300 px-4 py-2 font-semibold">
-                Balance
-              </td>
-              <td className="border border-gray-300 px-4 py-2 text-right">
-                {reportData?.data?.totalIncome -
-                  reportData?.data?.totalExpense || 0}
-              </td>
-            </tr>
-            {/* Gap Row */}
-            <tr className="hover:bg-gray-50 text-sm">
-              <td className="border border-gray-300 px-4 py-2 font-semibold">
-                Gp
-              </td>
-              <td className="border border-gray-300 px-4 py-2 text-right">
-                {reportData?.data?.gp}
-              </td>
-            </tr>
-            {/* Gross Income Row */}
-            <tr className="hover:bg-gray-50 text-sm">
-              <td className="border border-gray-300 px-4 py-2 font-semibold">
-                Gross Income
-              </td>
-              <td className="border border-gray-300 px-4 py-2 text-right">
-                {reportData?.data?.totalIncome -
-                  reportData?.data?.totalExpense -
-                  reportData?.data?.gp}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="flex justify-end">
+        <div className="border border-gray-300 w-5/12 flex justify-end mt-6">
+          <table className="table-auto w-full border-collapse text-left">
+            <thead className="bg-gray-100">
+              <tr>
+                <th
+                  colSpan={2}
+                  className="border border-gray-300 px-4 py-2 text-center text-lg font-semibold"
+                >
+                  Summary
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Balance Row */}
+              <tr className="hover:bg-gray-50 text-sm">
+                <td className="border border-gray-300 px-4 py-2 font-semibold">
+                  Balance
+                </td>
+                <td className="border border-gray-300 px-4 py-2 text-right">
+                  {reportData?.data?.totalIncome -
+                    reportData?.data?.totalExpense || 0}
+                </td>
+              </tr>
+              {/* Gap Row */}
+              <tr className="hover:bg-gray-50 text-sm">
+                <td className="border border-gray-300 px-4 py-2 font-semibold">
+                  Gp
+                </td>
+                <td className="border border-gray-300 px-4 py-2 text-right">
+                  {reportData?.data?.gp}
+                </td>
+              </tr>
+              {/* Gross Income Row */}
+              <tr className="hover:bg-gray-50 text-sm">
+                <td className="border border-gray-300 px-4 py-2 font-semibold">
+                  Gross Income
+                </td>
+                <td className="border border-gray-300 px-4 py-2 text-right">
+                  {reportData?.data?.totalIncome -
+                    reportData?.data?.totalExpense -
+                    reportData?.data?.gp}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       {/* Invisible Print Component */}
       <div className="invisible hidden">

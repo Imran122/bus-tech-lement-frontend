@@ -248,11 +248,19 @@ const ProfitandLoseReport = () => {
                     className="hover:bg-gray-50 text-center"
                   >
                     {[
-                      row.date, // Trip No
+                      row.date
+                        ? format(new Date(row.date), "dd-MM-yyyy")
+                        : "N/A",
                       row.id, // Trip No
                       row.registrationNo ?? "N/A", // Bus No
-                      row.upDate ?? "N/A", // Down Date
-                      row.downDate ?? "N/A", // Down Date
+                      row.upDate
+                        ? format(new Date(row.upDate), "dd-MM-yyyy")
+                        : "N/A",
+
+                      row.downDate
+                        ? format(new Date(row.downDate), "dd-MM-yyyy")
+                        : "N/A",
+
                       row.passengerUpWay ?? "N/A", // Down Date
                       row.passengerDownWay ?? "N/A", // Down Date
                       row.totalPassenger ?? "N/A", // Bus No

@@ -1,5 +1,6 @@
 import { Paragraph } from "@/components/common/typography/Paragraph";
 import { appConfiguration } from "@/utils/constants/common/appConfiguration";
+import { format } from "date-fns";
 import React from "react";
 
 interface IProfitandLossPrintProps {
@@ -88,11 +89,11 @@ const ProfitandLossPrint = React.forwardRef<
                   profitInfo.map((row: any, rowIndex: any) => (
                     <tr key={row.id || rowIndex}>
                       {[
-                        row.date ?? "N/A",
+                        format(new Date(row.date), "dd-MM-yyyy") ?? "N/A",
                         row.id ?? "N/A",
                         row.registrationNo ?? "N/A",
-                        row.upDate ?? "N/A",
-                        row.downDate ?? "N/A",
+                        format(new Date(row.upDate), "dd-MM-yyyy") ?? "N/A",
+                        format(new Date(row.downDate), "dd-MM-yyyy") ?? "N/A",
                         row.passengerUpWay ?? "0",
                         row.passengerDownWay ?? "0",
                         row.totalPassenger ?? "0",

@@ -105,7 +105,7 @@ const TripWiseReportPrint = React.forwardRef<
             <thead className="bg-gray-100">
               <tr>
                 <th
-                  colSpan={5}
+                  colSpan={6}
                   className="border border-gray-300  px-4 py-2 text-center font-semibold text-base"
                 >
                   Receive / Income
@@ -117,6 +117,7 @@ const TripWiseReportPrint = React.forwardRef<
                   "Counter Master Name",
                   "Qty",
                   "Fare",
+                  "Discount",
                   "Total Price",
                 ].map((header) => (
                   <th
@@ -144,13 +145,16 @@ const TripWiseReportPrint = React.forwardRef<
                     {row.fare || 0}
                   </td>
                   <td className="border border-gray-300 px-2 py-2 text-center">
+                    00.00
+                  </td>
+                  <td className="border border-gray-300 px-2 py-2 text-center">
                     {row.amount || 0}
                   </td>
                 </tr>
               ))}
               <tr className="bg-gray-100 font-semibold">
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   className="border  border-gray-300 px-4 py-2 text-center"
                 >
                   Total Income
