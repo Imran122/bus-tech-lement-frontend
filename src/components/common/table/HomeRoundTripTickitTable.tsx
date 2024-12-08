@@ -118,7 +118,7 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
       <thead>
         <tr className="bg-primary ">
           <th className="border-2 border-[#3491b1] p-2">
-            {translate("যাত্রা শুরু সময় এবং তারিখ", "Departure Time & Date")}
+            {translate("যাত্রা শুরু সময়", "Departure Time")}
           </th>
           <th className="border-2 border-[#3491b1] p-2">
             {translate("কোচ নং", "Coach No")}
@@ -155,14 +155,15 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
             <tr
               key={index}
               onClick={() => handleToggleRow(index, item)}
-              className="hover:bg-[#e074ee] cursor-pointer"
+              className={`${
+                index % 2 === 0 ? "bg-white" : "bg-gray-100"
+              } hover:bg-[#e074ee] cursor-pointer`}
             >
               <td className="border border-gray-300 p-2">
                 {translate(
                   `${convertTimeToBengali(item.schedule)}`,
                   `${item.schedule}`
                 )}{" "}
-                & {item.departureDate}
               </td>
               <td className="border border-gray-300 p-2">
                 {item.coachNo || translate("N/A", "N/A")}

@@ -346,7 +346,7 @@ const ProfitandLoseReport = () => {
       </section>
 
       <section className="flex justify-end my-10">
-        <div className="border w-6/12 ">
+        <div className="border w-5/12 ">
           <table className="table-auto w-full border-collapse font-bold border border-gray-200">
             <tbody>
               {[
@@ -409,7 +409,7 @@ const ProfitandLoseReport = () => {
                   <td className="border border-gray-300 px-4 py-2 font-semibold">
                     {row.label}
                   </td>
-                  <td className="border border-gray-300 px-4 font-semibold py-2">
+                  <td className="border text-right border-gray-300 px-4 font-semibold py-2">
                     {row.value}
                   </td>
                 </tr>

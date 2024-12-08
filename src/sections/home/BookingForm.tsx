@@ -501,7 +501,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                   )}
                 />
               </InputWrapper>
-              <Button type="submit" className="lg:mt-7 md:mt-5 mt-9 ml-2">
+              <Button type="submit" className="lg:mt-4 md:mt-5 mt-9 ml-2">
                 <span>
                   {userInfoLoading && (
                     <svg
@@ -524,7 +524,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-12 gap-5 my-0 h-full mt-6 px-4">
           {/* COUCH SEAT PLAN CONTAINER */}
-          <PageTransition className="col-span-5 w-full flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
+          <PageTransition className="lg:col-span-5 col-span-12 w-full flex items-center flex-col border-2 rounded-md justify-center  border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <SeatLayoutSelector
               checkingSeat={checkingSeat}
               bookingCoach={bookingCoach}
@@ -539,7 +539,7 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
           </PageTransition>
 
           {/* CUSTOMER & PAYMENT INFORMATION */}
-          <PageTransition className="col-span-7 flex flex-col justify-between h-full w-full">
+          <PageTransition className="lg:col-span-7 col-span-12 flex flex-col justify-between h-full w-full">
             <div className="border-2 mt-4 relative py-10 px-1">
               <h2 className="absolute border border-[#e57bf3] -top-3 left-2 px-2 bg-[#e074ee]">
                 {translate(

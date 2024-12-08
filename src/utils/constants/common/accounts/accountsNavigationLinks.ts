@@ -62,7 +62,7 @@ const accountDashboardRootLinks = {
 
     {
       icon: LuBus,
-      label: { bn: "লাভ ও ক্ষতির প্রতিবেদন", en: "Profit And Loss" },
+      label: { bn: "লাভ ও ক্ষতির প্রতিবেদন", en: "Bus No Wise Report" },
       key: "profit_and_loss",
       href: "profit_and_loss",
     },
@@ -157,7 +157,7 @@ const accountantExpenseManagementLinks = {
     // },
     {
       icon: LuBus,
-      label: { bn: "লাভ ও ক্ষতির প্রতিবেদন", en: "Profit And Loss" },
+      label: { bn: "লাভ ও ক্ষতির প্রতিবেদন", en: "Bus No Wise Report" },
       key: "profit_and_loss",
       href: "profit_and_loss",
     },

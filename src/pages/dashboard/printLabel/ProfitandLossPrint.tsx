@@ -40,7 +40,7 @@ const ProfitandLossPrint = React.forwardRef<
                 {appName}
               </Paragraph>
               <Paragraph className="pl-3" size={"md"}>
-                Bus wise report
+                Bus No wise report
               </Paragraph>
             </div>
           </div>

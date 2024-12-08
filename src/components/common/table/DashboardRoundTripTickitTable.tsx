@@ -163,7 +163,9 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
             <tr
               onClick={() => handleToggleRow(index, item)}
               key={index}
-              className="hover:bg-[#e074ee] cursor-pointer "
+              className={`${
+                index % 2 === 0 ? "bg-white" : "bg-gray-100"
+              } hover:bg-[#e074ee] cursor-pointer`}
             >
               <td className="border border-gray-300 p-2">
                 {translate(

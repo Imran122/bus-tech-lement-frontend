@@ -24,7 +24,7 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
         <thead>
           <tr className="bg-primary ">
             <th className="border-2 border-[#3491b1] p-2">
-              {translate("যাত্রা শুরু সময় এবং তারিখ", "Departure Time & Date")}
+              {translate("যাত্রা শুরু সময়", "Departure Time")}
             </th>
             <th className="border-2 border-[#3491b1] p-2">
               {translate("কোচ নং", "Coach No")}
@@ -35,9 +35,9 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
             {/* <th className="border-2 border-[#3491b1] p-2">
               {translate("বুকড", "Booked")}
             </th> */}
-            <th className="border-2 border-[#3491b1] p-2">
+            {/* <th className="border-2 border-[#3491b1] p-2">
               {translate("বিক্রিত", "Sold")}
-            </th>
+            </th> */}
             <th className="border-2 border-[#3491b1] p-2">
               {translate("ভাড়া", "Fare")}
             </th>
@@ -61,14 +61,15 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
               <tr
                 onClick={() => toggleRow(index)}
                 key={index}
-                className="hover:bg-[#e074ee] cursor-pointer"
+                className={`${
+                  index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                } hover:bg-[#e074ee] cursor-pointer`}
               >
                 <td className="border border-gray-300 p-2">
                   {translate(
                     `${convertTimeToBengali(coach.schedule)}`,
                     coach.schedule
                   )}{" "}
-                  & {coach.departureDate}
                 </td>
                 <td className="border border-gray-300 p-2">
                   {coach.coachNo || translate("N/A", "N/A")}
@@ -87,14 +88,14 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
                     coach?.CounterBookedSeat?.length?.toString() || "0"
                   )}
                 </td> */}
-                <td className="border border-gray-300 p-2">
+                {/* <td className="border border-gray-300 p-2">
                   {translate(
                     convertToBnDigit(
                       coach?.orderSeat?.length?.toString() || "0"
                     ),
                     coach?.orderSeat?.length?.toString() || "0"
                   )}
-                </td>
+                </td> */}
                 <td className="border border-gray-300 p-2">
                   <div className="flex flex-col items-start">
                     {coach.discount > 0 && (
