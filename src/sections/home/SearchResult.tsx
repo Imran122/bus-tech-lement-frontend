@@ -1,7 +1,6 @@
 import HomeRoundTripTickitTable from "@/components/common/table/HomeRoundTripTickitTable";
 import HomeTickitBookingTable from "@/components/common/table/HomeTickitBookingTable";
 import { Accordion } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -222,21 +221,19 @@ export default function SearchResult({
           >
             Proceed
           </button>
-          <div className="py-3 flex gap-4 items-end px-6 border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-            <h2 className="text-primary text-2xl  font-semibold">Reset Seat</h2>
+          <div className="lg:py-3 py-3 flex gap-4  px-10 rounded-md justify-center items-center bg-primary">
+            <h2 className="text-white text-xl  font-semibold">Reset</h2>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button
+                  <button
                     type="button"
                     className="text-muted-foreground"
                     onClick={ResetDataOfForm}
-                    variant="outline"
-                    size="icon"
                   >
                     <span className="sr-only">Refresh Button</span>
-                    <LuRefreshCw className="size-[21px]" />
-                  </Button>
+                    <LuRefreshCw className="size-[21px] text-white" />
+                  </button>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p> {translate("ফিল্টার রিসেট", "Reset Filter")}</p>
