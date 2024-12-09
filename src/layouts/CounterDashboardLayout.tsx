@@ -28,7 +28,7 @@ const CounterDashboardLayout: FC<ICounterDashboardLayoutProps> = () => {
           {/* DASHBOARD UPPER NAVIGATION */}
           <CounterDashboardUpperNavigation />
           {/* DASHBOARD PLAYGROUND */}
-          <section className="bg-muted/30 backdrop-blur-sm !w-[98.7%] ml-[13px] -mt-[2.5px] mb-1.5 rounded-md min-h-screen p-4 sm:px-6 sm:py-0 md:gap-8 overflow-x-hidden overflow-y-auto">
+          <section className="bg-muted/30  !w-[98.7%] ml-[13px] -mt-[2.5px] mb-1.5 rounded-md min-h-screen p-4 sm:px-6 sm:py-0 md:gap-8 overflow-x-hidden overflow-y-auto">
             <Outlet />
           </section>
         </section>

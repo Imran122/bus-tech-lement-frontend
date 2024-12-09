@@ -65,7 +65,6 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
   if (isLoading) {
     return <DetailsSkeleton />;
   }
-
   return (
     <section>
       <PageWrapper>

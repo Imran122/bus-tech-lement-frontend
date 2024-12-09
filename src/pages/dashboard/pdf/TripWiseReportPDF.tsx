@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
 
 const TripWiseReportPDF = ({
   reportData,
-  dateRange,
+
   logo,
   selectedTripNo,
 }: any) => {
@@ -157,7 +157,11 @@ const TripWiseReportPDF = ({
     totalAmount = 0,
     gp = 0,
   } = reportData?.data || {};
-
+  const today = new Date().toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -169,7 +173,7 @@ const TripWiseReportPDF = ({
         </View>
         <View style={styles.headerSection}>
           <Text style={styles.subHeading}>Trip No: {selectedTripNo}</Text>
-          <Text style={styles.subHeading}>Date: {dateRange}</Text>
+          <Text style={styles.subHeading}>Date: {today}</Text>
         </View>
 
         {/* Main Table */}

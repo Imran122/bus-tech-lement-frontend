@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
 const PdfPrintTickitOnline = ({
   tickitData,
   logo,
+  qrData,
 }: {
   tickitData: any;
   logo: any;
@@ -129,21 +130,6 @@ const PdfPrintTickitOnline = ({
   React.useEffect(() => {
     const generateQRCode = async () => {
       try {
-        const qrData = JSON.stringify({
-          phone: tickitData?.data?.phone || "N/A",
-          ticketNo: tickitData?.data?.ticketNo || "404NOTFOUND",
-          seats: tickitData?.data?.orderSeat
-            ?.map((seat: any) => seat?.seat)
-            .join(", "),
-          customerName: tickitData?.data?.customerName,
-          address: tickitData?.data?.address,
-          boardingPoint: tickitData?.data?.boardingPoint,
-          droppingPoint: tickitData?.data?.droppingPoint,
-          departureDate:
-            tickitData?.data?.orderSeat?.[0]?.coachConfig?.departureDate,
-          schedule: tickitData?.data?.orderSeat?.[0]?.coachConfig?.schedule,
-        });
-
         // Generate QR code as Base64
         const qrCodeUrl = await QRCode.toDataURL(qrData);
         setQrCodeBase64(qrCodeUrl);
@@ -213,7 +199,7 @@ const PdfPrintTickitOnline = ({
                     ).toLocaleDateString()
                   : "N/A"}
               </Text>
-              <Text style={styles.text}>
+              <Text style={[styles.text, { marginLeft: 7 }]}>
                 <Text style={styles.boldText}>Issue Date:</Text>{" "}
                 {tickitData?.data?.createdAt
                   ? new Date(tickitData.data.createdAt).toLocaleDateString()
@@ -235,7 +221,7 @@ const PdfPrintTickitOnline = ({
                 <Text style={styles.boldText}>Seat Fare (Tk):</Text>{" "}
                 {seatNo?.[0]?.unitPrice}
               </Text>
-              <Text style={styles.text}>
+              <Text style={[styles.text, { marginLeft: 32 }]}>
                 <Text style={styles.boldText}>Total Fare (Tk):</Text>{" "}
                 {tickitData?.data?.paymentAmount}
               </Text>

@@ -12,7 +12,7 @@ interface ITripWiseReportPrintProps {
 const TripWiseReportPrint = React.forwardRef<
   HTMLDivElement,
   ITripWiseReportPrintProps
->(({ reportData, logo, dateRange, selectedTripNo }, ref) => {
+>(({ reportData, logo, selectedTripNo }, ref) => {
   const {
     upWayCoachInfo = [],
     downWayCoachInfo = [],
@@ -23,7 +23,11 @@ const TripWiseReportPrint = React.forwardRef<
     totalAmount = 0,
     gp = 0,
   } = reportData?.data || {};
-
+  const today = new Date().toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
   const { appName } = appConfiguration;
 
   return (
@@ -45,7 +49,7 @@ const TripWiseReportPrint = React.forwardRef<
       <div className="mt-5">
         <div className="flex justify-between py-2">
           <h2>Trip No: {selectedTripNo}</h2>
-          <h2>Date Range: {dateRange}</h2>
+          <h2>Date: {today}</h2>
         </div>
         <table className="table-auto w-full border-collapse border border-gray-300 text-sm">
           <thead className="bg-gray-100">

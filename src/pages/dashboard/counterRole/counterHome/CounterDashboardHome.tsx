@@ -651,7 +651,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       {/* Modal for round trip form */}
       {isModalOpen && (
         <div className="fixed bottom-0 left-0 top-0 right-0 flex justify-center items-center  bg-black bg-opacity-50 z-50 ">
-          <div className="inset-0  overflow-scroll  w-full max-w-[95%] md:max-w-4xl bg-background border border-primary/50 border-dashed rounded-lg p-5 backdrop-blur-[2px]">
+          <div className="h-[700px] overflow-scroll  w-full max-w-[95%] md:max-w-4xl bg-background border border-primary/50 border-dashed rounded-lg p-5 backdrop-blur-[2px]">
             <button
               onClick={handleCloseModal}
               className="absolute top-4 right-4 text-red-500 font-bold"
