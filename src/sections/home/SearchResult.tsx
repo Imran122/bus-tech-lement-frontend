@@ -149,6 +149,8 @@ export default function SearchResult({
       );
     }
   };
+  //remember form data code
+  const [sharedFormState, setSharedFormState] = useState<any>({}); // Renamed state
   return (
     <div className="px-3">
       {/* {bookingState.orderType !== "Round_Trip" && 
@@ -262,6 +264,8 @@ export default function SearchResult({
               bookingFormState={bookingFormState}
               setBookingFormState={setBookingFormState}
               onClose={handleCloseModal}
+              sharedFormState={sharedFormState}
+              setSharedFormState={setSharedFormState}
             />
           </div>
         </div>

@@ -55,6 +55,8 @@ export interface IBookingFormStateProps {
   redirectLink: string | null;
   customerName: string | null;
   redirectConfirm: boolean;
+  sharedFormState: any; // Renamed state
+  setSharedFormState: (formState: any) => void;
 }
 
 const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
@@ -64,9 +66,20 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   bookingCoach,
   setBookingFormState,
   onClose,
+  sharedFormState,
+  setSharedFormState,
 }) => {
   const { translate } = useCustomTranslator();
   const goingDate = localStorage.getItem("goingDate");
+  const [localState, setLocalState] = useState(bookingFormState);
+
+  const handleFieldUpdate = (fieldName: string, value: any) => {
+    setSharedFormState((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
+    setValue(fieldName as keyof AddBookingSeatDataProps, value);
+  };
   const [addBooking, { isLoading: addBookingLoading, error: addBookingError }] =
     useAddBookingMutation() as any;
   const [
@@ -93,9 +106,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     formState: { errors },
   } = useForm<AddBookingSeatDataProps>({
     resolver: zodResolver(addBookingSeatSchema),
-    defaultValues: {
-      amount: 0,
-    },
+    defaultValues: useMemo(() => sharedFormState, [sharedFormState]),
   });
   const { data: partialInfoData } = useGetPartialInfoAllQuery({});
 
@@ -259,27 +270,42 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
     //setSubmitted(true);
     await refetch(); // Trigger API call manually
   };
-
   useEffect(() => {
     if (userInfoData?.data) {
-      // Populate all relevant form fields
-      setValue("customerName", userInfoData.data.name || "");
-      setValue("phone", userInfoData.data.phone || "");
-      setValue("gender", userInfoData.data.gender || "");
-      setValue("email", userInfoData.data.email || "");
-      setValue("address", userInfoData.data.address || "");
-      setValue("nationality", userInfoData.data.nationality || "");
-      setValue("nid", userInfoData.data.nid || "");
+      const {
+        name,
+        phone,
+        gender,
+        email,
+        address,
+        nationality,
+        nid,
+        boardingPoint,
+        droppingPoint,
+      } = userInfoData.data;
 
-      // Clear any previous error message
-      setErrorMessage("");
-      // setSubmitted(false);
-    } else {
-      // Set error message if no data found
-      setErrorMessage("No data found for this phone number.");
-      //setSubmitted(false);
+      const updatedFields = {
+        customerName: name || "",
+        phone: phone || "",
+        gender: gender || "",
+        email: email || "",
+        address: address || "",
+        nationality: nationality || "",
+        nid: nid || "",
+        boardingPoint: boardingPoint || "",
+        droppingPoint: droppingPoint || "",
+      };
+
+      setSharedFormState((prevState) => ({
+        ...prevState,
+        ...updatedFields,
+      }));
+
+      Object.entries(updatedFields).forEach(([key, value]) => {
+        setValue(key as keyof AddBookingSeatDataProps, value);
+      });
     }
-  }, [userInfoData, setValue]);
+  }, [userInfoData, setValue, setSharedFormState]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
     const tripType = localStorage.getItem("tripType");
     const returnDate = localStorage.getItem("returnDate");
@@ -444,6 +470,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       <td className="p-2 border">
                         <Input
                           {...register("customerName")}
+                          value={sharedFormState.customerName || ""}
+                          onChange={(e) =>
+                            handleFieldUpdate("customerName", e.target.value)
+                          }
                           placeholder={translate("নাম লিখুন", "Enter Name")}
                         />
                         {errors.customerName && (
@@ -458,6 +488,12 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       <td className="p-2 border">
                         <Input
                           {...register("phone")}
+                          value={sharedFormState.phone || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setPhoneNumber(value);
+                            handleFieldUpdate("phone", value);
+                          }}
                           placeholder={translate("ফোন লিখুন", "Enter Phone")}
                         />
                         {errors.phone && (
@@ -475,9 +511,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       </td>
                       <td className="p-2 border">
                         <Select
-                          value={watch("gender") || ""}
-                          onValueChange={(value: any) =>
-                            setValue("gender", value)
+                          value={sharedFormState.gender || ""}
+                          onValueChange={(value) =>
+                            handleFieldUpdate("gender", value)
                           }
                         >
                           <SelectTrigger className="w-full">
@@ -504,6 +540,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       <td className="p-2 border">
                         <Input
                           {...register("email")}
+                          value={sharedFormState.email || ""}
+                          onChange={(e) =>
+                            handleFieldUpdate("email", e.target.value)
+                          }
                           placeholder={translate("ইমেইল লিখুন", "Enter Email")}
                         />
                       </td>
@@ -521,13 +561,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                           label=""
                         >
                           <Select
-                            onValueChange={(value: string) => {
-                              setValue("boardingPoint", value);
-                              setError("boardingPoint", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.boardingPoint || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("boardingPoint", value)
+                            }
                           >
                             <SelectTrigger
                               id="boardingPoint"
@@ -568,13 +605,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                           label=""
                         >
                           <Select
-                            onValueChange={(value: string) => {
-                              setValue("droppingPoint", value);
-                              setError("droppingPoint", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.droppingPoint || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("droppingPoint", value)
+                            }
                           >
                             <SelectTrigger
                               id="droppingPoint"
@@ -620,13 +654,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                           label=""
                         >
                           <Select
-                            onValueChange={(value: string) => {
-                              setValue("returnBoardingPoint", value);
-                              setError("returnBoardingPoint", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.returnBoardingPoint || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("returnBoardingPoint", value)
+                            }
                           >
                             <SelectTrigger
                               id="returnBoardingPoint"
@@ -670,13 +701,10 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                           label=""
                         >
                           <Select
-                            onValueChange={(value: string) => {
-                              setValue("returnDroppingPoint", value);
-                              setError("returnDroppingPoint", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.returnDroppingPoint || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("returnDroppingPoint", value)
+                            }
                           >
                             <SelectTrigger
                               id="returnDroppingPoint"
@@ -685,29 +713,23 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                               <SelectValue
                                 placeholder={translate(
                                   "ফেরার ড্রপিং পয়েন্ট নির্বাচন করুন",
-                                  "Select Return Dropping Point"
+                                  "Select Return Droping Point"
                                 )}
                               />
                             </SelectTrigger>
                             <SelectContent>
                               {returnViaRoute.length > 0 &&
-                                returnViaRoute
-                                  .filter(
-                                    (target: any) =>
-                                      target?.station?.name !==
-                                      watch("boardingPoint")
-                                  )
-                                  .map((singlePoint: any) => (
-                                    <SelectItem
-                                      key={singlePoint.en}
-                                      value={singlePoint}
-                                    >
-                                      {formatter({
-                                        type: "words",
-                                        words: singlePoint,
-                                      })}
-                                    </SelectItem>
-                                  ))}
+                                returnViaRoute.map((singlePoint: any) => (
+                                  <SelectItem
+                                    key={singlePoint.en}
+                                    value={singlePoint}
+                                  >
+                                    {formatter({
+                                      type: "words",
+                                      words: singlePoint,
+                                    })}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                           </Select>
                         </InputWrapper>
@@ -721,9 +743,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       </td>
                       <td className="p-2 border">
                         <Select
-                          value={watch("paymentType") || ""}
-                          onValueChange={(value: any) =>
-                            setValue("paymentType", value)
+                          value={sharedFormState.paymentType || ""}
+                          onValueChange={(value) =>
+                            handleFieldUpdate("paymentType", value)
                           }
                         >
                           <SelectTrigger className="w-full">
@@ -749,9 +771,9 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
                       </td>
                       <td className="p-2 border">
                         <Select
-                          value={watch("paymentMethod") || ""}
+                          value={sharedFormState.paymentMethod || ""}
                           onValueChange={(value) =>
-                            setValue("paymentMethod", value)
+                            handleFieldUpdate("paymentMethod", value)
                           }
                         >
                           <SelectTrigger className="w-full">
