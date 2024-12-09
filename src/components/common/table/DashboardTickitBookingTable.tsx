@@ -16,8 +16,24 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
   const { translate } = useCustomTranslator();
   const [openRowIndex, setOpenRowIndex] = useState<number | null>(null);
 
-  const handleToggleRow = (index: number) => {
-    setOpenRowIndex((prevIndex) => (prevIndex === index ? null : index));
+  const [sharedFormState, setSharedFormState] = useState<any>({}); // Renamed state
+
+  const toggleRow = (index: number, coach: any) => {
+    setOpenRowIndex((prevIndex) => {
+      const newIndex = prevIndex === index ? null : index;
+
+      // Update shared form state with the data for the selected coach
+      if (newIndex !== null) {
+        setSharedFormState((prevState: any) => ({
+          ...prevState,
+          ...coach, // Merge with the existing data
+        }));
+      } else {
+        setSharedFormState({}); // Clear state when collapsing
+      }
+
+      return newIndex;
+    });
   };
   return (
     <table className="min-w-full border-collapse text-center border border-gray-300">
@@ -67,7 +83,7 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
           coachData.map((coach: any, index: any) => (
             <>
               <tr
-                onClick={() => handleToggleRow(index)}
+                onClick={() => toggleRow(index, coach)}
                 key={index}
                 className={`${
                   index % 2 === 0 ? "bg-white" : "bg-gray-100"
@@ -132,9 +148,9 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={(event) => {
+                    onClick={(event: any) => {
                       event.stopPropagation(); // Prevent triggering parent row's onClick
-                      handleToggleRow(index);
+                      toggleRow(index, coach);
                     }}
                   >
                     {openRowIndex === index
@@ -146,7 +162,11 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
               {openRowIndex === index && (
                 <tr>
                   <td colSpan={12} className="p-4">
-                    <CounterTickitBookingForm bookingCoach={coach} />
+                    <CounterTickitBookingForm
+                      sharedFormState={sharedFormState}
+                      setSharedFormState={setSharedFormState}
+                      bookingCoach={coach}
+                    />
                   </td>
                 </tr>
               )}

@@ -23,6 +23,7 @@ import {
   useAddBookingMutation,
   useAddBookingSeatMutation,
   useCheckingSeatMutation,
+  useGetTickitInfoByPhoneQuery,
   useRemoveBookingSeatMutation,
   useUnBookSeatFromCounterBookingMutation,
 } from "@/store/api/bookingApi";
@@ -35,7 +36,7 @@ import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
 import formatter from "@/utils/helpers/formatter";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import SeatLayoutSelector from "@/components/common/busSeatLayout/SeatLayoutSelector";
@@ -75,6 +76,8 @@ import TripSheet from "./TripSheet";
 
 interface ICounterBookingFormProps {
   bookingCoach: any;
+  sharedFormState: any; // Renamed state
+  setSharedFormState: (formState: any) => void;
 }
 export interface ICounterBookingFormStateProps {
   targetedSeat: number | null;
@@ -87,7 +90,10 @@ export interface ICounterBookingFormStateProps {
 
 const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   bookingCoach,
+  sharedFormState,
+  setSharedFormState,
 }) => {
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [bookingType, setBookingType] = useState("SeatIssue");
   const [expirationDate, setExpirationDate] = useState<Date | undefined>(
     undefined
@@ -204,27 +210,63 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     formState: { isSubmitSuccessful, errors },
   } = useForm<addBookingSeatFromCounterProps>({
     resolver: zodResolver(addBookingSeatFromCounterSchema),
-    defaultValues: {
-      counterId: undefined,
-      customerName: "",
-      paymentType: "", // For dropdowns, empty string is a good default for unselected state
-      paymentAmount: undefined,
-      gender: "Male", // Use undefined instead of empty string for optional enum fields
-      phone: "",
-      email: "",
-      address: "",
-      nid: "",
-      nationality: undefined, // Dropdown reset value
-      paymentMethod: undefined, // Dropdown reset value
-      boardingPoint: undefined, // Dropdown reset value
-      droppingPoint: undefined, // Dropdown reset value
-      noOfSeat: 0,
-      amount: 0,
-      date: bookingCoach?.departureDate || "", // Pre-fill if available
-      seats: [],
-    },
+    defaultValues: useMemo(() => sharedFormState, [sharedFormState]),
   });
+  const {
+    data: userInfoData,
+    isLoading: userInfoLoading,
+    refetch,
+  } = useGetTickitInfoByPhoneQuery(phoneNumber, {
+    skip: phoneNumber.length !== 11, // Skip unless phone number is 11 digits
+  }) as any;
+  useEffect(() => {
+    if (phoneNumber.length === 11) {
+      refetch(); // Trigger API call if phone number is 11 digits
+    }
+  }, [phoneNumber, refetch]);
+  const handleFieldUpdate = (fieldName: string, value: any) => {
+    setSharedFormState((prevState: any) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
+    setValue(fieldName as keyof addBookingSeatFromCounterProps, value);
+  };
+  useEffect(() => {
+    if (userInfoData?.data) {
+      const {
+        name,
+        phone,
+        gender,
+        email,
+        address,
+        nationality,
+        nid,
+        boardingPoint,
+        droppingPoint,
+      } = userInfoData.data;
 
+      const updatedFields = {
+        customerName: name || "",
+        phone: phone || "",
+        gender: gender || "",
+        email: email || "",
+        address: address || "",
+        nationality: nationality || "",
+        nid: nid || "",
+        boardingPoint: boardingPoint || "",
+        droppingPoint: droppingPoint || "",
+      };
+
+      setSharedFormState((prevState: any) => ({
+        ...prevState,
+        ...updatedFields,
+      }));
+
+      Object.entries(updatedFields).forEach(([key, value]) => {
+        setValue(key as keyof addBookingSeatFromCounterProps, value);
+      });
+    }
+  }, [userInfoData, setValue, setSharedFormState]);
   useEffect(() => {
     if (bookingCoach) {
       setStatusBookingCoach({
@@ -708,6 +750,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         <td className="border  p-2">
                           <Input
                             {...register("customerName")}
+                            value={sharedFormState.customerName || ""}
+                            onChange={(e) =>
+                              handleFieldUpdate("customerName", e.target.value)
+                            }
                             type="text"
                             id="name"
                             placeholder={translate(
@@ -728,6 +774,12 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         <td className="border  p-2">
                           <Input
                             {...register("phone")}
+                            value={sharedFormState.phone || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setPhoneNumber(value);
+                              handleFieldUpdate("phone", value);
+                            }}
                             type="tel"
                             id="phone"
                             placeholder={translate(
@@ -751,14 +803,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         </td>
                         <td className="border  p-2">
                           <Select
-                            value={watch("gender") || ""}
-                            onValueChange={(value: "Male" | "Female") => {
-                              setValue("gender", value);
-                              setError("gender", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.gender || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("gender", value)
+                            }
                           >
                             <SelectTrigger id="gender" className="w-full">
                               <SelectValue
@@ -784,6 +832,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         <td className="border  p-2">
                           <Input
                             {...register("email")}
+                            value={sharedFormState.email || ""}
+                            onChange={(e) =>
+                              handleFieldUpdate("email", e.target.value)
+                            }
                             type="email"
                             id="email"
                             placeholder={translate(
@@ -802,14 +854,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         </td>
                         <td className="border  p-2">
                           <Select
-                            value={watch("nationality") || ""}
-                            onValueChange={(value: string) => {
-                              setValue("nationality", value);
-                              setError("nationality", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.nationality || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("nationality", value)
+                            }
                           >
                             <SelectTrigger id="nationality" className="w-full">
                               <SelectValue
@@ -844,6 +892,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         <td className="border  p-2">
                           <Input
                             {...register("nid")}
+                            value={sharedFormState.nid || ""}
+                            onChange={(e) =>
+                              handleFieldUpdate("nid", e.target.value)
+                            }
                             type="text"
                             id="pass/nid"
                             placeholder={translate(
@@ -863,6 +915,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         <td colSpan={3} className="border  p-2">
                           <Input
                             {...register("address")}
+                            value={sharedFormState.address || ""}
+                            onChange={(e) =>
+                              handleFieldUpdate("address", e.target.value)
+                            }
                             type="text"
                             id="address"
                             placeholder={translate(
@@ -881,14 +937,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         </td>
                         <td className="border  p-2">
                           <Select
-                            value={watch("boardingPoint") || ""}
-                            onValueChange={(value: string) => {
-                              setValue("boardingPoint", value);
-                              setError("boardingPoint", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.boardingPoint || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("boardingPoint", value)
+                            }
                           >
                             <SelectTrigger
                               id="boardingPoint"
@@ -930,14 +982,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         </td>
                         <td className="border  p-2">
                           <Select
-                            value={watch("droppingPoint") || ""}
-                            onValueChange={(value: string) => {
-                              setValue("droppingPoint", value);
-                              setError("droppingPoint", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.droppingPoint || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("droppingPoint", value)
+                            }
                           >
                             <SelectTrigger
                               id="droppingPoint"
@@ -987,14 +1035,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         </td>
                         <td className="border  p-2">
                           <Select
-                            value={watch("paymentMethod") || ""}
-                            onValueChange={(value: string) => {
-                              setValue("paymentMethod", value);
-                              setError("paymentMethod", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.paymentMethod || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("paymentMethod", value)
+                            }
                           >
                             <SelectTrigger
                               id="paymentMethod"
@@ -1039,14 +1083,10 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                         </td>
                         <td className="border  p-2">
                           <Select
-                            value={watch("paymentType") || ""}
-                            onValueChange={(value: "FULL" | "PARTIAL") => {
-                              setValue("paymentType", value);
-                              setError("paymentType", {
-                                type: "custom",
-                                message: "",
-                              });
-                            }}
+                            value={sharedFormState.paymentType || ""}
+                            onValueChange={(value) =>
+                              handleFieldUpdate("paymentType", value)
+                            }
                           >
                             <SelectTrigger id="paymentType" className="w-full">
                               <SelectValue
