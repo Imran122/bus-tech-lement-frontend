@@ -648,14 +648,27 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
 
       {/* Modal for round trip form */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center">
-          <div className=" fixed top-[50px] left-1/2 transform -translate-x-1/2 w-full max-w-[95%] md:max-w-4xl bg-background border border-primary/50 border-dashed rounded-lg p-5 backdrop-blur-[2px] max-h-[80vh] overflow-y-auto">
+        <div
+          className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
+          style={{ overflow: "hidden" }}
+        >
+          <div
+            className="relative bg-white rounded-lg shadow-lg p-5 w-full max-w-[95%] md:max-w-4xl"
+            style={{
+              maxHeight: "80vh",
+              overflowY: "auto",
+            }}
+          >
+            {/* Close Button */}
             <button
-              onClick={handleCloseModal}
-              className="absolute top-4 right-4 text-red-500 font-bold"
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-red-500"
             >
               Close
             </button>
+
+            {/* Modal Content */}
+            <h2 className="text-xl font-bold mb-4">Round Trip Modal</h2>
             <RoundTripFormModal
               bookingCoach={bookingCoachSingle}
               onClose={handleCloseModal}
