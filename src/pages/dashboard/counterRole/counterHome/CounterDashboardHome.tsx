@@ -79,6 +79,8 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     size: 10,
     meta: { page: 0, size: 10, total: 100, totalPage: 10 },
   });
+  const [sharedFormState, setSharedFormState] = useState<any>({}); // Renamed state
+
   const bookingState = useSelector(selectCounterSearchFilter);
   const [removeBookingSeat] = useRemoveBookingSeatMutation({}) as any;
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -663,6 +665,8 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
               returnViaRoute={returnViaRoute}
               bookingFormState={bookingFormState}
               setBookingFormState={setBookingFormState}
+              sharedFormState={sharedFormState}
+              setSharedFormState={setSharedFormState}
             />
           </div>
         </div>

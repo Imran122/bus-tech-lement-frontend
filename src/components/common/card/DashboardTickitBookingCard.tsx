@@ -29,6 +29,7 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
   const { translate } = useCustomTranslator();
   //@ts-ignore
   const [selectedBookingCoach, setSelectedBookingCoach] = useState<any>({});
+  const [sharedFormState, setSharedFormState] = useState<any>({}); // Renamed state
 
   return (
     <AccordionItem value={index?.toString()}>
@@ -162,7 +163,11 @@ const DashboardTickitBookingCard: FC<IBookingTickitCardProps> = ({
 
       <AccordionContent>
         <PageTransition>
-          <CounterTickitBookingForm bookingCoach={coachData} />
+          <CounterTickitBookingForm
+            sharedFormState={sharedFormState}
+            setSharedFormState={setSharedFormState}
+            bookingCoach={coachData}
+          />
         </PageTransition>
       </AccordionContent>
     </AccordionItem>

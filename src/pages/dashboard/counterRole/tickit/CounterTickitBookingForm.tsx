@@ -203,7 +203,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   const {
     register,
     setValue,
-    setError,
+
     watch,
     handleSubmit,
     reset,
@@ -214,7 +214,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
   });
   const {
     data: userInfoData,
-    isLoading: userInfoLoading,
+
     refetch,
   } = useGetTickitInfoByPhoneQuery(phoneNumber, {
     skip: phoneNumber.length !== 11, // Skip unless phone number is 11 digits
