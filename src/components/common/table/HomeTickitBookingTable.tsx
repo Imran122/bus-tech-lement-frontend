@@ -15,8 +15,25 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
 }) => {
   const { translate } = useCustomTranslator();
   const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(null);
-  const toggleRow = (index: number) => {
-    setExpandedRowIndex((prevIndex) => (prevIndex === index ? null : index));
+
+  const [sharedFormState, setSharedFormState] = useState<any>({}); // Renamed state
+
+  const toggleRow = (index: number, coach: any) => {
+    setExpandedRowIndex((prevIndex) => {
+      const newIndex = prevIndex === index ? null : index;
+
+      // Update shared form state with the data for the selected coach
+      if (newIndex !== null) {
+        setSharedFormState((prevState: any) => ({
+          ...prevState,
+          ...coach, // Merge with the existing data
+        }));
+      } else {
+        setSharedFormState({}); // Clear state when collapsing
+      }
+
+      return newIndex;
+    });
   };
   return (
     <div className="overflow-x-auto">
@@ -59,7 +76,7 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
           {coachData.map((coach, index) => (
             <>
               <tr
-                onClick={() => toggleRow(index)}
+                onClick={() => toggleRow(index, coach)}
                 key={index}
                 className={`${
                   index % 2 === 0 ? "bg-white" : "bg-gray-100"
@@ -163,7 +180,11 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
               {expandedRowIndex === index && (
                 <tr key={`details-${index}`}>
                   <td colSpan={10} className="p-4 border border-gray-300">
-                    <BookingForm bookingCoach={coach} />{" "}
+                    <BookingForm
+                      bookingCoach={coach}
+                      sharedFormState={sharedFormState}
+                      setSharedFormState={setSharedFormState}
+                    />{" "}
                   </td>
                 </tr>
               )}

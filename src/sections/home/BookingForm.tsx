@@ -61,6 +61,8 @@ import { LuRefreshCw } from "react-icons/lu";
 
 interface IBookingFormProps {
   bookingCoach: any;
+  sharedFormState: any; // Renamed state
+  setSharedFormState: (formState: any) => void;
 }
 interface IBookingFormStateProps {
   targetedSeat: number | null;
@@ -70,7 +72,11 @@ interface IBookingFormStateProps {
   redirectConfirm: boolean;
 }
 
-const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
+const BookingForm: FC<IBookingFormProps> = ({
+  bookingCoach,
+  sharedFormState,
+  setSharedFormState,
+}) => {
   const { translate } = useCustomTranslator();
   const [phoneNumber, setPhoneNumber] = useState("");
   //
@@ -128,10 +134,15 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
     formState: { errors },
   } = useForm<AddBookingSeatDataProps>({
     resolver: zodResolver(addBookingSeatSchema),
-    defaultValues: {
-      amount: 0,
-    },
+    defaultValues: useMemo(() => sharedFormState, [sharedFormState]),
   });
+  const handleFieldUpdate = (fieldName: string, value: any) => {
+    setSharedFormState((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
+    setValue(fieldName as keyof AddBookingSeatDataProps, value);
+  };
   const { data: partialInfoData } = useGetPartialInfoAllQuery({});
   const paymentType = watch("paymentType"); // Watch the paymentType value
   const partialAmount = watch("paymentAmount");
@@ -309,25 +320,40 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
   };
   useEffect(() => {
     if (userInfoData?.data) {
-      // Populate all relevant form fields
-      setValue("customerName", userInfoData.data.name || "");
-      setValue("phone", userInfoData.data.phone || "");
-      setValue("gender", userInfoData.data.gender || "");
-      setValue("email", userInfoData.data.email || "");
-      setValue("address", userInfoData.data.address || "");
-      setValue("nationality", userInfoData.data.nationality || "");
-      setValue("nid", userInfoData.data.nid || "");
+      const {
+        name,
+        phone,
+        gender,
+        email,
+        address,
+        nationality,
+        nid,
+        boardingPoint,
+        droppingPoint,
+      } = userInfoData.data;
 
-      // Clear any previous error message
-      setErrorMessage("");
-    } else {
-      // Set error message if no data found
+      const updatedFields = {
+        customerName: name || "",
+        phone: phone || "",
+        gender: gender || "",
+        email: email || "",
+        address: address || "",
+        nationality: nationality || "",
+        nid: nid || "",
+        boardingPoint: boardingPoint || "",
+        droppingPoint: droppingPoint || "",
+      };
 
-      setErrorMessage("No data found for this phone number.");
+      setSharedFormState((prevState) => ({
+        ...prevState,
+        ...updatedFields,
+      }));
+
+      Object.entries(updatedFields).forEach(([key, value]) => {
+        setValue(key as keyof AddBookingSeatDataProps, value);
+      });
     }
-
-    // Reset `submitted` to allow for further searches by phone
-  }, [userInfoData, setValue]);
+  }, [userInfoData, setValue, setSharedFormState]);
   const onSubmit = async (data: AddBookingSeatDataProps) => {
     const cleanedData = removeFalsyProperties(data, [
       "nid",
@@ -561,6 +587,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                           {...register("customerName")}
                           type="text"
                           id="name"
+                          value={sharedFormState.customerName || ""}
+                          onChange={(e) =>
+                            handleFieldUpdate("customerName", e.target.value)
+                          }
                           placeholder={translate(
                             addBookingSeatForm.name.placeholder.bn,
                             addBookingSeatForm.name.placeholder.en
@@ -581,10 +611,11 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                           {...register("phone")}
                           type="tel"
                           id="phone"
-                          value={phoneNumber}
-                          onChange={(e: any) => {
-                            setPhoneNumber(e.target.value);
-                            setValue("phone", e.target.value); // Synchronize with react-hook-form
+                          value={sharedFormState.phone || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setPhoneNumber(value);
+                            handleFieldUpdate("phone", value);
                           }}
                           placeholder={translate(
                             addBookingSeatForm.phone.placeholder.bn,
@@ -609,13 +640,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                       </td>
                       <td className="border p-2">
                         <Select
-                          onValueChange={(value: string) => {
-                            setValue("boardingPoint", value);
-                            setError("boardingPoint", {
-                              type: "custom",
-                              message: "",
-                            });
-                          }}
+                          value={sharedFormState.boardingPoint || ""}
+                          onValueChange={(value) =>
+                            handleFieldUpdate("boardingPoint", value)
+                          }
                         >
                           <SelectTrigger id="boardingPoint" className="w-full">
                             <SelectValue
@@ -659,13 +687,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                       </td>
                       <td className="border p-2">
                         <Select
-                          onValueChange={(value: string) => {
-                            setValue("droppingPoint", value);
-                            setError("droppingPoint", {
-                              type: "custom",
-                              message: "",
-                            });
-                          }}
+                          value={sharedFormState.droppingPoint || ""}
+                          onValueChange={(value) =>
+                            handleFieldUpdate("droppingPoint", value)
+                          }
                         >
                           <SelectTrigger id="droppingPoint" className="w-full">
                             <SelectValue
@@ -711,11 +736,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                       </td>
                       <td className="border p-2">
                         <Select
-                          value={watch("gender") || ""}
-                          onValueChange={(value: "Male" | "Female") => {
-                            setValue("gender", value);
-                            setError("gender", { type: "custom", message: "" });
-                          }}
+                          value={sharedFormState.gender || ""}
+                          onValueChange={(value) =>
+                            handleFieldUpdate("gender", value)
+                          }
                         >
                           <SelectTrigger id="gender" className="w-full">
                             <SelectValue
@@ -743,6 +767,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                           {...register("email")}
                           type="email"
                           id="email"
+                          value={sharedFormState.email || ""}
+                          onChange={(e) =>
+                            handleFieldUpdate("email", e.target.value)
+                          }
                           placeholder={translate(
                             addBookingSeatForm.email.placeholder.bn,
                             addBookingSeatForm.email.placeholder.en
@@ -759,14 +787,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                       </td>
                       <td className="border p-2">
                         <Select
-                          value={watch("nationality") || ""}
-                          onValueChange={(value: string) => {
-                            setValue("nationality", value);
-                            setError("nationality", {
-                              type: "custom",
-                              message: "",
-                            });
-                          }}
+                          value={sharedFormState.nationality || ""}
+                          onValueChange={(value) =>
+                            handleFieldUpdate("nationality", value)
+                          }
                         >
                           <SelectTrigger id="nationality" className="w-full">
                             <SelectValue
@@ -800,6 +824,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                         <Input
                           {...register("nid")}
                           type="text"
+                          value={sharedFormState.nid || ""}
+                          onChange={(e) =>
+                            handleFieldUpdate("nid", e.target.value)
+                          }
                           id="pass/nid"
                           placeholder={translate(
                             addBookingSeatForm.passportOrNID.placeholder.bn,
@@ -820,6 +848,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                           {...register("address")}
                           type="text"
                           id="address"
+                          value={sharedFormState.address || ""}
+                          onChange={(e) =>
+                            handleFieldUpdate("address", e.target.value)
+                          }
                           placeholder={translate(
                             addBookingSeatForm.address.placeholder.bn,
                             addBookingSeatForm.address.placeholder.en
@@ -919,14 +951,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                     </td>
                     <td className="border p-2">
                       <Select
-                        value={watch("paymentType") || ""}
-                        onValueChange={(value: "FULL" | "PARTIAL") => {
-                          setValue("paymentType", value);
-                          setError("paymentType", {
-                            type: "custom",
-                            message: "",
-                          });
-                        }}
+                        value={sharedFormState.paymentType || ""}
+                        onValueChange={(value) =>
+                          handleFieldUpdate("paymentType", value)
+                        }
                       >
                         <SelectTrigger id="paymentType" className="w-full">
                           <SelectValue
@@ -1000,13 +1028,10 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                     </td>
                     <td className="border p-2">
                       <Select
-                        onValueChange={(value: string) => {
-                          setValue("paymentMethod", value);
-                          setError("paymentMethod", {
-                            type: "custom",
-                            message: "",
-                          });
-                        }}
+                        value={sharedFormState.paymentMethod || ""}
+                        onValueChange={(value) =>
+                          handleFieldUpdate("paymentMethod", value)
+                        }
                       >
                         <SelectTrigger id="paymentMethod" className="w-full">
                           <SelectValue
