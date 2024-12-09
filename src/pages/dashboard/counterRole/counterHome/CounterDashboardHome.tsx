@@ -427,7 +427,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
     return <TableSkeleton columns={7} />;
   }
   return (
-    <section>
+    <section className=" ">
       <PageWrapper>
         <div className="grid lg:grid-cols-5 grid-cols-2 gap-5 my-5">
           <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
@@ -648,27 +648,14 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
 
       {/* Modal for round trip form */}
       {isModalOpen && (
-        <div
-          className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
-          style={{ overflow: "hidden" }}
-        >
-          <div
-            className="relative bg-white rounded-lg shadow-lg p-5 w-full max-w-[95%] md:max-w-4xl"
-            style={{
-              maxHeight: "80vh",
-              overflowY: "auto",
-            }}
-          >
-            {/* Close Button */}
+        <div className="fixed bottom-0 left-0 top-0 right-0 flex justify-center items-center  bg-black bg-opacity-50 z-50 ">
+          <div className="inset-0  overflow-scroll  w-full max-w-[95%] md:max-w-4xl bg-background border border-primary/50 border-dashed rounded-lg p-5 backdrop-blur-[2px]">
             <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-red-500"
+              onClick={handleCloseModal}
+              className="absolute top-4 right-4 text-red-500 font-bold"
             >
               Close
             </button>
-
-            {/* Modal Content */}
-            <h2 className="text-xl font-bold mb-4">Round Trip Modal</h2>
             <RoundTripFormModal
               bookingCoach={bookingCoachSingle}
               onClose={handleCloseModal}

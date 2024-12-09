@@ -581,6 +581,11 @@ const BookingForm: FC<IBookingFormProps> = ({ bookingCoach }) => {
                           {...register("phone")}
                           type="tel"
                           id="phone"
+                          value={phoneNumber}
+                          onChange={(e: any) => {
+                            setPhoneNumber(e.target.value);
+                            setValue("phone", e.target.value); // Synchronize with react-hook-form
+                          }}
                           placeholder={translate(
                             addBookingSeatForm.phone.placeholder.bn,
                             addBookingSeatForm.phone.placeholder.en
