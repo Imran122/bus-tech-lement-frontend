@@ -103,19 +103,6 @@ const PdfPrintTickitOnline = ({
   logo: any;
   qrData: any;
 }) => {
-  const qrData = JSON.stringify({
-    phone: tickitData?.data?.phone || "N/A",
-    ticketNo: tickitData?.data?.ticketNo || "404NOTFOUND",
-    seats: tickitData?.data?.orderSeat
-      ?.map((seat: any) => seat?.seat)
-      .join(", "),
-    customerName: tickitData?.data?.customerName,
-    address: tickitData?.data?.address,
-    boardingPoint: tickitData?.data?.boardingPoint,
-    droppingPoint: tickitData?.data?.droppingPoint,
-    departureDate: tickitData?.data?.orderSeat?.[0]?.coachConfig?.departureDate,
-    schedule: tickitData?.data?.orderSeat?.[0]?.coachConfig?.schedule,
-  });
   const calculateReportingTime = (schedule: string | undefined): string => {
     if (!schedule || typeof schedule !== "string") {
       return "Invalid time";
