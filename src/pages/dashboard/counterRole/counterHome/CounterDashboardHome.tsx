@@ -554,23 +554,19 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
             >
               Proceed
             </button>
-            <div className="lg:py-3 py-[7px] flex gap-4 items-end lg:px-6 px-2 border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
-              <h2 className="text-primary text-2xl  font-semibold">
-                Reset Seat
-              </h2>
+            <div className="lg:py-3 py-3 flex gap-4  px-10 rounded-md justify-center items-center bg-primary">
+              <h2 className="text-white text-xl  font-semibold">Reset</h2>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button
+                    <button
                       type="button"
                       className="text-muted-foreground"
                       onClick={ResetDataOfForm}
-                      variant="outline"
-                      size="icon"
                     >
                       <span className="sr-only">Refresh Button</span>
-                      <LuRefreshCw className="size-[21px]" />
-                    </Button>
+                      <LuRefreshCw className="size-[21px] text-white" />
+                    </button>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p> {translate("ফিল্টার রিসেট", "Reset Filter")}</p>
