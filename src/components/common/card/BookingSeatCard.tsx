@@ -15,13 +15,19 @@ import PageTransition from "../effect/PageTransition";
 import CardWrapper from "../wrapper/CardWrapper";
 
 interface IBookingSeatCardProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  coachData: any;
+  coachData: any; // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setBookingState: (bookingState: IBookingStateProps) => void;
   index: number;
+  sharedFormState: any; // Pass shared form state
+  setSharedFormState: (state: any) => void; // Setter for shared form state
 }
 
-const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
+const BookingSeatCard: FC<IBookingSeatCardProps> = ({
+  coachData,
+  index,
+  sharedFormState,
+  setSharedFormState,
+}) => {
   const { translate } = useCustomTranslator();
   //@ts-ignore
   const [selectedBookingCoach, setSelectedBookingCoach] = useState<any>({});
@@ -148,7 +154,11 @@ const BookingSeatCard: FC<IBookingSeatCardProps> = ({ coachData, index }) => {
 
       <AccordionContent>
         <PageTransition>
-          <BookingForm bookingCoach={coachData} />
+          <BookingForm
+            sharedFormState={sharedFormState}
+            setSharedFormState={setSharedFormState}
+            bookingCoach={coachData}
+          />
         </PageTransition>
       </AccordionContent>
     </AccordionItem>

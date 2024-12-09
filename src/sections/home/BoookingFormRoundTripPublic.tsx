@@ -71,7 +71,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
 }) => {
   const { translate } = useCustomTranslator();
   const goingDate = localStorage.getItem("goingDate");
-  const [localState, setLocalState] = useState(bookingFormState);
+  //const [localState, setLocalState] = useState(bookingFormState);
 
   const handleFieldUpdate = (fieldName: string, value: any) => {
     setSharedFormState((prevState: any) => ({
@@ -100,7 +100,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   const {
     register,
     setValue,
-    setError,
+
     watch,
     handleSubmit,
     formState: { errors },
