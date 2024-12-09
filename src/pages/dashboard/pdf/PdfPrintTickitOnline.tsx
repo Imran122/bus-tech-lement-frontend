@@ -6,7 +6,8 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
-import QRCode from "react-qr-code";
+import * as QRCode from "qrcode"; // Use the `qrcode` library for QR code generation
+import React from "react";
 
 const styles = StyleSheet.create({
   page: {
@@ -74,11 +75,14 @@ const styles = StyleSheet.create({
   boldText: {
     fontWeight: "bold",
   },
-  qrCode: {
-    marginTop: 20,
+  qrCodeContainer: {
     flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
-    width: 150,
+    marginTop: 30, // Add some spacing from other elements
+  },
+  qrCodeImage: {
+    width: 150, // Adjust the size of the QR code as needed
     height: 150,
   },
   footer: {
@@ -94,12 +98,24 @@ const styles = StyleSheet.create({
 const PdfPrintTickitOnline = ({
   tickitData,
   logo,
-  qrData,
 }: {
   tickitData: any;
   logo: any;
   qrData: any;
 }) => {
+  const qrData = JSON.stringify({
+    phone: tickitData?.data?.phone || "N/A",
+    ticketNo: tickitData?.data?.ticketNo || "404NOTFOUND",
+    seats: tickitData?.data?.orderSeat
+      ?.map((seat: any) => seat?.seat)
+      .join(", "),
+    customerName: tickitData?.data?.customerName,
+    address: tickitData?.data?.address,
+    boardingPoint: tickitData?.data?.boardingPoint,
+    droppingPoint: tickitData?.data?.droppingPoint,
+    departureDate: tickitData?.data?.orderSeat?.[0]?.coachConfig?.departureDate,
+    schedule: tickitData?.data?.orderSeat?.[0]?.coachConfig?.schedule,
+  });
   const calculateReportingTime = (schedule: string | undefined): string => {
     if (!schedule || typeof schedule !== "string") {
       return "Invalid time";
@@ -121,7 +137,39 @@ const PdfPrintTickitOnline = ({
 
     return `${reportingHours}:${reportingMinutes} ${reportingPeriod}`;
   };
+  const [qrCodeBase64, setQrCodeBase64] = React.useState<string | null>(null);
 
+  React.useEffect(() => {
+    const generateQRCode = async () => {
+      try {
+        const qrData = JSON.stringify({
+          phone: tickitData?.data?.phone || "N/A",
+          ticketNo: tickitData?.data?.ticketNo || "404NOTFOUND",
+          seats: tickitData?.data?.orderSeat
+            ?.map((seat: any) => seat?.seat)
+            .join(", "),
+          customerName: tickitData?.data?.customerName,
+          address: tickitData?.data?.address,
+          boardingPoint: tickitData?.data?.boardingPoint,
+          droppingPoint: tickitData?.data?.droppingPoint,
+          departureDate:
+            tickitData?.data?.orderSeat?.[0]?.coachConfig?.departureDate,
+          schedule: tickitData?.data?.orderSeat?.[0]?.coachConfig?.schedule,
+        });
+
+        // Generate QR code as Base64
+        const qrCodeUrl = await QRCode.toDataURL(qrData);
+        setQrCodeBase64(qrCodeUrl);
+      } catch (error) {
+        console.error("Error generating QR code:", error);
+      }
+    };
+
+    generateQRCode();
+  }, [tickitData]);
+  if (!qrCodeBase64) {
+    return null; // Render nothing until QR code is generated
+  }
   const seatNo = tickitData?.data?.orderSeat?.filter(
     (s: any) => s.date === tickitData?.data?.date
   );
@@ -215,8 +263,9 @@ const PdfPrintTickitOnline = ({
 
           {/* QR Code */}
 
-          <View style={styles.qrCode}>
-            <QRCode value={qrData} size={80} />{" "}
+          {/* QR Code Section */}
+          <View style={styles.qrCodeContainer}>
+            <Image src={qrCodeBase64} style={styles.qrCodeImage} />
           </View>
 
           {/* Footer */}

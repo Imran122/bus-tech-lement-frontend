@@ -23,7 +23,6 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
   const [saleData, setSaleData] = useState<any>();
 
   const { data: singleCms } = useGetSingleCMSQuery({});
-
   const promiseResolveRef = useRef<any>(null);
   const printSaleRef = useRef(null);
 
@@ -149,8 +148,8 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
                 {data?.data?.order?.droppingPoint}
               </p>
               <p>
-                <span className="font-semibold">Schedule:</span>{" "}
-                {data?.data?.order?.schedule}
+                <span className="font-semibold">Date:</span>{" "}
+                {data?.data?.order?.date}
               </p>
               <p>
                 <span className="font-semibold">Seats:</span>{" "}
