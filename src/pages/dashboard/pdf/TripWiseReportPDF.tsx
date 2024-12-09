@@ -18,12 +18,21 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 5,
   },
-  headerSection: {
+  headerSectionTop: {
     marginBottom: 10,
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "row", // Ensure all elements align in a single row
+    flexDirection: "column", // Ensure all elements align in a single row
     flexWrap: "nowrap", // Prevent wrapping to the next line
+    columnGap: 10,
+  },
+  headerSection: {
+    marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "space-between", // Distribute space between elements
+    flexDirection: "row", // Align items in a row
+    flexWrap: "nowrap", // Prevent wrapping to the next line
+    width: "100%", // Ensure the container spans the full width
   },
   heading: {
     fontSize: 16,
@@ -153,7 +162,7 @@ const TripWiseReportPDF = ({
     <Document>
       <Page size="A4" style={styles.page}>
         {/* Header Section */}
-        <View style={styles.headerSection}>
+        <View style={styles.headerSectionTop}>
           <Image source={logo?.companyLogoBangla} style={styles.logo} />
           <Text style={styles.heading}>Iconic Express</Text>
           <Text style={styles.title}>Trip-Wise Report</Text>
