@@ -205,15 +205,15 @@ const BClassSeatLayout: FC<ISeatLayoutProps> = ({
         </div>
 
         {/* Last Row with Left, Middle, and Right Seats */}
-        <div className="grid grid-cols-4 pb-6 gap-x-5 gap-y-3 ">
-          <div className="grid-cols-1 col-span-1 justify-items-start">
+        <div className="grid grid-cols-4 pb-6 gap-x-6 gap-y-8 ">
+          <div className="grid grid-cols-1 col-span-1 justify-items-start gap-y-8">
             {
               //@ts-ignore
               renderSeatButton(seatsAllocation.lastRow[0])
             }
           </div>
 
-          <div className="grid-cols-1 col-span-1">
+          <div className="grid grid-cols-1 col-span-1">
             {
               //@ts-ignore
               renderSeatButton(seatsAllocation.lastRow[1])

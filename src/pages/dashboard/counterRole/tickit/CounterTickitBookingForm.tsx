@@ -532,8 +532,8 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
     <section>
       <PageTransition>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-12 gap-5">
-            <div className="col-span-4 py-10 px-3">
+          <div className="grid grid-cols-12 gap-2">
+            <div className="col-span-5 py-10 ">
               {/* seat status trip sheet seat status section */}
               <div className="flex items-center gap-2  mb-3">
                 {/* STATUS BUTTON */}
@@ -633,7 +633,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                 />
               </PageTransition>
             </div>
-            <div className="col-span-8 py-10 px-3 w-full ">
+            <div className="col-span-7 py-10 px-2 w-full ">
               <div className="relative w-full  border-2">
                 <h2 className="absolute border border-[#e57bf3] -top-3 left-2  z-50 px-2 bg-[#e074ee]">
                   {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
@@ -699,7 +699,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
 
                 <div className="w-full py-8">
                   <table className="table-auto border-collapse border  w-full">
-                    <tbody>
+                    <tbody className="text-[13px]">
                       {/* Row 1: Name and Phone */}
                       <tr className="border ">
                         <td className="border  p-2 font-medium">
@@ -926,7 +926,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                           )}
                         </td>
                         <td className="border  p-2 font-medium">
-                          {translate("ড্রপিং পয়েন্ট ✼", "Dropping Point ✼")}
+                          {translate("ড্রপিং পয়েন্ট ✼", "Drop Point ✼")}
                         </td>
                         <td className="border  p-2">
                           <Select
@@ -983,7 +983,7 @@ const CounterTickitBookingForm: FC<ICounterBookingFormProps> = ({
                       {/* Row 6: Payment Method and Payment Type */}
                       <tr className="border ">
                         <td className="border p-2 font-medium">
-                          {translate("পেমেন্ট পদ্ধতি ✼", "Payment Method ✼")}
+                          {translate("পেমেন্ট পদ্ধতি ✼", "Pay Method ✼")}
                         </td>
                         <td className="border  p-2">
                           <Select

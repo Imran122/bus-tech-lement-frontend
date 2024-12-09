@@ -120,7 +120,7 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
       <thead>
         <tr className="bg-primary text-white">
           <th className="border-2 border-[#3491b1] p-2">
-            {translate("যাত্রা শুরু সময় এবং তারিখ", "Departure Time & Date")}
+            {translate("যাত্রা শুরু সময়", "Departure Time")}
           </th>
           <th className="border-2 border-[#3491b1] p-2">
             {translate("কোচ নং", "Coach No")}
@@ -172,7 +172,6 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
                   `${convertTimeToBengali(item.schedule)}`,
                   `${item.schedule}`
                 )}{" "}
-                & {item.departureDate}
               </td>
               <td className="border border-gray-300 p-2">
                 {item.coachNo || translate("N/A", "N/A")}

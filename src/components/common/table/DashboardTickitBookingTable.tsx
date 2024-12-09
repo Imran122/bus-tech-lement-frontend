@@ -24,7 +24,7 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
       <thead>
         <tr className="bg-primary text-white">
           <th className="border-2 border-[#3491b1] p-2">
-            {translate("যাত্রা শুরু সময় এবং তারিখ", "Departure Time & Date")}
+            {translate("যাত্রা শুরু সময়", "Departure Time")}
           </th>
 
           <th className="border-2 border-[#3491b1] p-2">
@@ -78,7 +78,6 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
                     `${convertTimeToBengali(coach.schedule)}`,
                     `${coach.schedule}`
                   )}{" "}
-                  & {coach.departureDate}
                 </td>
                 <td className="border border-gray-300 p-2">
                   {coach.coachNo || translate("N/A", "N/A")}

@@ -289,7 +289,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {bookingState.date
-                        ? format(new Date(bookingState.date), "PPP")
+                        ? format(bookingState.date, "dd/MM/yyyy")
                         : translate(
                             "বুকিংয়ের তারিখ নির্বাচন করুন",
                             "Pick The Booking Date"

@@ -653,7 +653,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       {/* Modal for round trip form */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center">
-          <div className=" absolute top-[50px] left-1/2 transform -translate-x-1/2 w-full max-w-[95%] md:max-w-4xl bg-background border border-primary/50 border-dashed rounded-lg p-5 backdrop-blur-[2px] max-h-[80vh] overflow-y-auto">
+          <div className=" fixed top-[50px] left-1/2 transform -translate-x-1/2 w-full max-w-[95%] md:max-w-4xl bg-background border border-primary/50 border-dashed rounded-lg p-5 backdrop-blur-[2px] max-h-[80vh] overflow-y-auto">
             <button
               onClick={handleCloseModal}
               className="absolute top-4 right-4 text-red-500 font-bold"
