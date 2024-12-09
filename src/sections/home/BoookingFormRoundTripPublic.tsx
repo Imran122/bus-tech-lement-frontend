@@ -48,6 +48,8 @@ interface IBookingFormProps {
   returnViaRoute: any;
   setBookingFormState: any;
   onClose: any;
+  sharedFormState: any; // Renamed state
+  setSharedFormState: (formState: any) => void;
 }
 export interface IBookingFormStateProps {
   targetedSeat: number | null;
@@ -55,8 +57,6 @@ export interface IBookingFormStateProps {
   redirectLink: string | null;
   customerName: string | null;
   redirectConfirm: boolean;
-  sharedFormState: any; // Renamed state
-  setSharedFormState: (formState: any) => void;
 }
 
 const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
@@ -74,7 +74,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
   const [localState, setLocalState] = useState(bookingFormState);
 
   const handleFieldUpdate = (fieldName: string, value: any) => {
-    setSharedFormState((prevState) => ({
+    setSharedFormState((prevState: any) => ({
       ...prevState,
       [fieldName]: value,
     }));
@@ -296,7 +296,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
         droppingPoint: droppingPoint || "",
       };
 
-      setSharedFormState((prevState) => ({
+      setSharedFormState((prevState: any) => ({
         ...prevState,
         ...updatedFields,
       }));

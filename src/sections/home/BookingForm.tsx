@@ -128,7 +128,7 @@ const BookingForm: FC<IBookingFormProps> = ({
   const {
     register,
     setValue,
-    setError,
+
     watch,
     handleSubmit,
     formState: { errors },
@@ -137,7 +137,7 @@ const BookingForm: FC<IBookingFormProps> = ({
     defaultValues: useMemo(() => sharedFormState, [sharedFormState]),
   });
   const handleFieldUpdate = (fieldName: string, value: any) => {
-    setSharedFormState((prevState) => ({
+    setSharedFormState((prevState: any) => ({
       ...prevState,
       [fieldName]: value,
     }));
@@ -344,7 +344,7 @@ const BookingForm: FC<IBookingFormProps> = ({
         droppingPoint: droppingPoint || "",
       };
 
-      setSharedFormState((prevState) => ({
+      setSharedFormState((prevState: any) => ({
         ...prevState,
         ...updatedFields,
       }));

@@ -166,9 +166,9 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={(event) => {
+                    onClick={(event: any) => {
                       event.stopPropagation(); // Prevent triggering parent row's onClick
-                      toggleRow(index);
+                      toggleRow(index, coach);
                     }}
                   >
                     {expandedRowIndex === index
