@@ -1,6 +1,6 @@
 import { Suspense, useEffect } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import { Toaster as SoonerToaster } from "sonner";
 import { Toaster } from "./components/ui/toaster";
@@ -22,6 +22,7 @@ function App() {
     };
     fetchUser();
   }, [dispatch]);
+  const user = useSelector((state: any) => state.user);
 
   return (
     <Suspense fallback="Loading.........................">
@@ -37,6 +38,14 @@ function App() {
             href={appConfiguration.favicon}
             type="image/x-icon"
           ></link>
+          {user?.role === "counter" || !user?.role ? (
+            <meta name="viewport" content="width=1450" />
+          ) : (
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0"
+            />
+          )}
         </Helmet>
         <RouterProvider router={routers} />
         <Toaster />

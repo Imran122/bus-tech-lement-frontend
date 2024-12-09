@@ -247,7 +247,7 @@ export default function SearchResult({
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="border-primary/50 border-dashed bg-background backdrop-blur-[2px] duration-300 rounded-lg p-8 w-full max-w-4xl">
+          <div className="border-primary/50 h-[700px] overflow-scroll border-dashed bg-background backdrop-blur-[2px] duration-300 rounded-lg p-8 w-full max-w-4xl">
             <button
               onClick={handleCloseModal}
               className="text-red-500 font-bold mb-4"
