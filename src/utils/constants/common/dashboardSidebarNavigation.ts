@@ -65,12 +65,12 @@ const dashboardRootLinks = {
       key: "cancel_request",
       href: "today_cancel_request",
     },
-    // {
-    //   icon: LuUserCog,
-    //   label: { bn: "ব্যয়", en: "Payment" },
-    //   key: "due_payment",
-    //   href: "due_payment",
-    // },
+    {
+      icon: LuUserCheck,
+      label: { bn: "কোচ আপডেট করুন", en: "Update Coach Configs" },
+      key: "update_coach_configs",
+      action: "openModal", // Custom action identifier
+    },
   ],
 };
 const contactsManagementLinks = {
