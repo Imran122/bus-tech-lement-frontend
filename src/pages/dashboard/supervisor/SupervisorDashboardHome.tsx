@@ -11,6 +11,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -31,8 +37,11 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { LuDownload } from "react-icons/lu";
+import { MdDetails } from "react-icons/md";
 import { useSelector } from "react-redux";
 import CoachDetailsForSupervisor from "./CoachDetailsForSupervisor";
+//@ts-ignore
+import SupervisorCoachAndFIleDetails from "./SupervisorCOachAndFIleDetails";
 interface IReportSuite {}
 
 const SupervisorDashboardHome: FC<IReportSuite> = () => {
@@ -164,12 +173,36 @@ const SupervisorDashboardHome: FC<IReportSuite> = () => {
       header: translate("প্রস্থানের তারিখ", "Departure Date"),
       cell: (info: any) => new Date(info.getValue()).toLocaleDateString(),
     },
+    {
+      accessorKey: "departureDate",
+      header: translate("ফাইল দেখুন", "View Files"),
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <div className="flex gap-2">
+            {/* Edit Button */}
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="xs">
+                  <MdDetails className="mr-1" />
+                  {translate("বিস্তারিত", "Details")}
+                </Button>
+              </DialogTrigger>
+              <DialogContent size="lg">
+                <DialogTitle>Details</DialogTitle>
+                <SupervisorCoachAndFIleDetails item={item} />
+              </DialogContent>
+            </Dialog>
+          </div>
+        );
+      },
+    },
   ];
 
   if (coachLoading) {
     return <TableSkeleton columns={10} />;
   }
-
   return (
     <PageWrapper>
       {/* code for date select */}
