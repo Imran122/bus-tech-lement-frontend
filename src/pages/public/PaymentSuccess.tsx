@@ -164,37 +164,33 @@ const PaymentSuccess: FC<IPaymentSuccessProps> = () => {
 
               {/* PDF Download */}
               <div className="mt-6">
-                {saleData ? (
-                  <PDFDownloadLink
-                    document={
-                      <PdfPrintTickitOnline
-                        tickitData={saleData?.bookingInfo}
-                        logo={singleCms?.data}
-                        qrData={qrData}
-                      />
+                <PDFDownloadLink
+                  document={
+                    <PdfPrintTickitOnline
+                      tickitData={saleData?.bookingInfo}
+                      logo={singleCms?.data}
+                      qrData={qrData}
+                    />
+                  }
+                  fileName="tickit.pdf"
+                >
+                  {
+                    //@ts-ignore
+                    (params) => {
+                      const { loading } = params;
+                      return loading ? (
+                        <Button
+                          disabled
+                          className="transition-all duration-150"
+                        >
+                          <Loader /> Download
+                        </Button>
+                      ) : (
+                        <Button>Download</Button>
+                      );
                     }
-                    fileName="tickit.pdf"
-                  >
-                    {
-                      //@ts-ignore
-                      (params) => {
-                        const { loading } = params;
-                        return loading ? (
-                          <Button
-                            disabled
-                            className="transition-all duration-150"
-                          >
-                            <Loader /> Download
-                          </Button>
-                        ) : (
-                          <Button>Download</Button>
-                        );
-                      }
-                    }
-                  </PDFDownloadLink>
-                ) : (
-                  <Button disabled>Preparing Data...</Button>
-                )}
+                  }
+                </PDFDownloadLink>
               </div>
             </div>
           </div>
