@@ -144,7 +144,10 @@ const ProfitandLoseReport = () => {
           >
             Select Bus No
           </label>
-          <Select onValueChange={handleRegistrationNoChange}>
+          <Select
+            value={selectedRegistrationNo || ""}
+            onValueChange={handleRegistrationNoChange}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a Bus No" />
             </SelectTrigger>

@@ -144,7 +144,10 @@ const TripNoWiseReport = () => {
 
         <div>
           <label className="text-sm font-semibold">Select Trip No</label>
-          <Select onValueChange={(value) => handleFetchReport(value)}>
+          <Select
+            value={selectedTripNo}
+            onValueChange={(value) => handleFetchReport(value)}
+          >
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select Trip No" />
             </SelectTrigger>
