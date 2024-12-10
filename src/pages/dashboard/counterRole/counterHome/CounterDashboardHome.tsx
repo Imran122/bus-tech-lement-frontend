@@ -496,7 +496,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
             />
           </div>
         )}
-        {bookingState.roundTripGobookingCoachesList?.length > 0 && (
+        {bookingState.orderType === "Round_Trip" && (
           <div className="my-3 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-[#b642c5]/50 border-dashed bg-[#b642c5] backdrop-blur-[2px]">
             <h2 className="font-bold text-white text-2xl">
               {translate(
@@ -521,7 +521,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
               setBookingCoachSingle={setBookingCoachSingle}
             />
           )}
-        {bookingState.roundTripReturnBookingCoachesList?.length > 0 && (
+        {bookingState.orderType === "Round_Trip" && (
           <div className="my-3 px-3 flex justify-start items-center gap-5 border-2 rounded-md border-[#b642c5]/50 border-dashed bg-[#b642c5] backdrop-blur-[2px]">
             <h2 className="font-bold text-white text-2xl">
               {translate(

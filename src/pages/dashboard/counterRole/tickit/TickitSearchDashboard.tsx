@@ -29,6 +29,7 @@ import {
   setDate,
   setDestinationCounterId,
   setFromCounterId,
+  setOrderType,
   setRoundTripGoBookingCoachesList,
   setRoundTripReturnBookingCoachesList,
 } from "@/store/api/counter/counterSearchFilterSlice";
@@ -143,7 +144,6 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }, // Animate in
     exit: { opacity: 0, y: -100, transition: { duration: 0.5 } }, // Animate out
   };
-
   return (
     <div className="flex pb-2 justify-start items-center ">
       <div className="w-auto">
@@ -343,14 +343,15 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
                         onClick={() => {
                           dispatch(setFromCounterId(null));
                           dispatch(setDestinationCounterId(null));
-                          dispatch(setCoachType(""));
-                          dispatch(setDate(null));
+                          dispatch(setCoachType("AC"));
+                          dispatch(setOrderType("One_Trip"));
+                          dispatch(setDate(format(new Date(), "yyyy-MM-dd")));
                           setBookingState({
                             calenderOpen: false,
                             fromCounterId: null,
                             destinationCounterId: null,
                             coachType: "",
-                            date: null,
+                            date: format(new Date(), "yyyy-MM-dd"),
                             bookingCoachesList: [],
                           });
                         }}
