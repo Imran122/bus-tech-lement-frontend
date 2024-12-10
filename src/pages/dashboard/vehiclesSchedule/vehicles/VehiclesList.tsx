@@ -38,6 +38,7 @@ import { MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuDownload, LuPlus } from "react-icons/lu";
 import AddVehicles from "./AddVehicles";
+import DetailsVehicle from "./DetailsVehicle";
 import UpdateVehicle from "./UpdateVehicle";
 
 interface IVehiclesListProps {}
@@ -176,6 +177,21 @@ const VehiclesList: FC<IVehiclesListProps> = () => {
                     className="w-full flex justify-start"
                     size="xs"
                   >
+                    {translate("বিস্তারিত", "Details")}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent size="sm">
+                  <DialogTitle className="sr-only">empty</DialogTitle>
+                  <DetailsVehicle id={vehicle?.id} />
+                </DialogContent>
+              </Dialog>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full flex justify-start"
+                    size="xs"
+                  >
                     {translate("সম্পাদনা করুন", "Update")}
                   </Button>
                 </DialogTrigger>
@@ -199,7 +215,6 @@ const VehiclesList: FC<IVehiclesListProps> = () => {
   if (vehiclesLoading) {
     return <TableSkeleton columns={4} />;
   }
-
   return (
     <PageWrapper>
       <TableWrapper

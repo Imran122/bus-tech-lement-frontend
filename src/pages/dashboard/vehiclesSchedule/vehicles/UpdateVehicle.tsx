@@ -44,7 +44,6 @@ const UpdateVehicle: FC<IUpdateVehicleProps> = ({ id }) => {
     useUploadPhotoMutation();
   const { data: vehicleData, isLoading: vehicleLoading } =
     useGetSingleVehicleQuery(id);
-
   const {
     register,
     handleSubmit,
