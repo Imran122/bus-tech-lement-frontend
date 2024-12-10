@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/common/Loader";
 import PdfSeatStatusReport from "../../pdf/PdfSeatStatus";
 import SeatStatusExel from "../../exel/SeatStatusExel";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 
 interface ISeatStatus {
   bookingCoach: any;
@@ -37,6 +38,9 @@ interface ISeatStatusReport {
 const SeatStatus: FC<ISeatStatus> = ({ bookingCoach }) => {
   const { translate } = useCustomTranslator();
   const { CounterBookedSeat, orderSeat } = bookingCoach;
+  const { data: singleCms } = useGetSingleCMSQuery(
+    {}
+  );
 
   const result: ISeatStatusReport[] = [];
 
@@ -83,7 +87,7 @@ const SeatStatus: FC<ISeatStatus> = ({ bookingCoach }) => {
 
         <li>
           <PDFDownloadLink
-            document={<PdfSeatStatusReport result={result} />}
+            document={<PdfSeatStatusReport result={result} singleCms={singleCms}/>}
             fileName="seat_status_report.pdf"
           >
             

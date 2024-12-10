@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   logo: {
-    width: 40,
+    width: 50,
     height: 25,
     marginBottom: 10,
     alignSelf: "center",

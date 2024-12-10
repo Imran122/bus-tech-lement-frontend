@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   logo: {
-    width: 40,
+    width: 50,
     height: 25,
     marginBottom: 10,
     alignSelf: "center",
@@ -83,8 +83,9 @@ interface TripStatus {
   remarks?: string;
 }
 
-const PdfTripSheet = ({ bookingCoach, selectedTables }: any) => {
-    const { appName, logo } = appConfiguration;
+const PdfTripSheet = ({ bookingCoach, selectedTables, singleCms }: any) => {
+    const { appName } = appConfiguration;
+
     const currentDate = format(new Date(), "MMMM dd, yyyy");
     const {
       orderSeat,
@@ -129,7 +130,7 @@ const PdfTripSheet = ({ bookingCoach, selectedTables }: any) => {
         <Page size="A4" style={styles.page}>
           {/* Section for Logo, Title, and Date */}
           <View style={styles.section}>
-            <Image source={logo} style={styles.logo} />
+            <Image source={singleCms?.data?.companyLogo} style={styles.logo} />
             <Text style={styles.heading}>{appName}</Text>
             <Text style={styles.subHeading}>Date: {currentDate}</Text>
             <Text style={styles.title}>Trip Sheet Report</Text>

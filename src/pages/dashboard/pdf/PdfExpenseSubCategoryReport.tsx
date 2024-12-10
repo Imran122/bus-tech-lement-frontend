@@ -4,7 +4,8 @@ import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/render
 import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 
 interface ICategoryReportProps {
-  result: any; // Replace 'any' with the actual type you expect for result
+  result: any;
+  singleCms:any // Replace 'any' with the actual type you expect for result
 }
 
 const styles = StyleSheet.create({
@@ -64,15 +65,15 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   logo: {
-    width: 40,
+    width: 50,
     height: 25,
     marginBottom: 10,
     alignSelf: "center",
   },
 });
 
-const PdfExpenseSubCategoryReport: FC<ICategoryReportProps> = ({ result }) => {
-  const { appName, logo } = appConfiguration;
+const PdfExpenseSubCategoryReport: FC<ICategoryReportProps> = ({ result, singleCms }) => {
+  const { appName } = appConfiguration;
   const currentDate = format(new Date(), "MMMM dd, yyyy");
 
   return (
@@ -80,7 +81,7 @@ const PdfExpenseSubCategoryReport: FC<ICategoryReportProps> = ({ result }) => {
       <Page size="A4" style={styles.page}>
         <View style={styles.section}>
           {/* Logo */}
-          <Image source={logo} style={styles.logo} />
+          <Image source={singleCms?.data?.companyLogo} style={styles.logo} />
           <Text style={styles.heading}>{appName}</Text>
           <Text style={styles.subHeading}>Date: {currentDate}</Text>
           <Text style={styles.title}>Expense Category Report</Text>
