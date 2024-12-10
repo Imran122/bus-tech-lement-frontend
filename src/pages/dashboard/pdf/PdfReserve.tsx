@@ -1,15 +1,14 @@
-
-import { format } from "date-fns";
-import { FC } from "react";
+import { appConfiguration } from "@/utils/constants/common/appConfiguration";
 import {
   Document,
+  Image,
   Page,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  Image,
 } from "@react-pdf/renderer";
-import { appConfiguration } from "@/utils/constants/common/appConfiguration";
+import { format } from "date-fns";
+import { FC } from "react";
 
 const styles = StyleSheet.create({
   page: {
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
 });
 interface IPdfReserveProps {
   reserveInfo: any;
-  logo:any
+  logo: any;
 }
 
 const PdfReserve: FC<IPdfReserveProps> = ({ reserveInfo, logo }) => {
@@ -87,10 +86,7 @@ const PdfReserve: FC<IPdfReserveProps> = ({ reserveInfo, logo }) => {
       <Page size="A4" style={styles.page}>
         <View style={styles.section}>
           {/* Logo and Heading */}
-          <Image
-            source={logo?.data?.companyLogoBangla}
-            style={styles.logo}
-          />
+          <Image source={logo?.data?.companyLogo} style={styles.logo} />
           <Text style={styles.heading}>{appName}</Text>
           <Text style={styles.subHeading}>Date: {currentDate}</Text>
           <Text style={styles.title}>Counter Booking Seat Status Report</Text>

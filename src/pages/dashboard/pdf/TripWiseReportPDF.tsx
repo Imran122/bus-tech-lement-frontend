@@ -6,147 +6,151 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
+import React from "react";
+
+interface ITripWiseReportPDFProps {
+  reportData: any;
+  logo: any;
+
+  selectedTripNo: any;
+}
+
+// Define column widths for each table
+const mainTableColumnCount = 7;
+const mainColWidth = `${(100 / mainTableColumnCount).toFixed(2)}%`; // ~14.29%
+
+const incomeTableColumnCount = 6;
+const incomeColWidth = `${(100 / incomeTableColumnCount).toFixed(2)}%`; // ~16.67%
+
+const expenseTableColumnCount = 3;
+const expenseColWidth = `${(100 / expenseTableColumnCount).toFixed(2)}%`; // ~33.33%
 
 const styles = StyleSheet.create({
   page: {
-    flexDirection: "column",
-    padding: 10,
+    paddingHorizontal: 40,
+    paddingTop: 40,
+    paddingBottom: 20,
+    fontSize: 10,
+    color: "#000000",
+    fontFamily: "Helvetica",
   },
-
+  headerContainer: {
+    marginBottom: 20,
+    textAlign: "center",
+  },
   logo: {
-    width: 60,
-    height: 40,
+    width: 80,
     marginBottom: 5,
-  },
-  headerSectionTop: {
-    marginBottom: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column", // Ensure all elements align in a single row
-    flexWrap: "nowrap", // Prevent wrapping to the next line
-    columnGap: 10,
-  },
-  headerSection: {
-    marginBottom: 10,
-    alignItems: "center",
-    justifyContent: "space-between", // Distribute space between elements
-    flexDirection: "row", // Align items in a row
-    flexWrap: "nowrap", // Prevent wrapping to the next line
-    width: "100%", // Ensure the container spans the full width
-  },
-  heading: {
-    fontSize: 16,
-    fontWeight: "semibold",
-    textAlign: "center",
-    flexShrink: 1, // Prevent overflowing text
-    whiteSpace: "nowrap", // Ensure text stays on one line
-    overflow: "hidden", // Hide overflow text
-    textOverflow: "ellipsis", // Add ellipsis for overflow text
-  },
-  subHeading: {
-    fontSize: 12,
-    textAlign: "center",
+    alignSelf: "center",
   },
   title: {
+    fontSize: 14,
+    marginBottom: 4,
+    lineHeight: 1.2,
+  },
+  subTitle: {
     fontSize: 12,
+    lineHeight: 1.2,
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginVertical: 5,
-    fontWeight: "bold",
-    textAlign: "center",
-    whiteSpace: "nowrap", // Ensure the title is also on one line
   },
   table: {
     width: "100%",
-    marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderStyle: "solid",
+    borderColor: "#cccccc",
+    marginBottom: 20,
   },
   tableRow: {
     flexDirection: "row",
   },
-  tableHeader: {
-    flex: 1,
-    fontSize: 7,
+  headerCell: {
+    borderRightWidth: 1,
+    borderRightColor: "#cccccc",
+    borderBottomWidth: 1,
+    borderBottomColor: "#cccccc",
+    padding: 4,
     fontWeight: "bold",
     textAlign: "center",
-    borderBottomWidth: 1,
-    borderRightWidth: 1,
-    borderColor: "#ccc",
-    paddingVertical: 1, // Reduced padding
-    paddingHorizontal: 2, // Reduced padding
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    wordWrap: "nowrap",
-    textOverflow: "ellipsis", // Ensures all text fits in one line
+    fontSize: 9,
+    lineHeight: 1.2,
   },
-  tableCell: {
-    flex: 1,
-    fontSize: 8,
+  cell: {
+    borderRightWidth: 1,
+    borderRightColor: "#cccccc",
+    borderBottomWidth: 1,
+    borderBottomColor: "#cccccc",
+    padding: 4,
     textAlign: "center",
-    borderBottomWidth: 1,
-    borderRightWidth: 1,
-    borderColor: "#ccc",
-    paddingVertical: 2,
+    fontSize: 9,
+    lineHeight: 1.2,
   },
-  headerRoute: {
-    paddingHorizontal: 10, // Horizontal padding for "Route Name"
-    flex: 1,
-    fontSize: 8,
+  noBorderRight: {
+    borderRightWidth: 0,
+  },
+  boldBg: {
+    backgroundColor: "#f7f7f7",
     fontWeight: "bold",
-    textAlign: "center",
-    borderBottomWidth: 1,
-    borderRightWidth: 1,
-    borderColor: "#ccc",
-    paddingVertical: 5,
   },
-  tableCellroute: {
-    flex: 1,
-    fontSize: 8,
-    textAlign: "center",
-    borderBottomWidth: 1,
-    borderRightWidth: 1,
-    borderColor: "#ccc",
-    paddingHorizontal: 10,
-    flexWrap: "wrap",
-    wordWrap: "break-word",
-  },
-  lastCell: {
-    borderRightWidth: 0, // Remove right border for the last cell
-  },
-  bothTable: {
+  sideBySideContainer: {
     flexDirection: "row",
+    gap: 2, // Adjust gap if needed
+    marginBottom: 30,
     justifyContent: "space-between",
-    marginBottom: 10,
-    alignItems: "stretch",
+    alignItems: "flex-start",
   },
-  incomeTable: {
-    flex: 3, // Occupies more space than expense table
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderBottomWidth: 0, // Removes the bottom border
+  incomeTableContainer: {
+    width: "68%", // Increased width for income table
   },
-
-  expenseTable: {
-    flex: 2, // Occupies less space
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderBottomWidth: 0, // Removes the bottom border
+  expenseTableContainer: {
+    width: "30%", // Reduced width for expense table
   },
   summaryTable: {
-    width: "50%",
     alignSelf: "flex-end",
-    marginTop: 10,
+    width: "40%",
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#cccccc",
+  },
+  summaryRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#cccccc",
+  },
+  summaryLabel: {
+    fontWeight: "bold",
+    padding: 4,
+    fontSize: 9,
+    lineHeight: 1.2,
+    flexGrow: 1,
+  },
+  summaryValue: {
+    padding: 4,
+    textAlign: "right",
+    width: 60,
+    borderLeftWidth: 1,
+    borderLeftColor: "#cccccc",
+    fontSize: 9,
+    lineHeight: 1.2,
   },
 });
 
-const TripWiseReportPDF = ({
-  reportData,
+// Helper to create style with fixed width for each cell
+const cellStyleWithWidth = (width: string) => ({
+  width,
+});
 
-  logo,
-  selectedTripNo,
-}: any) => {
+function getCellStyles(baseStyles: any[], width: string, isLast?: boolean) {
+  const finalStyles = [...baseStyles, cellStyleWithWidth(width)];
+  if (isLast) finalStyles.push(styles.noBorderRight);
+  return finalStyles;
+}
+
+const TripWiseReportPDF = React.forwardRef<
+  HTMLDivElement,
+  ITripWiseReportPDFProps
+>(({ reportData, logo, selectedTripNo }, ref) => {
   const {
     upWayCoachInfo = [],
     downWayCoachInfo = [],
@@ -162,156 +166,310 @@ const TripWiseReportPDF = ({
     month: "long",
     year: "numeric",
   });
+
+  const mainHeaders = [
+    "Coach",
+    "Coach No",
+    "Route Name",
+    "Registration No",
+    "Supervisor Name",
+    "Driver Name",
+    "Helper Name",
+  ];
+  const incomeHeaders = [
+    "Counter Name",
+    "Counter Master",
+    "Qty",
+    "Fare",
+    "Discount",
+    "Total Price",
+  ];
+  const expenseHeaders = ["Expense Name", "Amount", "Total Amount"];
+
   return (
-    <Document>
-      <Page size="A4" style={styles.page}>
+    //@ts-ignore
+    <Document ref={ref}>
+      <Page size="A4" orientation="landscape" style={styles.page}>
         {/* Header Section */}
-        <View style={styles.headerSectionTop}>
-          <Image source={logo?.companyLogoBangla} style={styles.logo} />
-          <Text style={styles.heading}>Iconic Express</Text>
-          <Text style={styles.title}>Trip-Wise Report</Text>
+        <View style={styles.headerContainer}>
+          {logo?.companyLogoBangla && (
+            <Image style={styles.logo} src={logo?.companyLogo} />
+          )}
+          <Text wrap={false} style={styles.title}>
+            {reportData?.appName || ""}
+          </Text>
+          <Text wrap={false} style={styles.subTitle}>
+            Trip No Wise Report
+          </Text>
         </View>
-        <View style={styles.headerSection}>
-          <Text style={styles.subHeading}>Trip No: {selectedTripNo}</Text>
-          <Text style={styles.subHeading}>Date: {today}</Text>
+
+        {/* Info Row */}
+        <View style={styles.infoRow}>
+          <Text wrap={false}>Trip No: {selectedTripNo}</Text>
+          <Text wrap={false}>Date: {today}</Text>
         </View>
 
         {/* Main Table */}
         <View style={styles.table}>
           <View style={styles.tableRow}>
-            {[
-              "Coach",
-              "Coach No",
-              "Route Name",
-              "Registration No",
-              "Supervisor Name",
-              "Driver Name",
-              "Helper Name",
-            ].map((header, index) => (
+            {mainHeaders.map((h, i) => (
               <Text
-                key={index}
-                style={[
-                  index === 2 ? styles.headerRoute : styles.tableHeader,
-                  index === 6 ? styles.lastCell : {},
-                ]}
+                key={i}
+                wrap={false}
+                style={getCellStyles(
+                  [styles.headerCell],
+                  mainColWidth,
+                  i === mainHeaders.length - 1
+                )}
               >
-                {header}
+                {h}
               </Text>
             ))}
           </View>
-          {[upWayCoachInfo, downWayCoachInfo].map((info, index) => (
-            <View style={styles.tableRow} key={index}>
-              <Text style={styles.tableCell}>
-                {index === 0 ? "Up Way Coach" : "Down Way Coach"}
+          {[upWayCoachInfo, downWayCoachInfo].map((info, i) => (
+            <View style={styles.tableRow} key={i}>
+              <Text
+                wrap={false}
+                style={getCellStyles([styles.cell], mainColWidth)}
+              >
+                {i === 0 ? "Up Way Coach" : "Down Way Coach"}
               </Text>
-              <Text style={styles.tableCell}>{info?.coachNo || "N/A"}</Text>
-              <Text style={styles.tableCellroute}>
+              <Text
+                wrap={false}
+                style={getCellStyles([styles.cell], mainColWidth)}
+              >
+                {info?.coachNo || "N/A"}
+              </Text>
+              <Text
+                wrap={false}
+                style={getCellStyles([styles.cell], mainColWidth)}
+              >
                 {info?.route?.routeName || "N/A"}
               </Text>
-              <Text style={styles.tableCell}>
+              <Text
+                wrap={false}
+                style={getCellStyles([styles.cell], mainColWidth)}
+              >
                 {info?.registrationNo || "N/A"}
               </Text>
-              <Text style={styles.tableCell}>
+              <Text
+                wrap={false}
+                style={getCellStyles([styles.cell], mainColWidth)}
+              >
                 {info?.supervisor?.userName || "N/A"}
               </Text>
-              <Text style={styles.tableCell}>
+              <Text
+                wrap={false}
+                style={getCellStyles([styles.cell], mainColWidth)}
+              >
                 {info?.driver?.name || "N/A"}
               </Text>
-              <Text style={[styles.tableCell, styles.lastCell]}>
+              <Text
+                wrap={false}
+                style={getCellStyles([styles.cell], mainColWidth, true)}
+              >
                 {info?.helper?.name || "N/A"}
               </Text>
             </View>
           ))}
         </View>
 
-        {/* Income and Expense Tables */}
-        <View style={styles.bothTable}>
+        {/* Side by side tables */}
+        <View style={styles.sideBySideContainer}>
           {/* Income Table */}
-          <View style={styles.incomeTable}>
+          <View style={[styles.table, styles.incomeTableContainer]}>
+            {/* Title Row for Income */}
             <View style={styles.tableRow}>
-              <Text style={[styles.tableHeader, { flex: 6 }]}>
+              <Text
+                wrap={false}
+                style={[
+                  styles.cell,
+                  styles.boldBg,
+                  { borderBottomColor: "#cccccc", borderBottomWidth: 1 },
+                  cellStyleWithWidth("100%"),
+                  styles.noBorderRight,
+                ]}
+              >
                 Receive / Income
               </Text>
             </View>
+            {/* Income Header Row */}
             <View style={styles.tableRow}>
-              {[
-                "Counter Name",
-                "Counter Master",
-                "Qty",
-                "Fare",
-                "Discount",
-                "Total Price",
-              ].map((header, index) => (
+              {incomeHeaders.map((h, i) => (
                 <Text
-                  key={index}
-                  style={[
-                    styles.tableHeader,
-                    index === 5 ? styles.lastCell : {},
-                  ]}
+                  wrap={false}
+                  key={i}
+                  style={getCellStyles(
+                    [styles.headerCell],
+                    incomeColWidth,
+                    i === incomeHeaders.length - 1
+                  )}
                 >
-                  {header}
+                  {h}
                 </Text>
               ))}
             </View>
             {collectionReport.map((row: any, index: any) => (
               <View style={styles.tableRow} key={index}>
-                <Text style={styles.tableCell}>{row.counterName || "N/A"}</Text>
-                <Text style={styles.tableCell}>
+                <Text
+                  wrap={false}
+                  style={getCellStyles([styles.cell], incomeColWidth)}
+                >
+                  {row.counterName || "N/A"}
+                </Text>
+                <Text
+                  wrap={false}
+                  style={getCellStyles([styles.cell], incomeColWidth)}
+                >
                   {row.counterMasterName || "N/A"}
                 </Text>
-                <Text style={styles.tableCell}>{row.noOfPassenger || 0}</Text>
-                <Text style={styles.tableCell}>{row.fare || 0}</Text>
-                <Text style={styles.tableCell}>00.00</Text>
-                <Text style={[styles.tableCell, styles.lastCell]}>
+                <Text
+                  wrap={false}
+                  style={getCellStyles([styles.cell], incomeColWidth)}
+                >
+                  {row.noOfPassenger || 0}
+                </Text>
+                <Text
+                  wrap={false}
+                  style={getCellStyles([styles.cell], incomeColWidth)}
+                >
+                  {row.fare || 0}
+                </Text>
+                <Text
+                  wrap={false}
+                  style={getCellStyles([styles.cell], incomeColWidth)}
+                >
+                  00.00
+                </Text>
+                <Text
+                  wrap={false}
+                  style={getCellStyles([styles.cell], incomeColWidth, true)}
+                >
                   {row.amount || 0}
                 </Text>
               </View>
             ))}
             <View style={styles.tableRow}>
-              <Text style={[styles.tableCell, { flex: 5 }]}>Total Income</Text>
-              <Text style={[styles.tableCell, styles.lastCell]}>
+              <Text
+                wrap={false}
+                style={[
+                  styles.cell,
+                  { fontWeight: "bold", backgroundColor: "#f7f7f7" },
+                  cellStyleWithWidth(`${(100 / 6) * 5}%`), // Span 5 columns
+                ]}
+              >
+                Total Income
+              </Text>
+              <Text
+                wrap={false}
+                style={[
+                  styles.cell,
+                  styles.noBorderRight,
+                  { fontWeight: "bold", backgroundColor: "#f7f7f7" },
+                  cellStyleWithWidth(incomeColWidth),
+                ]}
+              >
                 {totalIncome}
               </Text>
             </View>
           </View>
 
           {/* Expense Table */}
-          <View style={styles.expenseTable}>
+          <View style={[styles.table, styles.expenseTableContainer]}>
+            {/* First Header Row (Expense 2 col + Total Amount 1 col) */}
             <View style={styles.tableRow}>
-              <Text style={[styles.tableHeader, { flex: 6 }]}>
-                Expense & Total Amount
+              <Text
+                wrap={false}
+                style={[
+                  styles.cell,
+                  styles.boldBg,
+                  cellStyleWithWidth(
+                    `${Number(expenseColWidth.replace("%", "")) * 2}%`
+                  ),
+                ]}
+              >
+                Expense
+              </Text>
+              <Text
+                wrap={false}
+                style={[
+                  styles.cell,
+                  styles.boldBg,
+                  styles.noBorderRight,
+                  cellStyleWithWidth(expenseColWidth),
+                ]}
+              >
+                Total Amount
               </Text>
             </View>
+            {/* Second Header Row (3 columns) */}
             <View style={styles.tableRow}>
-              {["Expense Name", "Amount", "Total Amount"].map(
-                (header, index) => (
-                  <Text
-                    key={index}
-                    style={[
-                      styles.tableHeader,
-                      index === 2 ? styles.lastCell : {},
-                    ]}
-                  >
-                    {header}
-                  </Text>
-                )
-              )}
+              {expenseHeaders.map((h, i) => (
+                <Text
+                  wrap={false}
+                  key={i}
+                  style={getCellStyles(
+                    [styles.headerCell],
+                    expenseColWidth,
+                    i === expenseHeaders.length - 1
+                  )}
+                >
+                  {h}
+                </Text>
+              ))}
             </View>
             {expenseReport.map((row: any, index: any) => (
               <View style={styles.tableRow} key={index}>
-                <Text style={styles.tableCell}>
+                <Text
+                  wrap={false}
+                  style={getCellStyles([styles.cell], expenseColWidth)}
+                >
                   {row.expenseCategory || "N/A"}
                 </Text>
-                <Text style={styles.tableCell}>{row.amount || 0}</Text>
-                <Text style={[styles.tableCell, styles.lastCell]}>
+                <Text
+                  wrap={false}
+                  style={getCellStyles([styles.cell], expenseColWidth)}
+                >
+                  {row.amount || 0}
+                </Text>
+                <Text
+                  wrap={false}
+                  style={getCellStyles([styles.cell], expenseColWidth, true)}
+                >
                   {row.amount || 0}
                 </Text>
               </View>
             ))}
             <View style={styles.tableRow}>
-              <Text style={styles.tableHeader}>Total Expense</Text>
-              <Text style={styles.tableHeader}>{totalExpense}</Text>
-              <Text style={[styles.tableHeader, styles.lastCell]}>
+              <Text
+                wrap={false}
+                style={[
+                  styles.cell,
+                  { fontWeight: "bold", backgroundColor: "#f7f7f7" },
+                  cellStyleWithWidth(expenseColWidth),
+                ]}
+              >
+                Total Expense
+              </Text>
+              <Text
+                wrap={false}
+                style={[
+                  styles.cell,
+                  { fontWeight: "bold", backgroundColor: "#f7f7f7" },
+                  cellStyleWithWidth(expenseColWidth),
+                ]}
+              >
+                {totalExpense}
+              </Text>
+              <Text
+                wrap={false}
+                style={[
+                  styles.cell,
+                  styles.noBorderRight,
+                  { fontWeight: "bold", backgroundColor: "#f7f7f7" },
+                  cellStyleWithWidth(expenseColWidth),
+                ]}
+              >
                 {totalAmount}
               </Text>
             </View>
@@ -325,9 +483,11 @@ const TripWiseReportPDF = ({
             { label: "GP", value: gp },
             { label: "Gross Income", value: totalIncome - totalExpense - gp },
           ].map((row, index) => (
-            <View style={styles.tableRow} key={index}>
-              <Text style={styles.tableCell}>{row.label}</Text>
-              <Text style={[styles.tableCell, styles.lastCell]}>
+            <View style={styles.summaryRow} key={index}>
+              <Text wrap={false} style={styles.summaryLabel}>
+                {row.label}
+              </Text>
+              <Text wrap={false} style={styles.summaryValue}>
                 {row.value.toFixed(2)}
               </Text>
             </View>
@@ -336,6 +496,6 @@ const TripWiseReportPDF = ({
       </Page>
     </Document>
   );
-};
+});
 
 export default TripWiseReportPDF;

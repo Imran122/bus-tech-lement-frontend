@@ -109,7 +109,7 @@ const PdfProfitAndLoss = ({
       <Page size="LEGAL" orientation="landscape" style={styles.page}>
         {/* Header Section */}
         <View style={styles.header}>
-          <Image source={logo?.companyLogoBangla} style={styles.logo} />
+          <Image source={logo?.companyLogo} style={styles.logo} />
           <Text style={styles.heading}>{appName}</Text>
           <Text style={styles.subHeading}>Bus-wise Report</Text>
         </View>

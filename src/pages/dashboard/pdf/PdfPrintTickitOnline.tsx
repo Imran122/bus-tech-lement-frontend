@@ -153,7 +153,7 @@ const PdfPrintTickitOnline = ({
         <View style={styles.container}>
           {/* Header */}
           <View style={styles.header}>
-            <Image src={logo?.companyLogoBangla} style={styles.logo} />
+            <Image src={logo?.companyLogo} style={styles.logo} />
             <Text style={styles.heading}>Online Ticket</Text>
             <Text style={styles.subHeading}>Hotline: 01945518927</Text>
           </View>

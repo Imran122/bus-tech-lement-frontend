@@ -64,6 +64,7 @@ const TripNoWiseReport = () => {
   if (isTripsLoading || isReportLoading) {
     return <TableSkeleton />;
   }
+
   return (
     <section className="p-4">
       <div className="flex gap-3">
@@ -73,7 +74,6 @@ const TripNoWiseReport = () => {
               document={
                 <TripWiseReportPDF
                   reportData={reportData}
-                  dateRange={formattedDateRange}
                   logo={singleCms?.data}
                   selectedTripNo={selectedTripNo}
                 />
