@@ -83,7 +83,7 @@ const ExpenseSubCategoryReport = () => {
         <ul className="flex space-x-3">
           <li>
             <PDFDownloadLink
-              document={<PdfExpenseSubCategoryReport result={categoryList} />}
+              document={<PdfExpenseSubCategoryReport result={categoryList} singleCms={singleCms}/>}
               fileName="expense_sub_category_report.pdf"
             >
               {

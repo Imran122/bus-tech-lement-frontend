@@ -19,6 +19,7 @@ import { Paragraph } from "@/components/common/typography/Paragraph";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfTripSheet from "../../pdf/PdfTripSheet";
 import { Loader } from "@/components/common/Loader";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 
 interface TripStatus {
   seat: string;
@@ -40,8 +41,10 @@ interface ITripSheet {
 const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
   const { logo } = appConfiguration;
   const currentDateTime = new Date().toLocaleString();
+  const { data: singleCms } = useGetSingleCMSQuery(
+    {}
+  );
 
-  console.log("tripsheet", bookingCoach)
   const {
     orderSeat,
     seatAvailable,
@@ -98,7 +101,6 @@ const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
         (order: any) => order.seat === seat.seat
       );
 
-      // console.log("match order", matchedOrder)
 
       return {
         seat: seat.seat,
@@ -149,7 +151,7 @@ const TripSheet: FC<ITripSheet> = ({ bookingCoach }: any) => {
         </div>
         <div className="flex items-center gap-5">
         <PDFDownloadLink
-            document={<PdfTripSheet bookingCoach={bookingCoach} selectedTables={selectedTables}/>}
+            document={<PdfTripSheet singleCms={singleCms} bookingCoach={bookingCoach} selectedTables={selectedTables}/>}
             fileName="trip_sheet_report.pdf"
           >
             {

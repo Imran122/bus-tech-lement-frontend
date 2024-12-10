@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   logo: {
-    width: 40,
+    width: 50,
     height: 25,
     marginBottom: 10,
     alignSelf: "center",
@@ -90,17 +90,18 @@ interface ISeatStatusReport {
 
 interface PdfSeatStatusReportProps {
   result: ISeatStatusReport[];
+  singleCms:any
 }
 
-const PdfSeatStatusReport: React.FC<PdfSeatStatusReportProps> = ({ result }) => {
-  const { appName, logo } = appConfiguration;
+const PdfSeatStatusReport: React.FC<PdfSeatStatusReportProps> = ({ result, singleCms }) => {
+  const { appName } = appConfiguration;
   const currentDate = format(new Date(), "MMMM dd, yyyy");
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.section}>
-          <Image source={logo} style={styles.logo} />
+          <Image source={singleCms?.data?.companyLogo} style={styles.logo} />
           <Text style={styles.heading}>{appName}</Text>
           <Text style={styles.subHeading}>Date: {currentDate}</Text>
           <Text style={styles.title}>

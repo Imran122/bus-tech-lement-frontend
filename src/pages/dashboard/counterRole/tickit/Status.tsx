@@ -15,6 +15,7 @@ import PdfStatusReport from "../../pdf/PdfStatus";
 import StatusExel from "../../exel/StatusExel";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/common/Loader";
+import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 
 interface IStatus {
   bookingCoach: any;
@@ -35,7 +36,9 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
   const { translate } = useCustomTranslator();
   const { CounterBookedSeat, orderSeat } = bookingCoach;
   const result: StatusData[] = [];
-
+  const { data: singleCms } = useGetSingleCMSQuery(
+    {}
+  );
 
   orderSeat.forEach((item: any) => {
     if (item.order.counterId) {
@@ -91,7 +94,7 @@ const Status: FC<IStatus> = ({ bookingCoach }) => {
 
         <li>
           <PDFDownloadLink
-            document={<PdfStatusReport result={result} />}
+            document={<PdfStatusReport result={result} singleCms={singleCms}/>}
             fileName="counter_booking_status_report.pdf"
           >
             
