@@ -6,6 +6,7 @@ import UpdateCoachConfigNavigationForm from "@/pages/dashboard/vehiclesSchedule/
 import { closeModal } from "@/store/api/user/coachConfigModalSlice";
 import { useAppContext } from "@/utils/hooks/useAppContext";
 import { useFontShifter } from "@/utils/hooks/useFontShifter";
+import { AnimatePresence, motion } from "framer-motion";
 import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
@@ -18,6 +19,11 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
   const isModalOpen = useSelector(
     (state: any) => state.coachConfigModal.isModalOpen
   );
+  const modalVariants = {
+    hidden: { opacity: 0, y: -100 }, // Slide from above
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }, // Animate in
+    exit: { opacity: 0, y: -100, transition: { duration: 0.5 } }, // Animate out
+  };
   return (
     <TooltipProvider>
       <main
@@ -38,10 +44,10 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
             <Outlet />
           </section>
         </section>
-        {isModalOpen && (
+        {/* {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="relative w-full max-w-7xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
-              {/* Close Button */}
+             
               <button
                 className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
                 onClick={() => dispatch(closeModal())}
@@ -54,7 +60,31 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
               </div>{" "}
             </div>
           </div>
-        )}
+        )} */}
+
+        <AnimatePresence>
+          {isModalOpen && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={modalVariants}
+            >
+              {isModalOpen && (
+                <div className="h-[700px] overflow-scroll  lg:!w-8/12 w-11/12 py-11 px-5 bg-background border border-primary/50 border-dashed rounded-lg backdrop-blur-[2px]">
+                  <button
+                    onClick={() => dispatch(closeModal())}
+                    className="absolute top-4 right-4 text-red-500 font-bold"
+                  >
+                    Close
+                  </button>
+                  <UpdateCoachConfigNavigationForm />
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </TooltipProvider>
   );
