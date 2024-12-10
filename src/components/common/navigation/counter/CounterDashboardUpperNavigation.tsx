@@ -74,66 +74,71 @@ const CounterDashboardUpperNavigation: FC = () => {
       <div className="lg:hidden block">
         <img src={logocompany} />
       </div>
-      <nav className=" w-full flex gap-1">
-        <ul className="hidden lg:flex gap-x-2 items-center">
-          {subNavigation?.subLinks?.length > 0 &&
-            subNavigation?.subLinks?.map(
-              (singleNav: ICounterNavigationLinks, navIndex: number) => (
-                <li className="text-white bg-primary rounded-md" key={navIndex}>
-                  <PageTransition>
-                    <NavLink
-                      to={"/" + role + "/" + singleNav.href}
-                      className={({ isActive, isPending }) =>
-                        isPending
-                          ? "pending"
-                          : isActive
-                          ? "active_link"
-                          : "inactive_link"
-                      }
-                    >
-                      <Label
-                        className="cursor-pointer text-white text-nowrap"
-                        size="sm"
+      <nav className=" w-full flex justify-between items-center gap-1">
+        <div className=" w-full flex items-center gap-1">
+          <ul className="hidden lg:flex gap-x-2 items-center">
+            {subNavigation?.subLinks?.length > 0 &&
+              subNavigation?.subLinks?.map(
+                (singleNav: ICounterNavigationLinks, navIndex: number) => (
+                  <li
+                    className="text-white bg-primary rounded-md"
+                    key={navIndex}
+                  >
+                    <PageTransition>
+                      <NavLink
+                        to={"/" + role + "/" + singleNav.href}
+                        className={({ isActive, isPending }) =>
+                          isPending
+                            ? "pending"
+                            : isActive
+                            ? "active_link"
+                            : "inactive_link"
+                        }
                       >
-                        {translate(singleNav.label.bn, singleNav.label.en)}
-                      </Label>
-                    </NavLink>
-                  </PageTransition>
-                </li>
-              )
-            )}
-        </ul>
+                        <Label
+                          className="cursor-pointer text-white text-nowrap"
+                          size="sm"
+                        >
+                          {translate(singleNav.label.bn, singleNav.label.en)}
+                        </Label>
+                      </NavLink>
+                    </PageTransition>
+                  </li>
+                )
+              )}
+          </ul>
 
-        <ul className="hidden lg:block">
-          <li className="mt-2">
-            <TickitSearchDashboard
-              bookingState={bookingState}
-              setBookingState={setBookingState}
-            />
-          </li>
-        </ul>
-
-        <ul className="block lg:hidden relative">
-          <li className="inline-flex items-center">
-            <button
-              onClick={() => setShowSearchDashboard(!showSearchDashboard)}
-              className="md:px-6 px-4 md:text-base text-xm py-2 bg-primary text-white rounded-md"
-            >
-              {showSearchDashboard ? "Hide" : "Tickit"}
-            </button>
-          </li>
-
-          {showSearchDashboard && (
-            <div className="absolute top-full left-0 mt-5 w-full">
+          <ul className="hidden lg:block">
+            <li className="mt-2">
               <TickitSearchDashboard
                 bookingState={bookingState}
                 setBookingState={setBookingState}
               />
-            </div>
-          )}
-        </ul>
+            </li>
+          </ul>
 
-        <ul className="flex gap-x-2 items-center">
+          <ul className="block lg:hidden relative">
+            <li className="inline-flex items-center">
+              <button
+                onClick={() => setShowSearchDashboard(!showSearchDashboard)}
+                className="md:px-6 px-4 md:text-base text-xm py-2 bg-primary text-white rounded-md"
+              >
+                {showSearchDashboard ? "Hide" : "Tickit"}
+              </button>
+            </li>
+
+            {showSearchDashboard && (
+              <div className="absolute top-full left-0 mt-5 w-full">
+                <TickitSearchDashboard
+                  bookingState={bookingState}
+                  setBookingState={setBookingState}
+                />
+              </div>
+            )}
+          </ul>
+        </div>
+
+        <ul className="flex gap-x-2 items-center justify-end ">
           <li>
             <LocaleSwitcher />
           </li>

@@ -35,6 +35,7 @@ import {
 import { closeModal, openModal } from "@/store/api/user/coachConfigModalSlice";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { format } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
 import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react"; // Added useState here
 import { LuRefreshCw } from "react-icons/lu";
@@ -137,6 +138,12 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
       }));
     }
   }, [bookingState?.fromCounterId, user?.counterId, dispatch]);
+  const modalVariants = {
+    hidden: { opacity: 0, y: -100 }, // Slide from above
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }, // Animate in
+    exit: { opacity: 0, y: -100, transition: { duration: 0.5 } }, // Animate out
+  };
+
   return (
     <div className="flex pb-2 justify-start items-center ">
       <div className="w-auto">
@@ -363,25 +370,33 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
           </div>
         </div>
       </div>
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 lg:top-[400px] md:top-[270px] top-[360px]">
-          <div className="relative w-full max-w-5xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
-            {/* Close Button */}
-            <button
-              className="absolute top-6 right-4 text-gray-500 hover:text-gray-700"
-              onClick={() => dispatch(closeModal())}
-              aria-label="Close Modal"
-            >
-              <MdClose />
-            </button>
-            <DashboardRountTripSearchModal
-              countersData={countersData?.data || []}
-              bookingState={bookingState}
-              setBookingState={setBookingState}
-            />
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center mt-[400px]"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={modalVariants}
+          >
+            <div className="relative w-full max-w-5xl px-10 py-6 mx-auto bg-background rounded-lg shadow-lg">
+              {/* Close Button */}
+              <button
+                className="absolute top-6 right-4 text-gray-500 hover:text-gray-700"
+                onClick={() => dispatch(closeModal())}
+                aria-label="Close Modal"
+              >
+                <MdClose />
+              </button>
+              <DashboardRountTripSearchModal
+                countersData={countersData?.data || []}
+                bookingState={bookingState}
+                setBookingState={setBookingState}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
