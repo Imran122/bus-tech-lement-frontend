@@ -94,6 +94,13 @@ const styles = StyleSheet.create({
   footerValue: {
     flex: 1,
   },
+  headerContainer: {
+    marginBottom: 10,
+    marginTop: 20,
+    textAlign: "center",
+    flexDirection: "column",
+    gap: 2,
+  },
 });
 
 const PdfProfitAndLoss = ({
@@ -108,7 +115,7 @@ const PdfProfitAndLoss = ({
     <Document>
       <Page size="LEGAL" orientation="landscape" style={styles.page}>
         {/* Header Section */}
-        <View style={styles.header}>
+        <View style={styles.headerContainer}>
           <Image source={logo?.companyLogo} style={styles.logo} />
           <Text style={styles.heading}>{appName}</Text>
           <Text style={styles.subHeading}>Bus-wise Report</Text>
