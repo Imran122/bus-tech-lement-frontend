@@ -29,6 +29,9 @@ import {
   setDate,
   setDestinationCounterId,
   setFromCounterId,
+  setIsLoadingBookingCoachesList,
+  setIsLoadingRoundTripGoBookingCoachesList,
+  setIsLoadingRoundTripReturnBookingCoachesList,
   setOrderType,
   setRoundTripGoBookingCoachesList,
   setRoundTripReturnBookingCoachesList,
@@ -71,19 +74,36 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
   const user = useSelector((state: any) => state.user);
 
   // Fetch booking coaches
-  const { data: bookingCoachesData } = useGetBookingCoachesQuery({
-    fromCounterId: bookingState.fromCounterId,
-    destinationCounterId: bookingState.destinationCounterId,
-    coachType: bookingState.coachType,
-    date: bookingState.date
-      ? format(new Date(bookingState.date), "yyyy-MM-dd")
-      : undefined,
-    returnDate: bookingState.returnDate
-      ? format(new Date(bookingState.returnDate), "yyyy-MM-dd")
-      : undefined,
-    orderType: bookingState.orderType,
-  }) as any;
-
+  const { data: bookingCoachesData, isLoading: isLoadingBookingCoaches } =
+    useGetBookingCoachesQuery({
+      fromCounterId: bookingState.fromCounterId,
+      destinationCounterId: bookingState.destinationCounterId,
+      coachType: bookingState.coachType,
+      date: bookingState.date
+        ? format(new Date(bookingState.date), "yyyy-MM-dd")
+        : undefined,
+      returnDate: bookingState.returnDate
+        ? format(new Date(bookingState.returnDate), "yyyy-MM-dd")
+        : undefined,
+      orderType: bookingState.orderType,
+    }) as any;
+  // Dispatch loading flags for booking coaches
+  useEffect(() => {
+    if (bookingState.orderType === "One_Trip") {
+      dispatch(setIsLoadingRoundTripGoBookingCoachesList(false));
+      dispatch(setIsLoadingRoundTripReturnBookingCoachesList(false));
+      dispatch(setIsLoadingBookingCoachesList(isLoadingBookingCoaches));
+    } else if (bookingState.orderType === "Round_Trip") {
+      // Assuming the same query fetches both go and return data
+      dispatch(
+        setIsLoadingRoundTripGoBookingCoachesList(isLoadingBookingCoaches)
+      );
+      dispatch(
+        setIsLoadingRoundTripReturnBookingCoachesList(isLoadingBookingCoaches)
+      );
+      dispatch(setIsLoadingBookingCoachesList(false));
+    }
+  }, [bookingState.orderType, isLoadingBookingCoaches, dispatch]);
   useEffect(() => {
     if (bookingState.orderType === "One_Trip") {
       if (
@@ -350,7 +370,7 @@ const TickitSearchDashboard: FC<IDashboardBookingProps> = ({
                             calenderOpen: false,
                             fromCounterId: null,
                             destinationCounterId: null,
-                            coachType: "",
+                            coachType: "AC",
                             date: format(new Date(), "yyyy-MM-dd"),
                             bookingCoachesList: [],
                           });

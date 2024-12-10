@@ -33,6 +33,7 @@ import { useSelector } from "react-redux";
 import CounterOrderDetailsModal from "../sales/CounterOrderDetailsModal";
 import UpdateCounterOrderModal from "../sales/UpdateCounterOrderModal";
 
+import BookingTableSkeleton from "@/components/common/skeleton/BookingTableSkeleton";
 import DashboardRoundTripTickitTable from "@/components/common/table/DashboardRoundTripTickitTable";
 import DashboardTickitBookingTable from "@/components/common/table/DashboardTickitBookingTable";
 import {
@@ -425,6 +426,15 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
       );
     }
   };
+  const isLoading =
+    loadingSalesTickit ||
+    bookingState.isLoadingBookingCoachesList ||
+    bookingState.isLoadingRoundTripGoBookingCoachesList ||
+    bookingState.isLoadingRoundTripReturnBookingCoachesList;
+
+  if (isLoading) {
+    return <BookingTableSkeleton />; // Render your Loader component
+  }
   if (loadingSalesTickit) {
     return <TableSkeleton columns={7} />;
   }

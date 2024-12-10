@@ -12,6 +12,9 @@ export interface ITickitBookingStateProps {
   bookingCoachesList: any[];
   roundTripGobookingCoachesList: any[]; // Added for round trip go data
   roundTripReturnBookingCoachesList: any[]; // Added for round trip return data
+  isLoadingBookingCoachesList: boolean;
+  isLoadingRoundTripGoBookingCoachesList: boolean;
+  isLoadingRoundTripReturnBookingCoachesList: boolean;
 }
 
 const initialState: ITickitBookingStateProps = {
@@ -25,6 +28,9 @@ const initialState: ITickitBookingStateProps = {
   bookingCoachesList: [],
   roundTripGobookingCoachesList: [],
   roundTripReturnBookingCoachesList: [],
+  isLoadingBookingCoachesList: false,
+  isLoadingRoundTripGoBookingCoachesList: false,
+  isLoadingRoundTripReturnBookingCoachesList: false,
 };
 
 const counterSearchFilterSlice = createSlice({
@@ -61,6 +67,22 @@ const counterSearchFilterSlice = createSlice({
     resetFilters(state) {
       Object.assign(state, initialState);
     },
+    // Loading reducers
+    setIsLoadingBookingCoachesList(state, action: PayloadAction<boolean>) {
+      state.isLoadingBookingCoachesList = action.payload;
+    },
+    setIsLoadingRoundTripGoBookingCoachesList(
+      state,
+      action: PayloadAction<boolean>
+    ) {
+      state.isLoadingRoundTripGoBookingCoachesList = action.payload;
+    },
+    setIsLoadingRoundTripReturnBookingCoachesList(
+      state,
+      action: PayloadAction<boolean>
+    ) {
+      state.isLoadingRoundTripReturnBookingCoachesList = action.payload;
+    },
   },
 });
 
@@ -75,6 +97,9 @@ export const {
   setRoundTripGoBookingCoachesList,
   setRoundTripReturnBookingCoachesList,
   resetFilters,
+  setIsLoadingBookingCoachesList,
+  setIsLoadingRoundTripGoBookingCoachesList,
+  setIsLoadingRoundTripReturnBookingCoachesList,
 } = counterSearchFilterSlice.actions;
 
 export const selectCounterSearchFilter = (state: any) =>
