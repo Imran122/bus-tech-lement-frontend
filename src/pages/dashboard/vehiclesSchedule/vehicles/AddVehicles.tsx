@@ -54,33 +54,33 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
   const [selectedDates, setSelectedDates] = useState<{
     deliveryDate: Date | null;
     orderDate: Date | null;
-    registrationDate: Date | null;
-    fitnessDate: Date | null;
-    routePermitDate: Date | null;
-    taxTokenDate: Date | null;
+    registrationExpiryDate: Date | null;
+    fitnessExpiryDate: Date | null;
+    routePermitExpiryDate: Date | null;
+    taxTokenExpiryDate: Date | null;
   }>({
     deliveryDate: null,
     orderDate: null,
-    registrationDate: null,
-    fitnessDate: null,
-    routePermitDate: null,
-    taxTokenDate: null,
+    registrationExpiryDate: null,
+    fitnessExpiryDate: null,
+    routePermitExpiryDate: null,
+    taxTokenExpiryDate: null,
   });
 
   const [calendarOpen, setCalendarOpen] = useState<{
     deliveryDate: boolean;
     orderDate: boolean;
-    registrationDate: boolean;
-    fitnessDate: boolean;
-    routePermitDate: boolean;
-    taxTokenDate: boolean;
+    registrationExpiryDate: boolean;
+    fitnessExpiryDate: boolean;
+    routePermitExpiryDate: boolean;
+    taxTokenExpiryDate: boolean;
   }>({
     deliveryDate: false,
     orderDate: false,
-    registrationDate: false,
-    fitnessDate: false,
-    routePermitDate: false,
-    taxTokenDate: false,
+    registrationExpiryDate: false,
+    fitnessExpiryDate: false,
+    routePermitExpiryDate: false,
+    taxTokenExpiryDate: false,
   });
 
   const handleDateChange = (
@@ -194,9 +194,12 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
           )}
         >
           <Popover
-            open={calendarOpen.registrationDate}
+            open={calendarOpen.registrationExpiryDate}
             onOpenChange={(open) =>
-              setCalendarOpen((prev) => ({ ...prev, registrationDate: open }))
+              setCalendarOpen((prev) => ({
+                ...prev,
+                registrationExpiryDate: open,
+              }))
             }
           >
             <PopoverTrigger asChild>
@@ -205,8 +208,8 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 className="w-full justify-start text-left"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDates.registrationDate
-                  ? format(selectedDates.registrationDate, "PPP")
+                {selectedDates.registrationExpiryDate
+                  ? format(selectedDates.registrationExpiryDate, "PPP")
                   : translate("তারিখ নির্বাচন করুন", "Select a date")}
               </Button>
             </PopoverTrigger>
@@ -215,9 +218,9 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 style={{ pointerEvents: "auto" }}
                 className="cursor-pointer"
                 mode="single"
-                selected={selectedDates.registrationDate || new Date()}
+                selected={selectedDates.registrationExpiryDate || new Date()}
                 onSelect={(date) =>
-                  handleDateChange("registrationDate", date || new Date())
+                  handleDateChange("registrationExpiryDate", date || new Date())
                 }
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
@@ -245,9 +248,9 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
           label={translate("ফিটনেস মেয়াদ তারিখ*", "Fitness expiry date*")}
         >
           <Popover
-            open={calendarOpen.fitnessDate}
+            open={calendarOpen.fitnessExpiryDate}
             onOpenChange={(open) =>
-              setCalendarOpen((prev) => ({ ...prev, fitnessDate: open }))
+              setCalendarOpen((prev) => ({ ...prev, fitnessExpiryDate: open }))
             }
           >
             <PopoverTrigger asChild>
@@ -256,8 +259,8 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 className="w-full justify-start text-left"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDates.fitnessDate
-                  ? format(selectedDates.fitnessDate, "PPP")
+                {selectedDates.fitnessExpiryDate
+                  ? format(selectedDates.fitnessExpiryDate, "PPP")
                   : translate("তারিখ নির্বাচন করুন", "Select a date")}
               </Button>
             </PopoverTrigger>
@@ -266,9 +269,9 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 style={{ pointerEvents: "auto" }}
                 className="cursor-pointer"
                 mode="single"
-                selected={selectedDates.fitnessDate || new Date()}
+                selected={selectedDates.fitnessExpiryDate || new Date()}
                 onSelect={(date) =>
-                  handleDateChange("fitnessDate", date || new Date())
+                  handleDateChange("fitnessExpiryDate", date || new Date())
                 }
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
@@ -300,9 +303,9 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
           )}
         >
           <Popover
-            open={calendarOpen.taxTokenDate}
+            open={calendarOpen.taxTokenExpiryDate}
             onOpenChange={(open) =>
-              setCalendarOpen((prev) => ({ ...prev, taxTokenDate: open }))
+              setCalendarOpen((prev) => ({ ...prev, taxTokenExpiryDate: open }))
             }
           >
             <PopoverTrigger asChild>
@@ -311,8 +314,8 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 className="w-full justify-start text-left"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDates.taxTokenDate
-                  ? format(selectedDates.taxTokenDate, "PPP")
+                {selectedDates.taxTokenExpiryDate
+                  ? format(selectedDates.taxTokenExpiryDate, "PPP")
                   : translate("তারিখ নির্বাচন করুন", "Select a date")}
               </Button>
             </PopoverTrigger>
@@ -321,9 +324,9 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 style={{ pointerEvents: "auto" }}
                 className="cursor-pointer"
                 mode="single"
-                selected={selectedDates.taxTokenDate || new Date()}
+                selected={selectedDates.taxTokenExpiryDate || new Date()}
                 onSelect={(date) =>
-                  handleDateChange("taxTokenDate", date || new Date())
+                  handleDateChange("taxTokenExpiryDate", date || new Date())
                 }
                 fromYear={1960}
                 toYear={new Date().getFullYear()}
@@ -354,9 +357,12 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
           )}
         >
           <Popover
-            open={calendarOpen.routePermitDate}
+            open={calendarOpen.routePermitExpiryDate}
             onOpenChange={(open) =>
-              setCalendarOpen((prev) => ({ ...prev, routePermitDate: open }))
+              setCalendarOpen((prev) => ({
+                ...prev,
+                routePermitExpiryDate: open,
+              }))
             }
           >
             <PopoverTrigger asChild>
@@ -365,8 +371,8 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 className="w-full justify-start text-left"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDates.routePermitDate
-                  ? format(selectedDates.routePermitDate, "PPP")
+                {selectedDates.routePermitExpiryDate
+                  ? format(selectedDates.routePermitExpiryDate, "PPP")
                   : translate("তারিখ নির্বাচন করুন", "Select a date")}
               </Button>
             </PopoverTrigger>
@@ -375,9 +381,9 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
                 style={{ pointerEvents: "auto" }}
                 className="cursor-pointer"
                 mode="single"
-                selected={selectedDates.routePermitDate || new Date()}
+                selected={selectedDates.routePermitExpiryDate || new Date()}
                 onSelect={(date) =>
-                  handleDateChange("routePermitDate", date || new Date())
+                  handleDateChange("routePermitExpiryDate", date || new Date())
                 }
                 fromYear={1960}
                 toYear={new Date().getFullYear()}

@@ -55,6 +55,7 @@ const DetailsVehicle: FC<IDetailsVehicleProps> = ({ id }) => {
       )}
     >
       <GridWrapper>
+        {/* Basic Details */}
         <LabelDescription
           heading={translate("নিবন্ধন নম্বর", "Registration No")}
           paragraph={vehicle?.registrationNo || "N/A"}
@@ -103,22 +104,8 @@ const DetailsVehicle: FC<IDetailsVehicleProps> = ({ id }) => {
               : "N/A"
           }
         />
-        {renderImageField(
-          translate("নিবন্ধন ফাইল", "Registration File"),
-          vehicle?.registrationFile
-        )}
-        {renderImageField(
-          translate("ফিটনেস সার্টিফিকেট", "Fitness Certificate"),
-          vehicle?.fitnessCertificate
-        )}
-        {renderImageField(
-          translate("ট্যাক্স টোকেন", "Tax Token"),
-          vehicle?.taxToken
-        )}
-        {renderImageField(
-          translate("রুট পারমিট", "Route Permit"),
-          vehicle?.routePermit
-        )}
+
+        {/* Additional Details */}
         <LabelDescription
           heading={translate("রঙ", "Color")}
           paragraph={vehicle?.color || "N/A"}
@@ -129,23 +116,82 @@ const DetailsVehicle: FC<IDetailsVehicleProps> = ({ id }) => {
             vehicle?.active ? translate("হ্যাঁ", "Yes") : translate("না", "No")
           }
         />
-        <LabelDescription
-          heading={translate("তৈরি হয়েছে", "Created At")}
-          paragraph={
-            vehicle?.createdAt
-              ? formatter({ type: "date&time", dateTime: vehicle?.createdAt })
-              : "N/A"
-          }
-        />
-        <LabelDescription
-          heading={translate("হালনাগাদ হয়েছে", "Updated At")}
-          paragraph={
-            vehicle?.updatedAt
-              ? formatter({ type: "date&time", dateTime: vehicle?.updatedAt })
-              : "N/A"
-          }
-        />
       </GridWrapper>
+      {/* Two-Column Layout for Expiry Dates and Images */}
+      <div className="grid grid-cols-2 gap-4">
+        <LabelDescription
+          heading={translate(
+            "রেজিস্ট্রেশন মেয়াদ শেষের তারিখ",
+            "Registration Expiry Date"
+          )}
+          paragraph={
+            vehicle?.registrationExpiryDate
+              ? formatter({
+                  type: "date",
+                  dateTime: vehicle?.registrationExpiryDate,
+                })
+              : "N/A"
+          }
+        />
+        {renderImageField(
+          translate("রেজিস্ট্রেশন ফাইল", "Registration File"),
+          vehicle?.registrationFile
+        )}
+
+        <LabelDescription
+          heading={translate("ফিটনেস মেয়াদ শেষের তারিখ", "Fitness Expiry Date")}
+          paragraph={
+            vehicle?.fitnessExpiryDate
+              ? formatter({
+                  type: "date",
+                  dateTime: vehicle?.fitnessExpiryDate,
+                })
+              : "N/A"
+          }
+        />
+        {renderImageField(
+          translate("ফিটনেস সার্টিফিকেট", "Fitness Certificate"),
+          vehicle?.fitnessCertificate
+        )}
+
+        <LabelDescription
+          heading={translate(
+            "রুট পারমিট মেয়াদ শেষের তারিখ",
+            "Route Permit Expiry Date"
+          )}
+          paragraph={
+            vehicle?.routePermitExpiryDate
+              ? formatter({
+                  type: "date",
+                  dateTime: vehicle?.routePermitExpiryDate,
+                })
+              : "N/A"
+          }
+        />
+        {renderImageField(
+          translate("রুট পারমিট", "Route Permit"),
+          vehicle?.routePermit
+        )}
+
+        <LabelDescription
+          heading={translate(
+            "ট্যাক্স টোকেন মেয়াদ শেষের তারিখ",
+            "Tax Token Expiry Date"
+          )}
+          paragraph={
+            vehicle?.taxTokenExpiryDate
+              ? formatter({
+                  type: "date",
+                  dateTime: vehicle?.taxTokenExpiryDate,
+                })
+              : "N/A"
+          }
+        />
+        {renderImageField(
+          translate("ট্যাক্স টোকেন", "Tax Token"),
+          vehicle?.taxToken
+        )}
+      </div>
     </DetailsWrapper>
   );
 };

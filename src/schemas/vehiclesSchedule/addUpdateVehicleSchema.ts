@@ -22,10 +22,10 @@ export const addUpdateVehicleSchema = z.object({
   deliveryToDipo: z.string().optional(),
   deliveryDate: z.string().optional(),
 
-  registrationDate: z.string().optional(),
-  fitnessDate: z.string().optional(),
-  routePermitDate: z.string().optional(),
-  taxTokenDate: z.string().optional(),
+  registrationExpiryDate: z.string().optional(),
+  fitnessExpiryDate: z.string().optional(),
+  routePermitExpiryDate: z.string().optional(),
+  taxTokenExpiryDate: z.string().optional(),
   orderDate: z.string().optional(),
 });
 

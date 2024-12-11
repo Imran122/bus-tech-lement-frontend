@@ -86,7 +86,7 @@ const Hero: FC<IHeroProps> = () => {
           </div> */}
           </div>
           {/* Container for left and right sides */}
-          <div className="w-full  flex lg:flex-row justify-center items-start gap-x-5">
+          <div className="w-full  flex justify-center items-start gap-x-5">
             {/* Booking form */}
             <div className="w-full mt-1">
               <Booking
@@ -107,9 +107,6 @@ const Hero: FC<IHeroProps> = () => {
               bookingState={bookingState}
               setBookingState={setBookingState}
             />
-          </div>
-          <div className="w-full lg:hidden block  px-5">
-            <BusAnimation />
           </div>
         </div>
 
