@@ -1,6 +1,5 @@
 import { FlipWords } from "@/components/common/typography/FlipWords";
 import { Heading } from "@/components/common/typography/Heading";
-import SectionWrapper from "@/components/common/wrapper/SectionWrapper";
 import { cn } from "@/lib/utils";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { useLocaleContext } from "@/utils/hooks/useLocaleContext";
@@ -41,7 +40,7 @@ const Hero: FC<IHeroProps> = () => {
   return (
     <>
       <section className="shadow-2xl pb-10 rounded-md ">
-        <SectionWrapper className=" mt-5 mb-0 ">
+        <div className="w-full mx-auto px-10 mt-5 mb-0 ">
           {/* Left side: Heading and Booking Form */}
           <div className="w-full  flex flex-col-reverse lg:flex-row items-center justify-center ">
             <Heading
@@ -112,11 +111,10 @@ const Hero: FC<IHeroProps> = () => {
           <div className="w-full lg:hidden block  px-5">
             <BusAnimation />
           </div>
-        </SectionWrapper>
-        <div className="mx-auto px-10 ">
-          <div className="w-full mx-auto">
-            <OfferSlider />
-          </div>
+        </div>
+
+        <div className="w-full mx-auto px-10">
+          <OfferSlider />
         </div>
       </section>
       <section className="shadow-2xl rounded-md  px-3 mt-14 ">
