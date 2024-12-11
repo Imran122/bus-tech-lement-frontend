@@ -1,5 +1,4 @@
 import PageTransition from "@/components/common/effect/PageTransition";
-import SelectSkeleton from "@/components/common/skeleton/SelectSkeleton";
 import { Label } from "@/components/common/typography/Label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -25,10 +24,11 @@ import {
 import { cn } from "@/lib/utils";
 import { useGetBookingCoachesQuery } from "@/store/api/bookingApi";
 import { useGetCountersQuery } from "@/store/api/contact/counterApi";
+import { Counter } from "@/types/dashboard/vehicleeSchedule.ts/counter";
 import { useCustomTranslator } from "@/utils/hooks/useCustomTranslator";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { LuRefreshCw } from "react-icons/lu";
 interface IBookingProps {
   bookingState: any;
@@ -51,7 +51,11 @@ export interface IBookingStateProps {
 const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
   const { translate } = useCustomTranslator();
   const [tripType, setTripType] = useState("One_Trip");
-  //
+  //const [selectedCounter, setSelectedCounter] = useState<Counter | null>(null);
+  const dropdownFromRef = useRef<HTMLDivElement>(null);
+  const dropdownToRef = useRef<HTMLDivElement>(null);
+
+  //const [isOpen, setIsOpen] = useState(false);
 
   const shouldFetchData = Boolean(
     bookingState.fromCounterId &&
@@ -146,6 +150,60 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
       localStorage.setItem("goingDate", formattedGoingDate);
     }
   }, [tripType, bookingState.date, bookingState.returnDate]);
+
+  const closeDropdowns = () => {
+    setBookingState((prevState: any) => ({
+      ...prevState,
+      fromCounterDropdownOpen: false,
+      destinationCounterDropdownOpen: false,
+    }));
+  };
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownFromRef.current &&
+        !dropdownFromRef.current.contains(event.target as Node) &&
+        dropdownToRef.current &&
+        !dropdownToRef.current.contains(event.target as Node)
+      ) {
+        closeDropdowns();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleDropdownToggle = (dropdown: "from" | "to") => {
+    setBookingState((prevState: any) => ({
+      ...prevState,
+      fromCounterDropdownOpen:
+        dropdown === "from" ? !prevState.fromCounterDropdownOpen : false,
+      destinationCounterDropdownOpen:
+        dropdown === "to" ? !prevState.destinationCounterDropdownOpen : false,
+    }));
+  };
+
+  const handleCounterSelect = (dropdown: "from" | "to", counterId: number) => {
+    if (dropdown === "from") {
+      setBookingState((prevState: any) => ({
+        ...prevState,
+        fromCounterId: counterId,
+        fromCounterDropdownOpen: false,
+      }));
+    } else {
+      setBookingState((prevState: any) => ({
+        ...prevState,
+        destinationCounterId: counterId,
+        destinationCounterDropdownOpen: false,
+      }));
+    }
+  };
+
   return (
     <div className="flex justify-center items-center">
       <PageTransition className=" w-full ">
@@ -175,87 +233,93 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
               </PageTransition>
               <ul className="grid grid-cols-2 gap-5 pb-5">
                 {/* STARTING POINT */}
-                <li>
-                  <Select
-                    value={bookingState?.fromCounterId?.toString() || ""}
-                    onValueChange={(value: string) => {
-                      setBookingState((prevState: IBookingStateProps) => ({
-                        ...prevState,
-                        fromCounterId: +value,
-                      }));
-                    }}
-                  >
-                    <SelectTrigger className="uppercase text-xs lg:text-sm px-2 lg:px-3">
-                      <SelectValue
-                        placeholder={translate(
-                          "শুরু করার কাউন্টার",
-                          "Staring Counter"
-                        )}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {!countersLoading &&
-                        countersData?.data?.length > 0 &&
-                        countersData?.data?.map(
-                          (singleCounter: any, counterIndex: number) => (
-                            <SelectItem
-                              key={counterIndex}
-                              value={singleCounter?.id?.toString()}
-                              className="uppercase"
-                            >
-                              {singleCounter?.name}
-                            </SelectItem>
-                          )
-                        )}
 
-                      {countersLoading && !countersData?.data?.length && (
-                        <SelectSkeleton />
-                      )}
-                    </SelectContent>
-                  </Select>
+                {/* STARTING POINT */}
+                <li>
+                  <div className="relative" ref={dropdownFromRef}>
+                    <div
+                      onClick={() => handleDropdownToggle("from")}
+                      className="w-full text-black uppercase text-xs px-4 py-2 bg-white border border-gray-300 rounded-md flex justify-between items-center cursor-pointer"
+                    >
+                      {bookingState.fromCounterId
+                        ? countersData?.data?.find(
+                            (counter: Counter) =>
+                              counter.id === bookingState.fromCounterId
+                          )?.name || "Select Starting Counter"
+                        : "Select Starting Counter"}
+                      <span>▼</span>
+                    </div>
+                    {bookingState.fromCounterDropdownOpen && (
+                      <ul className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-48 overflow-y-auto">
+                        {countersLoading ? (
+                          <li className="px-4 py-2 text-white">Loading...</li>
+                        ) : countersData?.data?.length > 0 ? (
+                          countersData.data
+                            .filter(
+                              (counter: Counter) =>
+                                counter.id !== bookingState.destinationCounterId
+                            )
+                            .map((counter: Counter) => (
+                              <li
+                                key={counter.id}
+                                onClick={() =>
+                                  handleCounterSelect("from", counter.id)
+                                }
+                                className="px-4 py-2 text-black focus:bg-accent focus:text-accent-foreground  cursor-pointer"
+                              >
+                                {counter.name}
+                              </li>
+                            ))
+                        ) : (
+                          <li className="px-4 py-2 text-black">No Data</li>
+                        )}
+                      </ul>
+                    )}
+                  </div>
                 </li>
-                {/* ENDING POINT */}
-                <li>
-                  <Select
-                    value={bookingState?.destinationCounterId?.toString() || ""}
-                    onValueChange={(value: string) => {
-                      setBookingState((prevState: IBookingStateProps) => ({
-                        ...prevState,
-                        destinationCounterId: +value,
-                      }));
-                    }}
-                  >
-                    <SelectTrigger className="uppercase text-xs lg:text-sm px-2 lg:px-3">
-                      <SelectValue
-                        placeholder={translate(
-                          "গন্তব্য কাউন্টার",
-                          "Ending Counter"
-                        )}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {!countersLoading &&
-                        countersData?.data?.length > 0 &&
-                        countersData?.data
-                          .filter(
-                            (target: any) =>
-                              target?.id !== bookingState.fromCounterId
-                          )
-                          ?.map((singleCounter: any, counterIndex: number) => (
-                            <SelectItem
-                              key={counterIndex}
-                              value={singleCounter?.id?.toString()}
-                              className="uppercase"
-                            >
-                              {singleCounter?.name}
-                            </SelectItem>
-                          ))}
 
-                      {countersLoading && !countersData?.data?.length && (
-                        <SelectSkeleton />
-                      )}
-                    </SelectContent>
-                  </Select>
+                {/* Ending Counter Dropdown */}
+                <li>
+                  <div className="relative" ref={dropdownToRef}>
+                    <div
+                      onClick={() => handleDropdownToggle("to")}
+                      className="w-full uppercase text-black text-xs px-4 py-2 bg-white border border-gray-300 rounded-md flex justify-between items-center cursor-pointer"
+                    >
+                      {bookingState.destinationCounterId
+                        ? countersData?.data?.find(
+                            (counter: Counter) =>
+                              counter.id === bookingState.destinationCounterId
+                          )?.name || "Select Destination Counter"
+                        : "Select Destination Counter"}
+                      <span>▼</span>
+                    </div>
+                    {bookingState.destinationCounterDropdownOpen && (
+                      <ul className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-48 overflow-y-auto">
+                        {countersLoading ? (
+                          <li className="px-4 py-2 text-black">Loading...</li>
+                        ) : countersData?.data?.length > 0 ? (
+                          countersData.data
+                            .filter(
+                              (counter: Counter) =>
+                                counter.id !== bookingState.fromCounterId
+                            )
+                            .map((counter: Counter) => (
+                              <li
+                                key={counter.id}
+                                onClick={() =>
+                                  handleCounterSelect("to", counter.id)
+                                }
+                                className="px-4 py-2 text-black focus:bg-accent focus:text-accent-foreground cursor-pointer"
+                              >
+                                {counter.name}
+                              </li>
+                            ))
+                        ) : (
+                          <li className="px-4 py-2 text-black">No Data</li>
+                        )}
+                      </ul>
+                    )}
+                  </div>
                 </li>
 
                 {/* COACH TYPE */}
