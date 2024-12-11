@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import LocationOfCounter from "@/components/ui/LoactionOfCounter";
 import CounterTickitBookingForm from "@/pages/dashboard/counterRole/tickit/CounterTickitBookingForm";
 import { convertTimeToBengali } from "@/utils/helpers/convertTimeToBengali";
 import { convertToBnDigit } from "@/utils/helpers/convertToBnDigit";
@@ -95,8 +96,10 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
                     `${coach.schedule}`
                   )}{" "}
                 </td>
-                <td className="border border-gray-300 py-1 px-2">
+                <td className="border border-gray-300 flex gap-1 py-1 px-2">
                   {coach.coachNo || translate("N/A", "N/A")}
+
+                  <LocationOfCounter viaRoute={coach.route?.viaRoute} />
                 </td>{" "}
                 <td className="border border-gray-300 py-1 px-2">
                   {translate(
