@@ -122,8 +122,8 @@ const contactsManagementLinks = {
 const vehicleManagementsLinks = {
   icon: LuCar,
   label: {
-    bn: "যানবাহন ব্যবস্থাপনা",
-    en: "Vehicle Management",
+    bn: "সময়সূচী ব্যবস্থাপনা",
+    en: "Schedule Management",
   },
   key: "station_list",
   href: "station_list",
@@ -135,12 +135,6 @@ const vehicleManagementsLinks = {
       href: "station_list",
     },
     {
-      icon: LuDollarSign,
-      label: { bn: "ভাড়ার তালিকা ", en: "Fare List" },
-      key: "fare_list",
-      href: "fare_list",
-    },
-    {
       icon: LuMerge,
       label: { bn: "রুট তালিকা", en: "Route List" },
       key: "route_list",
@@ -148,27 +142,33 @@ const vehicleManagementsLinks = {
     },
     {
       icon: LuBus,
-      label: { bn: "সময়সূচী তালিকা", en: "Schedule List" },
+      label: { bn: "সময়সূচী তালিকা", en: "Schedule Time List" },
       key: "schedule_list",
       href: "schedule_list",
     },
     {
-      icon: LuArmchair,
-      label: { bn: "যানবাহন তালিকা ", en: "Vehicle List" },
-      key: "vehicle_list",
-      href: "vehicle_list",
+      icon: LuDollarSign,
+      label: { bn: "ভাড়ার তালিকা ", en: "Fare List" },
+      key: "fare_list",
+      href: "fare_list",
     },
   ],
 };
 const scheduleManagementLinks = {
   icon: WatchIcon,
   label: {
-    bn: "সময়সূচী ব্যবস্থাপনা",
-    en: "Schedule Management",
+    bn: "যানবাহন ব্যবস্থাপনা ",
+    en: "Vehicle Management",
   },
   key: "coach_list",
   href: "coach_list",
   subLinks: [
+    {
+      icon: LuArmchair,
+      label: { bn: "যানবাহন তালিকা ", en: "Vehicle List" },
+      key: "vehicle_list",
+      href: "vehicle_list",
+    },
     {
       icon: LuUserCheck,
       label: { bn: "কোচ তালিকা", en: "Coach List" },

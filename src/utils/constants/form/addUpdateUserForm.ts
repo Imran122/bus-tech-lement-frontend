@@ -20,12 +20,12 @@ export interface IAddUpdateUserFormProps {
 const addUpdateUserForm: IAddUpdateUserFormProps = {
   userName: {
     label: {
-      en: "Full Name ✼",
-      bn: "পুরো নাম ✼",
+      en: "User Name ✼",
+      bn: "ব্যবহৃত নাম ✼",
     },
     placeholder: {
-      en: "Enter your full name (First and Last)",
-      bn: "আপনার পুরো নাম লিখুন (প্রথম ও শেষ নাম)",
+      en: "Enter your user name",
+      bn: "আপনার ব্যবহৃত নাম লিখুন",
     },
   },
   roleId: {
@@ -100,8 +100,8 @@ const addUpdateUserForm: IAddUpdateUserFormProps = {
   },
   contactNo: {
     label: {
-      en: "Contact Number",
-      bn: "যোগাযোগের নম্বর",
+      en: "Contact Number ✼",
+      bn: "যোগাযোগের নম্বর ✼",
     },
     placeholder: {
       en: "Enter your phone number (e.g., +8801XXXXXXXXX)",

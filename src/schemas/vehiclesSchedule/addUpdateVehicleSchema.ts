@@ -21,6 +21,11 @@ export const addUpdateVehicleSchema = z.object({
   color: z.string().optional(),
   deliveryToDipo: z.string().optional(),
   deliveryDate: z.string().optional(),
+
+  registrationDate: z.string().optional(),
+  fitnessDate: z.string().optional(),
+  routePermitDate: z.string().optional(),
+  taxTokenDate: z.string().optional(),
   orderDate: z.string().optional(),
 });
 

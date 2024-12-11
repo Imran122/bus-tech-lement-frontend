@@ -54,17 +54,33 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
   const [selectedDates, setSelectedDates] = useState<{
     deliveryDate: Date | null;
     orderDate: Date | null;
+    registrationDate: Date | null;
+    fitnessDate: Date | null;
+    routePermitDate: Date | null;
+    taxTokenDate: Date | null;
   }>({
     deliveryDate: null,
     orderDate: null,
+    registrationDate: null,
+    fitnessDate: null,
+    routePermitDate: null,
+    taxTokenDate: null,
   });
 
   const [calendarOpen, setCalendarOpen] = useState<{
     deliveryDate: boolean;
     orderDate: boolean;
+    registrationDate: boolean;
+    fitnessDate: boolean;
+    routePermitDate: boolean;
+    taxTokenDate: boolean;
   }>({
     deliveryDate: false,
     orderDate: false,
+    registrationDate: false,
+    fitnessDate: false,
+    routePermitDate: false,
+    taxTokenDate: false,
   });
 
   const handleDateChange = (
@@ -150,10 +166,11 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-2 gap-4"
+        className="grid grid-cols-2 gap-4 items-center justify-items-center"
       >
         {/* Registration Number */}
         <InputWrapper
+          className="col-span-2"
           error={errors?.registrationNo?.message}
           labelFor="registrationNo"
           label={translate("রেজিস্ট্রেশন নম্বর ✼", "Registration Number ✼")}
@@ -168,6 +185,47 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
             )}
           />
         </InputWrapper>
+        {/* rgistraiton date */}
+
+        <InputWrapper
+          label={translate(
+            "নিবন্ধনের মেয়াদ তারিখ*",
+            "Registration expiry date*"
+          )}
+        >
+          <Popover
+            open={calendarOpen.registrationDate}
+            onOpenChange={(open) =>
+              setCalendarOpen((prev) => ({ ...prev, registrationDate: open }))
+            }
+          >
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDates.registrationDate
+                  ? format(selectedDates.registrationDate, "PPP")
+                  : translate("তারিখ নির্বাচন করুন", "Select a date")}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end">
+              <Calendar
+                style={{ pointerEvents: "auto" }}
+                className="cursor-pointer"
+                mode="single"
+                selected={selectedDates.registrationDate || new Date()}
+                onSelect={(date) =>
+                  handleDateChange("registrationDate", date || new Date())
+                }
+                fromYear={1960}
+                toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
+              />
+            </PopoverContent>
+          </Popover>
+        </InputWrapper>
         {/* photo registrationFile uplaod */}
         <InputWrapper
           error={errors?.registrationFile?.message}
@@ -175,7 +233,6 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
           label={translate("রেজিস্ট্রেশন ফাইল ✼", "Registration File ✼")}
         >
           <PhotoCropper
-            ratio={3 / 4}
             id="registrationFile"
             photo={watch("registrationFile") || undefined}
             setPhoto={(value: string | undefined) => {
@@ -183,7 +240,43 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
             }}
           />
         </InputWrapper>
-
+        {/* Fitness expire date */}
+        <InputWrapper
+          label={translate("ফিটনেস মেয়াদ তারিখ*", "Fitness expiry date*")}
+        >
+          <Popover
+            open={calendarOpen.fitnessDate}
+            onOpenChange={(open) =>
+              setCalendarOpen((prev) => ({ ...prev, fitnessDate: open }))
+            }
+          >
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDates.fitnessDate
+                  ? format(selectedDates.fitnessDate, "PPP")
+                  : translate("তারিখ নির্বাচন করুন", "Select a date")}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end">
+              <Calendar
+                style={{ pointerEvents: "auto" }}
+                className="cursor-pointer"
+                mode="single"
+                selected={selectedDates.fitnessDate || new Date()}
+                onSelect={(date) =>
+                  handleDateChange("fitnessDate", date || new Date())
+                }
+                fromYear={1960}
+                toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
+              />
+            </PopoverContent>
+          </Popover>
+        </InputWrapper>
         {/* Fitness Certificate */}
         <InputWrapper
           error={errors?.fitnessCertificate?.message}
@@ -191,7 +284,6 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
           label={translate("ফিটনেস সার্টিফিকেট ✼", "Fitness Certificate ✼")}
         >
           <PhotoCropper
-            ratio={3 / 4}
             photo={watch("fitnessCertificate") || undefined}
             id="fitnessCertificate"
             setPhoto={(value: string | undefined) => {
@@ -199,7 +291,47 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
             }}
           />
         </InputWrapper>
+        {/* tax token expire date */}
 
+        <InputWrapper
+          label={translate(
+            "ট্যাক্স টোকেন মেয়াদ তারিখ*",
+            "Tax Token expiry date*"
+          )}
+        >
+          <Popover
+            open={calendarOpen.taxTokenDate}
+            onOpenChange={(open) =>
+              setCalendarOpen((prev) => ({ ...prev, taxTokenDate: open }))
+            }
+          >
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDates.taxTokenDate
+                  ? format(selectedDates.taxTokenDate, "PPP")
+                  : translate("তারিখ নির্বাচন করুন", "Select a date")}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end">
+              <Calendar
+                style={{ pointerEvents: "auto" }}
+                className="cursor-pointer"
+                mode="single"
+                selected={selectedDates.taxTokenDate || new Date()}
+                onSelect={(date) =>
+                  handleDateChange("taxTokenDate", date || new Date())
+                }
+                fromYear={1960}
+                toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
+              />
+            </PopoverContent>
+          </Popover>
+        </InputWrapper>
         {/* Tax Token */}
         <InputWrapper
           error={errors?.taxToken?.message}
@@ -207,7 +339,6 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
           label={translate("ট্যাক্স টোকেন ✼", "Tax Token ✼")}
         >
           <PhotoCropper
-            ratio={3 / 4}
             id="taxToken"
             photo={watch("taxToken") || undefined}
             setPhoto={(value: string | undefined) => {
@@ -215,7 +346,46 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
             }}
           />
         </InputWrapper>
-
+        {/* ROute permit expire date */}
+        <InputWrapper
+          label={translate(
+            "রুট পারমিট মেয়াদ তারিখ*",
+            "Route Permit expiry date*"
+          )}
+        >
+          <Popover
+            open={calendarOpen.routePermitDate}
+            onOpenChange={(open) =>
+              setCalendarOpen((prev) => ({ ...prev, routePermitDate: open }))
+            }
+          >
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDates.routePermitDate
+                  ? format(selectedDates.routePermitDate, "PPP")
+                  : translate("তারিখ নির্বাচন করুন", "Select a date")}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end">
+              <Calendar
+                style={{ pointerEvents: "auto" }}
+                className="cursor-pointer"
+                mode="single"
+                selected={selectedDates.routePermitDate || new Date()}
+                onSelect={(date) =>
+                  handleDateChange("routePermitDate", date || new Date())
+                }
+                fromYear={1960}
+                toYear={new Date().getFullYear()}
+                captionLayout="dropdown-buttons"
+              />
+            </PopoverContent>
+          </Popover>
+        </InputWrapper>
         {/* Route Permit */}
         <InputWrapper
           error={errors?.routePermit?.message}
@@ -223,7 +393,6 @@ const AddVehicles: FC<IAddVehicleProps> = ({ setVehicleState }) => {
           label={translate("রুট পারমিট ✼", "Route Permit ✼")}
         >
           <PhotoCropper
-            ratio={3 / 4}
             id="routePermit"
             photo={watch("routePermit") || undefined}
             setPhoto={(value: string | undefined) => {

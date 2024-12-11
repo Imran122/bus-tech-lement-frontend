@@ -22,7 +22,7 @@ export const addUserSchema = z
     counterId: z.number({
       required_error: "Counter is required",
     }),
-    dateOfBirth: z.string().nullable(),
+    dateOfBirth: z.string().optional(),
     gender: z.enum(["Male", "Female"]).optional(),
     maritalStatus: z.enum(["Married", "Unmarried"]).optional(),
     bloodGroup: z.string().optional(),
