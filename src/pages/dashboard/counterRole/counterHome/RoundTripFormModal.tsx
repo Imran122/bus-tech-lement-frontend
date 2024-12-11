@@ -622,7 +622,9 @@ const RoundTripFormModal: FC<ICounterBookingFormProps> = ({
                 <div>
                   {bookingFormState.selectedSeats?.length > 0 ? (
                     <VanishListTable
-                      listItems={bookingFormState.selectedSeats}
+                      listItems={bookingFormState.selectedSeats
+                        .slice()
+                        .reverse()}
                       handleBookingSeat={handleBookingSeat}
                     />
                   ) : (

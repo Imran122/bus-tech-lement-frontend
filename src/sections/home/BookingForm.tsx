@@ -46,6 +46,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import SeatLayoutSelector from "@/components/common/busSeatLayout/SeatLayoutSelector";
+import { VanishListTable } from "@/components/common/form/VanishListTable";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -566,7 +567,54 @@ const BookingForm: FC<IBookingFormProps> = ({
 
           {/* CUSTOMER & PAYMENT INFORMATION */}
           <PageTransition className="lg:col-span-7 col-span-12 flex flex-col justify-between h-full w-full">
-            <div className="border-2 mt-4 relative py-10 px-1">
+            <div className="lg:mb-8 mb-6">
+              {/* <h2 className="lg:text-2xl text-lg font-semibold">
+                {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
+              </h2> */}
+              <div>
+                {bookingFormState.selectedSeats?.length > 0 ? (
+                  <div className="relative w-full  border-2">
+                    <h2 className="absolute border border-[#e57bf3] -top-3 left-2   px-2 bg-[#e074ee]">
+                      {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
+                    </h2>
+                    <div className="px-3  h-[250px] overflow-y-scroll">
+                      <div className="mt-6">
+                        <div>
+                          {bookingFormState.selectedSeats?.length > 0 ? (
+                            <VanishListTable
+                              listItems={bookingFormState.selectedSeats
+                                .slice()
+                                .reverse()}
+                              handleBookingSeat={handleBookingSeat}
+                            />
+                          ) : (
+                            <div className="flex justify-center text-center">
+                              <Paragraph variant="destructive" size="sm">
+                                {translate(
+                                  "আপনি এখনো কোনো আসন নির্বাচন করেননি। বুকিং সম্পূর্ণ করতে দয়া করে একটি আসন নির্বাচন করুন।",
+                                  "You haven't selected a seat yet. Please choose a seat to proceed with your booking."
+                                )}
+                              </Paragraph>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-center text-center">
+                    <Paragraph variant="destructive" size="sm">
+                      {translate(
+                        "আপনি এখনো কোনো আসন নির্বাচন করেননি। বুকিং সম্পূর্ণ করতে দয়া করে একটি আসন নির্বাচন করুন।",
+                        "You haven't selected a seat yet. Please choose a seat to proceed with your booking."
+                      )}
+                    </Paragraph>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="border-2 mt-0 relative py-2 px-1">
               <h2 className="absolute border border-[#e57bf3] -top-3 left-2 px-2 bg-[#e074ee]">
                 {translate(
                   "গ্রাহকের ব্যক্তিগত তথ্য",
@@ -864,81 +912,14 @@ const BookingForm: FC<IBookingFormProps> = ({
                 </table>
               </div>
             </div>
-            <div className="lg:my-12 my-6">
-              <h2 className="lg:text-2xl text-lg font-semibold">
-                {translate("আসন সংক্রান্ত তথ্য", "Seat Information")}
-              </h2>
-              <div>
-                {bookingFormState.selectedSeats?.length > 0 ? (
-                  <div className="w-full py-4">
-                    <table className="table-auto border-collapse border w-full">
-                      <thead>
-                        <tr className="bg-gray-200">
-                          <th className="border p-2">
-                            {translate("আসন নং", "Seat No.")}
-                          </th>
-                          <th className="border p-2">
-                            {translate("বর্তমান ভাড়া", "Current Fare")}
-                          </th>
-                          <th className="border p-2">
-                            {translate("পূর্ববর্তী ভাড়া", "Previous Fare")}
-                          </th>
-                          <th className="border p-2">
-                            {translate("অ্যাকশন", "Action")}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {bookingFormState.selectedSeats.map((seat, index) => (
-                          <tr key={index}>
-                            <td className="border p-2 text-center">
-                              {seat.seat}
-                            </td>
-                            <td className="border p-2 text-center">
-                              {formatter({
-                                type: "amount",
-                                amount: seat.currentAmount,
-                              })}
-                            </td>
-                            <td className="border p-2 text-center">
-                              {formatter({
-                                type: "amount",
-                                amount: seat.previousAmount,
-                              })}
-                            </td>
-                            <td className="border p-2 text-center">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleBookingSeat(seat)}
-                              >
-                                {translate("মুছে ফেলুন", "Remove")}
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="flex justify-center text-center">
-                    <Paragraph variant="destructive" size="sm">
-                      {translate(
-                        "আপনি এখনো কোনো আসন নির্বাচন করেননি। বুকিং সম্পূর্ণ করতে দয়া করে একটি আসন নির্বাচন করুন।",
-                        "You haven't selected a seat yet. Please choose a seat to proceed with your booking."
-                      )}
-                    </Paragraph>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="lg:mt-6 mt-3">
+
+            <div className="lg:mt-6 mt-3 text-start">
               <h2 className="lg:text-2xl text-lg font-semibold">
                 {translate("পেমেন্ট বিবরণ:", "Payment Details:")}
               </h2>
             </div>
 
-            <div className="lg:mt-6 mt-3">
+            <div className="lg:mt-2 mt-3">
               <table className="table-auto border-collapse border w-full">
                 <tbody>
                   {/* Payment Type */}

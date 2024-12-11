@@ -89,22 +89,22 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
                   index % 2 === 0 ? "bg-white" : "bg-gray-100"
                 } hover:bg-[#e074ee] cursor-pointer`}
               >
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 py-1 px-2">
                   {translate(
                     `${convertTimeToBengali(coach.schedule)}`,
                     `${coach.schedule}`
                   )}{" "}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 py-1 px-2">
                   {coach.coachNo || translate("N/A", "N/A")}
                 </td>{" "}
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 py-1 px-2">
                   {translate(
                     `${convertToBnDigit(coach?.seatAvailable?.toString())}`,
                     coach.seatAvailable?.toString()
                   )}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 py-1 px-2">
                   {coach?.CounterBookedSeat?.length
                     ? translate(
                         `$
@@ -113,7 +113,7 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
                       )
                     : "0"}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 py-1 px-2">
                   {coach?.orderSeat?.length
                     ? translate(
                         `${convertToBnDigit(coach?.orderSeat?.length)}`,
@@ -121,19 +121,19 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
                       )
                     : "0"}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 py-1 px-2">
                   {formatter({
                     type: "amount",
                     amount: coach.fare?.amount || 0,
                   })}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 py-1 px-2">
                   {coach.registrationNo || translate("N/A", "N/A")}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 py-1 px-2">
                   {coach.fromCounter?.name || translate("N/A", "N/A")}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 py-1 px-2">
                   {coach.destinationCounter?.name || translate("N/A", "N/A")}
                 </td>
                 {/* <td className="border border-gray-300 p-2">
@@ -144,9 +144,10 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
                   coach.coachType === "AC" ? "Air Conditioned" : "Non-AC"
                 )}
               </td> */}
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 px-2 py-1">
                   <Button
-                    variant="outline"
+                    className=""
+                    variant="viewSeat"
                     size="sm"
                     onClick={(event: any) => {
                       event.stopPropagation(); // Prevent triggering parent row's onClick

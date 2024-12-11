@@ -435,7 +435,7 @@ const BoookingFormRoundTripPublic: FC<IBookingFormProps> = ({
               <div>
                 {bookingFormState.selectedSeats?.length > 0 ? (
                   <VanishListPublicRoundTrip
-                    listItems={bookingFormState.selectedSeats}
+                    listItems={bookingFormState.selectedSeats.slice().reverse()}
                     handleBookingSeat={handleBookingSeat}
                   />
                 ) : (
