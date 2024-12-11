@@ -151,9 +151,9 @@ const Booking: FC<IBookingProps> = ({ bookingState, setBookingState }) => {
       <PageTransition className=" w-full ">
         <div className="">
           <div id="booking" className="rounded-lg ">
-            <h2 className="mt-2 text-transparent bg-clip-text bg-gradient-to-r from-[#c84cd9] to-[#840495] sm:bg-gradient-to-l text-start text-base lg:text-[40px] font-bold pb-6 text-grad">
+            {/* <h2 className="mt-2 text-transparent bg-clip-text bg-gradient-to-r from-[#c84cd9] to-[#840495] sm:bg-gradient-to-l text-start text-base lg:text-[40px] font-bold pb-6 text-grad">
               {translate("আপনার যাত্রা শুরু করুন", "Start Your Journey")}
-            </h2>
+            </h2> */}
             {/* COACH FILTERS */}
             <div className="rounded-xl p-3 lg:p-7  bg-gradient-to-tr from-primary to-tertiary text-primary-foreground">
               {/* seelct trip type */}

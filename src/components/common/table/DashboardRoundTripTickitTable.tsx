@@ -167,22 +167,22 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
                 index % 2 === 0 ? "bg-white" : "bg-gray-100"
               } hover:bg-[#e074ee] cursor-pointer`}
             >
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {translate(
                   `${convertTimeToBengali(item.schedule)}`,
                   `${item.schedule}`
                 )}{" "}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item.coachNo || translate("N/A", "N/A")}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {translate(
                   `${convertToBnDigit(item?.seatAvailable?.toString())}`,
                   item.seatAvailable?.toString()
                 )}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item?.CounterBookedSeat?.length
                   ? translate(
                       `${convertToBnDigit(item?.CounterBookedSeat?.length)}`,
@@ -190,7 +190,7 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
                     )
                   : "0"}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item?.orderSeat?.length
                   ? translate(
                       `${convertToBnDigit(item?.orderSeat?.length)}`,
@@ -199,19 +199,19 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
                   : "0"}
               </td>
 
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {formatter({
                   type: "amount",
                   amount: item.fare?.amount || 0,
                 })}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item.registrationNo || translate("N/A", "N/A")}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item.fromCounter?.name || translate("N/A", "N/A")}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item.destinationCounter?.name || translate("N/A", "N/A")}
               </td>
 
@@ -224,9 +224,9 @@ const DashboardRoundTripTickitTable: FC<IGenericBookingTableProps> = ({
                 )}
               </td> */}
 
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 <Button
-                  variant="outline"
+                  variant="viewSeat"
                   size="sm"
                   onClick={(event) => {
                     event.stopPropagation(); // Prevent row click

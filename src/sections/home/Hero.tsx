@@ -41,9 +41,9 @@ const Hero: FC<IHeroProps> = () => {
   return (
     <>
       <section className="shadow-2xl pb-10 rounded-md ">
-        <SectionWrapper className="lg:px-4 mt-5 mb-0 mx-auto">
+        <SectionWrapper className=" mt-5 mb-0 ">
           {/* Left side: Heading and Booking Form */}
-          <div className="w-full flex flex-col-reverse lg:flex-row items-center justify-center px-2">
+          <div className="w-full  flex flex-col-reverse lg:flex-row items-center justify-center ">
             <Heading
               className={cn(
                 locale !== "bn" && "font-lora font-semibold",
@@ -87,9 +87,9 @@ const Hero: FC<IHeroProps> = () => {
           </div> */}
           </div>
           {/* Container for left and right sides */}
-          <div className="w-full flex flex-col lg:flex-row justify-center items-start gap-6">
+          <div className="w-full  flex lg:flex-row justify-center items-start gap-x-5">
             {/* Booking form */}
-            <div className="w-full mx-auto px-5">
+            <div className="w-full mt-1">
               <Booking
                 bookingState={bookingState}
                 setBookingState={setBookingState}
@@ -97,29 +97,29 @@ const Hero: FC<IHeroProps> = () => {
             </div>
 
             {/* Right side: Thumbnail */}
-            <div className="w-full lg:block hidden ">
+            <div className="w-full  lg:block hidden ">
               <BusAnimation />
             </div>
           </div>
 
           {/* search result */}
-          <div className="w-full py-5">
+          <div className="w-full py-3">
             <SearchResult
               bookingState={bookingState}
               setBookingState={setBookingState}
             />
           </div>
-          <div className="w-full lg:hidden block pb-4 px-5">
+          <div className="w-full lg:hidden block  px-5">
             <BusAnimation />
           </div>
         </SectionWrapper>
-        <div className="mx-auto px-5">
+        <div className="mx-auto px-10 ">
           <div className="w-full mx-auto">
             <OfferSlider />
           </div>
         </div>
       </section>
-      <section className="shadow-2xl rounded-md  px-3 py-10 mt-10">
+      <section className="shadow-2xl rounded-md  px-3 mt-14 ">
         <div className=" w-full mx-auto">
           <ClientNote />
         </div>

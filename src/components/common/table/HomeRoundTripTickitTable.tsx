@@ -159,16 +159,16 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
                 index % 2 === 0 ? "bg-white" : "bg-gray-100"
               } hover:bg-[#e074ee] cursor-pointer`}
             >
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {translate(
                   `${convertTimeToBengali(item.schedule)}`,
                   `${item.schedule}`
                 )}{" "}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item.coachNo || translate("N/A", "N/A")}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {translate(
                   `${convertToBnDigit(item?.seatAvailable?.toString())}`,
                   item.seatAvailable?.toString()
@@ -182,7 +182,7 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
                     )
                   : "0"}
               </td> */}
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item?.orderSeat?.length
                   ? translate(
                       `${convertToBnDigit(item?.orderSeat?.length)}`,
@@ -190,7 +190,7 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
                     )
                   : "0"}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 <div className="flex flex-col items-start">
                   {item.discount > 0 && (
                     <span className="font-anek font-light text-sm line-through mt-1">
@@ -225,7 +225,7 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
                   </span>
                 </div>
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item?.coachClass === "B_Class"
                   ? "Business Class"
                   : item?.coachClass === "S_Class"
@@ -234,15 +234,15 @@ const HomeRoundTripTickitTable: FC<IHomeRoundTripTickitTableProps> = ({
                   ? "Sleeper Coach"
                   : "Economy Class"}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item.fromCounter?.name || translate("N/A", "N/A")}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 {item.destinationCounter?.name || translate("N/A", "N/A")}
               </td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 px-2 py-1">
                 <Button
-                  variant="outline"
+                  variant="viewSeat"
                   size="sm"
                   onClick={(event) => {
                     event.stopPropagation(); // Prevent row click

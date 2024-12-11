@@ -82,16 +82,16 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
                   index % 2 === 0 ? "bg-white" : "bg-gray-100"
                 } hover:bg-[#e074ee] cursor-pointer`}
               >
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 px-2 py-1">
                   {translate(
                     `${convertTimeToBengali(coach.schedule)}`,
                     coach.schedule
                   )}{" "}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 px-2 py-1">
                   {coach.coachNo || translate("N/A", "N/A")}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 px-2 py-1">
                   {translate(
                     convertToBnDigit(coach?.seatAvailable?.toString() || "0"),
                     coach?.seatAvailable?.toString() || "0"
@@ -113,7 +113,7 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
                     coach?.orderSeat?.length?.toString() || "0"
                   )}
                 </td> */}
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 px-2 py-1">
                   <div className="flex flex-col items-start">
                     {coach.discount > 0 && (
                       <span className="font-anek font-light text-sm line-through mb-1">
@@ -147,7 +147,7 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
                     </span>
                   </div>
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 px-2 py-1">
                   {coach?.coachClass === "B_Class"
                     ? "Business Class"
                     : coach?.coachClass === "S_Class"
@@ -156,15 +156,15 @@ const HomeTickitBookingTable: FC<IBookingTickitTableProps> = ({
                     ? "Sleeper Coach"
                     : "Economy Class"}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 px-2 py-1">
                   {coach.fromCounter?.name || translate("N/A", "N/A")}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 px-2 py-1">
                   {coach.destinationCounter?.name || translate("N/A", "N/A")}
                 </td>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 px-2 py-1">
                   <Button
-                    variant="outline"
+                    variant="viewSeat"
                     size="sm"
                     onClick={(event: any) => {
                       event.stopPropagation(); // Prevent triggering parent row's onClick
