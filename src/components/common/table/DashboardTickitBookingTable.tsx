@@ -174,7 +174,7 @@ const DashboardTickitBookingTable: FC<IBookingTickitTableProps> = ({
           ))
         ) : (
           <tr>
-            <td colSpan={12} className="p-4 text-center">
+            <td colSpan={12} className="p-4 text-center text-red-500">
               {translate("কোনো তথ্য নেই", "No Data available")}
             </td>
           </tr>

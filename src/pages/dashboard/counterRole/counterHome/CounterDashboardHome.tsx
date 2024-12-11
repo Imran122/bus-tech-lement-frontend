@@ -466,7 +466,7 @@ const CounterDashboardHome: FC<ISalesListProps> = () => {
           </PageTransition>{" "}
           <PageTransition className="w-full my-2 flex items-center flex-col border-2 rounded-md justify-center border-primary/50 border-dashed bg-primary/5 backdrop-blur-[2px] duration-300">
             <div className="p-6 flex flex-col justify-start items-start w-full">
-              <h2>Todays Offline Sales</h2>
+              <h2>Todays Counter Sales</h2>
               <h2 className="mt-3">
                 Total:{" "}
                 {salesTickitList?.data?.todayOfflineTicketCount !== 0

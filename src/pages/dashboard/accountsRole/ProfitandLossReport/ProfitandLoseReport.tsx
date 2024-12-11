@@ -290,7 +290,7 @@ const ProfitandLoseReport = () => {
                 <tr>
                   <td
                     colSpan={8}
-                    className="text-center text-gray-500 py-4 border border-gray-300"
+                    className="text-center text-red-500 py-4 border border-gray-300"
                   >
                     No data available
                   </td>
